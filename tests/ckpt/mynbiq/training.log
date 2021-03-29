@@ -1,0 +1,8 @@
+2021-03-29 00:31:02,605 DEBUG    79 positive data to encode
+2021-03-29 00:31:02,605 DEBUG    preparing negative data
+2021-03-29 00:31:05,902 INFO     add linear layer for softmax_loss
+2021-03-29 00:31:05,905 INFO     start model training
+2021-03-29 00:31:05,905 INFO     	 * train data: 79, batch number: 1
+2021-03-29 00:31:30,451 DEBUG    [epoch 0/1] (step 1/1) batch loss: 648.46: lr: 0.0001
+2021-03-29 00:31:35,527 INFO     [epoch 0/1] average loss: 648.46, lr: 0.0001
+2021-03-29 00:31:35,611 INFO     complete training: model ckpt was saved at tests/ckpt/mynbiq
