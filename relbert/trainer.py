@@ -214,7 +214,8 @@ class Trainer:
                 feature_negative = torch.cat([v_anchor, v_negative, torch.abs(v_anchor - v_negative)], dim=1)
                 feature = torch.cat([feature_positive, feature_negative])
                 pred = torch.sigmoid(self.linear(feature))
-                label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative), dtype=torch.float32)
+                label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
+                                     dtype=torch.float32, device=self.lm.device)
                 loss += bce(pred, label.unsqueeze(-1))
 
             # backward: calculate gradient
