@@ -15,7 +15,7 @@ def config(parser):
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
     parser.add_argument('--lr-decay', help='linear decay of learning rate after warmup', action='store_true')
     parser.add_argument("--epoch-warmup", help="warmup epochs", default=5, type=int)
-    parser.add_argument("--weight-decay", help="l2 penalty for weight decay", default=1e-6, type=float)
+    parser.add_argument("--weight-decay", help="l2 penalty for weight decay", default=0, type=float)
     parser.add_argument('--optimizer', help='optimizer `adam`/`adamax`/`adam`', default='adam', type=str)
     parser.add_argument("--momentum", help="sgd momentum", default=0.9, type=float)
     # training environment
