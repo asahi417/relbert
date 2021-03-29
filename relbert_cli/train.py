@@ -24,7 +24,7 @@ def config(parser):
     parser.add_argument('--fp16', help='fp16 for training', action='store_true')
     parser.add_argument('--epoch-save', help='interval to save model weight', default=10, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
-    parser.add_argument('--export-dir', help='directory to export model weight file', default='./ckpt', type=str)
+    parser.add_argument('--export-dir', help='directory to export model weight file', default='./ckpt/relbert', type=str)
     # language model
     parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
