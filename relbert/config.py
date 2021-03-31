@@ -18,14 +18,14 @@ class Config:
         logging.info('hyperparameters')
         for k, v in self.config.items():
             logging.info('\t * {}: {}'.format(k, v))
-        ex_configs = {i: self.safe_open(i) for i in glob('{}/*/config.json'.format(export_dir))}
+        ex_configs = {i: self.safe_open(i) for i in glob('{}/*/trainer_config.json'.format(export_dir))}
         same_config = list(filter(lambda x: x[1] == self.config, ex_configs.items()))
         if len(same_config) != 0:
             input('\ncheckpoint already exists: {}\n enter to overwrite >>>'.format(same_config[0]))
             for _p, _ in same_config:
                 shutil.rmtree(os.path.dirname(_p))
         self.cache_dir = '{}/{}'.format(export_dir, self.get_random_string(
-            [os.path.basename(i.replace('/config.json', '')) for i in ex_configs.keys()]
+            [os.path.basename(i.replace('/trainer_config.json', '')) for i in ex_configs.keys()]
         ))
         self.__dict__.update(self.config)
         self.__cache_init()
