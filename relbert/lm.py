@@ -188,6 +188,10 @@ class RelBERT:
 
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
+        self.parallel = False
+        if torch.cuda.device_count() > 1:
+            self.parallel = True
+            self.model = torch.nn.DataParallel(self.model)
         self.model.to(self.device)
         logging.info('BERT running on {} GPU'.format(torch.cuda.device_count()))
 
@@ -198,7 +202,10 @@ class RelBERT:
         self.model.eval()
 
     def save(self, cache_dir):
-        self.model.save_pretrained(cache_dir)
+        if self.parallel:
+            self.model.module.save_pretrained(cache_dir)
+        else:
+            self.model.save_pretrained(cache_dir)
         self.tokenizer.save_pretrained(cache_dir)
 
     def preprocess(self,
