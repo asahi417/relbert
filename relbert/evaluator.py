@@ -69,8 +69,6 @@ def _evaluate(model,
         embeddings = lm.get_embedding(all_pairs, batch_size=batch, num_worker=num_worker)
         assert len(embeddings) == len(all_pairs)
         embedding_dict = {str(k): v for k, v in zip(all_pairs, embeddings)}
-        print(embedding_dict.keys())
-        input()
 
         def prediction(_data):
             accuracy = []
