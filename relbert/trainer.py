@@ -130,6 +130,8 @@ class Trainer:
             self.discriminative_loss = nn.BCELoss()
             self.linear.to(self.lm.device)
             model_parameters += list(self.linear.named_parameters())
+            if self.lm.parallel:
+                self.linear = torch.nn.DataParallel(self.linear)
 
         # setup optimizer
         if self.config.weight_decay is not None or self.config.weight_decay != 0:

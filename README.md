@@ -55,7 +55,7 @@ relbert-train --debug -n -t g -p --mode average_no_mask
 relbert-train --debug -n -t h -p --mode average_no_mask
 relbert-train --debug -n -t i -p --mode average_no_mask
 ```
-```
+```shell script
 relbert-train --debug -n -t a -s
 relbert-train --debug -n -t b -s
 relbert-train --debug -n -t c -s
@@ -65,7 +65,6 @@ relbert-train --debug -n -t f -s
 relbert-train --debug -n -t g -s
 relbert-train --debug -n -t h -s
 relbert-train --debug -n -t i -s
-
 relbert-train --debug -n -t a -p -s
 relbert-train --debug -n -t b -p -s
 relbert-train --debug -n -t c -p -s
@@ -75,7 +74,6 @@ relbert-train --debug -n -t f -p -s
 relbert-train --debug -n -t g -p -s
 relbert-train --debug -n -t h -p -s
 relbert-train --debug -n -t i -p -s
-
 relbert-train --debug -n -t a -s --mode average
 relbert-train --debug -n -t b -s --mode average
 relbert-train --debug -n -t c -s --mode average
@@ -85,7 +83,6 @@ relbert-train --debug -n -t f -s --mode average
 relbert-train --debug -n -t g -s --mode average
 relbert-train --debug -n -t h -s --mode average
 relbert-train --debug -n -t i -s --mode average
-
 relbert-train --debug -n -t a -p -s --mode average
 relbert-train --debug -n -t b -p -s --mode average
 relbert-train --debug -n -t c -p -s --mode average
@@ -95,7 +92,6 @@ relbert-train --debug -n -t f -p -s --mode average
 relbert-train --debug -n -t g -p -s --mode average
 relbert-train --debug -n -t h -p -s --mode average
 relbert-train --debug -n -t i -p -s --mode average
-
 relbert-train --debug -n -t a -s --mode average_no_mask
 relbert-train --debug -n -t b -s --mode average_no_mask
 relbert-train --debug -n -t c -s --mode average_no_mask
@@ -105,7 +101,6 @@ relbert-train --debug -n -t f -s --mode average_no_mask
 relbert-train --debug -n -t g -s --mode average_no_mask
 relbert-train --debug -n -t h -s --mode average_no_mask
 relbert-train --debug -n -t i -s --mode average_no_mask
-
 relbert-train --debug -n -t a -p -s --mode average_no_mask
 relbert-train --debug -n -t b -p -s --mode average_no_mask
 relbert-train --debug -n -t c -p -s --mode average_no_mask
