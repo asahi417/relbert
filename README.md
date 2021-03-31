@@ -2,35 +2,35 @@
 
 
 ```shell script
-relbert-train --debug -n -t a
-relbert-train --debug -n -t b
-relbert-train --debug -n -t c
-relbert-train --debug -n -t d
-relbert-train --debug -n -t e
-relbert-train --debug -n -t f
-relbert-train --debug -n -t g
-relbert-train --debug -n -t h
-relbert-train --debug -n -t i
+relbert-train --debug -n -t a -b 32
+relbert-train --debug -n -t b -b 32
+relbert-train --debug -n -t c -b 32
+relbert-train --debug -n -t d -b 32
+relbert-train --debug -n -t e -b 32
+relbert-train --debug -n -t f -b 32
+relbert-train --debug -n -t g -b 32
+relbert-train --debug -n -t h -b 32
+relbert-train --debug -n -t i -b 32
 
-relbert-train --debug -n -t a -s
-relbert-train --debug -n -t b -s
-relbert-train --debug -n -t c -s
-relbert-train --debug -n -t d -s
-relbert-train --debug -n -t e -s
-relbert-train --debug -n -t f -s
-relbert-train --debug -n -t g -s
-relbert-train --debug -n -t h -s
-relbert-train --debug -n -t i -s
+relbert-train --debug -n -t a -s -b 32
+relbert-train --debug -n -t b -s -b 32
+relbert-train --debug -n -t c -s -b 32
+relbert-train --debug -n -t d -s -b 32
+relbert-train --debug -n -t e -s -b 32
+relbert-train --debug -n -t f -s -b 32
+relbert-train --debug -n -t g -s -b 32
+relbert-train --debug -n -t h -s -b 32
+relbert-train --debug -n -t i -s -b 32
 
-relbert-train --debug -n -t a -p
-relbert-train --debug -n -t b -p
-relbert-train --debug -n -t c -p
-relbert-train --debug -n -t d -p
-relbert-train --debug -n -t e -p
-relbert-train --debug -n -t f -p
-relbert-train --debug -n -t g -p
-relbert-train --debug -n -t h -p
-relbert-train --debug -n -t i -p
+relbert-train --debug -n -t a -p -b 32
+relbert-train --debug -n -t b -p -b 32
+relbert-train --debug -n -t c -p -b 32
+relbert-train --debug -n -t d -p -b 32
+relbert-train --debug -n -t e -p -b 32
+relbert-train --debug -n -t f -p -b 32
+relbert-train --debug -n -t g -p -b 32
+relbert-train --debug -n -t h -p -b 32
+relbert-train --debug -n -t i -p -b 32
 
 relbert-train --debug -n -t a -p -s
 relbert-train --debug -n -t b -p -s

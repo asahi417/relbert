@@ -1,6 +1,0 @@
-2021-03-29 01:43:20,186 DEBUG    79 positive data to encode
-2021-03-29 01:43:20,186 DEBUG    preparing negative data
-2021-03-29 01:43:24,770 INFO     start model training
-2021-03-29 01:43:24,770 INFO     start model training
-2021-03-29 01:43:24,771 INFO     	 * train data: 79, batch number: 1
-2021-03-29 01:43:24,771 INFO     	 * train data: 79, batch number: 1

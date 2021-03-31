@@ -1,1 +1,0 @@
-{"model": "albert-base-v1", "max_length": 64, "mode": "mask", "data": "semeval2012", "n_sample": 10, "template_type": "a", "softmax_loss": false, "in_batch_negative": false, "mse_margin": 1, "epoch": 50, "epoch_warmup": 5, "batch": 64, "lr": 0.001, "lr_decay": false, "weight_decay": 1e-06, "optimizer": "adam", "momentum": 0.9, "fp16": false, "random_seed": 0}

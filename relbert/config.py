@@ -25,7 +25,7 @@ class Config:
             for _p, _ in same_config:
                 shutil.rmtree(os.path.dirname(_p))
         prefix_key = ['template_type', 'softmax_loss', 'in_batch_negative', 'parent_contrast']
-        prefix = '_'.join([self.config[k] for k in prefix_key])
+        prefix = '_'.join([str(self.config[k]) for k in prefix_key])
         self.cache_dir = '{}/{}_{}'.format(export_dir, prefix, self.get_random_string(
             [os.path.basename(i.replace('/config.json', '')) for i in ex_configs.keys()]
         ))
