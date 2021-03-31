@@ -9,7 +9,7 @@ def config(parser):
     parser.add_argument('-s', '--softmax-loss', help='softmax loss', action='store_true')
     parser.add_argument('-n', '--in-batch-negative', help='in batch negative', action='store_true')
     parser.add_argument('-p', '--parent-contrast', help='hierarchical contrastive loss', action='store_true')
-    parser.add_argument('-e', '--epoch', help='training epochs', default=40, type=int)
+    parser.add_argument('-e', '--epoch', help='training epochs', default=30, type=int)
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('-b', '--batch', help='batch size', default=16, type=int)
     parser.add_argument('--lr', help='learning rate', default=0.00005, type=float)
