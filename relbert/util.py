@@ -81,20 +81,18 @@ def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_st
     return LambdaLR(optimizer, lr_lambda, last_epoch)
 
 
-def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative, margin: int = 1, in_batch_negative: bool = True):
+def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
+                 tensor_positive_parent=None, tensor_negative_parent=None,
+                 margin: int = 1, in_batch_negative: bool = True):
     """ Compute contrastive triplet loss with in batch augmentation which enables to propagate error on quadratic
     of batch size. """
+    loss = 0
+
+    # the main contrastive loss
     distance_positive = torch.sum((tensor_positive_0 - tensor_positive_1) ** 2, -1) ** 0.5
-
-    # the first tensor as an anchor
-    distance_negative = torch.sum((tensor_positive_0 - tensor_negative) ** 2, -1) ** 0.5
-    loss = torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
-    # loss = torch.sum(torch.clip(distance_positive - distance_negative - mse_margin, min=0))
-
-    # the second tensor as an anchor
-    distance_negative = torch.sum((tensor_positive_1 - tensor_negative) ** 2, -1) ** 0.5
-    loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
-    # loss += torch.sum(torch.clip(distance_positive - distance_negative - mse_margin, min=0))
+    for tensor_positive in [tensor_positive_0, tensor_positive_1]:
+        distance_negative = torch.sum((tensor_positive - tensor_negative) ** 2, -1) ** 0.5
+        loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
 
     if in_batch_negative:
         # No elements in single batch share same relation type, so here we construct negative sample within batch
@@ -105,4 +103,12 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative, margin: 
         distance_positive_batch = distance_positive.unsqueeze(-1)
         loss_batch = torch.clip(distance_positive_batch - distance_negative_batch - margin, min=0)
         loss += torch.sum(loss_batch)
+
+    if tensor_positive_parent is not None and tensor_negative_parent is not None:
+        # contrastive loss of the parent class
+        for tensor_positive in [tensor_positive_0, tensor_positive_1]:
+            distance_positive = torch.sum((tensor_positive - tensor_positive_parent) ** 2, -1) ** 0.5
+            distance_negative = torch.sum((tensor_positive - tensor_negative_parent) ** 2, -1) ** 0.5
+            loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
+
     return loss

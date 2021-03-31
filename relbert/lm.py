@@ -2,7 +2,7 @@
 import os
 import logging
 from typing import Dict, List
-from itertools import combinations, chain
+from itertools import combinations
 from multiprocessing import Pool
 from random import randint
 
@@ -16,16 +16,22 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'BERT'
 
 
+def rand_sample(_list):
+    return _list[randint(0, len(_list) - 1)]
+
+
 class Dataset(torch.utils.data.Dataset):
     """ Dataset loader for triplet loss. """
     float_tensors = ['attention_mask']
 
-    def __init__(self, positive_samples: Dict, negative_samples: Dict = None, pairwise_input: bool = True):
+    def __init__(self, positive_samples: Dict, negative_samples: Dict = None, pairwise_input: bool = True,
+                 relation_structure: Dict = None):
         if negative_samples is not None:
             assert positive_samples.keys() == negative_samples.keys()
         self.positive_samples = positive_samples
         self.negative_samples = negative_samples
         self.pairwise_input = pairwise_input
+        self.relation_structure = relation_structure
         if self.pairwise_input:
             self.keys = sorted(list(positive_samples.keys()))
             self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2)) for k in self.keys}
@@ -47,20 +53,41 @@ class Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         relation_type = self.keys[idx]
-        patterns = self.positive_pattern_id[relation_type]
         if self.pairwise_input:
-            i = randint(0, len(patterns) - 1)
-            a, b = patterns[i]
-            # a, b = self.positive_pattern_flat[idx]
+            # pairwise input for contrastive loss
+
+            # randomly sample pair from the specific relation type as a positive pair
+            a, b = rand_sample(self.positive_pattern_id[relation_type])
             positive_a = self.positive_samples[relation_type][a]
             tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
             positive_b = self.positive_samples[relation_type][b]
             tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
 
+            # randomly sample negative from same relation
             negative_list = self.negative_samples[relation_type]
-            i = randint(0, len(negative_list) - 1)
-            tensor_negative = {k: self.to_tensor(k, v) for k, v in negative_list[i].items()}
-            return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
+            tensor_negative = {k: self.to_tensor(k, v) for k, v in rand_sample(negative_list).items()}
+
+            if self.relation_structure is not None:
+                # positive sample from same parent relation and negative from other parent relation
+
+                # sample parent relation (positive)
+                parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
+                assert len(parent_relation) == 1
+                # sample relation from the parent
+                relation_positive = rand_sample(self.relation_structure[parent_relation[0]])
+                positive_parent = rand_sample(self.positive_samples[relation_positive])
+                tensor_positive_parent = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
+                # sample parent relation (negative)
+                parent_relation_n = rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
+                # sample relation from the parent
+                relation_negative = rand_sample(self.relation_structure[parent_relation_n])
+                # sample individual entry from the relation
+                negative_parent = rand_sample(self.positive_samples[relation_negative])
+                tensor_negative_parent = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
+                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative,
+                        'positive_parent': tensor_positive_parent, 'negative_parent': tensor_negative_parent}
+            else:
+                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
         else:
             NotImplementedError()
             # a = self.positive_pattern_flat[idx]
@@ -178,6 +205,7 @@ class RelBERT:
     def preprocess(self,
                    positive_samples,
                    negative_sample: List = None,
+                   relation_structure: Dict = None,
                    parallel: bool = True,
                    pairwise_input: bool = True):
         """ Preprocess textual data.
@@ -194,6 +222,7 @@ class RelBERT:
         torch.utils.data.Dataset
         """
         if type(positive_samples) is not dict:
+            assert relation_structure is None
             assert len(positive_samples) > 0, len(positive_samples)
             positive_samples = [positive_samples] if type(positive_samples[0]) is str else positive_samples
             positive_samples = {k: v for k, v in enumerate(positive_samples)}
@@ -226,7 +255,6 @@ class RelBERT:
         positive_embedding = pool_map(positive_samples_list.flatten_list)
         positive_embedding = positive_samples_list.restore_structure(positive_embedding)
         positive_embedding = {key[n]: v for n, v in enumerate(positive_embedding)}
-
         negative_embedding = None
         if negative_sample_list is not None:
             negative_embedding = pool_map(negative_sample_list.flatten_list)
@@ -235,6 +263,7 @@ class RelBERT:
 
         return Dataset(positive_samples=positive_embedding,
                        negative_samples=negative_embedding,
+                       relation_structure=relation_structure,
                        pairwise_input=pairwise_input)
 
     def to_embedding(self, encode):

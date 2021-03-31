@@ -61,4 +61,6 @@ def get_semeval_data(n_sample: int = 10, return_score: bool = False, cache_dir: 
                                              list(zip(*list(filter(lambda x: x[0] > 0, lines_scale[-n_sample:]))))[1]]
 
         all_relation_type[relation_id] = relation_type
-    return all_positive, all_negative, all_relation_type
+    parent = list(set([i[:-1] for i in all_relation_type.keys()]))
+    relation_structure = {p: [i for i in all_relation_type.keys() if p == i[:-1]] for p in parent}
+    return all_positive, all_negative, relation_structure

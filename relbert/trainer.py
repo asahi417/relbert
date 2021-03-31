@@ -25,6 +25,7 @@ class Trainer:
                  template_type: str = 'a',
                  softmax_loss: bool = True,
                  in_batch_negative: bool = True,
+                 parent_contrast: bool = True,
                  mse_margin: float = 1,
                  epoch: int = 10,
                  epoch_warmup: int = 10,
@@ -50,6 +51,7 @@ class Trainer:
         template_type
         softmax_loss
         in_batch_negative
+        parent_contrast
         mse_margin
         epoch
         epoch_warmup
@@ -84,6 +86,7 @@ class Trainer:
             template_type=template_type,
             softmax_loss=softmax_loss,
             in_batch_negative=in_batch_negative,
+            parent_contrast=parent_contrast,
             mse_margin=mse_margin,
             epoch=epoch,
             epoch_warmup=epoch_warmup,
@@ -109,9 +112,12 @@ class Trainer:
 
         # get dataset
         if self.config.data == 'semeval2012':
-            all_positive, all_negative, _ = get_semeval_data(
+            all_positive, all_negative, relation_structure = get_semeval_data(
                 n_sample=self.config.n_sample, cache_dir=self.cache_dir)
-            self.dataset = self.lm.preprocess(positive_samples=all_positive, negative_sample=all_negative)
+            if self.config.parent_contrast:
+                self.dataset = self.lm.preprocess(all_positive, all_negative, relation_structure)
+            else:
+                self.dataset = self.lm.preprocess(all_positive, all_negative)
         else:
             raise ValueError('unknown data: {}'.format(self.config.data))
 
@@ -193,20 +199,31 @@ class Trainer:
         bce = nn.BCELoss()
         step_in_epoch = len(data_loader)
         for i, x in enumerate(data_loader):
+
+            self.optimizer.zero_grad()
+
             positive_a = {k: v.to(self.lm.device) for k, v in x['positive_a'].items()}
             positive_b = {k: v.to(self.lm.device) for k, v in x['positive_b'].items()}
             negative = {k: v.to(self.lm.device) for k, v in x['negative'].items()}
+            if self.config.parent_contrast:
+                positive_hc = {k: v.to(self.lm.device) for k, v in x['positive_parent'].items()}
+                negative_hc = {k: v.to(self.lm.device) for k, v in x['negative_parent'].items()}
+                encode = {k: torch.cat([positive_a[k], positive_b[k], negative[k], positive_hc[k], negative_hc[k]])
+                          for k in positive_a.keys()}
+                embedding = self.lm.to_embedding(encode)
+                v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
 
-            # zero the parameter gradients
-            self.optimizer.zero_grad()
+                # contrastive loss
+                loss = triplet_loss(v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc,
+                                    margin=self.config.mse_margin, in_batch_negative=self.config.in_batch_negative)
+            else:
+                encode = {k: torch.cat([positive_a[k], positive_b[k], negative[k]]) for k in positive_a.keys()}
+                embedding = self.lm.to_embedding(encode)
+                v_anchor, v_positive, v_negative = embedding.chunk(3)
 
-            encode = {k: torch.cat([positive_a[k], positive_b[k], negative[k]]) for k in positive_a.keys()}
-            embedding = self.lm.to_embedding(encode)
-            v_anchor, v_positive, v_negative = embedding.chunk(3)
-
-            # contrastive loss
-            loss = triplet_loss(v_anchor, v_positive, v_negative,
-                                margin=self.config.mse_margin, in_batch_negative=self.config.in_batch_negative)
+                # contrastive loss
+                loss = triplet_loss(v_anchor, v_positive, v_negative,
+                                    margin=self.config.mse_margin, in_batch_negative=self.config.in_batch_negative)
 
             if self.linear is not None:
                 # the 3-way discriminative loss used in SBERT
