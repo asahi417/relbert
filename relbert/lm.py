@@ -32,14 +32,15 @@ class Dataset(torch.utils.data.Dataset):
         self.negative_samples = negative_samples
         self.pairwise_input = pairwise_input
         self.relation_structure = relation_structure
+        self.positive_pattern_id = None
         if self.pairwise_input:
             self.keys = sorted(list(positive_samples.keys()))
             self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2))
                                         for k in self.keys}
         else:
-            self.keys = sorted(list(positive_samples.keys()))
+            self.keys = sorted(list(self.positive_samples.keys()))
+            assert all(len(self.positive_samples[k]) == 1 for k in self.keys)
             assert self.negative_samples is None
-            self.positive_pattern_id = {k: list(range(len(self.positive_samples[k]))) for k in self.keys}
 
     def __len__(self):
         return len(self.keys)
@@ -87,11 +88,9 @@ class Dataset(torch.utils.data.Dataset):
             else:
                 return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
         else:
-            # deterministic
-            a = self.positive_pattern_id[relation_type]
-            positive_a = self.positive_samples[relation_type][a]
-            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
-            return {'positive_a': tensor_positive_a}
+            # deterministic sampling for prediction
+            positive_a = self.positive_samples[relation_type][0]
+            return {k: self.to_tensor(k, v) for k, v in positive_a.items()}
 
 
 class EncodePlus:
@@ -280,7 +279,7 @@ class RelBERT:
         return batch_embedding_tensor
 
     def get_embedding(self, x: List, batch_size: int = None, num_worker: int = 1, parallel: bool = True):
-        """ Get embedding from BERT.
+        """ Get embedding from RelBERT.
 
         Parameters
         ----------
@@ -297,13 +296,15 @@ class RelBERT:
         -------
         Embedding (len(x), n_hidden).
         """
-        data = self.preprocess(x, parallel=parallel)
-        batch_size = len(x) if batch_size is None else batch_size
-        data_loader = torch.utils.data.DataLoader(
-            data, num_workers=num_worker, batch_size=batch_size, shuffle=False, drop_last=False)
+        with torch.no_grad():
+            data = self.preprocess(x, parallel=parallel, pairwise_input=False)
+            batch_size = len(x) if batch_size is None else batch_size
+            data_loader = torch.utils.data.DataLoader(
+                data, num_workers=num_worker, batch_size=batch_size, shuffle=False, drop_last=False)
 
-        logging.debug('\t* run LM inference')
-        h_list = []
-        for encode in data_loader:
-            h_list += self.to_embedding(encode[0]).cpu().to_list()
+            logging.debug('\t * run LM inference')
+            h_list = []
+            for encode in data_loader:
+                # v = self.to_embedding(encode)
+                h_list += self.to_embedding(encode).cpu().tolist()
         return h_list
