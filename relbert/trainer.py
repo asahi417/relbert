@@ -189,7 +189,9 @@ class Trainer:
                 self.scheduler.step()
 
         writer.close()
-        self.lm.save(self.checkpoint_dir)
+        cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, e)
+        os.makedirs(cache_dir)
+        self.lm.save(cache_dir)
         logging.info('complete training: model ckpt was saved at {}'.format(self.checkpoint_dir))
 
     def train_single_epoch(self, data_loader, epoch_n: int, writer):
