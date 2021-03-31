@@ -12,7 +12,7 @@ def config(parser):
     parser.add_argument('-e', '--epoch', help='training epochs', default=40, type=int)
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('-b', '--batch', help='batch size', default=16, type=int)
-    parser.add_argument('--lr', help='learning rate', default=0.00001, type=float)
+    parser.add_argument('--lr', help='learning rate', default=0.00005, type=float)
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
     parser.add_argument('--lr-decay', help='linear decay of learning rate after warmup', action='store_true')
     parser.add_argument("--epoch-warmup", help="warmup epochs", default=10, type=int)
