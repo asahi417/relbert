@@ -305,6 +305,5 @@ class RelBERT:
             logging.debug('\t * run LM inference')
             h_list = []
             for encode in data_loader:
-                # v = self.to_embedding(encode)
                 h_list += self.to_embedding(encode).cpu().tolist()
         return h_list
