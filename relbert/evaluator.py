@@ -77,14 +77,14 @@ def _evaluate(model,
         acc_val = prediction(val)
         acc_test = prediction(test)
         acc = (acc_val * len(val) + acc_test * len(test))/(len(val) + len(test))
-        result.append({
-            'accuracy_valid': acc_val, 'accuracy_test': acc_test, 'accuracy_full': acc,
-            'model': model, 'mode': lm.mode, 'template_type': lm.template_type,
-            'softmax_loss':,
-            'in_batch_negative',
-            'parent_contrast',
-            'data': k
-        })
+        # result.append({
+        #     'accuracy_valid': acc_val, 'accuracy_test': acc_test, 'accuracy_full': acc,
+        #     'model': model, 'mode': lm.mode, 'template_type': lm.template_type,
+        #     'softmax_loss':,
+        #     'in_batch_negative',
+        #     'parent_contrast',
+        #     'data': k
+        # })
         logging.info(str(result[-1]))
     return result
 
