@@ -22,6 +22,26 @@ relbert-train --debug -n -t g -s
 relbert-train --debug -n -t h -s
 relbert-train --debug -n -t i -s
 
+relbert-train --debug -n -t a -p
+relbert-train --debug -n -t b -p
+relbert-train --debug -n -t c -p
+relbert-train --debug -n -t d -p
+relbert-train --debug -n -t e -p
+relbert-train --debug -n -t f -p
+relbert-train --debug -n -t g -p
+relbert-train --debug -n -t h -p
+relbert-train --debug -n -t i -p
+
+relbert-train --debug -n -t a -p -s
+relbert-train --debug -n -t b -p -s
+relbert-train --debug -n -t c -p -s
+relbert-train --debug -n -t d -p -s
+relbert-train --debug -n -t e -p -s
+relbert-train --debug -n -t f -p -s
+relbert-train --debug -n -t g -p -s
+relbert-train --debug -n -t h -p -s
+relbert-train --debug -n -t i -p -s
+
 relbert-train --debug -n -t a --mse-margin 0
 relbert-train --debug -n -t b --mse-margin 0
 relbert-train --debug -n -t c --mse-margin 0
@@ -42,23 +62,23 @@ relbert-train --debug -n -t g -s --mse-margin 0
 relbert-train --debug -n -t h -s --mse-margin 0
 relbert-train --debug -n -t i -s --mse-margin 0
 
-relbert-train --debug -n -t a -p
-relbert-train --debug -n -t b -p
-relbert-train --debug -n -t c -p
-relbert-train --debug -n -t d -p
-relbert-train --debug -n -t e -p
-relbert-train --debug -n -t f -p
-relbert-train --debug -n -t g -p
-relbert-train --debug -n -t h -p
-relbert-train --debug -n -t i -p
+relbert-train --debug -n -t a -p --mse-margin 0
+relbert-train --debug -n -t b -p --mse-margin 0
+relbert-train --debug -n -t c -p --mse-margin 0
+relbert-train --debug -n -t d -p --mse-margin 0
+relbert-train --debug -n -t e -p --mse-margin 0
+relbert-train --debug -n -t f -p --mse-margin 0
+relbert-train --debug -n -t g -p --mse-margin 0
+relbert-train --debug -n -t h -p --mse-margin 0
+relbert-train --debug -n -t i -p --mse-margin 0
 
-relbert-train --debug -n -t a -p -s
-relbert-train --debug -n -t b -p -s
-relbert-train --debug -n -t c -p -s
-relbert-train --debug -n -t d -p -s
-relbert-train --debug -n -t e -p -s
-relbert-train --debug -n -t f -p -s
-relbert-train --debug -n -t g -p -s
-relbert-train --debug -n -t h -p -s
-relbert-train --debug -n -t i -p -s
+relbert-train --debug -n -t a -p -s --mse-margin 0
+relbert-train --debug -n -t b -p -s --mse-margin 0
+relbert-train --debug -n -t c -p -s --mse-margin 0
+relbert-train --debug -n -t d -p -s --mse-margin 0
+relbert-train --debug -n -t e -p -s --mse-margin 0
+relbert-train --debug -n -t f -p -s --mse-margin 0
+relbert-train --debug -n -t g -p -s --mse-margin 0
+relbert-train --debug -n -t h -p -s --mse-margin 0
+relbert-train --debug -n -t i -p -s --mse-margin 0
 ```

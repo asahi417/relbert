@@ -24,16 +24,18 @@ class Config:
             input('\ncheckpoint already exists: {}\n enter to overwrite >>>'.format(same_config[0]))
             for _p, _ in same_config:
                 shutil.rmtree(os.path.dirname(_p))
-        self.cache_dir = '{}/{}'.format(export_dir, self.get_random_string(
+        prefix_key = ['template_type', 'softmax_loss', 'in_batch_negative', 'parent_contrast']
+        prefix = '_'.join([self.config[k] for k in prefix_key])
+        self.cache_dir = '{}/{}_{}'.format(export_dir, prefix, self.get_random_string(
             [os.path.basename(i.replace('/config.json', '')) for i in ex_configs.keys()]
         ))
         self.__dict__.update(self.config)
         self.__cache_init()
 
     def __cache_init(self):
-        if not os.path.exists('{}/config.json'.format(self.cache_dir)):
+        if not os.path.exists('{}/trainer_config.json'.format(self.cache_dir)):
             os.makedirs(self.cache_dir, exist_ok=True)
-            with open('{}/config.json'.format(self.cache_dir), 'w') as f:
+            with open('{}/trainer_config.json'.format(self.cache_dir), 'w') as f:
                 json.dump(self.config, f)
 
     @staticmethod

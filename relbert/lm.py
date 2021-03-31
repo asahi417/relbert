@@ -34,14 +34,12 @@ class Dataset(torch.utils.data.Dataset):
         self.relation_structure = relation_structure
         if self.pairwise_input:
             self.keys = sorted(list(positive_samples.keys()))
-            self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2)) for k in self.keys}
+            self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2))
+                                        for k in self.keys}
         else:
-            NotImplementedError()
-            # assert self.negative_samples is None
-            # self.keys =
-            # self.positive_pattern_id = {k: list(range(len(self.positive_samples[k]))) for k in self.keys}
-            # self.key_mapper = list(chain(*[[k] * len(self.positive_pattern_id[k]) for k in keys]))
-            # self.positive_pattern_flat = list(chain(*[self.positive_pattern_id[k] for k in keys]))
+            self.keys = sorted(list(positive_samples.keys()))
+            assert self.negative_samples is None
+            self.positive_pattern_id = {k: list(range(len(self.positive_samples[k]))) for k in self.keys}
 
     def __len__(self):
         return len(self.keys)
@@ -89,11 +87,12 @@ class Dataset(torch.utils.data.Dataset):
             else:
                 return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
         else:
-            NotImplementedError()
-            # a = self.positive_pattern_flat[idx]
-            # positive_a = self.positive_samples[relation_type][a]
-            # tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
-            # return {'positive_a': tensor_positive_a}
+            # deterministic
+            a = self.positive_pattern_id[relation_type]
+            a = self.positive_pattern_flat[idx]
+            positive_a = self.positive_samples[relation_type][a]
+            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
+            return {'positive_a': tensor_positive_a}
 
 
 class EncodePlus:
@@ -204,7 +203,7 @@ class RelBERT:
 
     def preprocess(self,
                    positive_samples,
-                   negative_sample: List = None,
+                   negative_sample: Dict = None,
                    relation_structure: Dict = None,
                    parallel: bool = True,
                    pairwise_input: bool = True):
@@ -212,8 +211,9 @@ class RelBERT:
 
         Parameters
         ----------
-        positive_samples : List
-        negative_sample : List
+        positive_samples : List or Dict
+            1D array with string (for prediction) or dictionary with 2D array (for training)
+        negative_sample : Dict
         parallel : bool
             Parallelize data processing part over CPUs.
 
@@ -222,10 +222,12 @@ class RelBERT:
         torch.utils.data.Dataset
         """
         if type(positive_samples) is not dict:
+            # need to be 1d array
             assert relation_structure is None
+            assert negative_sample is None
             assert len(positive_samples) > 0, len(positive_samples)
-            positive_samples = [positive_samples] if type(positive_samples[0]) is str else positive_samples
-            positive_samples = {k: v for k, v in enumerate(positive_samples)}
+            assert type(positive_samples) is list and all(type(i) is str for i in positive_samples)
+            positive_samples = {k: [v] for k, v in enumerate(positive_samples)}
 
         key = list(positive_samples.keys())
         positive_samples_list = ListKeeper([positive_samples[k] for k in key])
@@ -235,13 +237,11 @@ class RelBERT:
         if negative_sample is not None:
             logging.debug('preparing negative data')
             assert len(negative_sample) > 0, len(negative_sample)
-            if type(negative_sample) is not dict:
-                negative_sample = [negative_sample] if type(negative_sample[0]) is str else negative_sample
-                negative_sample = {k: v for k, v in enumerate(negative_sample)}
             assert negative_sample.keys() == positive_samples.keys()
             negative_sample_list = ListKeeper([negative_sample[k] for k in key])
 
-        shared = {'tokenizer': self.tokenizer, 'max_length': self.max_length, 'template_type': self.template_type, 'mode': self.mode}
+        shared = {'tokenizer': self.tokenizer, 'max_length': self.max_length, 'template_type': self.template_type,
+                  'mode': self.mode}
 
         def pool_map(_list):
             if parallel:
