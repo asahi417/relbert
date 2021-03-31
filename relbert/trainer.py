@@ -2,15 +2,14 @@
 import os
 import logging
 
-from .data import get_semeval_data
-from .config import Config
-from .util import fix_seed
-from .lm import RelBERT
 import torch
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 
-from .util import get_linear_schedule_with_warmup, triplet_loss
+from .lm import RelBERT
+from .data import get_semeval_data
+from .config import Config
+from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed
 
 
 class Trainer:
@@ -252,5 +251,3 @@ class Trainer:
             self.scaler.update()
 
         return total_loss / step_in_epoch
-
-

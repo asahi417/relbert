@@ -133,7 +133,7 @@ class RelBERT:
 
     def __init__(self,
                  model: str,
-                 max_length: int = 32,
+                 max_length: int = 128,
                  cache_dir: str = None,
                  mode: str = 'mask',
                  template_type: str = 'a'):
@@ -193,7 +193,7 @@ class RelBERT:
             self.parallel = True
             self.model = torch.nn.DataParallel(self.model)
         self.model.to(self.device)
-        logging.info('BERT running on {} GPU'.format(torch.cuda.device_count()))
+        logging.info('language model running on {} GPU'.format(torch.cuda.device_count()))
 
     def train(self):
         self.model.train()

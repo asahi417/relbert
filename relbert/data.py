@@ -1,12 +1,11 @@
 """ get SemEval2012 task 2 dataset """
 import os
+import json
 from glob import glob
 from .util import wget, home_dir
 
 URL = 'https://drive.google.com/u/0/uc?id=0BzcZKTSeYL8VYWtHVmxUR3FyUmc&export=download'
 FILENAME = 'SemEval-2012-Platinum-Ratings.tar.gz'
-
-__all__ = 'get_semeval_data'
 
 
 def get_semeval_data(n_sample: int = 10, return_score: bool = False, cache_dir: str = None):
@@ -64,3 +63,20 @@ def get_semeval_data(n_sample: int = 10, return_score: bool = False, cache_dir: 
     parent = list(set([i[:-1] for i in all_relation_type.keys()]))
     relation_structure = {p: [i for i in all_relation_type.keys() if p == i[:-1]] for p in parent}
     return all_positive, all_negative, relation_structure
+
+
+def get_analogy_data(data_name: str, cache_dir: str = None):
+    """ Get SAT-type dataset: a list of (answer: int, prompts: list, stem: list, choice: list)"""
+    cache_dir = cache_dir if cache_dir is not None else home_dir
+    cache_dir = '{}/data'.format(cache_dir)
+    os.makedirs(cache_dir, exist_ok=True)
+    root_url_analogy = 'https://github.com/asahi417/AnalogyDataset/releases/download/0.0.0'
+    assert data_name in ['sat', 'u2', 'u4', 'google', 'bats'], 'unknown data_iterator: {}'.format(data_name)
+    if not os.path.exists('{}/{}'.format(cache_dir, data_name)):
+        wget('{}/{}.zip'.format(root_url_analogy, data_name), cache_dir)
+    with open('{}/{}/test.jsonl'.format(cache_dir, data_name), 'r') as f:
+        test_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
+    with open('{}/{}/valid.jsonl'.format(cache_dir, data_name), 'r') as f:
+        val_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
+    return val_set, test_set
+
