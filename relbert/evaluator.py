@@ -66,10 +66,9 @@ def _evaluate(model,
         logging.debug('\t * data: {}'.format(k))
         all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
         all_pairs = [tuple(v) for v in all_pairs]
-        print(all_pairs)
-        input()
         embeddings = lm.get_embedding(all_pairs, batch_size=batch, num_worker=num_worker)
-        embedding_dict = {str(k): v for k, v in zip(data, embeddings)}
+        assert len(embeddings) == len(all_pairs)
+        embedding_dict = {str(k): v for k, v in zip(all_pairs, embeddings)}
         print(embedding_dict.keys())
         input()
 
