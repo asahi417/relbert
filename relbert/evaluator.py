@@ -66,8 +66,12 @@ def _evaluate(model,
         logging.debug('\t * data: {}'.format(k))
         all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
         all_pairs = [tuple(v) for v in all_pairs]
+        print(all_pairs)
+        input()
         embeddings = lm.get_embedding(all_pairs, batch_size=batch, num_worker=num_worker)
         embedding_dict = {str(k): v for k, v in zip(data, embeddings)}
+        print(embedding_dict.keys())
+        input()
 
         def prediction(_data):
             accuracy = []
