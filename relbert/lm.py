@@ -89,7 +89,6 @@ class Dataset(torch.utils.data.Dataset):
         else:
             # deterministic
             a = self.positive_pattern_id[relation_type]
-            a = self.positive_pattern_flat[idx]
             positive_a = self.positive_samples[relation_type][a]
             tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
             return {'positive_a': tensor_positive_a}
@@ -229,11 +228,10 @@ class RelBERT:
         torch.utils.data.Dataset
         """
         if type(positive_samples) is not dict:
-            # need to be 1d array
             assert relation_structure is None
             assert negative_sample is None
             assert len(positive_samples) > 0, len(positive_samples)
-            assert type(positive_samples) is list and all(type(i) is str for i in positive_samples)
+            assert type(positive_samples) is list and all(type(i) is tuple for i in positive_samples)
             positive_samples = {k: [v] for k, v in enumerate(positive_samples)}
 
         key = list(positive_samples.keys())
@@ -281,7 +279,7 @@ class RelBERT:
         batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
         return batch_embedding_tensor
 
-    def get_embedding(self, x: List, batch_size: int = None, num_worker: int = 0, parallel: bool = True):
+    def get_embedding(self, x: List, batch_size: int = None, num_worker: int = 1, parallel: bool = True):
         """ Get embedding from BERT.
 
         Parameters

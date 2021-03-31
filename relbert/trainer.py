@@ -182,15 +182,15 @@ class Trainer:
                 logging.info('[epoch {}/{}] average loss: {}, lr: {}'.format(
                     e, self.config.epoch, round(mean_loss, 3), inst_lr))
 
-                if e % epoch_save == 0 and e != 0:
-                    cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, e)
-                    os.makedirs(cache_dir)
+                if (e + 1) % epoch_save == 0 and (e + 1) != 0:
+                    cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, e + 1)
+                    os.makedirs(cache_dir, exist_ok=True)
                     self.lm.save(cache_dir)
                 self.scheduler.step()
 
         writer.close()
-        cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, e)
-        os.makedirs(cache_dir)
+        cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, e + 1)
+        os.makedirs(cache_dir, exist_ok=True)
         self.lm.save(cache_dir)
         logging.info('complete training: model ckpt was saved at {}'.format(self.checkpoint_dir))
 
