@@ -41,7 +41,7 @@ def main():
         logging.info('* evaluate trained RelBERT: {}'.format(ckpt))
 
     for n, i in enumerate(ckpt):
-        logging.info('## start evaluation {}/{}: {} ##'.format(n + 1, len(ckpt), ckpt))
+        logging.info('## start evaluation {}/{}: {} ##'.format(n + 1, len(ckpt), i))
         if os.path.exists('{}/trainer_config.json'.format(i)):
             with open('{}/trainer_config.json'.format(i), 'r') as f:
                 trainer_config = json.load(f)
