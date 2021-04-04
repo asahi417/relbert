@@ -110,17 +110,14 @@ class Trainer:
         self.checkpoint_dir = self.config.cache_dir
 
         # get dataset
-        if self.config.data == 'semeval2012':
-            all_positive, all_negative, relation_structure = get_training_data(
-                data_name=self.config.data,
-                n_sample=self.config.n_sample, cache_dir=self.cache_dir)
-            if self.config.parent_contrast:
-                self.dataset = self.lm.preprocess(all_positive, all_negative, relation_structure)
-            else:
-                self.dataset = self.lm.preprocess(all_positive, all_negative)
+        all_positive, all_negative, relation_structure = get_training_data(
+            data_name=self.config.data,
+            n_sample=self.config.n_sample, cache_dir=self.cache_dir)
+        if self.config.parent_contrast:
+            self.dataset = self.lm.preprocess(all_positive, all_negative, relation_structure)
         else:
-            raise ValueError('unknown data: {}'.format(self.config.data))
-
+            self.dataset = self.lm.preprocess(all_positive, all_negative)
+        
         model_parameters = list(self.lm.model.named_parameters())
         self.linear = None
         self.discriminative_loss = None
