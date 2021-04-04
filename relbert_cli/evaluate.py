@@ -14,7 +14,7 @@ def config(parser):
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
     parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
-    parser.add_argument('--export-file', help='export file', default='./eval.csv', type=str)
+    parser.add_argument('--export-file', help='export file', default='./eval/relbert.eval.csv', type=str)
 
     parser.add_argument('-m', '--model', help='vanilla language model', default=None, type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)

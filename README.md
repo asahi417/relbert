@@ -91,15 +91,7 @@ relbert-train --debug -n -t f --mode average_no_mask
 relbert-train --debug -n -t g --mode average_no_mask
 relbert-train --debug -n -t h --mode average_no_mask
 relbert-train --debug -n -t i --mode average_no_mask
-relbert-train --debug -n -t a -p --mode average_no_mask
-relbert-train --debug -n -t b -p --mode average_no_mask
-relbert-train --debug -n -t c -p --mode average_no_mask
-relbert-train --debug -n -t d -p --mode average_no_mask
-relbert-train --debug -n -t e -p --mode average_no_mask
-relbert-train --debug -n -t f -p --mode average_no_mask
-relbert-train --debug -n -t g -p --mode average_no_mask
-relbert-train --debug -n -t h -p --mode average_no_mask
-relbert-train --debug -n -t i -p --mode average_no_mask
+
 relbert-train --debug -n -t a -s --mode average_no_mask
 relbert-train --debug -n -t b -s --mode average_no_mask
 relbert-train --debug -n -t c -s --mode average_no_mask
@@ -109,6 +101,17 @@ relbert-train --debug -n -t f -s --mode average_no_mask
 relbert-train --debug -n -t g -s --mode average_no_mask
 relbert-train --debug -n -t h -s --mode average_no_mask
 relbert-train --debug -n -t i -s --mode average_no_mask
+
+relbert-train --debug -n -t a -p --mode average_no_mask
+relbert-train --debug -n -t b -p --mode average_no_mask
+relbert-train --debug -n -t c -p --mode average_no_mask
+relbert-train --debug -n -t d -p --mode average_no_mask
+relbert-train --debug -n -t e -p --mode average_no_mask
+relbert-train --debug -n -t f -p --mode average_no_mask
+relbert-train --debug -n -t g -p --mode average_no_mask
+relbert-train --debug -n -t h -p --mode average_no_mask
+relbert-train --debug -n -t i -p --mode average_no_mask
+
 relbert-train --debug -n -t a -p -s --mode average_no_mask
 relbert-train --debug -n -t b -p -s --mode average_no_mask
 relbert-train --debug -n -t c -p -s --mode average_no_mask
