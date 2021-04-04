@@ -117,7 +117,7 @@ class Trainer:
             self.dataset = self.lm.preprocess(all_positive, all_negative, relation_structure)
         else:
             self.dataset = self.lm.preprocess(all_positive, all_negative)
-        
+
         model_parameters = list(self.lm.model.named_parameters())
         self.linear = None
         self.discriminative_loss = None

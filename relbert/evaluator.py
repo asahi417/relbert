@@ -88,7 +88,7 @@ def _evaluate(model,
         result.append({
             'accuracy_valid': acc_val, 'accuracy_test': acc_test, 'accuracy_full': acc,
             'model': model, 'mode': lm.mode, 'template_type': lm.template_type,
-            'data': k
+            'analogy_data': k
         })
         logging.info(str(result[-1]))
     return result

@@ -10,16 +10,13 @@ import relbert
 def config(parser):
     parser.add_argument('-c', '--ckpt', help='checkpoint dir', default='./ckpt/relbert')
     parser.add_argument('-b', '--batch', help='batch size', default=32, type=int)
-
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
     parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
     parser.add_argument('--export-file', help='export file', default='./eval/relbert.eval.csv', type=str)
-
     parser.add_argument('-m', '--model', help='vanilla language model', default=None, type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
     parser.add_argument('--mode', help='lm mode', default='mask', type=str)
-
     parser.add_argument('--test-type', help='test data', default='analogy', type=str)
     parser.add_argument('-t', '--template-type', help='template type', default='a', type=str)
     return parser
@@ -46,6 +43,7 @@ def main():
             with open('{}/trainer_config.json'.format(i), 'r') as f:
                 trainer_config = json.load(f)
             shared_config = {
+                'data': trainer_config['data'],
                 'softmax_loss': trainer_config['softmax_loss'],
                 'in_batch_negative': trainer_config['in_batch_negative'],
                 'parent_contrast': trainer_config['parent_contrast'],
