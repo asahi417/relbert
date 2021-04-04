@@ -7,7 +7,7 @@ from torch import nn
 from torch.utils.tensorboard import SummaryWriter
 
 from .lm import RelBERT
-from .data import get_semeval_data
+from .data import get_training_data
 from .config import Config
 from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed
 
@@ -111,7 +111,8 @@ class Trainer:
 
         # get dataset
         if self.config.data == 'semeval2012':
-            all_positive, all_negative, relation_structure = get_semeval_data(
+            all_positive, all_negative, relation_structure = get_training_data(
+                data_name=self.config.data,
                 n_sample=self.config.n_sample, cache_dir=self.cache_dir)
             if self.config.parent_contrast:
                 self.dataset = self.lm.preprocess(all_positive, all_negative, relation_structure)

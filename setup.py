@@ -40,6 +40,7 @@ setup(
         "transformers",
         "sentencepiece",
         "tensorboard",
+        "truecase"
     ],
     python_requires='>=3.6',
     entry_points={
