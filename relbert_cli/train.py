@@ -9,7 +9,7 @@ def config(parser):
     parser.add_argument('-s', '--softmax-loss', help='softmax loss', action='store_true')
     parser.add_argument('-n', '--in-batch-negative', help='in batch negative', action='store_true')
     parser.add_argument('-p', '--parent-contrast', help='hierarchical contrastive loss', action='store_true')
-    parser.add_argument('-e', '--epoch', help='training epochs', default=45, type=int)
+    parser.add_argument('-e', '--epoch', help='training epochs', default=100, type=int)
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('-b', '--batch', help='batch size', default=16, type=int)
     parser.add_argument('--lr', help='learning rate', default=0.00005, type=float)
@@ -23,7 +23,7 @@ def config(parser):
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
     parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
     parser.add_argument('--fp16', help='fp16 for training', action='store_true')
-    parser.add_argument('--epoch-save', help='interval to save model weight', default=3, type=int)
+    parser.add_argument('--epoch-save', help='interval to save model weight', default=5, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
     parser.add_argument('--export-dir', help='directory to export model weight file', default='./ckpt/relbert', type=str)
     # language model
