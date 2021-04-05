@@ -65,7 +65,8 @@ def _evaluate(model,
         data = {d: get_analogy_data(d, cache_dir=cache_dir) for d in ['bats', 'sat', 'u2', 'u4', 'google']}
         data_loader_dict = {} if data_loader_dict is None else data_loader_dict
         loader_type = '{}.{}'.format(model, template_type)
-        if loader_type not in data_loader_dict:
+        print(data_loader_dict.keys(), loader_type)
+        if loader_type not in data_loader_dict.keys():
             data_loader_dict[loader_type] = {}
             for d in ['bats', 'sat', 'u2', 'u4', 'google']:
                 val, test = data[d]
