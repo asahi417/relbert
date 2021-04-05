@@ -80,7 +80,7 @@ def _evaluate(model,
     else:
         raise ValueError('unknown test_type: {}'.format(test_type))
 
-    result = []
+    embedding_dict = {}
     for k, (val, test) in data.items():
         logging.debug('\t * data: {}'.format(k))
         all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
@@ -90,13 +90,16 @@ def _evaluate(model,
         for encode in data_loader_dict[loader_type][k]:
             embeddings += lm.to_embedding(encode).cpu().tolist()
         assert len(embeddings) == len(all_pairs)
-        embedding_dict = {str(k): v for k, v in zip(all_pairs, embeddings)}
+        embedding_dict[k] = {str(k_): v for k_, v in zip(all_pairs, embeddings)}
+
+    result = []
+    for k, (val, test) in data.items():
 
         def prediction(_data):
             accuracy = []
             for single_data in _data:
-                v_stem = embedding_dict[str(tuple(single_data['stem']))]
-                v_choice = [embedding_dict[str(tuple(c))] for c in single_data['choice']]
+                v_stem = embedding_dict[k][str(tuple(single_data['stem']))]
+                v_choice = [embedding_dict[k][str(tuple(c))] for c in single_data['choice']]
                 sims = [cos_similarity(v_stem, v) for v in v_choice]
                 pred = sims.index(max(sims))
                 if sims[pred] == -100:
