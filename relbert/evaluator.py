@@ -60,11 +60,11 @@ def _evaluate(model,
               num_worker: int = 1,
               data_loader_dict: Dict = None):
     lm = RelBERT(model, max_length=max_length, mode=mode, template_type=template_type)
-    
+
     if test_type == 'analogy':
         data = {d: get_analogy_data(d, cache_dir=cache_dir) for d in ['bats', 'sat', 'u2', 'u4', 'google']}
         data_loader_dict = {} if data_loader_dict is None else data_loader_dict
-        loader_type = '{}.{}'.format(model, template_type)
+        loader_type = '{}.{}'.format(lm.config.model_type, template_type)
         print(data_loader_dict.keys(), loader_type)
         if loader_type not in data_loader_dict.keys():
             data_loader_dict[loader_type] = {}
@@ -113,7 +113,8 @@ def _evaluate(model,
         result.append({
             'accuracy_valid': acc_val, 'accuracy_test': acc_test, 'accuracy_full': acc,
             'model': model, 'mode': lm.mode, 'template_type': lm.template_type,
-            'analogy_data': k
+            'analogy_data': k,
+            'lm': lm.config.model_type
         })
         logging.info(str(result[-1]))
     return result, data_loader_dict
