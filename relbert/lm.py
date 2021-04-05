@@ -272,11 +272,12 @@ class RelBERT:
 
     def to_embedding(self, encode):
         """ Compute embedding from batch of encode. """
-        encode = {k: v.to(self.device) for k, v in encode.items()}
-        labels = encode.pop('labels')
-        output = self.model(**encode, return_dict=True)
-        batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
-        return batch_embedding_tensor
+        with torch.no_grad():
+            encode = {k: v.to(self.device) for k, v in encode.items()}
+            labels = encode.pop('labels')
+            output = self.model(**encode, return_dict=True)
+            batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
+            return batch_embedding_tensor
 
     def get_embedding(self, x: List, batch_size: int = None, num_worker: int = 1, parallel: bool = True):
         """ Get embedding from RelBERT.
@@ -296,14 +297,14 @@ class RelBERT:
         -------
         Embedding (len(x), n_hidden).
         """
-        with torch.no_grad():
-            data = self.preprocess(x, parallel=parallel, pairwise_input=False)
-            batch_size = len(x) if batch_size is None else batch_size
-            data_loader = torch.utils.data.DataLoader(
-                data, num_workers=num_worker, batch_size=batch_size, shuffle=False, drop_last=False)
 
-            logging.debug('\t * run LM inference')
-            h_list = []
-            for encode in data_loader:
-                h_list += self.to_embedding(encode).cpu().tolist()
+        data = self.preprocess(x, parallel=parallel, pairwise_input=False)
+        batch_size = len(x) if batch_size is None else batch_size
+        data_loader = torch.utils.data.DataLoader(
+            data, num_workers=num_worker, batch_size=batch_size, shuffle=False, drop_last=False)
+
+        logging.debug('\t * run LM inference')
+        h_list = []
+        for encode in data_loader:
+            h_list += self.to_embedding(encode).cpu().tolist()
         return h_list

@@ -9,7 +9,7 @@ import relbert
 
 def config(parser):
     parser.add_argument('-c', '--ckpt', help='checkpoint dir', default='./ckpt/relbert')
-    parser.add_argument('-b', '--batch', help='batch size', default=32, type=int)
+    parser.add_argument('-b', '--batch', help='batch size', default=2048, type=int)
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
     parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')

@@ -4,7 +4,7 @@ from itertools import chain
 from typing import List, Dict
 
 import pandas as pd
-
+import torch
 from .lm import RelBERT
 from .data import get_analogy_data
 
@@ -30,9 +30,12 @@ def evaluate(model: List,
              shared_config: Dict = None):
     logging.info('{} checkpoints'.format(len(model)))
     result = []
+    data_loader_dict = None
     for n, i in enumerate(model):
         logging.info('\t * checkpoint {}/{}: {}'.format(n + 1, len(model), i))
-        result += _evaluate(i, max_length, template_type, mode, test_type, cache_dir, batch, num_worker)
+        tmp_result, data_loader_dict = _evaluate(
+            i, max_length, template_type, mode, test_type, cache_dir, batch, num_worker, data_loader_dict)
+        result += tmp_result
     if shared_config is not None:
         for tmp in result:
             tmp.update(shared_config)
@@ -54,19 +57,35 @@ def _evaluate(model,
               test_type: str = 'analogy',
               cache_dir: str = None,
               batch: int = 64,
-              num_worker: int = 1):
+              num_worker: int = 1,
+              data_loader_dict: Dict = None):
+    lm = RelBERT(model, max_length=max_length, mode=mode, template_type=template_type)
+    
     if test_type == 'analogy':
-        data = {d: get_analogy_data(d, cache_dir=cache_dir) for d in ['sat', 'u2', 'u4', 'google', 'bats']}
+        data = {d: get_analogy_data(d, cache_dir=cache_dir) for d in ['bats', 'sat', 'u2', 'u4', 'google']}
+        data_loader_dict = {} if data_loader_dict is None else data_loader_dict
+        loader_type = '{}.{}'.format(model, template_type)
+        if loader_type not in data_loader_dict:
+            for d in ['bats', 'sat', 'u2', 'u4', 'google']:
+                val, test = data[d]
+                all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
+                data_ = lm.preprocess(all_pairs, parallel=True, pairwise_input=False)
+                batch = len(all_pairs) if batch is None else batch
+                data_loader_dict[loader_type] = torch.utils.data.DataLoader(
+                    data_, num_workers=num_worker, batch_size=batch, shuffle=False, drop_last=False)
+
     else:
         raise ValueError('unknown test_type: {}'.format(test_type))
 
-    lm = RelBERT(model, max_length=max_length, mode=mode, template_type=template_type)
     result = []
     for k, (val, test) in data.items():
         logging.debug('\t * data: {}'.format(k))
         all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
         all_pairs = [tuple(v) for v in all_pairs]
-        embeddings = lm.get_embedding(all_pairs, batch_size=batch, num_worker=num_worker)
+
+        embeddings = []
+        for encode in data_loader_dict:
+            embeddings += lm.to_embedding(encode).cpu().tolist()
         assert len(embeddings) == len(all_pairs)
         embedding_dict = {str(k): v for k, v in zip(all_pairs, embeddings)}
 
@@ -91,12 +110,5 @@ def _evaluate(model,
             'analogy_data': k
         })
         logging.info(str(result[-1]))
-    return result
-
-
-
-
-
-
-
+    return result, data_loader_dict
 
