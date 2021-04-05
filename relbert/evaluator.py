@@ -71,7 +71,6 @@ def _evaluate(model,
                 val, test = data[d]
                 all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
                 all_pairs = [tuple(i) for i in all_pairs]
-                print(all_pairs[0])
                 data_ = lm.preprocess(all_pairs, parallel=True, pairwise_input=False)
                 batch = len(all_pairs) if batch is None else batch
                 data_loader_dict[loader_type][d] = torch.utils.data.DataLoader(
