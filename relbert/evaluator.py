@@ -66,12 +66,15 @@ def _evaluate(model,
         data_loader_dict = {} if data_loader_dict is None else data_loader_dict
         loader_type = '{}.{}'.format(model, template_type)
         if loader_type not in data_loader_dict:
+            data_loader_dict[loader_type] = {}
             for d in ['bats', 'sat', 'u2', 'u4', 'google']:
                 val, test = data[d]
                 all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
+                all_pairs = [tuple(i) for i in all_pairs]
+                print(all_pairs[0])
                 data_ = lm.preprocess(all_pairs, parallel=True, pairwise_input=False)
                 batch = len(all_pairs) if batch is None else batch
-                data_loader_dict[loader_type] = torch.utils.data.DataLoader(
+                data_loader_dict[loader_type][d] = torch.utils.data.DataLoader(
                     data_, num_workers=num_worker, batch_size=batch, shuffle=False, drop_last=False)
 
     else:
@@ -84,7 +87,7 @@ def _evaluate(model,
         all_pairs = [tuple(v) for v in all_pairs]
 
         embeddings = []
-        for encode in data_loader_dict:
+        for encode in data_loader_dict[loader_type][k]:
             embeddings += lm.to_embedding(encode).cpu().tolist()
         assert len(embeddings) == len(all_pairs)
         embedding_dict = {str(k): v for k, v in zip(all_pairs, embeddings)}
