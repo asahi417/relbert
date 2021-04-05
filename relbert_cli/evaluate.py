@@ -37,6 +37,7 @@ def main():
         ckpt = glob('{}/*'.format(opt.ckpt))
         logging.info('* evaluate trained RelBERT: {}'.format(ckpt))
 
+    data_loader_dict = None
     for n, i in enumerate(ckpt):
         logging.info('## start evaluation {}/{}: {} ##'.format(n + 1, len(ckpt), i))
         if os.path.exists('{}/trainer_config.json'.format(i)):
@@ -50,7 +51,7 @@ def main():
                 'mse_margin': trainer_config['mse_margin']
             }
             model = [os.path.dirname(i) for i in glob('{}/*/pytorch_model.bin'.format(i))]
-            relbert.evaluate(
+            data_loader_dict = relbert.evaluate(
                 model=model,
                 max_length=trainer_config['max_length'],
                 test_type=opt.test_type,
@@ -58,12 +59,13 @@ def main():
                 cache_dir=opt.cache_dir,
                 batch=opt.batch,
                 num_worker=opt.num_workers,
-                shared_config=shared_config
+                shared_config=shared_config,
+                data_loader_dict=data_loader_dict
             )
         else:
             shared_config = {
                 'softmax_loss': None, 'in_batch_negative': None, 'parent_contrast': None, 'mse_margin': None}
-            relbert.evaluate(
+            data_loader_dict = relbert.evaluate(
                 model=[i],
                 max_length=opt.max_length,
                 template_type=opt.template_type,
@@ -73,7 +75,8 @@ def main():
                 cache_dir=opt.cache_dir,
                 batch=opt.batch,
                 num_worker=opt.num_workers,
-                shared_config=shared_config
+                shared_config=shared_config,
+                data_loader_dict=data_loader_dict
             )
 
 

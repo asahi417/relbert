@@ -27,10 +27,10 @@ def evaluate(model: List,
              cache_dir: str = None,
              batch: int = 64,
              num_worker: int = 1,
-             shared_config: Dict = None):
+             shared_config: Dict = None,
+             data_loader_dict = None):
     logging.info('{} checkpoints'.format(len(model)))
     result = []
-    data_loader_dict = None
     for n, i in enumerate(model):
         logging.info('\t * checkpoint {}/{}: {}'.format(n + 1, len(model), i))
         tmp_result, data_loader_dict = _evaluate(
@@ -48,6 +48,7 @@ def evaluate(model: List,
         df = df.drop_duplicates()
     df.to_csv(export_file)
     logging.info('exported to {}'.format(export_file))
+    return data_loader_dict
 
 
 def _evaluate(model,
