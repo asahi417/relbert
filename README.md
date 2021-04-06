@@ -178,7 +178,7 @@ relbert-eval --debug -m roberta-large,bert-large-cased -t g --mode average_no_ma
 relbert-eval --debug -m roberta-large,bert-large-cased -t h --mode average_no_mask
 relbert-eval --debug -m roberta-large,bert-large-cased -t i --mode average_no_mask
 
-relbert-eval --debug -m roberta-large,bert-large-cased -t a --mode average
+relbert-eval --debug -m roberta-large,bert-large-cased -t a --mode average -b 2048
 relbert-eval --debug -m roberta-large,bert-large-cased -t b --mode average
 relbert-eval --debug -m roberta-large,bert-large-cased -t c --mode average
 relbert-eval --debug -m roberta-large,bert-large-cased -t d --mode average

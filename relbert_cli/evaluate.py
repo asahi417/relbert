@@ -64,7 +64,8 @@ def main():
             )
         else:
             shared_config = {
-                'softmax_loss': None, 'in_batch_negative': None, 'parent_contrast': None, 'mse_margin': None}
+                'data': None, 'softmax_loss': None, 'in_batch_negative': None, 'parent_contrast': None,
+                'mse_margin': None}
             data_loader_dict = relbert.evaluate(
                 model=[i],
                 max_length=opt.max_length,
