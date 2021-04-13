@@ -109,7 +109,7 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
     of batch size. """
     loss = 0
     n_backward = 0
-    boundary = -1e32
+    boundary = 0
 
     # the main contrastive loss
     distance_positive = torch.sum((tensor_positive_0 - tensor_positive_1) ** 2, -1) ** 0.5

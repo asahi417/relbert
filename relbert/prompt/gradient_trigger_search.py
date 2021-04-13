@@ -305,6 +305,7 @@ class GradientTriggerSearch:
                 print(grad.max(), grad.min())
                 # replace nan by zero
                 grad[grad != grad] = 0
+                print(grad.max(), grad.min())
                 # print(grad)
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
