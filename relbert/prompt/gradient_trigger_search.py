@@ -298,19 +298,18 @@ class GradientTriggerSearch:
                 loss = triplet_loss(
                     v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc, margin=self.config.mse_margin,
                     in_batch_negative=self.config.in_batch_negative)
-
                 # backward: calculate gradient
                 # with torch.autograd.set_detect_anomaly(True):
                 loss.backward()
                 grad = self.gradient_store.get()
                 # avoid gradient overflow
                 # grad = torch.clip(grad, max=MAX_GRADIENT_VALUE, min=-MAX_GRADIENT_VALUE)
-                # print(grad.max(), grad.min())
+                print(grad.max(), grad.min())
                 # replace nan by zero
                 grad[grad != grad] = 0
                 # print(grad.max(), grad.min())
                 # print(grad)
-                n_grad += len(grad)
+                n_grad += 1
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
                 grad = torch.masked_select(grad, trigger_position)
@@ -381,7 +380,7 @@ class GradientTriggerSearch:
     def top_candidate(self, averaged_grad, filter_matrix):
         """ Returns the top candidate replacements."""
         with torch.no_grad():
-            print(self.input_embeddings.weight.max(), averaged_grad.max())
+            # print(self.input_embeddings.weight.max(), averaged_grad.max())
             gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
             logging.debug('\t - max gradient score:{}'.format(gradient_dot_embedding_matrix.max()))
             _, top_k_ids = gradient_dot_embedding_matrix.topk(self.config.topk)

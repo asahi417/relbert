@@ -136,7 +136,7 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
             distance_negative = torch.sum((tensor_positive - tensor_negative_parent) ** 2, -1) ** 0.5
             loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=boundary))
             n_backward += len(distance_positive)
-
+    loss = loss / n_backward
     return loss
 
 
