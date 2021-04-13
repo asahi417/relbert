@@ -157,7 +157,7 @@ class GradientTriggerSearch:
                  in_batch_negative: bool = True,
                  parent_contrast: bool = True,
                  mse_margin: float = 1,
-                 batch: int = 512,
+                 batch: int = 32,
                  random_seed: int = 0,
                  export_dir: str = None,
                  export_name: str = None,
@@ -257,11 +257,14 @@ class GradientTriggerSearch:
         """
         logging.info('start prompt generation')
         filter_matrix = None
-        for i in range(self.config.n_iteration):
-            filter_matrix = self.__single_iteration(num_workers, filter_matrix)
-            logging.info('iteration {}/{}: {}'.format(
-                i + 1, self.config.n_iteration, self.tokenizer.convert_ids_to_tokens(self.prompter.triggers)))
-            self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i))
+        with open('{}/loss.txt'.format(self.config.cache_dir), 'w') as f:
+            for i in range(self.config.n_iteration):
+                filter_matrix, loss = self.__single_iteration(num_workers, filter_matrix)
+                logging.info('iteration {}/{}: {}\t loss {}'.format(
+                    i + 1, self.config.n_iteration, self.tokenizer.convert_ids_to_tokens(self.prompter.triggers), loss))
+                self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i))
+                f.write('{}\n'.format(loss))
+        self.prompter.save('{}/prompt.json'.format(self.config.cache_dir))
 
     def __single_iteration(self, num_workers: int = 1, filter_matrix=None):
 
@@ -376,7 +379,7 @@ class GradientTriggerSearch:
         logging.info('update trigger at {}: {}'.format(
             trigger_to_flip, self.tokenizer.convert_ids_to_tokens(best_trigger)))
         self.prompter.update_trigger(trigger_to_flip, best_trigger)
-        return filter_matrix
+        return filter_matrix, best_loss
 
     def top_candidate(self, averaged_grad, filter_matrix):
         """ Returns the top candidate replacements."""
