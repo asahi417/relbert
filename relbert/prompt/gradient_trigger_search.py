@@ -307,6 +307,7 @@ class GradientTriggerSearch:
                 grad = torch.masked_select(grad, trigger_position)
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 sum_grad += grad.sum(dim=0)
+                print(sum_grad)
                 total_loss += loss.sum().cpu().item()
 
             avg_grad = sum_grad / n_grad
