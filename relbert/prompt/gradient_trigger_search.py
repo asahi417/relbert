@@ -268,7 +268,6 @@ class GradientTriggerSearch:
             sum_grad = 0
             n_grad = 0
             total_loss = 0
-            # with torch.autograd.set_detect_anomaly(True):
             for i, x in enumerate(loader):
                 positive_a = {k: v.to(self.device) for k, v in x['positive_a'].items()}
                 positive_b = {k: v.to(self.device) for k, v in x['positive_b'].items()}
@@ -300,6 +299,7 @@ class GradientTriggerSearch:
                     in_batch_negative=self.config.in_batch_negative)
 
                 # backward: calculate gradient
+                # with torch.autograd.set_detect_anomaly(True):
                 loss.backward()
                 grad = self.gradient_store.get()
                 # print(grad)
@@ -309,6 +309,7 @@ class GradientTriggerSearch:
                 trigger_position = trigger.unsqueeze(-1) == 1
                 grad = torch.masked_select(grad, trigger_position)
                 print(grad.max(), grad.min())
+                print(grad)
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 print(grad.sum(dim=0))
                 sum_grad += grad.sum(dim=0)
