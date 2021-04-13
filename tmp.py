@@ -11,7 +11,7 @@ if __name__ == '__main__':
         n_trigger_b=2,
         n_trigger_e=2,
         n_iteration=1000,
-        batch=256,
+        batch=128,
         topk=100)
     prompter.get_prompt()
 
