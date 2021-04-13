@@ -109,12 +109,13 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
     of batch size. """
     loss = 0
     n_backward = 0
+    boundary = -1e32
 
     # the main contrastive loss
     distance_positive = torch.sum((tensor_positive_0 - tensor_positive_1) ** 2, -1) ** 0.5
     for tensor_positive in [tensor_positive_0, tensor_positive_1]:
         distance_negative = torch.sum((tensor_positive - tensor_negative) ** 2, -1) ** 0.5
-        loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
+        loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=boundary))
         n_backward += len(distance_positive)
 
     if in_batch_negative:
@@ -124,7 +125,7 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
         distance_negative_batch = torch.sum((tensor_positive_0.unsqueeze(-1).permute(0, 2, 1) -
                                              tensor_positive_1.unsqueeze(-1).permute(2, 0, 1)) ** 2, -1) ** 0.5
         distance_positive_batch = distance_positive.unsqueeze(-1)
-        loss_batch = torch.clip(distance_positive_batch - distance_negative_batch - margin, min=0)
+        loss_batch = torch.clip(distance_positive_batch - distance_negative_batch - margin, min=boundary)
         loss += torch.sum(loss_batch)
         n_backward += len(loss_batch)
 
@@ -133,7 +134,7 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
         for tensor_positive in [tensor_positive_0, tensor_positive_1]:
             distance_positive = torch.sum((tensor_positive - tensor_positive_parent) ** 2, -1) ** 0.5
             distance_negative = torch.sum((tensor_positive - tensor_negative_parent) ** 2, -1) ** 0.5
-            loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
+            loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=boundary))
             n_backward += len(distance_positive)
 
     return loss

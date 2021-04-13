@@ -302,10 +302,10 @@ class GradientTriggerSearch:
                 # with torch.autograd.set_detect_anomaly(True):
                 loss.backward()
                 grad = self.gradient_store.get()
+                print(grad.max(), grad.min())
                 # replace nan by zero
                 grad[grad != grad] = 0
                 # print(grad)
-                print(grad.max(), grad.min())
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
@@ -316,8 +316,8 @@ class GradientTriggerSearch:
                 sum_grad += grad.sum(dim=0)
                 # replace exploded gradient by zero
                 # sum_grad[sum_grad != sum_grad] = 0
-                print(sum_grad.max(), sum_grad.min())
-                input()
+                # print(sum_grad.max(), sum_grad.min())
+                # input()
                 total_loss += loss.sum().cpu().item()
 
             avg_grad = sum_grad / n_grad
