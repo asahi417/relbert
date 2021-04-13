@@ -104,6 +104,9 @@ class PromptGenerator:
     def update_trigger(self, trigger_index: int, trigger_id: str):
         self.triggers[trigger_index] = trigger_id
 
+    def get_trigger(self, trigger_index: int):
+        return self.triggers[trigger_index]
+
     def __single_word_pair_prompt(self, word_pair: List):
         assert len(word_pair) == 2 and type(word_pair) in (list, tuple)
         h, t = word_pair
@@ -338,6 +341,7 @@ class GradientTriggerSearch:
 
         logging.debug('evaluate to get the best trigger: {}'.format(trigger_to_flip))
         candidate_with_score = []
+        original_trigger = self.prompter.get_trigger(trigger_to_flip)
         for c in candidate:
             self.prompter.update_trigger(trigger_to_flip, c)
             data, _ = self.preprocess()
@@ -350,6 +354,7 @@ class GradientTriggerSearch:
                 logging.debug('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
         if len(candidate_with_score) == 0:
             logging.info('no triggers updated')
+            self.prompter.update_trigger(trigger_to_flip, original_trigger)
             return filter_matrix
         best_trigger, best_loss = sorted(candidate_with_score, key=lambda x: x[1])[0]
         logging.info('update trigger at {}: {}'.format(
