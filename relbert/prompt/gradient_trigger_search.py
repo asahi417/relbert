@@ -257,8 +257,9 @@ class GradientTriggerSearch:
         logging.info('start prompt generation')
         filter_matrix = None
         for i in range(self.config.n_iteration):
-            logging.info('iteration {}/{}'.format(i + 1, self.config.n_iteration))
             filter_matrix = self.__single_iteration(num_workers, filter_matrix)
+            logging.info('iteration {}/{}: {}'.format(
+                i + 1, self.config.n_iteration, self.tokenizer.convert_ids_to_tokens(self.prompter.triggers)))
             self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i))
 
     def __single_iteration(self, num_workers: int = 1, filter_matrix=None):
@@ -317,8 +318,8 @@ class GradientTriggerSearch:
             data, vocab = self.preprocess(True)
             logging.debug('construct filtering vocab matrix')
             filter_matrix = torch.zeros(self.tokenizer.vocab_size, dtype=torch.float32, device=self.device)
-            for v in vocab:
-                filter_matrix[v] = -1e32
+            for __v in vocab:
+                filter_matrix[__v] = -1e32
             for word, idx in self.tokenizer.get_vocab().items():
                 # https://github.com/ucinlp/autoprompt/blob/master/autoprompt/create_trigger.py#L274
                 if len(word) == 1:
@@ -365,6 +366,7 @@ class GradientTriggerSearch:
     def top_candidate(self, averaged_grad, filter_matrix):
         """ Returns the top candidate replacements."""
         with torch.no_grad():
+            print(self.input_embeddings.weight.max(), averaged_grad.max())
             gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
             logging.debug('\t - max gradient score:{}'.format(gradient_dot_embedding_matrix.max()))
             _, top_k_ids = gradient_dot_embedding_matrix.topk(self.config.topk)
