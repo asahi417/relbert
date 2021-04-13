@@ -1,11 +1,9 @@
 """ get SemEval2012 task 2 dataset """
 import os
 import json
-import re
 from glob import glob
 from itertools import chain, product
 
-import truecase
 from .util import wget, home_dir
 
 

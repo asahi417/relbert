@@ -9,7 +9,7 @@ from torch.utils.tensorboard import SummaryWriter
 from .lm import RelBERT
 from .data import get_training_data
 from .config import Config
-from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed
+from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed, module_output_dir
 
 
 class Trainer:
@@ -36,7 +36,7 @@ class Trainer:
                  momentum: float = 0.9,
                  fp16: bool = False,
                  random_seed: int = 0,
-                 export_dir: str = './ckpt',
+                 export_dir: str = None,
                  cache_dir: str = None):
         """ Initialize training instance to finetune relation BERT model.
 
@@ -68,6 +68,8 @@ class Trainer:
 
         fix_seed(random_seed)
         self.cache_dir = cache_dir
+        if export_dir is None:
+            export_dir = '{}/ckpt'.format(module_output_dir)
 
         # load language model
         self.lm = RelBERT(

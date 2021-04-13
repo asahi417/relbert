@@ -3,14 +3,35 @@ import os
 import tarfile
 import zipfile
 import requests
+from typing import Dict
+from itertools import combinations
+from random import randint
 
 import gdown
 import numpy as np
 import torch
+import transformers
 from torch.optim.lr_scheduler import LambdaLR
 
 
 home_dir = '{}/.cache/relbert'.format(os.path.expanduser('~'))
+module_output_dir = './relbert_output'
+
+
+def load_language_model(model_name, cache_dir: str = None):
+    try:
+        tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
+    except ValueError:
+        tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir, local_files_only=True)
+    try:
+        config = transformers.AutoConfig.from_pretrained(model_name, cache_dir=cache_dir)
+    except ValueError:
+        config = transformers.AutoConfig.from_pretrained(model_name, cache_dir=cache_dir, local_files_only=True)
+    try:
+        model = transformers.AutoModel.from_pretrained(model_name, config=config, cache_dir=cache_dir)
+    except ValueError:
+        model = transformers.AutoModel.from_pretrained(model_name, config=config, cache_dir=cache_dir, local_files_only=True)
+    return tokenizer, model, config
 
 
 def wget(url, cache_dir: str, gdrive_filename: str = None):
@@ -87,12 +108,14 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
     """ Compute contrastive triplet loss with in batch augmentation which enables to propagate error on quadratic
     of batch size. """
     loss = 0
+    n_backward = 0
 
     # the main contrastive loss
     distance_positive = torch.sum((tensor_positive_0 - tensor_positive_1) ** 2, -1) ** 0.5
     for tensor_positive in [tensor_positive_0, tensor_positive_1]:
         distance_negative = torch.sum((tensor_positive - tensor_negative) ** 2, -1) ** 0.5
         loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
+        n_backward += len(distance_positive)
 
     if in_batch_negative:
         # No elements in single batch share same relation type, so here we construct negative sample within batch
@@ -103,6 +126,7 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
         distance_positive_batch = distance_positive.unsqueeze(-1)
         loss_batch = torch.clip(distance_positive_batch - distance_negative_batch - margin, min=0)
         loss += torch.sum(loss_batch)
+        n_backward += len(loss_batch)
 
     if tensor_positive_parent is not None and tensor_negative_parent is not None:
         # contrastive loss of the parent class
@@ -110,5 +134,87 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
             distance_positive = torch.sum((tensor_positive - tensor_positive_parent) ** 2, -1) ** 0.5
             distance_negative = torch.sum((tensor_positive - tensor_negative_parent) ** 2, -1) ** 0.5
             loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
+            n_backward += len(distance_positive)
 
     return loss
+
+
+def rand_sample(_list):
+    return _list[randint(0, len(_list) - 1)]
+
+
+class Dataset(torch.utils.data.Dataset):
+    """ Dataset loader for triplet loss. """
+    float_tensors = ['attention_mask']
+
+    def __init__(self,
+                 positive_samples: Dict,
+                 negative_samples: Dict = None,
+                 pairwise_input: bool = True,
+                 relation_structure: Dict = None):
+        if negative_samples is not None:
+            assert positive_samples.keys() == negative_samples.keys()
+        self.positive_samples = positive_samples
+        self.negative_samples = negative_samples
+        self.pairwise_input = pairwise_input
+        self.relation_structure = relation_structure
+        self.positive_pattern_id = None
+        if self.pairwise_input:
+            self.keys = sorted(list(positive_samples.keys()))
+            self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2))
+                                        for k in self.keys}
+        else:
+            self.keys = sorted(list(self.positive_samples.keys()))
+            assert all(len(self.positive_samples[k]) == 1 for k in self.keys)
+            assert self.negative_samples is None
+
+    def __len__(self):
+        return len(self.keys)
+
+    def to_tensor(self, name, data):
+        if name in self.float_tensors:
+            return torch.tensor(data, dtype=torch.float32)
+        return torch.tensor(data, dtype=torch.long)
+
+    def __getitem__(self, idx):
+        relation_type = self.keys[idx]
+        if self.pairwise_input:
+            # pairwise input for contrastive loss
+
+            # randomly sample pair from the specific relation type as a positive pair
+            a, b = rand_sample(self.positive_pattern_id[relation_type])
+            positive_a = self.positive_samples[relation_type][a]
+            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
+            positive_b = self.positive_samples[relation_type][b]
+            tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
+
+            # randomly sample negative from same relation
+            negative_list = self.negative_samples[relation_type]
+            tensor_negative = {k: self.to_tensor(k, v) for k, v in rand_sample(negative_list).items()}
+
+            if self.relation_structure is not None:
+                # positive sample from same parent relation and negative from other parent relation
+
+                # sample parent relation (positive)
+                parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
+                assert len(parent_relation) == 1
+                # sample relation from the parent
+                relation_positive = rand_sample(self.relation_structure[parent_relation[0]])
+                positive_parent = rand_sample(self.positive_samples[relation_positive])
+                tensor_positive_parent = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
+                # sample parent relation (negative)
+                parent_relation_n = rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
+                # sample relation from the parent
+                relation_negative = rand_sample(self.relation_structure[parent_relation_n])
+                # sample individual entry from the relation
+                negative_parent = rand_sample(self.positive_samples[relation_negative])
+                tensor_negative_parent = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
+                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative,
+                        'positive_parent': tensor_positive_parent, 'negative_parent': tensor_negative_parent}
+            else:
+                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
+        else:
+            # deterministic sampling for prediction
+            positive_a = self.positive_samples[relation_type][0]
+            return {k: self.to_tensor(k, v) for k, v in positive_a.items()}
+

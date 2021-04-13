@@ -2,95 +2,53 @@
 import os
 import logging
 from typing import Dict, List
-from itertools import combinations
 from multiprocessing import Pool
-from random import randint
 
 import transformers
 import torch
 
-from .prompt import word_pair_prompter
 from .list_keeper import ListKeeper
+from .util import Dataset
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
-__all__ = 'BERT'
+__all__ = 'RelBERT'
 
 
-def rand_sample(_list):
-    return _list[randint(0, len(_list) - 1)]
+def custom_prompter(word_pair, template_type: str = 'a', custom_template: str = None, mask_token: str = None):
+    """ Transform word pair into string prompt. """
 
+    preset_templates = {
+        "a": "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>",
+        "b": "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is A's <mask>",
+        "c": "Today, I finally discovered the relation between <subj> and <obj> : <mask>",
+        "d": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>",
+        "e": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is A’s <mask>",
+        "f": "The teacher explained how <subj> is related to <obj> : it is <obj> 's <mask>",
+        "g": "The teacher explained how <subj> is related to <obj> : it is <mask>",
+        "h": "The teacher explained how <subj> is related to <obj> : <mask>",
+        "i": "The teacher explained how <subj> is related to <obj> : it is the <mask>"
+    }
 
-class Dataset(torch.utils.data.Dataset):
-    """ Dataset loader for triplet loss. """
-    float_tensors = ['attention_mask']
+    token_mask = '<mask>'
+    token_subject = '<subj>'
+    token_object = '<obj>'
 
-    def __init__(self, positive_samples: Dict, negative_samples: Dict = None, pairwise_input: bool = True,
-                 relation_structure: Dict = None):
-        if negative_samples is not None:
-            assert positive_samples.keys() == negative_samples.keys()
-        self.positive_samples = positive_samples
-        self.negative_samples = negative_samples
-        self.pairwise_input = pairwise_input
-        self.relation_structure = relation_structure
-        self.positive_pattern_id = None
-        if self.pairwise_input:
-            self.keys = sorted(list(positive_samples.keys()))
-            self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2))
-                                        for k in self.keys}
-        else:
-            self.keys = sorted(list(self.positive_samples.keys()))
-            assert all(len(self.positive_samples[k]) == 1 for k in self.keys)
-            assert self.negative_samples is None
+    if custom_template is not None:
+        assert token_mask in custom_template, 'mask token not found: {}'.format(custom_template)
+        assert token_subject in custom_template, 'subject token not found: {}'.format(custom_template)
+        assert token_object in custom_template, 'object token not found: {}'.format(custom_template)
+        template = custom_template
+    else:
+        template = preset_templates[template_type]
 
-    def __len__(self):
-        return len(self.keys)
-
-    def to_tensor(self, name, data):
-        if name in self.float_tensors:
-            return torch.tensor(data, dtype=torch.float32)
-        return torch.tensor(data, dtype=torch.long)
-
-    def __getitem__(self, idx):
-        relation_type = self.keys[idx]
-        if self.pairwise_input:
-            # pairwise input for contrastive loss
-
-            # randomly sample pair from the specific relation type as a positive pair
-            a, b = rand_sample(self.positive_pattern_id[relation_type])
-            positive_a = self.positive_samples[relation_type][a]
-            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
-            positive_b = self.positive_samples[relation_type][b]
-            tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
-
-            # randomly sample negative from same relation
-            negative_list = self.negative_samples[relation_type]
-            tensor_negative = {k: self.to_tensor(k, v) for k, v in rand_sample(negative_list).items()}
-
-            if self.relation_structure is not None:
-                # positive sample from same parent relation and negative from other parent relation
-
-                # sample parent relation (positive)
-                parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
-                assert len(parent_relation) == 1
-                # sample relation from the parent
-                relation_positive = rand_sample(self.relation_structure[parent_relation[0]])
-                positive_parent = rand_sample(self.positive_samples[relation_positive])
-                tensor_positive_parent = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
-                # sample parent relation (negative)
-                parent_relation_n = rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
-                # sample relation from the parent
-                relation_negative = rand_sample(self.relation_structure[parent_relation_n])
-                # sample individual entry from the relation
-                negative_parent = rand_sample(self.positive_samples[relation_negative])
-                tensor_negative_parent = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
-                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative,
-                        'positive_parent': tensor_positive_parent, 'negative_parent': tensor_negative_parent}
-            else:
-                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
-        else:
-            # deterministic sampling for prediction
-            positive_a = self.positive_samples[relation_type][0]
-            return {k: self.to_tensor(k, v) for k, v in positive_a.items()}
+    assert len(word_pair) == 2, word_pair
+    subj, obj = word_pair
+    assert token_subject not in subj and token_object not in subj and token_mask not in subj
+    assert token_subject not in obj and token_object not in obj and token_mask not in obj
+    prompt = template.replace(token_subject, subj).replace(token_object, obj)
+    if mask_token is not None:
+        prompt = prompt.replace(token_mask, mask_token)
+    return prompt
 
 
 class EncodePlus:
@@ -106,9 +64,14 @@ class EncodePlus:
             self.max_length = max_length
 
     def __call__(self, word_pair: List):
-        """ Encoding a word pair or sentence. """
+        """ Encoding a word pair or sentence. If the word pair is given use custom template."""
         param = {'max_length': self.max_length, 'truncation': True, 'padding': 'max_length'}
-        sentence = word_pair_prompter(word_pair, template_type=self.template_type, mask_token=self.tokenizer.mask_token)
+        if all(type(i) is str for i in word_pair):
+            # input is a list of sentence
+            sentence = word_pair
+        else:
+            sentence = custom_prompter(
+                word_pair, template_type=self.template_type, mask_token=self.tokenizer.mask_token)
         encode = self.tokenizer.encode_plus(sentence, **param)
         assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
         encode['labels'] = self.input_ids_to_labels(encode['input_ids'])
@@ -272,20 +235,19 @@ class RelBERT:
 
     def to_embedding(self, encode):
         """ Compute embedding from batch of encode. """
-        with torch.no_grad():
-            encode = {k: v.to(self.device) for k, v in encode.items()}
-            labels = encode.pop('labels')
-            output = self.model(**encode, return_dict=True)
-            batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
-            return batch_embedding_tensor
+        encode = {k: v.to(self.device) for k, v in encode.items()}
+        labels = encode.pop('labels')
+        output = self.model(**encode, return_dict=True)
+        batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
+        return batch_embedding_tensor
 
     def get_embedding(self, x: List, batch_size: int = None, num_worker: int = 1, parallel: bool = True):
-        """ Get embedding from RelBERT.
+        """ Get embedding from RelBERT (no gradient).
 
         Parameters
         ----------
         x : list
-            List of word pairs.
+            List of word pairs or sentence
         batch_size : int
             Batch size.
         num_worker : int
@@ -305,6 +267,7 @@ class RelBERT:
 
         logging.debug('\t * run LM inference')
         h_list = []
-        for encode in data_loader:
-            h_list += self.to_embedding(encode).cpu().tolist()
+        with torch.no_grad():
+            for encode in data_loader:
+                h_list += self.to_embedding(encode).cpu().tolist()
         return h_list

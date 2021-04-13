@@ -13,27 +13,32 @@ __all__ = 'Config'
 
 class Config:
 
-    def __init__(self, export_dir: str, **kwargs):
+    def __init__(self, export_dir: str, config_name: str = 'trainer_config', checkpoint_name: str = None, **kwargs):
         self.config = kwargs
         logging.info('hyperparameters')
         for k, v in self.config.items():
             logging.info('\t * {}: {}'.format(k, v))
-        ex_configs = {i: self.safe_open(i) for i in glob('{}/*/trainer_config.json'.format(export_dir))}
+        ex_configs = {i: self.safe_open(i) for i in glob('{}/*/{}.json'.format(export_dir, config_name))}
+        taken_name = [os.path.basename(i.replace('/{}.json'.format(config_name), '')) for i in ex_configs.keys()]
         same_config = list(filter(lambda x: x[1] == self.config, ex_configs.items()))
         if len(same_config) != 0:
             input('\ncheckpoint already exists: {}\n enter to overwrite >>>'.format(same_config[0]))
             for _p, _ in same_config:
                 shutil.rmtree(os.path.dirname(_p))
-        self.cache_dir = '{}/{}'.format(export_dir, self.get_random_string(
-            [os.path.basename(i.replace('/trainer_config.json', '')) for i in ex_configs.keys()]
-        ))
-        self.__dict__.update(self.config)
-        self.__cache_init()
+                taken_name.pop(taken_name.index(os.path.basename(os.path.dirname(_p))))
 
-    def __cache_init(self):
-        if not os.path.exists('{}/trainer_config.json'.format(self.cache_dir)):
+        if checkpoint_name is not None:
+            assert checkpoint_name not in taken_name, '{} is taken, use different name'.format(checkpoint_name)
+            self.cache_dir = '{}/{}'.format(export_dir, checkpoint_name)
+        else:
+            self.cache_dir = '{}/{}'.format(export_dir, self.get_random_string(taken_name))
+        self.__dict__.update(self.config)
+        self.__cache_init(config_name)
+
+    def __cache_init(self, config_name):
+        if not os.path.exists('{}/{}.json'.format(self.cache_dir, config_name)):
             os.makedirs(self.cache_dir, exist_ok=True)
-            with open('{}/trainer_config.json'.format(self.cache_dir), 'w') as f:
+            with open('{}/{}.json'.format(self.cache_dir, config_name), 'w') as f:
                 json.dump(self.config, f)
 
     @staticmethod
