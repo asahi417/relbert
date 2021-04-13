@@ -51,12 +51,12 @@ class EncodePlus:
 class PromptGenerator:
     """ Prompt generator with triggers. """
 
-    def __init__(self, n_trigger: int, n_trigger_b: int, n_trigger_e: int, tokenizer=None):
+    def __init__(self, n_trigger_i: int, n_trigger_b: int, n_trigger_e: int, tokenizer=None):
         """ Prompt generator with triggers.
 
         Parameters
         ----------
-        n_trigger : int
+        n_trigger_i : int
             The number of mask in between word_pair.
         n_trigger_b : int
             The number of mask at the beginning of the template.
@@ -66,10 +66,10 @@ class PromptGenerator:
         """
         self.tokenizer = tokenizer
         # initialize triggers with mask
-        self.triggers = [self.tokenizer.mask_token_id] * n_trigger_b + [self.tokenizer.mask_token_id] * n_trigger + \
+        self.triggers = [self.tokenizer.mask_token_id] * n_trigger_b + [self.tokenizer.mask_token_id] * n_trigger_i + \
                         [self.tokenizer.mask_token_id] * n_trigger_e
         self.b = n_trigger_b
-        self.i = n_trigger
+        self.i = n_trigger_i
         self.e = n_trigger_e
         self.n_trigger = len(self.triggers)
 
@@ -143,7 +143,7 @@ class GradientTriggerSearch:
 
     def __init__(self,
                  topk: int = 10,
-                 n_trigger: int = 1,
+                 n_trigger_i: int = 1,
                  n_trigger_b: int = 1,
                  n_trigger_e: int = 1,
                  n_iteration: int = 10,
@@ -157,7 +157,7 @@ class GradientTriggerSearch:
                  in_batch_negative: bool = True,
                  parent_contrast: bool = True,
                  mse_margin: float = 1,
-                 batch: int = 64,
+                 batch: int = 512,
                  random_seed: int = 0,
                  export_dir: str = None,
                  export_name: str = None,
@@ -170,14 +170,14 @@ class GradientTriggerSearch:
         self.model.eval()
         self.input_embeddings = self.model.get_input_embeddings()
         self.gradient_store = GradientStorage(self.input_embeddings)
-        self.prompter = PromptGenerator(n_trigger, n_trigger_b, n_trigger_e, self.tokenizer)
+        self.prompter = PromptGenerator(n_trigger_i, n_trigger_b, n_trigger_e, self.tokenizer)
         # cache config
         self.config = Config(
             config_name='prompter_config',
             export_dir=export_dir,
             checkpoint_name=export_name,
             topk=topk,
-            n_trigger=n_trigger,
+            n_trigger_i=n_trigger_i,
             n_trigger_b=n_trigger_b,
             n_trigger_e=n_trigger_e,
             n_iteration=n_iteration,
@@ -298,18 +298,19 @@ class GradientTriggerSearch:
                 loss = triplet_loss(
                     v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc, margin=self.config.mse_margin,
                     in_batch_negative=self.config.in_batch_negative)
+
                 # backward: calculate gradient
                 # with torch.autograd.set_detect_anomaly(True):
                 loss.backward()
                 grad = self.gradient_store.get()
                 # avoid gradient overflow
                 # grad = torch.clip(grad, max=MAX_GRADIENT_VALUE, min=-MAX_GRADIENT_VALUE)
-                print(grad.max(), grad.min())
+                # print(grad.max(), grad.min())
                 # replace nan by zero
                 grad[grad != grad] = 0
                 # print(grad.max(), grad.min())
                 # print(grad)
-                n_grad += 1
+                n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
                 grad = torch.masked_select(grad, trigger_position)

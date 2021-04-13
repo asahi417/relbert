@@ -5,6 +5,13 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logg
 
 if __name__ == '__main__':
     prompter = relbert.prompt.GradientTriggerSearch(
-        model='roberta-base', export_name='test', batch=1024, topk=10)
-    prompter.get_prompt(0)
+        model='roberta-large',
+        export_name='test',
+        n_trigger_i=4,
+        n_trigger_b=2,
+        n_trigger_e=2,
+        n_iteration=1000,
+        topk=100)
+    prompter.get_prompt()
+
 
