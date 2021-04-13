@@ -60,7 +60,7 @@ def main():
     else:
         raise ValueError('unknown method: {}'.format(opt.method))
 
-    prompter.get_prompt(opt.num_worker)
+    prompter.get_prompt(opt.num_workers)
 
 
 if __name__ == '__main__':
