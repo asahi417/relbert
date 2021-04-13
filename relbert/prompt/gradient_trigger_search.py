@@ -302,6 +302,8 @@ class GradientTriggerSearch:
                 # with torch.autograd.set_detect_anomaly(True):
                 loss.backward()
                 grad = self.gradient_store.get()
+                # avoid gradient overflow
+                grad = torch.clip(grad, max=500, min=-500)
                 print(grad.max(), grad.min())
                 # replace nan by zero
                 grad[grad != grad] = 0
