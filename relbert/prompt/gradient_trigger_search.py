@@ -302,13 +302,17 @@ class GradientTriggerSearch:
                 loss.backward()
                 grad = self.gradient_store.get()
                 print(grad)
+                print(grad.max(), grad.min())
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
                 grad = torch.masked_select(grad, trigger_position)
+                print(grad.max(), grad.min())
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
+                print(grad.sum(dim=0))
                 sum_grad += grad.sum(dim=0)
                 print(sum_grad, n_grad)
+                input()
                 total_loss += loss.sum().cpu().item()
 
             avg_grad = sum_grad / n_grad
