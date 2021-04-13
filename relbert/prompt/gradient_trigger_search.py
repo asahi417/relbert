@@ -301,7 +301,6 @@ class GradientTriggerSearch:
                 # backward: calculate gradient
                 # with torch.autograd.set_detect_anomaly(True):
                 loss.backward()
-                print(loss)
                 grad = self.gradient_store.get()
                 # print(grad)
                 # print(grad.max(), grad.min())
@@ -310,7 +309,7 @@ class GradientTriggerSearch:
                 trigger_position = trigger.unsqueeze(-1) == 1
                 grad = torch.masked_select(grad, trigger_position)
                 print(grad.max(), grad.min())
-                print(grad != grad)
+                print((grad != grad).sum())
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 print(grad)
                 print(grad.sum(dim=0))
