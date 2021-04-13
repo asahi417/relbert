@@ -268,52 +268,53 @@ class GradientTriggerSearch:
             sum_grad = 0
             n_grad = 0
             total_loss = 0
-            for i, x in enumerate(loader):
-                positive_a = {k: v.to(self.device) for k, v in x['positive_a'].items()}
-                positive_b = {k: v.to(self.device) for k, v in x['positive_b'].items()}
-                negative = {k: v.to(self.device) for k, v in x['negative'].items()}
-                if self.config.parent_contrast:
-                    positive_hc = {k: v.to(self.device) for k, v in x['positive_parent'].items()}
-                    negative_hc = {k: v.to(self.device) for k, v in x['negative_parent'].items()}
-                    encode = {k: torch.cat([positive_a[k], positive_b[k], negative[k], positive_hc[k], negative_hc[k]])
-                              for k in positive_a.keys()}
-                else:
-                    encode = {k: torch.cat([positive_a[k], positive_b[k], negative[k]]) for k in positive_a.keys()}
+            with torch.autograd.set_detect_anomaly(True):
+                for i, x in enumerate(loader):
+                    positive_a = {k: v.to(self.device) for k, v in x['positive_a'].items()}
+                    positive_b = {k: v.to(self.device) for k, v in x['positive_b'].items()}
+                    negative = {k: v.to(self.device) for k, v in x['negative'].items()}
+                    if self.config.parent_contrast:
+                        positive_hc = {k: v.to(self.device) for k, v in x['positive_parent'].items()}
+                        negative_hc = {k: v.to(self.device) for k, v in x['negative_parent'].items()}
+                        encode = {k: torch.cat([positive_a[k], positive_b[k], negative[k], positive_hc[k], negative_hc[k]])
+                                  for k in positive_a.keys()}
+                    else:
+                        encode = {k: torch.cat([positive_a[k], positive_b[k], negative[k]]) for k in positive_a.keys()}
 
-                # get model prediction
-                encode = {k: _v.to(self.device) for k, _v in encode.items()}
-                # print(encode['input_ids'])
-                labels = encode.pop('labels')
-                trigger = encode.pop('trigger')
-                output = self.model(**encode, return_dict=True)
-                batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
-                if self.config.parent_contrast:
-                    v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = batch_embedding_tensor.chunk(5)
-                else:
-                    v_anchor, v_positive, v_negative = batch_embedding_tensor.chunk(3)
-                    v_positive_hc = v_negative_hc = None
+                    # get model prediction
+                    encode = {k: _v.to(self.device) for k, _v in encode.items()}
+                    # print(encode['input_ids'])
+                    labels = encode.pop('labels')
+                    trigger = encode.pop('trigger')
+                    output = self.model(**encode, return_dict=True)
+                    batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
+                    if self.config.parent_contrast:
+                        v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = batch_embedding_tensor.chunk(5)
+                    else:
+                        v_anchor, v_positive, v_negative = batch_embedding_tensor.chunk(3)
+                        v_positive_hc = v_negative_hc = None
 
-                # contrastive loss
-                loss = triplet_loss(
-                    v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc, margin=self.config.mse_margin,
-                    in_batch_negative=self.config.in_batch_negative)
+                    # contrastive loss
+                    loss = triplet_loss(
+                        v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc, margin=self.config.mse_margin,
+                        in_batch_negative=self.config.in_batch_negative)
 
-                # backward: calculate gradient
-                loss.backward()
-                grad = self.gradient_store.get()
-                print(grad)
-                print(grad.max(), grad.min())
-                n_grad += len(grad)
-                batch_size, _, emb_dim = grad.size()
-                trigger_position = trigger.unsqueeze(-1) == 1
-                grad = torch.masked_select(grad, trigger_position)
-                print(grad.max(), grad.min())
-                grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
-                print(grad.sum(dim=0))
-                sum_grad += grad.sum(dim=0)
-                print(sum_grad, n_grad)
-                input()
-                total_loss += loss.sum().cpu().item()
+                    # backward: calculate gradient
+                    loss.backward()
+                    grad = self.gradient_store.get()
+                    print(grad)
+                    print(grad.max(), grad.min())
+                    n_grad += len(grad)
+                    batch_size, _, emb_dim = grad.size()
+                    trigger_position = trigger.unsqueeze(-1) == 1
+                    grad = torch.masked_select(grad, trigger_position)
+                    print(grad.max(), grad.min())
+                    grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
+                    print(grad.sum(dim=0))
+                    sum_grad += grad.sum(dim=0)
+                    print(sum_grad, n_grad)
+                    input()
+                    total_loss += loss.sum().cpu().item()
 
             avg_grad = sum_grad / n_grad
             avg_loss = total_loss / n_grad
