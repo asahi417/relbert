@@ -178,6 +178,7 @@ class GradientTriggerSearch:
         self.gradient_store = GradientStorage(self.input_embeddings)
         self.prompter = PromptGenerator(n_trigger_i, n_trigger_b, n_trigger_e, self.tokenizer)
         # cache config
+        self.batch = batch
         self.config = Config(
             config_name='prompter_config',
             export_dir=export_dir,
@@ -198,7 +199,6 @@ class GradientTriggerSearch:
             in_batch_negative=in_batch_negative,
             parent_contrast=parent_contrast,
             mse_margin=mse_margin,
-            batch=batch,
             random_seed=random_seed)
         self.checkpoint_dir = self.config.cache_dir
         # GPU setup
@@ -342,7 +342,7 @@ class GradientTriggerSearch:
             # individual runs.
             for _ in tqdm(list(range(self.config.n_trial))):
                 # logging.debug('\t * individual trial: {}/{}'.format(n + 1, self.config.n_trial))
-                loader = torch.utils.data.DataLoader(data, batch_size=self.config.batch, num_workers=num_workers)
+                loader = torch.utils.data.DataLoader(data, batch_size=self.batch, num_workers=num_workers)
                 sum_grad, n_grad, total_loss = aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss)
             return sum_grad/n_grad, total_loss/n_grad
 
