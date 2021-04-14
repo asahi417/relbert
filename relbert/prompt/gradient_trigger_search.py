@@ -309,7 +309,9 @@ class GradientTriggerSearch:
                 loss.backward()
                 grad = self.gradient_store.get()
                 # check there's no nan
-                assert (grad != grad).sum().cpu().item() == 0, (grad != grad).sum()
+                print(grad.max(), grad.min())
+                input()
+                # assert (grad != grad).sum().cpu().item() == 0, (grad != grad).sum()
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
