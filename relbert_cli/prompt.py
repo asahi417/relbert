@@ -60,6 +60,14 @@ def main():
     else:
         raise ValueError('unknown method: {}'.format(opt.method))
 
+    # add file handler
+    logger = logging.getLogger()
+    file_handler = logging.FileHandler('{}/process.log'.format(prompter.checkpoint_dir))
+    file_handler.setLevel(level)
+    file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
+    logger.addHandler(file_handler)
+
+    # run
     prompter.get_prompt(opt.num_workers)
 
 

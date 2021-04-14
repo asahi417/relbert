@@ -16,7 +16,7 @@ from ..data import get_training_data
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'GradientTriggerSearch'
-MAX_GRADIENT_VALUE = 1500
+MAX_GRADIENT_VALUE = 100
 
 
 class EncodePlus:
@@ -193,6 +193,7 @@ class GradientTriggerSearch:
             mse_margin=mse_margin,
             batch=batch,
             random_seed=random_seed)
+        self.checkpoint_dir = self.config.cache_dir
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
         self.parallel = False
@@ -257,12 +258,13 @@ class GradientTriggerSearch:
         """
         logging.info('start prompt generation')
         filter_matrix = None
-        with open('{}/loss.txt'.format(self.config.cache_dir), 'w') as f:
-            for i in range(self.config.n_iteration):
-                filter_matrix, loss = self.__single_iteration(num_workers, filter_matrix)
-                logging.info('iteration {}/{}: {}\t loss {}'.format(
-                    i + 1, self.config.n_iteration, self.tokenizer.convert_ids_to_tokens(self.prompter.triggers), loss))
-                self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i))
+        for i in range(self.config.n_iteration):
+            filter_matrix, loss = self.__single_iteration(num_workers, filter_matrix)
+            logging.info('iteration {}/{}: {}\t loss {}'.format(
+                i + 1, self.config.n_iteration, self.tokenizer.convert_ids_to_tokens(self.prompter.triggers), loss))
+            self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i))
+            mode = 'a' if os.path.exists('{}/loss.txt'.format(self.config.cache_dir)) else 'w'
+            with open('{}/loss.txt'.format(self.config.cache_dir), mode) as f:
                 f.write('{}\n'.format(loss))
         self.prompter.save('{}/prompt.json'.format(self.config.cache_dir))
 
@@ -303,28 +305,17 @@ class GradientTriggerSearch:
                     in_batch_negative=self.config.in_batch_negative)
 
                 # backward: calculate gradient
-                # with torch.autograd.set_detect_anomaly(True):
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), MAX_GRADIENT_VALUE)
                 loss.backward()
                 grad = self.gradient_store.get()
-                # avoid gradient overflow
-                # grad = torch.clip(grad, max=MAX_GRADIENT_VALUE, min=-MAX_GRADIENT_VALUE)
-                # print(grad.max(), grad.min())
-                # replace nan by zero
-                grad[grad != grad] = 0
-                # print(grad.max(), grad.min())
-                # print(grad)
+                # check there's no nan
+                assert (grad != grad).sum() == 0, (grad != grad).sum()
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
                 grad = torch.masked_select(grad, trigger_position)
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
-                # print(grad)
-                # print(grad.sum(dim=0))
                 sum_grad += grad.sum(dim=0)
-                # replace exploded gradient by zero
-                # sum_grad[sum_grad != sum_grad] = 0
-                # print(sum_grad.max(), sum_grad.min())
-                # input()
                 total_loss += loss.sum().cpu().item()
 
             avg_grad = sum_grad / n_grad
@@ -374,7 +365,7 @@ class GradientTriggerSearch:
         if len(candidate_with_score) == 0:
             logging.info('no triggers updated')
             self.prompter.update_trigger(trigger_to_flip, original_trigger)
-            return filter_matrix
+            return filter_matrix, average_loss
         best_trigger, best_loss = sorted(candidate_with_score, key=lambda x: x[1])[0]
         logging.info('update trigger at {}: {}'.format(
             trigger_to_flip, self.tokenizer.convert_ids_to_tokens(best_trigger)))
