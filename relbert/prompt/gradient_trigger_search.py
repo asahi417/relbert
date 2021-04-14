@@ -16,7 +16,7 @@ from ..data import get_training_data
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'GradientTriggerSearch'
-MAX_GRADIENT_VALUE = 1
+MAX_GRADIENT_VALUE = 500
 
 
 class EncodePlus:
@@ -308,9 +308,8 @@ class GradientTriggerSearch:
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), MAX_GRADIENT_VALUE)
                 loss.backward()
                 grad = self.gradient_store.get()
-                # check there's no nan
-                print(grad.max(), grad.min())
-                input()
+                # remove nan
+                grad[grad != grad] = 0
                 # assert (grad != grad).sum().cpu().item() == 0, (grad != grad).sum()
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
