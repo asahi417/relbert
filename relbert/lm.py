@@ -1,6 +1,7 @@
 """ RelBERT: Get relational embedding from transformers language model. """
 import os
 import logging
+import json
 from typing import Dict, List
 from multiprocessing import Pool
 
@@ -12,12 +13,7 @@ from .util import Dataset
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'RelBERT'
-
-
-def custom_prompter(word_pair, template_type: str = 'a', custom_template: str = None, mask_token: str = None):
-    """ Transform word pair into string prompt. """
-
-    preset_templates = {
+preset_templates = {
         "a": "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>",
         "b": "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is A's <mask>",
         "c": "Today, I finally discovered the relation between <subj> and <obj> : <mask>",
@@ -28,6 +24,10 @@ def custom_prompter(word_pair, template_type: str = 'a', custom_template: str = 
         "h": "The teacher explained how <subj> is related to <obj> : <mask>",
         "i": "The teacher explained how <subj> is related to <obj> : it is the <mask>"
     }
+
+
+def custom_prompter(word_pair, template_type: str = 'a', custom_template: str = None, mask_token: str = None):
+    """ Transform word pair into string prompt. """
 
     token_mask = '<mask>'
     token_subject = '<subj>'
@@ -54,8 +54,9 @@ def custom_prompter(word_pair, template_type: str = 'a', custom_template: str = 
 class EncodePlus:
     """ Wrapper of encode_plus for multiprocessing. """
 
-    def __init__(self, tokenizer, max_length: int, template_type: str = 'a', mode: str = 'mask'):
-        self.template_type = template_type
+    def __init__(self, tokenizer, max_length: int,
+                 custom_template_type: str = 'a', mode: str = 'average_no_mask'):
+        self.custom_template_type = custom_template_type
         self.tokenizer = tokenizer
         self.max_length = self.tokenizer.model_max_length
         self.mode = mode
@@ -70,8 +71,9 @@ class EncodePlus:
             # input is a list of sentence
             sentence = word_pair
         else:
+            assert self.custom_template_type is not None
             sentence = custom_prompter(
-                word_pair, template_type=self.template_type, mask_token=self.tokenizer.mask_token)
+                word_pair, template_type=self.custom_template_type, mask_token=self.tokenizer.mask_token)
         encode = self.tokenizer.encode_plus(sentence, **param)
         assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
         encode['labels'] = self.input_ids_to_labels(encode['input_ids'])
@@ -96,7 +98,7 @@ class RelBERT:
                  model: str,
                  max_length: int = 128,
                  cache_dir: str = None,
-                 mode: str = 'mask',
+                 mode: str = 'average_no_mask',
                  template_type: str = 'a'):
         """ Get embedding from transformers language model.
 
@@ -111,6 +113,8 @@ class RelBERT:
             - `mask` to get the embedding for a word pair by [MASK] token, eg) (A, B) -> A [MASK] B
             - `average` to average embeddings over the context.
             - `cls` to get the embedding on the [CLS] token
+        template_type : str
+            Custom template type
         """
         assert 'bert' in model, '{} is not BERT'.format(model)
         self.model_name = model
@@ -126,15 +130,23 @@ class RelBERT:
             self.config = transformers.AutoConfig.from_pretrained(model, cache_dir=cache_dir,
                                                                   local_files_only=True)
         # check if the language model is RelBERT trained or not.
+        self.custom_template_type = None
+        self.template = None
         if 'relbert_config' in self.config.to_dict().keys():
+            logging.info('loading finetuned RelBERT model')
             self.mode = self.config.relbert_config['mode']
-            self.template_type = self.config.relbert_config['template_type']
+            self.custom_template_type = self.config.relbert_config['template_type']
             self.is_trained = True
+            self.template = None
         else:
-            self.config.update({'relbert_config': {'mode': mode, 'template_type': template_type}})
             self.mode = mode
-            self.template_type = template_type
             self.is_trained = False
+            if template_type in preset_templates:
+                self.custom_template_type = template_type
+            else:
+                with open(template_type, 'r') as f:
+                    self.template = json.load(f)
+            self.config.update({'relbert_config': {'mode': mode, 'template_type': None, 'template': self.template}})
         try:
             self.model = transformers.AutoModel.from_pretrained(
                 self.model_name, config=self.config, cache_dir=self.cache_dir)
@@ -207,7 +219,7 @@ class RelBERT:
             assert negative_sample.keys() == positive_samples.keys()
             negative_sample_list = ListKeeper([negative_sample[k] for k in key])
 
-        shared = {'tokenizer': self.tokenizer, 'max_length': self.max_length, 'template_type': self.template_type,
+        shared = {'tokenizer': self.tokenizer, 'max_length': self.max_length, 'template_type': self.custom_template_type,
                   'mode': self.mode}
 
         def pool_map(_list):

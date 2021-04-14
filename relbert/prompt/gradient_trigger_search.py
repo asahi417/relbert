@@ -241,7 +241,7 @@ class GradientTriggerSearch:
         positive_embedding = pool_map(p_prompt_out)
         negative_embedding = pool_map(n_prompt_out)
         if any(i is None for i in positive_embedding) or any(i is None for i in negative_embedding):
-            return None, None
+            return None
         positive_embedding = positive_samples_list.restore_structure(positive_embedding)
         positive_embedding = {key[n]: v for n, v in enumerate(positive_embedding)}
         negative_embedding = negative_samples_list.restore_structure(negative_embedding)
