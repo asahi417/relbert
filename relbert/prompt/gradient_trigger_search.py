@@ -16,7 +16,7 @@ from ..data import get_training_data
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'GradientTriggerSearch'
-MAX_GRADIENT_VALUE = 100
+MAX_GRADIENT_VALUE = 10
 
 
 class EncodePlus:
@@ -309,7 +309,7 @@ class GradientTriggerSearch:
                 loss.backward()
                 grad = self.gradient_store.get()
                 # check there's no nan
-                # assert (grad != grad).sum() == 0, (grad != grad).sum()
+                assert (grad != grad).sum().cpu().item() == 0, (grad != grad).sum()
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
