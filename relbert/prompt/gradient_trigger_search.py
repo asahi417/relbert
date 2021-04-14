@@ -6,7 +6,7 @@ import random
 from itertools import chain
 from typing import List
 from multiprocessing import Pool
-
+from tqdm import tqdm
 import torch
 
 from ..list_keeper import ListKeeper
@@ -335,8 +335,8 @@ class GradientTriggerSearch:
             # As the data feeder is stochastic (randomly sample combination of positive and negative), we ensure the
             # gradients are aggregated from large enough sets to behave as a global gradient by conducting several
             # individual runs.
-            for n in range(self.config.n_trial):
-                logging.debug('\t * individual trial: {}/{}'.format(n + 1, self.config.n_trial))
+            for _ in tqdm(list(range(self.config.n_trial))):
+                # logging.debug('\t * individual trial: {}/{}'.format(n + 1, self.config.n_trial))
                 loader = torch.utils.data.DataLoader(data, batch_size=self.config.batch, num_workers=num_workers)
                 sum_grad, n_grad, total_loss = aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss)
             return sum_grad/n_grad, total_loss/n_grad
@@ -356,8 +356,9 @@ class GradientTriggerSearch:
                     logging.debug('\t filtered: {}'.format(word))
                     filter_matrix[idx] = -1e32
         if average_grad is None:
+            logging.debug('compute gradient')
             average_grad, average_loss = aggregate_loss()
-            logging.debug('\t - initial loss: {}'.format(average_loss))
+            logging.debug('initial loss: {}'.format(average_loss))
 
         if self.config.trigger_selection == 'random':
             trigger_to_flip = random.randrange(self.prompter.n_trigger)
@@ -370,6 +371,7 @@ class GradientTriggerSearch:
         original_trigger = self.prompter.get_trigger(trigger_to_flip)
         for c in candidate:
             self.prompter.update_trigger(trigger_to_flip, c)
+            logging.debug('compute gradient for candidate: {}'.format(c))
             _grad, _loss = aggregate_loss()
             if _grad is None:
                 logging.debug('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
