@@ -89,8 +89,13 @@ class PromptGenerator:
 
     def save(self, export_file: str, loss: float = None):
         assert export_file.endswith('.json')
-        tmp = {'top': self.triggers[:self.b], 'mid': self.triggers[self.b:self.b + self.i],
-               'bottom': self.triggers[self.b + self.i:], 'loss': loss}
+        tmp = {'top': self.triggers[:self.b],
+               'top_str': self.tokenizer.convert_ids_to_tokens(self.triggers[:self.b]),
+               'mid': self.triggers[self.b:self.b + self.i],
+               'mid_str': self.tokenizer.convert_ids_to_tokens(self.triggers[self.b:self.b + self.i]),
+               'bottom': self.triggers[self.b + self.i:],
+               'bottom_str': self.tokenizer.convert_ids_to_tokens(self.triggers[self.b + self.i:]),
+               'loss': loss}
         with open(export_file, 'w') as f:
             json.dump(tmp, f)
         logging.debug('exported to {}'.format(export_file))
@@ -371,7 +376,7 @@ class GradientTriggerSearch:
         original_trigger = self.prompter.get_trigger(trigger_to_flip)
         for c in candidate:
             self.prompter.update_trigger(trigger_to_flip, c)
-            logging.debug('compute gradient for candidate: {}'.format(c))
+            logging.debug('compute gradient for candidate: {}'.format(self.tokenizer.convert_ids_to_tokens(c)))
             _grad, _loss = aggregate_loss()
             if _grad is None:
                 logging.debug('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))

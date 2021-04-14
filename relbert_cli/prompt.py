@@ -12,7 +12,7 @@ def config(parser):
     parser.add_argument('--n-trigger-b', help='trigger number', default=1, type=int)
     parser.add_argument('--n-trigger-e', help='trigger number', default=1, type=int)
     parser.add_argument('-i', '--n-iteration', help='iteration', default=1000, type=int)
-    parser.add_argument('--n-trial', help='individual trial to mitigate randomness', default=50, type=int)
+    parser.add_argument('--n-trial', help='individual trial to mitigate randomness', default=100, type=int)
     # optimization
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('-b', '--batch', help='batch size', default=32, type=int)
