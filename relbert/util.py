@@ -178,38 +178,36 @@ class Dataset(torch.utils.data.Dataset):
         return torch.tensor(data, dtype=torch.long)
 
     def __getitem__(self, idx):
+        # relation type for positive sample
         relation_type = self.keys[idx]
         if self.pairwise_input:
-            # pairwise input for contrastive loss
-
-            # randomly sample pair from the specific relation type as a positive pair
+            # sampling pair from the relation type for anchor positive sample
             a, b = rand_sample(self.positive_pattern_id[relation_type])
             positive_a = self.positive_samples[relation_type][a]
-            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
             positive_b = self.positive_samples[relation_type][b]
+            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
             tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
 
-            # randomly sample negative from same relation
+            # sampling negative from the relation type
             negative_list = self.negative_samples[relation_type]
             tensor_negative = {k: self.to_tensor(k, v) for k, v in rand_sample(negative_list).items()}
 
             if self.relation_structure is not None:
-                # positive sample from same parent relation and negative from other parent relation
-
-                # sample parent relation (positive)
+                # sampling relation type that shares same parent class with the positive sample
                 parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
                 assert len(parent_relation) == 1
-                # sample relation from the parent
                 relation_positive = rand_sample(self.relation_structure[parent_relation[0]])
+                # sampling positive from the relation type
                 positive_parent = rand_sample(self.positive_samples[relation_positive])
                 tensor_positive_parent = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
-                # sample parent relation (negative)
+
+                # sampling relation type from different parent class (negative)
                 parent_relation_n = rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
-                # sample relation from the parent
                 relation_negative = rand_sample(self.relation_structure[parent_relation_n])
                 # sample individual entry from the relation
                 negative_parent = rand_sample(self.positive_samples[relation_negative])
                 tensor_negative_parent = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
+
                 return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative,
                         'positive_parent': tensor_positive_parent, 'negative_parent': tensor_negative_parent}
             else:

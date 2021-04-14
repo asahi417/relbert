@@ -87,10 +87,10 @@ class PromptGenerator:
         """
         return list(map(self.__single_word_pair_prompt, word_pair))
 
-    def save(self, export_file: str):
+    def save(self, export_file: str, loss: float = None):
         assert export_file.endswith('.json')
         tmp = {'top': self.triggers[:self.b], 'mid': self.triggers[self.b:self.b + self.i],
-               'bottom': self.triggers[self.b + self.i:]}
+               'bottom': self.triggers[self.b + self.i:], 'loss': loss}
         with open(export_file, 'w') as f:
             json.dump(tmp, f)
         logging.debug('exported to {}'.format(export_file))
@@ -147,6 +147,7 @@ class GradientTriggerSearch:
                  n_trigger_b: int = 1,
                  n_trigger_e: int = 1,
                  n_iteration: int = 10,
+                 n_trial: int = 50,
                  filter_label: bool = True,
                  filter_pn: bool = True,
                  trigger_selection: str = 'random',
@@ -181,6 +182,7 @@ class GradientTriggerSearch:
             n_trigger_b=n_trigger_b,
             n_trigger_e=n_trigger_e,
             n_iteration=n_iteration,
+            n_trial=n_trial,
             filter_label=filter_label,
             filter_pn=filter_pn,
             trigger_selection=trigger_selection,
@@ -208,7 +210,19 @@ class GradientTriggerSearch:
         assert self.all_negative.keys() == self.all_positive.keys()
         logging.debug('{} positive data/{} negative data'.format(len(self.all_positive), len(self.all_negative)))
 
-    def preprocess(self, return_filtering_vocab: bool = False):
+    def get_filtering_matrix(self):
+        key = list(self.all_positive.keys())
+        positive_samples_list = ListKeeper([self.all_positive[k] for k in key])
+        p_prompt_out = self.prompter(positive_samples_list.flatten_list)
+        negative_samples_list = ListKeeper([self.all_negative[k] for k in key])
+        n_prompt_out = self.prompter(negative_samples_list.flatten_list)
+        filter_vocab = list(self.tokenizer.all_special_ids)
+        if self.config.filter_label:
+            v = set(list(chain(*[i for i, _ in n_prompt_out])) + list(chain(*[i for i, _ in p_prompt_out])))
+            filter_vocab += list(filter(lambda x: x not in self.tokenizer.all_special_ids, v))
+        return filter_vocab
+
+    def preprocess(self):
         """ Encoding data and returns torch.utils.data.Dataset. """
 
         shared = {'tokenizer': self.tokenizer, 'max_length': self.config.max_length}
@@ -220,10 +234,8 @@ class GradientTriggerSearch:
             return out
 
         key = list(self.all_positive.keys())
-
         positive_samples_list = ListKeeper([self.all_positive[k] for k in key])
         p_prompt_out = self.prompter(positive_samples_list.flatten_list)
-
         negative_samples_list = ListKeeper([self.all_negative[k] for k in key])
         n_prompt_out = self.prompter(negative_samples_list.flatten_list)
         positive_embedding = pool_map(p_prompt_out)
@@ -236,17 +248,10 @@ class GradientTriggerSearch:
         negative_embedding = {key[n]: v for n, v in enumerate(negative_embedding)}
 
         if self.config.parent_contrast:
-            data = Dataset(positive_samples=positive_embedding, negative_samples=negative_embedding,
+            return Dataset(positive_samples=positive_embedding, negative_samples=negative_embedding,
                            relation_structure=self.relation_structure)
         else:
-            data = Dataset(positive_samples=positive_embedding, negative_samples=negative_embedding)
-        if not return_filtering_vocab:
-            return data, None
-        filter_vocab = list(self.tokenizer.all_special_ids)
-        if self.config.filter_label:
-            v = set(list(chain(*[i for i, _ in n_prompt_out])) + list(chain(*[i for i, _ in n_prompt_out])))
-            filter_vocab += list(filter(lambda x: x not in self.tokenizer.all_special_ids, v))
-        return data, filter_vocab
+            return Dataset(positive_samples=positive_embedding, negative_samples=negative_embedding)
 
     def get_prompt(self, num_workers: int = 1):
         """ Train prompter.
@@ -258,22 +263,22 @@ class GradientTriggerSearch:
         """
         logging.info('start prompt generation')
         filter_matrix = None
+        grad = None
         for i in range(self.config.n_iteration):
-            filter_matrix, loss = self.__single_iteration(num_workers, filter_matrix)
+            filter_matrix, loss, grad = self.__single_iteration(num_workers, filter_matrix, grad)
+            if loss is None:
+                continue
             logging.info('iteration {}/{}: {}\t loss {}'.format(
                 i + 1, self.config.n_iteration, self.tokenizer.convert_ids_to_tokens(self.prompter.triggers), loss))
-            self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i))
+            self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i), loss)
             mode = 'a' if os.path.exists('{}/loss.txt'.format(self.config.cache_dir)) else 'w'
             with open('{}/loss.txt'.format(self.config.cache_dir), mode) as f:
                 f.write('{}\n'.format(loss))
-        self.prompter.save('{}/prompt.json'.format(self.config.cache_dir))
+        self.prompter.save('{}/prompt.json'.format(self.config.cache_dir), loss)
 
-    def __single_iteration(self, num_workers: int = 1, filter_matrix=None):
+    def __single_iteration(self, num_workers: int = 1, filter_matrix=None, average_grad=None):
 
-        def aggregate_loss(loader):
-            sum_grad = 0
-            n_grad = 0
-            total_loss = 0
+        def aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss):
             for i, x in enumerate(loader):
                 positive_a = {k: v.to(self.device) for k, v in x['positive_a'].items()}
                 positive_b = {k: v.to(self.device) for k, v in x['positive_b'].items()}
@@ -318,14 +323,27 @@ class GradientTriggerSearch:
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 sum_grad += grad.sum(dim=0)
                 total_loss += loss.sum().cpu().item()
+            return sum_grad, n_grad, total_loss
 
-            avg_grad = sum_grad / n_grad
-            avg_loss = total_loss / n_grad
-            return avg_grad, avg_loss
+        def aggregate_loss():
+            data = self.preprocess()
+            if data is None:
+                return None, None
+            sum_grad = 0
+            n_grad = 0
+            total_loss = 0
+            # As the data feeder is stochastic (randomly sample combination of positive and negative), we ensure the
+            # gradients are aggregated from large enough sets to behave as a global gradient by conducting several
+            # individual runs.
+            for n in range(self.config.n_trial):
+                logging.debug('\t * individual trial: {}/{}'.format(n + 1, self.config.n_trial))
+                loader = torch.utils.data.DataLoader(data, batch_size=self.config.batch, num_workers=num_workers)
+                sum_grad, n_grad, total_loss = aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss)
+            return sum_grad/n_grad, total_loss/n_grad
 
         logging.debug('compute candidate trigger')
         if filter_matrix is None:
-            data, vocab = self.preprocess(True)
+            vocab = self.get_filtering_matrix()
             logging.debug('construct filtering vocab matrix')
             filter_matrix = torch.zeros(self.tokenizer.vocab_size, dtype=torch.float32, device=self.device)
             for __v in vocab:
@@ -337,12 +355,9 @@ class GradientTriggerSearch:
                 if idx in vocab or self.tokenizer.decode([idx])[0].isupper():
                     logging.debug('\t filtered: {}'.format(word))
                     filter_matrix[idx] = -1e32
-        else:
-            data, _ = self.preprocess()
-
-        data_loader = torch.utils.data.DataLoader(data, batch_size=self.config.batch, num_workers=num_workers)
-        average_grad, average_loss = aggregate_loss(data_loader)
-        logging.debug('\t - current loss: {}'.format(average_loss))
+        if average_grad is None:
+            average_grad, average_loss = aggregate_loss()
+            logging.debug('\t - initial loss: {}'.format(average_loss))
 
         if self.config.trigger_selection == 'random':
             trigger_to_flip = random.randrange(self.prompter.n_trigger)
@@ -355,23 +370,22 @@ class GradientTriggerSearch:
         original_trigger = self.prompter.get_trigger(trigger_to_flip)
         for c in candidate:
             self.prompter.update_trigger(trigger_to_flip, c)
-            data, _ = self.preprocess()
-            if data is not None:
-                data_loader = torch.utils.data.DataLoader(data, batch_size=self.config.batch, num_workers=num_workers)
-                _, _loss = aggregate_loss(data_loader)
-                candidate_with_score.append([c, _loss])
-                logging.debug('\t - candidate: {} \tloss: {}'.format(self.tokenizer.convert_ids_to_tokens(c), _loss))
-            else:
+            _grad, _loss = aggregate_loss()
+            if _grad is None:
                 logging.debug('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
+            else:
+                candidate_with_score.append([c, _loss, _grad])
+                logging.debug('\t - candidate: {} \tloss: {}'.format(self.tokenizer.convert_ids_to_tokens(c), _loss))
+
         if len(candidate_with_score) == 0:
             logging.info('no triggers updated')
             self.prompter.update_trigger(trigger_to_flip, original_trigger)
-            return filter_matrix, average_loss
-        best_trigger, best_loss = sorted(candidate_with_score, key=lambda x: x[1])[0]
+            return filter_matrix, None, None
+        best_trigger, best_loss, best_grad = sorted(candidate_with_score, key=lambda x: x[1])[0]
         logging.info('update trigger at {}: {}'.format(
             trigger_to_flip, self.tokenizer.convert_ids_to_tokens(best_trigger)))
         self.prompter.update_trigger(trigger_to_flip, best_trigger)
-        return filter_matrix, best_loss
+        return filter_matrix, best_loss, best_grad
 
     def top_candidate(self, averaged_grad, filter_matrix):
         """ Returns the top candidate replacements."""
