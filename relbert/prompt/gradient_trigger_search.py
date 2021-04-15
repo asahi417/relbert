@@ -334,8 +334,6 @@ class GradientTriggerSearch:
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
-                print(grad.shape, trigger_position.shape)
-                input()
                 grad = torch.masked_select(grad, trigger_position)
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 sum_grad += grad.sum(dim=0)
@@ -361,7 +359,7 @@ class GradientTriggerSearch:
                 sum_grad, n_grad, total_loss = aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss)
             return sum_grad/n_grad, total_loss/n_grad
 
-        logging.debug('compute candidate trigger')
+        logging.info('compute candidate trigger')
         if filter_matrix is None:
             vocab = self.get_filtering_matrix()
             logging.debug('construct filtering vocab matrix')
@@ -391,21 +389,20 @@ class GradientTriggerSearch:
             raise NotImplementedError()
         candidate = self.top_candidate(average_grad[trigger_to_flip], filter_matrix)
 
-        logging.debug('evaluate to get the best trigger: {}'.format(trigger_to_flip))
+        logging.info('evaluate to get the best trigger: {}'.format(trigger_to_flip))
         candidate_with_score = []
         original_trigger = self.prompter.get_trigger(trigger_to_flip)
         for c in candidate:
             self.prompter.update_trigger(trigger_to_flip, c)
             logging.debug('compute gradient for candidate: {}'.format(self.tokenizer.convert_ids_to_tokens(c)))
-
             # fix_seed(0)
 
             _grad, _loss = aggregate_loss()
             if _grad is None:
-                logging.debug('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
+                logging.info('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
             else:
                 candidate_with_score.append([c, _loss, _grad])
-                logging.debug('\t - candidate: {} \tloss: {}'.format(self.tokenizer.convert_ids_to_tokens(c), _loss))
+                logging.info('\t - candidate: {} \tloss: {}'.format(self.tokenizer.convert_ids_to_tokens(c), _loss))
 
         if len(candidate_with_score) == 0:
             logging.info('no triggers updated')
