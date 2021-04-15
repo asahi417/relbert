@@ -21,7 +21,7 @@ def config(parser):
     parser.add_argument('-p', '--parent-contrast', help='hierarchical contrastive loss', action='store_true')
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('-b', '--batch', help='batch size', default=16, type=int)
-    parser.add_argument('--batch-no-grad', help='batch size', default=64, type=int)
+    parser.add_argument('--batch-no-grad', help='batch size', default=512, type=int)
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
     # training environment
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
