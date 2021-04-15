@@ -326,6 +326,7 @@ class GradientTriggerSearch:
                     in_batch_negative=self.config.in_batch_negative)
 
                 total_loss += loss.sum().cpu().item()
+                n_grad += len(labels)
                 if no_grad:
                     continue
                 # backward: calculate gradient
@@ -335,7 +336,6 @@ class GradientTriggerSearch:
                 # remove nan
                 grad[grad != grad] = 0
                 # assert (grad != grad).sum().cpu().item() == 0, (grad != grad).sum()
-                n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
                 grad = torch.masked_select(grad, trigger_position)
