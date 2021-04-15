@@ -397,7 +397,7 @@ class GradientTriggerSearch:
             self.prompter.update_trigger(trigger_to_flip, c)
             logging.debug('compute gradient for candidate: {}'.format(self.tokenizer.convert_ids_to_tokens(c)))
             with torch.no_grad():
-                _, _loss = aggregate_loss()
+                _, _loss = aggregate_loss(no_grad=True)
             if _loss is None:
                 logging.info('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
             else:
