@@ -153,8 +153,8 @@ class GradientTriggerSearch:
                  n_trigger_e: int = 1,
                  n_iteration: int = 10,
                  n_trial: int = 50,
-                 filter_label: bool = True,
-                 filter_pn: bool = True,
+                 filter_label: bool = False,
+                 filter_pn: bool = False,
                  trigger_selection: str = 'random',
                  model: str = 'roberta-large',
                  max_length: int = 64,
@@ -270,7 +270,6 @@ class GradientTriggerSearch:
         filter_matrix = None
         grad = None
         for i in range(self.config.n_iteration):
-            fix_seed(0)
             filter_matrix, loss, grad = self.__single_iteration(num_workers, filter_matrix, grad)
             if loss is None:
                 continue
@@ -329,7 +328,7 @@ class GradientTriggerSearch:
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 sum_grad += grad.sum(dim=0)
                 total_loss += loss.sum().cpu().item()
-                break
+                # break
             return sum_grad, n_grad, total_loss
 
         def aggregate_loss():
@@ -379,6 +378,9 @@ class GradientTriggerSearch:
         for c in candidate:
             self.prompter.update_trigger(trigger_to_flip, c)
             logging.debug('compute gradient for candidate: {}'.format(self.tokenizer.convert_ids_to_tokens(c)))
+
+            # fix_seed(0)
+
             _grad, _loss = aggregate_loss()
             if _grad is None:
                 logging.debug('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))

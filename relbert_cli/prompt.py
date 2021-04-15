@@ -13,6 +13,8 @@ def config(parser):
     parser.add_argument('--n-trigger-e', help='trigger number', default=1, type=int)
     parser.add_argument('-i', '--n-iteration', help='iteration', default=1000, type=int)
     parser.add_argument('--n-trial', help='individual trial to mitigate randomness', default=100, type=int)
+    parser.add_argument('--filter-label', help='remove label token', action='store_true')
+    parser.add_argument('--filter-pn', help='remove proper noun', action='store_true')
     # optimization
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('-b', '--batch', help='batch size', default=32, type=int)
@@ -49,6 +51,8 @@ def main():
             n_trigger_e=opt.n_trigger_e,
             n_iteration=opt.n_iteration,
             n_trial=opt.n_trial,
+            filter_label=opt.filter_label,
+            filter_pn=opt.filter_pn,
             model=opt.model,
             max_length=opt.max_length,
             data=opt.data,
