@@ -7,6 +7,7 @@ import pandas as pd
 import torch
 from .lm import RelBERT
 from .data import get_analogy_data
+from .util import module_output_dir
 
 
 def cos_similarity(a_, b_):
@@ -23,12 +24,15 @@ def evaluate(model: List,
              template_type: str = 'a',
              mode: str = 'mask',
              test_type: str = 'analogy',
-             export_file: str = './eval.csv',
+             export_file: str = None,
              cache_dir: str = None,
              batch: int = 64,
              num_worker: int = 1,
              shared_config: Dict = None,
-             data_loader_dict = None):
+             data_loader_dict=None):
+    if export_file is None:
+        export_file = '{}/eval/accuracy.{}.csv'.format(module_output_dir, test_type)
+
     logging.info('{} checkpoints'.format(len(model)))
     result = []
     for n, i in enumerate(model):
@@ -115,8 +119,8 @@ def _evaluate(model,
         acc = (acc_val * len(val) + acc_test * len(test))/(len(val) + len(test))
         result.append({
             'accuracy_valid': acc_val, 'accuracy_test': acc_test, 'accuracy_full': acc,
-            'model': model, 'mode': lm.mode, 'custom_template_type': lm.custom_template_type,
-            'template': lm.template, 'analogy_data': k, 'lm': lm.config.model_type
+            'model': model, 'mode': lm.mode, 'template_type': template_type,
+            'analogy_data': k, 'lm': lm.config.model_type
         })
         logging.info(str(result[-1]))
     return result, data_loader_dict

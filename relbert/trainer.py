@@ -18,7 +18,7 @@ class Trainer:
     def __init__(self,
                  model: str = 'roberta-large',
                  max_length: int = 64,
-                 mode: str = 'mask',
+                 mode: str = 'average',
                  data: str = 'semeval2012',
                  n_sample: int = 10,
                  template_type: str = 'a',
@@ -85,7 +85,8 @@ class Trainer:
             mode=mode,
             data=data,
             n_sample=n_sample,
-            template_type=template_type,
+            custom_template_type=self.lm.custom_template_type,
+            template=self.lm.template,
             softmax_loss=softmax_loss,
             in_batch_negative=in_batch_negative,
             parent_contrast=parent_contrast,
@@ -114,8 +115,7 @@ class Trainer:
 
         # get dataset
         all_positive, all_negative, relation_structure = get_training_data(
-            data_name=self.config.data,
-            n_sample=self.config.n_sample, cache_dir=self.cache_dir)
+            data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=self.cache_dir)
         if self.config.parent_contrast:
             self.dataset = self.lm.preprocess(all_positive, all_negative, relation_structure)
         else:
