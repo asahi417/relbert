@@ -1,7 +1,7 @@
 relbert-prompt -n --n-trigger-i 3 --export-name 131
 relbert-prompt -n --n-trigger-i 4 --export-name 141
 relbert-prompt -n --n-trigger-i 5 --export-name 151
-relbert-prompt -n --n-trigger-i 6 --export-name 161
+relbert-prompt -n --n-trigger-i 6 --export-name 161 -b 32
 
 relbert-prompt -n -p --n-trigger-i 3 --export-name 131_p
 relbert-prompt -n -p --n-trigger-i 4 --export-name 141_p

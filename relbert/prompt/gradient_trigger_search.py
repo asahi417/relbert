@@ -334,6 +334,8 @@ class GradientTriggerSearch:
                 n_grad += len(grad)
                 batch_size, _, emb_dim = grad.size()
                 trigger_position = trigger.unsqueeze(-1) == 1
+                print(grad.shape, trigger_position.shape)
+                input()
                 grad = torch.masked_select(grad, trigger_position)
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 sum_grad += grad.sum(dim=0)
