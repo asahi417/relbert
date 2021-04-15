@@ -27,6 +27,7 @@ def config(parser):
     parser.add_argument('--export-name', help='directory name', default=None, type=str)
     # language model
     parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
+    parser.add_argument('--checkpoint-path', help='checkpoint to load', default=None, type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
     # data
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
@@ -62,7 +63,9 @@ def main():
             random_seed=opt.random_seed,
             export_dir=opt.export_dir,
             export_name=opt.export_name,
-            cache_dir=opt.cache_dir)
+            cache_dir=opt.cache_dir,
+            checkpoint_path=opt.checkpoint_path
+        )
     else:
         raise ValueError('unknown method: {}'.format(opt.method))
 

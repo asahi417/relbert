@@ -167,7 +167,8 @@ class GradientTriggerSearch:
                  random_seed: int = 0,
                  export_dir: str = None,
                  export_name: str = None,
-                 cache_dir: str = None):
+                 cache_dir: str = None,
+                 checkpoint_path: str = None):
         fix_seed(random_seed)
         if export_dir is None:
             export_dir = '{}/prompt_files'.format(module_output_dir)
@@ -176,13 +177,13 @@ class GradientTriggerSearch:
         self.model.eval()
         self.input_embeddings = self.model.get_input_embeddings()
         self.gradient_store = GradientStorage(self.input_embeddings)
-        self.prompter = PromptGenerator(n_trigger_i, n_trigger_b, n_trigger_e, self.tokenizer)
         # cache config
         self.batch = batch
         self.config = Config(
             config_name='prompter_config',
             export_dir=export_dir,
             checkpoint_name=export_name,
+            checkpoint_path=checkpoint_path,
             topk=topk,
             n_trigger_i=n_trigger_i,
             n_trigger_b=n_trigger_b,
@@ -201,6 +202,16 @@ class GradientTriggerSearch:
             mse_margin=mse_margin,
             random_seed=random_seed)
         self.checkpoint_dir = self.config.cache_dir
+        self.prompter = PromptGenerator(n_trigger_i, n_trigger_b, n_trigger_e, self.tokenizer)
+        if self.config.last_iter != 0:
+            ckpt = '{}/prompt.{}.json'.format(self.config.cache_dir, self.config.last_iter - 1)
+            logging.info('loading last prompt checkpoint from {}'.format(ckpt))
+            # restore last prompt
+            with open(ckpt, 'r') as f:
+                tmp = json.load(f)
+            for n, i in enumerate(tmp['top'] + tmp['mid'] + tmp['bottom']):
+                self.prompter.update_trigger(n, i)
+
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
         self.parallel = False
@@ -269,7 +280,7 @@ class GradientTriggerSearch:
         logging.info('start prompt generation')
         filter_matrix = None
         grad = None
-        for i in range(self.config.n_iteration):
+        for i in range(self.config.last_iter, self.config.n_iteration):
             filter_matrix, loss, grad = self.__single_iteration(num_workers, filter_matrix, grad)
             if loss is None:
                 continue
