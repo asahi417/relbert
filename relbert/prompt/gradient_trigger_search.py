@@ -354,13 +354,14 @@ class GradientTriggerSearch:
             filter_matrix = torch.zeros(self.tokenizer.vocab_size, dtype=torch.float32, device=self.device)
             for __v in vocab:
                 filter_matrix[__v] = -1e32
-            for word, idx in self.tokenizer.get_vocab().items():
-                # https://github.com/ucinlp/autoprompt/blob/master/autoprompt/create_trigger.py#L274
-                if len(word) == 1:
-                    continue
-                if idx in vocab or self.tokenizer.decode([idx])[0].isupper():
-                    logging.debug('\t filtered: {}'.format(word))
-                    filter_matrix[idx] = -1e32
+            if self.config.filter_pn:
+                for word, idx in self.tokenizer.get_vocab().items():
+                    # https://github.com/ucinlp/autoprompt/blob/master/autoprompt/create_trigger.py#L274
+                    if len(word) == 1:
+                        continue
+                    if idx in vocab or self.tokenizer.decode([idx])[0].isupper():
+                        logging.debug('\t filtered: {}'.format(word))
+                        filter_matrix[idx] = -1e32
         if average_grad is None:
             logging.debug('compute gradient')
             average_grad, average_loss = aggregate_loss()
