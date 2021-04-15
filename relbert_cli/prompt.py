@@ -7,7 +7,7 @@ import relbert
 def config(parser):
     # prompt
     parser.add_argument('--method', help='prompting method', default='autoprompt', type=str)
-    parser.add_argument('-k', '--topk', help='top k', default=15, type=int)
+    parser.add_argument('-k', '--topk', help='top k', default=5, type=int)
     parser.add_argument('--trigger-selection', help='method to select trigger', default='best', type=str)
     parser.add_argument('--n-trigger-i', help='trigger number', default=3, type=int)
     parser.add_argument('--n-trigger-b', help='trigger number', default=1, type=int)
@@ -21,6 +21,7 @@ def config(parser):
     parser.add_argument('-p', '--parent-contrast', help='hierarchical contrastive loss', action='store_true')
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('-b', '--batch', help='batch size', default=16, type=int)
+    parser.add_argument('--batch-no-grad', help='batch size', default=64, type=int)
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
     # training environment
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)

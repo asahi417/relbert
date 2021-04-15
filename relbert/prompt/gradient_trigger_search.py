@@ -163,7 +163,8 @@ class GradientTriggerSearch:
                  in_batch_negative: bool = True,
                  parent_contrast: bool = True,
                  mse_margin: float = 1,
-                 batch: int = 32,
+                 batch: int = 16,
+                 batch_no_grad: int = 64,
                  random_seed: int = 0,
                  export_dir: str = None,
                  export_name: str = None,
@@ -179,6 +180,7 @@ class GradientTriggerSearch:
         self.gradient_store = GradientStorage(self.input_embeddings)
         # cache config
         self.batch = batch
+        self.batch_no_grad = batch_no_grad
         self.config = Config(
             config_name='prompter_config',
             export_dir=export_dir,
@@ -278,9 +280,8 @@ class GradientTriggerSearch:
         """
         logging.info('start prompt generation')
         filter_matrix = None
-        grad = None
         for i in range(self.config.last_iter, self.config.n_iteration):
-            filter_matrix, loss, grad = self.__single_iteration(num_workers, filter_matrix, grad)
+            filter_matrix, loss = self.__single_iteration(num_workers, filter_matrix)
             if loss is None:
                 continue
             logging.info('iteration {}/{}: {}\t loss {}'.format(
@@ -291,9 +292,9 @@ class GradientTriggerSearch:
                 f.write('{}\n'.format(loss))
         self.prompter.save('{}/prompt.json'.format(self.config.cache_dir), loss)
 
-    def __single_iteration(self, num_workers: int = 1, filter_matrix=None, average_grad=None):
+    def __single_iteration(self, num_workers: int = 1, filter_matrix=None):
 
-        def aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss):
+        def aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss, no_grad: bool = False):
             for i, x in enumerate(loader):
                 positive_a = {k: v.to(self.device) for k, v in x['positive_a'].items()}
                 positive_b = {k: v.to(self.device) for k, v in x['positive_b'].items()}
@@ -324,6 +325,9 @@ class GradientTriggerSearch:
                     v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc, margin=self.config.mse_margin,
                     in_batch_negative=self.config.in_batch_negative)
 
+                total_loss += loss.sum().cpu().item()
+                if no_grad:
+                    continue
                 # backward: calculate gradient
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), MAX_GRADIENT_VALUE)
                 loss.backward()
@@ -337,26 +341,24 @@ class GradientTriggerSearch:
                 grad = torch.masked_select(grad, trigger_position)
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 sum_grad += grad.sum(dim=0)
-                total_loss += loss.sum().cpu().item()
+
             return sum_grad, n_grad, total_loss
 
-        def aggregate_loss():
+        def aggregate_loss(no_grad: bool = False):
             shared_param = self.preprocess()
             if shared_param is None:
                 return None, None
+            total_loss = 0
             sum_grad = 0
             n_grad = 0
-            total_loss = 0
             # As the data feeder is stochastic (randomly sample combination of positive and negative), we ensure the
             # gradients are aggregated from large enough sets to behave as a global gradient by conducting several
             # individual runs.
+            batch = self.batch_no_grad if no_grad else self.batch
             for d in tqdm(list(range(self.config.n_trial))):
                 data = Dataset(deterministic_index=d, **shared_param)
-                # for k, v in data.pattern_id.items():
-                #     print(k, len(v))
-                # input()
-                loader = torch.utils.data.DataLoader(data, batch_size=self.batch, num_workers=num_workers)
-                sum_grad, n_grad, total_loss = aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss)
+                loader = torch.utils.data.DataLoader(data, batch_size=batch, num_workers=num_workers)
+                sum_grad, n_grad, total_loss = aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss, no_grad)
             return sum_grad/n_grad, total_loss/n_grad
 
         logging.info('compute candidate trigger')
@@ -374,10 +376,9 @@ class GradientTriggerSearch:
                     if idx in vocab or self.tokenizer.decode([idx])[0].isupper():
                         logging.debug('\t filtered: {}'.format(word))
                         filter_matrix[idx] = -1e32
-        if average_grad is None:
-            logging.debug('compute gradient')
-            average_grad, average_loss = aggregate_loss()
-            logging.debug('initial loss: {}'.format(average_loss))
+        logging.debug('compute gradient')
+        average_grad, average_loss = aggregate_loss()
+        logging.debug('\t * tmp loss: {}'.format(average_loss))
 
         if self.config.trigger_selection == 'random':
             trigger_to_flip = random.randrange(self.prompter.n_trigger)
@@ -395,24 +396,23 @@ class GradientTriggerSearch:
         for c in candidate:
             self.prompter.update_trigger(trigger_to_flip, c)
             logging.debug('compute gradient for candidate: {}'.format(self.tokenizer.convert_ids_to_tokens(c)))
-            # fix_seed(0)
-
-            _grad, _loss = aggregate_loss()
-            if _grad is None:
+            with torch.no_grad():
+                _, _loss = aggregate_loss()
+            if _loss is None:
                 logging.info('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
             else:
-                candidate_with_score.append([c, _loss, _grad])
+                candidate_with_score.append([c, _loss])
                 logging.info('\t - candidate: {} \tloss: {}'.format(self.tokenizer.convert_ids_to_tokens(c), _loss))
 
         if len(candidate_with_score) == 0:
             logging.info('no triggers updated')
             self.prompter.update_trigger(trigger_to_flip, original_trigger)
-            return filter_matrix, None, None
-        best_trigger, best_loss, best_grad = sorted(candidate_with_score, key=lambda x: x[1])[0]
+            return filter_matrix, None
+        best_trigger, best_loss = sorted(candidate_with_score, key=lambda x: x[1])[0]
         logging.info('update trigger at {}: {}'.format(
             trigger_to_flip, self.tokenizer.convert_ids_to_tokens(best_trigger)))
         self.prompter.update_trigger(trigger_to_flip, best_trigger)
-        return filter_matrix, best_loss, best_grad
+        return filter_matrix, best_loss
 
     def top_candidate(self, averaged_grad, filter_matrix):
         """ Returns the top candidate replacements."""
