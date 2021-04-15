@@ -270,6 +270,7 @@ class GradientTriggerSearch:
         filter_matrix = None
         grad = None
         for i in range(self.config.n_iteration):
+            fix_seed(0)
             filter_matrix, loss, grad = self.__single_iteration(num_workers, filter_matrix, grad)
             if loss is None:
                 continue
@@ -328,6 +329,7 @@ class GradientTriggerSearch:
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 sum_grad += grad.sum(dim=0)
                 total_loss += loss.sum().cpu().item()
+                break
             return sum_grad, n_grad, total_loss
 
         def aggregate_loss():

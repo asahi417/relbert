@@ -73,25 +73,25 @@ class EncodePlus:
     def __call__(self, word_pair: List):
         """ Encoding a word pair or sentence. If the word pair is given use custom template."""
         param = {'max_length': self.max_length, 'truncation': True, 'padding': 'max_length'}
-        if all(type(i) is str for i in word_pair):
-            logging.warning('receive sentence instead of word: {}'.format(word_pair))
-            sentence = word_pair
+        # if all(type(i) is str for i in word_pair):
+        #     logging.warning('receive sentence instead of word: {}'.format(word_pair))
+        #     sentence = word_pair
+        # else:
+        if self.template:
+            top = self.template['top']
+            mid = self.template['mid']
+            bottom = self.template['bottom']
+            h, t = word_pair
+            mask = self.tokenizer.mask_token
+            assert h != mask and t != mask
+            token_ids = self.tokenizer.encode(
+                ' '.join([mask] * len(top) + [h] + [mask] * len(mid) + [t] + [mask] * len(bottom)))
+            token_ids = [-100 if i == self.tokenizer.mask_token_id else i for i in token_ids]
+            for i in top + mid + bottom:
+                token_ids[token_ids.index(-100)] = i
+            sentence = self.tokenizer.decode(token_ids)
         else:
-            if self.template:
-                top = self.template['top']
-                mid = self.template['mid']
-                bottom = self.template['bottom']
-                h, t = word_pair
-                mask = self.tokenizer.mask_token
-                assert h != mask and t != mask
-                token_ids = self.tokenizer.encode(
-                    ' '.join([mask] * len(top) + [h] + [mask] * len(mid) + [t] + [mask] * len(bottom)))
-                token_ids = [-100 if i == self.tokenizer.mask_token_id else i for i in token_ids]
-                for i in top + mid + bottom:
-                    token_ids[token_ids.index(-100)] = i
-                sentence = self.tokenizer.decode(token_ids)
-            else:
-                sentence = custom_prompter(word_pair, self.custom_template_type, self.tokenizer.mask_token)
+            sentence = custom_prompter(word_pair, self.custom_template_type, self.tokenizer.mask_token)
         encode = self.tokenizer.encode_plus(sentence, **param)
         assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
         encode['labels'] = self.input_ids_to_labels(encode['input_ids'])
