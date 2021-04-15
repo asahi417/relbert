@@ -18,7 +18,8 @@ def config(parser):
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
     parser.add_argument('--mode', help='lm mode', default='mask', type=str)
     parser.add_argument('--test-type', help='test data', default='analogy', type=str)
-    parser.add_argument('-t', '--template-type', help='template type', default='a', type=str)
+    parser.add_argument('-t', '--template-type', help='template type or path to generated prompt file',
+                        default='a', type=str)
     return parser
 
 

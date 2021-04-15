@@ -74,6 +74,7 @@ class Trainer:
         # load language model
         self.lm = RelBERT(
             model=model, max_length=max_length, cache_dir=self.cache_dir, mode=mode, template_type=template_type)
+
         assert not self.lm.is_trained, '{} is already trained'.format(model)
         self.lm.train()
 
