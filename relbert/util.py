@@ -164,7 +164,7 @@ class Dataset(torch.utils.data.Dataset):
             # self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2))
             #                             for k in self.keys}
             self.pattern_id = {k: list(product(
-                list(combinations(range(len(self.positive_samples[k])), 2)), negative_samples
+                list(combinations(range(len(self.positive_samples[k])), 2)), list(range(len(self.negative_samples[k])))
             )) for k in self.keys}
         else:
             self.keys = sorted(list(self.positive_samples.keys()))
