@@ -4,7 +4,7 @@ import tarfile
 import zipfile
 import requests
 from typing import Dict
-from itertools import combinations
+from itertools import combinations, product
 from random import randint
 
 import gdown
@@ -140,10 +140,6 @@ def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
     return loss
 
 
-def rand_sample(_list):
-    return _list[randint(0, len(_list) - 1)]
-
-
 class Dataset(torch.utils.data.Dataset):
     """ Dataset loader for triplet loss. """
     float_tensors = ['attention_mask']
@@ -152,22 +148,34 @@ class Dataset(torch.utils.data.Dataset):
                  positive_samples: Dict,
                  negative_samples: Dict = None,
                  pairwise_input: bool = True,
-                 relation_structure: Dict = None):
+                 relation_structure: Dict = None,
+                 deterministic_index: int = None):
         if negative_samples is not None:
             assert positive_samples.keys() == negative_samples.keys()
         self.positive_samples = positive_samples
         self.negative_samples = negative_samples
         self.pairwise_input = pairwise_input
         self.relation_structure = relation_structure
-        self.positive_pattern_id = None
+        # self.positive_pattern_id = None
+        self.pattern_id = None
+        self.deterministic_index = deterministic_index
         if self.pairwise_input:
             self.keys = sorted(list(positive_samples.keys()))
-            self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2))
-                                        for k in self.keys}
+            # self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2))
+            #                             for k in self.keys}
+            self.pattern_id = {k: list(product(
+                list(combinations(range(len(self.positive_samples[k])), 2)), negative_samples
+            )) for k in self.keys}
         else:
             self.keys = sorted(list(self.positive_samples.keys()))
             assert all(len(self.positive_samples[k]) == 1 for k in self.keys)
             assert self.negative_samples is None
+
+    def rand_sample(self, _list):
+        if self.deterministic_index:
+            return _list[self.deterministic_index % len(_list)]
+            # return _list[self.deterministic_index]
+        return _list[randint(0, len(_list) - 1)]
 
     def __len__(self):
         return len(self.keys)
@@ -182,30 +190,33 @@ class Dataset(torch.utils.data.Dataset):
         relation_type = self.keys[idx]
         if self.pairwise_input:
             # sampling pair from the relation type for anchor positive sample
-            a, b = rand_sample(self.positive_pattern_id[relation_type])
+            (a, b), n = self.rand_sample(self.pattern_id[relation_type])
+            # a, b = self.rand_sample(self.positive_pattern_id[relation_type])
             positive_a = self.positive_samples[relation_type][a]
             positive_b = self.positive_samples[relation_type][b]
+            negative = self.negative_samples[relation_type][n]
             tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
             tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
+            tensor_negative = {k: self.to_tensor(k, v) for k, v in negative.items()}
 
-            # sampling negative from the relation type
-            negative_list = self.negative_samples[relation_type]
-            tensor_negative = {k: self.to_tensor(k, v) for k, v in rand_sample(negative_list).items()}
+            # # sampling negative from the relation type
+            # negative_list = self.negative_samples[relation_type]
+            # tensor_negative = {k: self.to_tensor(k, v) for k, v in self.rand_sample(negative_list).items()}
 
             if self.relation_structure is not None:
                 # sampling relation type that shares same parent class with the positive sample
                 parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
                 assert len(parent_relation) == 1
-                relation_positive = rand_sample(self.relation_structure[parent_relation[0]])
+                relation_positive = self.rand_sample(self.relation_structure[parent_relation[0]])
                 # sampling positive from the relation type
-                positive_parent = rand_sample(self.positive_samples[relation_positive])
+                positive_parent = self.rand_sample(self.positive_samples[relation_positive])
                 tensor_positive_parent = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
 
                 # sampling relation type from different parent class (negative)
-                parent_relation_n = rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
-                relation_negative = rand_sample(self.relation_structure[parent_relation_n])
+                parent_relation_n = self.rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
+                relation_negative = self.rand_sample(self.relation_structure[parent_relation_n])
                 # sample individual entry from the relation
-                negative_parent = rand_sample(self.positive_samples[relation_negative])
+                negative_parent = self.rand_sample(self.positive_samples[relation_negative])
                 tensor_negative_parent = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
 
                 return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative,

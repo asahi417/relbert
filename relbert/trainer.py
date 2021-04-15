@@ -37,6 +37,7 @@ class Trainer:
                  fp16: bool = False,
                  random_seed: int = 0,
                  export_dir: str = None,
+                 export_name: str = None,
                  cache_dir: str = None):
         """ Initialize training instance to finetune relation BERT model.
 
@@ -63,6 +64,7 @@ class Trainer:
         fp16
         random_seed
         export_dir
+        export_name
         cache_dir
         """
 
@@ -101,7 +103,9 @@ class Trainer:
             momentum=momentum,
             fp16=fp16,
             random_seed=random_seed,
-            export_dir=export_dir)
+            export_dir=export_dir,
+            export_name=export_name
+        )
 
         # add file handler
         logger = logging.getLogger()

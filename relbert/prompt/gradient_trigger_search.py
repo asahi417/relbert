@@ -159,7 +159,7 @@ class GradientTriggerSearch:
                  model: str = 'roberta-large',
                  max_length: int = 64,
                  data: str = 'semeval2012',
-                 n_sample: int = 10,
+                 n_sample: int = 5,
                  in_batch_negative: bool = True,
                  parent_contrast: bool = True,
                  mse_margin: float = 1,
@@ -262,12 +262,11 @@ class GradientTriggerSearch:
         positive_embedding = {key[n]: v for n, v in enumerate(positive_embedding)}
         negative_embedding = negative_samples_list.restore_structure(negative_embedding)
         negative_embedding = {key[n]: v for n, v in enumerate(negative_embedding)}
-
         if self.config.parent_contrast:
-            return Dataset(positive_samples=positive_embedding, negative_samples=negative_embedding,
-                           relation_structure=self.relation_structure)
+            return dict(positive_samples=positive_embedding, negative_samples=negative_embedding,
+                        relation_structure=self.relation_structure)
         else:
-            return Dataset(positive_samples=positive_embedding, negative_samples=negative_embedding)
+            return dict(positive_samples=positive_embedding, negative_samples=negative_embedding)
 
     def get_prompt(self, num_workers: int = 1):
         """ Train prompter.
@@ -339,12 +338,11 @@ class GradientTriggerSearch:
                 grad = grad.view(batch_size, self.prompter.n_trigger, emb_dim)
                 sum_grad += grad.sum(dim=0)
                 total_loss += loss.sum().cpu().item()
-                # break
             return sum_grad, n_grad, total_loss
 
         def aggregate_loss():
-            data = self.preprocess()
-            if data is None:
+            shared_param = self.preprocess()
+            if shared_param is None:
                 return None, None
             sum_grad = 0
             n_grad = 0
@@ -352,8 +350,11 @@ class GradientTriggerSearch:
             # As the data feeder is stochastic (randomly sample combination of positive and negative), we ensure the
             # gradients are aggregated from large enough sets to behave as a global gradient by conducting several
             # individual runs.
-            for _ in tqdm(list(range(self.config.n_trial))):
-                # logging.debug('\t * individual trial: {}/{}'.format(n + 1, self.config.n_trial))
+            for d in tqdm(list(range(self.config.n_trial))):
+                data = Dataset(deterministic_index=d, **shared_param)
+                # for k, v in data.pattern_id.items():
+                #     print(k, len(v))
+                # input()
                 loader = torch.utils.data.DataLoader(data, batch_size=self.batch, num_workers=num_workers)
                 sum_grad, n_grad, total_loss = aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss)
             return sum_grad/n_grad, total_loss/n_grad
@@ -380,9 +381,13 @@ class GradientTriggerSearch:
 
         if self.config.trigger_selection == 'random':
             trigger_to_flip = random.randrange(self.prompter.n_trigger)
-            candidate = self.top_candidate(average_grad[trigger_to_flip], filter_matrix)
+        elif self.config.trigger_selection == 'best':
+            # choose trigger with the largest gradient norm
+            grad_norm = ((average_grad ** 2).sum(-1) ** 0.5).cpu().tolist()
+            trigger_to_flip = grad_norm.index(max(grad_norm))
         else:
             raise NotImplementedError()
+        candidate = self.top_candidate(average_grad[trigger_to_flip], filter_matrix)
 
         logging.debug('evaluate to get the best trigger: {}'.format(trigger_to_flip))
         candidate_with_score = []
