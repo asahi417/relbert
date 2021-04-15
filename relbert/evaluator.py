@@ -61,6 +61,7 @@ def _evaluate(model,
               num_worker: int = 1,
               data_loader_dict: Dict = None):
     lm = RelBERT(model, max_length=max_length, mode=mode, template_type=template_type)
+    lm.eval()
 
     if test_type == 'analogy':
         data = {d: get_analogy_data(d, cache_dir=cache_dir) for d in ['bats', 'sat', 'u2', 'u4', 'google']}
@@ -81,16 +82,18 @@ def _evaluate(model,
         raise ValueError('unknown test_type: {}'.format(test_type))
 
     embedding_dict = {}
-    for k, (val, test) in data.items():
-        logging.debug('\t * data: {}'.format(k))
-        all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
-        all_pairs = [tuple(v) for v in all_pairs]
+    with torch.no_grad():
 
-        embeddings = []
-        for encode in data_loader_dict[loader_type][k]:
-            embeddings += lm.to_embedding(encode).cpu().tolist()
-        assert len(embeddings) == len(all_pairs)
-        embedding_dict[k] = {str(k_): v for k_, v in zip(all_pairs, embeddings)}
+        for k, (val, test) in data.items():
+            logging.debug('\t * data: {}'.format(k))
+            all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
+            all_pairs = [tuple(v) for v in all_pairs]
+
+            embeddings = []
+            for encode in data_loader_dict[loader_type][k]:
+                embeddings += lm.to_embedding(encode).cpu().tolist()
+            assert len(embeddings) == len(all_pairs)
+            embedding_dict[k] = {str(k_): v for k_, v in zip(all_pairs, embeddings)}
 
     result = []
     for k, (val, test) in data.items():
@@ -112,9 +115,8 @@ def _evaluate(model,
         acc = (acc_val * len(val) + acc_test * len(test))/(len(val) + len(test))
         result.append({
             'accuracy_valid': acc_val, 'accuracy_test': acc_test, 'accuracy_full': acc,
-            'model': model, 'mode': lm.mode, 'template_type': lm.template_type,
-            'analogy_data': k,
-            'lm': lm.config.model_type
+            'model': model, 'mode': lm.mode, 'custom_template_type': lm.custom_template_type,
+            'template': lm.template, 'analogy_data': k, 'lm': lm.config.model_type
         })
         logging.info(str(result[-1]))
     return result, data_loader_dict
