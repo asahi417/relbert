@@ -17,7 +17,7 @@ from ..data import get_training_data
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'GradientTriggerSearch'
-MAX_GRADIENT_VALUE = 10
+MAX_GRADIENT_VALUE = 2000
 
 
 class EncodePlus:
