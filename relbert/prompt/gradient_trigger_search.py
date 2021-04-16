@@ -436,7 +436,8 @@ class GradientTriggerSearch:
         """ Returns the top candidate replacements."""
         with torch.no_grad():
             # gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
-            gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
+            # gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
+            gradient_dot_embedding_matrix = - torch.matmul(self.input_embeddings.weight, averaged_grad)
             logging.debug('\t - max gradient score:{}'.format(gradient_dot_embedding_matrix.max()))
             _, top_k_ids = gradient_dot_embedding_matrix.topk(len(gradient_dot_embedding_matrix))
         return top_k_ids.cpu().tolist()
