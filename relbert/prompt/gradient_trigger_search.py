@@ -410,6 +410,7 @@ class GradientTriggerSearch:
                     _, cand_loss = aggregate_loss(no_grad=True)
                 if cand_loss is None:
                     logging.info('\t - candidate: {} \tSKIP (invalid token)'.format(c_str))
+                    continue
                 loss_gain = average_loss - cand_loss
                 if loss_gain > 0:
                     logging.info('\t - candidate: {} \tUPDATE (loss decrease: {})'.format(c_str, loss_gain))
