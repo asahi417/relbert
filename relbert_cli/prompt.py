@@ -26,8 +26,8 @@ def config(parser):
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
     parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
-    parser.add_argument('--export-dir', help='directory to export', default=None, type=str)
-    parser.add_argument('--export-name', help='directory name', default=None, type=str)
+    # parser.add_argument('--export-dir', help='directory to export', default=None, type=str)
+    parser.add_argument('--export', help='directory name', default=None, type=str)
     # language model
     parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
     parser.add_argument('--checkpoint-path', help='checkpoint to load', default=None, type=str)
@@ -66,8 +66,9 @@ def main():
             mse_margin=opt.mse_margin,
             batch=opt.batch,
             random_seed=opt.random_seed,
-            export_dir=opt.export_dir,
-            export_name=opt.export_name,
+            export=opt.export,
+            # export_dir=opt.export_dir,
+            # export_name=opt.export_name,
             cache_dir=opt.cache_dir,
             checkpoint_path=opt.checkpoint_path
         )

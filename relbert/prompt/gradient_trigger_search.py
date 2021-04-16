@@ -148,6 +148,7 @@ class GradientStorage:
 class GradientTriggerSearch:
 
     def __init__(self,
+                 export: str=None,
                  topk: int = -1,
                  n_trigger_i: int = 1,
                  n_trigger_b: int = 1,
@@ -166,13 +167,9 @@ class GradientTriggerSearch:
                  batch: int = 16,
                  batch_no_grad: int = 64,
                  random_seed: int = 0,
-                 export_dir: str = None,
-                 export_name: str = None,
                  cache_dir: str = None,
                  checkpoint_path: str = None):
         fix_seed(random_seed)
-        if export_dir is None:
-            export_dir = '{}/prompt_files'.format(module_output_dir)
         # model setup
         self.tokenizer, self.model, self.config = load_language_model(model, cache_dir)
         self.model.eval()
@@ -183,8 +180,7 @@ class GradientTriggerSearch:
         self.batch_no_grad = batch_no_grad
         self.config = Config(
             config_name='prompter_config',
-            export_dir=export_dir,
-            checkpoint_name=export_name,
+            export=export,
             checkpoint_path=checkpoint_path,
             topk=topk,
             n_trigger_i=n_trigger_i,

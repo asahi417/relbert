@@ -23,14 +23,13 @@ def config(parser):
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
     parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
     parser.add_argument('--fp16', help='fp16 for training', action='store_true')
-    parser.add_argument('--epoch-save', help='interval to save model weight', default=5, type=int)
+    parser.add_argument('--epoch-save', help='interval to save model weight', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
-    parser.add_argument('--export-dir', help='directory to export model weight file', default=None, type=str)
-    parser.add_argument('--export-name', help='directory name', default=None, type=str)
+    parser.add_argument('--export', help='directory to export model weight file', default=None, type=str)
     # language model
     parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
-    parser.add_argument('--mode', help='lm mode', default='mask', type=str)
+    parser.add_argument('--mode', help='lm mode', default='average', type=str)
     # data
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
     parser.add_argument('--n-sample', help='sample size', default=5, type=int)
@@ -60,16 +59,16 @@ def main():
         parent_contrast=opt.parent_contrast,
         mse_margin=opt.mse_margin,
         epoch=opt.epoch,
-        epoch_warmup=opt.epoch_warmup,
+        export=opt.export,
         batch=opt.batch,
         lr=opt.lr,
         lr_decay=opt.lr_decay,
+        lr_warmup=opt.lr_warmup,
         weight_decay=opt.weight_decay,
         optimizer=opt.optimizer,
         momentum=opt.momentum,
         fp16=opt.fp16,
         random_seed=opt.random_seed,
-        export_dir=opt.export_dir,
         cache_dir=opt.cache_dir)
 
     # add file handler

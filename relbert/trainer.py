@@ -17,6 +17,7 @@ class Trainer:
     """ Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
 
     def __init__(self,
+                 export: str = None,
                  model: str = 'roberta-large',
                  max_length: int = 64,
                  mode: str = 'average',
@@ -37,8 +38,6 @@ class Trainer:
                  momentum: float = 0.9,
                  fp16: bool = False,
                  random_seed: int = 0,
-                 export_dir: str = None,
-                 export_name: str = None,
                  cache_dir: str = None):
         """ Initialize training instance to finetune relation BERT model.
 
@@ -71,8 +70,6 @@ class Trainer:
 
         fix_seed(random_seed)
         self.cache_dir = cache_dir
-        if export_dir is None:
-            export_dir = '{}/ckpt'.format(module_output_dir)
 
         # load language model
         self.lm = RelBERT(
@@ -104,8 +101,7 @@ class Trainer:
             momentum=momentum,
             fp16=fp16,
             random_seed=random_seed,
-            export_dir=export_dir,
-            export_name=export_name
+            export=export,
         )
 
         # calculate the number of trial to cover all combination in batch

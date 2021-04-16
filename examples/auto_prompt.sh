@@ -1,19 +1,10 @@
-relbert-prompt -n --n-trigger-i 3 --export-name 131_n
-relbert-prompt -n --n-trigger-i 4 --export-name 141_n
-relbert-prompt -n --n-trigger-i 5 --export-name 151_n
-relbert-prompt -n --n-trigger-i 6 --export-name 161_n
-
-relbert-prompt -n -p --n-trigger-i 3 --export-name 131_n_p
-relbert-prompt -n -p --n-trigger-i 4 --export-name 141_n_p
-relbert-prompt -n -p --n-trigger-i 5 --export-name 151_n_p
-#relbert-prompt -n -p --n-trigger-i 6 --export-name 161_n_p
-
-#relbert-prompt -n --n-trigger-i 3 --filter-label --export-name 131_label
-#relbert-prompt -n --n-trigger-i 4 --filter-label --export-name 141_label
-#relbert-prompt -n --n-trigger-i 5 --filter-label --export-name 151_label
-#relbert-prompt -n --n-trigger-i 6 --filter-label --export-name 161_label
-
-#relbert-prompt -n --n-trigger-i 3 --filter-pn --export-name 131_pn
-#relbert-prompt -n --n-trigger-i 4 --filter-pn --export-name 141_pn
-#relbert-prompt -n --n-trigger-i 5 --filter-pn --export-name 151_pn
-#relbert-prompt -n --n-trigger-i 6 --filter-pn --export-name 161_pn
+export PROMPT_DIR='./relbert_output/prompt_files'
+relbert-prompt --n-trigger-b 0 --n-trigger-i 3 --n-trigger-e 0 --export ${PROMPT_DIR}/030
+relbert-prompt --n-trigger-b 0 --n-trigger-i 4 --n-trigger-e 0 --export ${PROMPT_DIR}/040
+relbert-prompt --n-trigger-b 0 --n-trigger-i 5 --n-trigger-e 0 --export ${PROMPT_DIR}/050
+relbert-prompt --n-trigger-b 1 --n-trigger-i 3 --n-trigger-e 1 --export ${PROMPT_DIR}/131
+relbert-prompt --n-trigger-b 1 --n-trigger-i 4 --n-trigger-e 1 --export ${PROMPT_DIR}/141
+relbert-prompt --n-trigger-b 1 --n-trigger-i 5 --n-trigger-e 1 --export ${PROMPT_DIR}/151
+relbert-prompt --n-trigger-b 2 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/232
+relbert-prompt --n-trigger-b 2 --n-trigger-i 4 --n-trigger-e 2 --export ${PROMPT_DIR}/242
+relbert-prompt --n-trigger-b 2 --n-trigger-i 5 --n-trigger-e 2 --export ${PROMPT_DIR}/252

@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 from .lm import RelBERT
 from .data import get_analogy_data
-from .util import module_output_dir, Dataset
+from .util import Dataset
 
 
 def cos_similarity(a_, b_):
@@ -20,19 +20,18 @@ def cos_similarity(a_, b_):
 
 
 def evaluate(model: List,
+             export_file: str,
              max_length: int = 64,
              template_type: str = 'a',
              mode: str = 'mask',
              test_type: str = 'analogy',
-             export_file: str = None,
              cache_dir: str = None,
              batch: int = 64,
              num_worker: int = 1,
              shared_config: Dict = None,
              data_loader_dict=None):
-    if export_file is None:
-        export_file = '{}/eval/accuracy.{}.csv'.format(module_output_dir, test_type)
-
+    if not export_file.endswith('.csv'):
+        export_file += '.csv'
     logging.info('{} checkpoints'.format(len(model)))
     result = []
     for n, i in enumerate(model):
