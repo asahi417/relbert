@@ -1,6 +1,7 @@
 """ Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
 import os
 import logging
+from itertools import product, combinations
 
 import torch
 from torch import nn
@@ -107,23 +108,15 @@ class Trainer:
             export_name=export_name
         )
 
-        # add file handler
-        logger = logging.getLogger()
-        file_handler = logging.FileHandler('{}/training.log'.format(self.config.cache_dir))
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
-        logger.addHandler(file_handler)
+        # calculate the number of trial to cover all combination in batch
+        self.n_trial = len(list(product(combinations(range(self.config.n_sample), 2), range(self.config.n_sample))))
 
         # model size
         self.checkpoint_dir = self.config.cache_dir
 
         # get dataset
-        all_positive, all_negative, relation_structure = get_training_data(
+        self.all_positive, self.all_negative, self.relation_structure = get_training_data(
             data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=self.cache_dir)
-        if self.config.parent_contrast:
-            self.dataset = self.lm.preprocess(all_positive, all_negative, relation_structure)
-        else:
-            self.dataset = self.lm.preprocess(all_positive, all_negative)
 
         model_parameters = list(self.lm.model.named_parameters())
         self.linear = None
@@ -176,6 +169,11 @@ class Trainer:
             Epoch to run validation eg) Every 100000 epoch, it will save model weight as default.
         """
         writer = SummaryWriter(log_dir=self.config.cache_dir)
+
+        if self.config.parent_contrast:
+            dataset = self.lm.preprocess(self.all_positive, self.all_negative, self.relation_structure)
+        else:
+            dataset = self.lm.preprocess(self.all_positive, self.all_negative)
 
         logging.info('start model training')
         loader = torch.utils.data.DataLoader(

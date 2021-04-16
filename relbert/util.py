@@ -171,10 +171,10 @@ class Dataset(torch.utils.data.Dataset):
             assert all(len(self.positive_samples[k]) == 1 for k in self.keys)
             assert self.negative_samples is None
 
-    def rand_sample(self, _list):
-        if self.deterministic_index:
-            return _list[self.deterministic_index % len(_list)]
-            # return _list[self.deterministic_index]
+    @staticmethod
+    def rand_sample(_list):
+        # if self.deterministic_index:
+        #     return _list[self.deterministic_index % len(_list)]
         return _list[randint(0, len(_list) - 1)]
 
     def __len__(self):
@@ -190,7 +190,10 @@ class Dataset(torch.utils.data.Dataset):
         relation_type = self.keys[idx]
         if self.pairwise_input:
             # sampling pair from the relation type for anchor positive sample
-            (a, b), n = self.rand_sample(self.pattern_id[relation_type])
+            if self.deterministic_index:
+                (a, b), n = self.pattern_id[relation_type][self.deterministic_index]
+            else:
+                (a, b), n = self.rand_sample(self.pattern_id[relation_type])
             # a, b = self.rand_sample(self.positive_pattern_id[relation_type])
             positive_a = self.positive_samples[relation_type][a]
             positive_b = self.positive_samples[relation_type][b]
