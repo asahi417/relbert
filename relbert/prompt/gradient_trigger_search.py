@@ -381,7 +381,7 @@ class GradientTriggerSearch:
                         filter_matrix[idx] = -1e32
         logging.debug('compute gradient')
         average_grad, average_loss = aggregate_loss()
-        logging.debug('\t * tmp loss: {}'.format(average_loss))
+        logging.info('\t * tmp loss: {}'.format(average_loss))
 
         if self.config.trigger_selection == 'random':
             trigger_to_flip = random.randrange(self.prompter.n_trigger)
@@ -394,26 +394,30 @@ class GradientTriggerSearch:
         candidate = self.top_candidate(average_grad[trigger_to_flip], filter_matrix)
 
         logging.info('evaluate to get the best trigger: {}'.format(trigger_to_flip))
-        candidate_with_score = []
+        # candidate_with_score = []
+        best_trigger, best_loss = None, None
         original_trigger = self.prompter.get_trigger(trigger_to_flip)
-        for c in candidate:
+        for m, c in enumerate(candidate):
             self.prompter.update_trigger(trigger_to_flip, c)
-            logging.debug('compute gradient for candidate: {}'.format(self.tokenizer.convert_ids_to_tokens(c)))
             with torch.no_grad():
                 _, _loss = aggregate_loss(no_grad=True)
             if _loss is None:
                 logging.info('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
-            else:
-                candidate_with_score.append([c, _loss])
-                logging.info('\t - candidate: {} \tloss: {}'.format(self.tokenizer.convert_ids_to_tokens(c), _loss))
-
-        if len(candidate_with_score) == 0:
+            logging.info('\t - candidate: {} \tloss: {}'.format(self.tokenizer.convert_ids_to_tokens(c), _loss))
+            if _loss < average_loss:
+                logging.info('\t * loss improved: {} < {}'.format(_loss, average_loss))
+                best_trigger, best_loss = c, _loss
+                break
+            if self.config.topk != -1 and m > self.config.topk:
+                break
+            # else:
+                # candidate_with_score.append([c, _loss])
+        if best_loss is None:
             logging.info('no triggers updated')
             self.prompter.update_trigger(trigger_to_flip, original_trigger)
             return filter_matrix, None
-        best_trigger, best_loss = sorted(candidate_with_score, key=lambda x: x[1])[0]
-        logging.info('update trigger at {}: {}'.format(
-            trigger_to_flip, self.tokenizer.convert_ids_to_tokens(best_trigger)))
+        # best_trigger, best_loss = sorted(candidate_with_score, key=lambda x: x[1])[0]
+        logging.info('update `{}`: {}'.format(trigger_to_flip, self.tokenizer.convert_ids_to_tokens(best_trigger)))
         self.prompter.update_trigger(trigger_to_flip, best_trigger)
         return filter_matrix, best_loss
 
@@ -423,5 +427,6 @@ class GradientTriggerSearch:
             # print(self.input_embeddings.weight.max(), averaged_grad.max())
             gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
             logging.debug('\t - max gradient score:{}'.format(gradient_dot_embedding_matrix.max()))
-            _, top_k_ids = gradient_dot_embedding_matrix.topk(self.config.topk)
+            # _, top_k_ids = gradient_dot_embedding_matrix.topk(self.config.topk)
+            _, top_k_ids = gradient_dot_embedding_matrix.topk(len(gradient_dot_embedding_matrix))
         return top_k_ids.cpu().tolist()

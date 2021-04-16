@@ -2,7 +2,7 @@
 import os
 import logging
 from itertools import product, combinations
-
+import random
 import torch
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
@@ -10,7 +10,7 @@ from torch.utils.tensorboard import SummaryWriter
 from .lm import RelBERT
 from .data import get_training_data
 from .config import Config
-from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed, module_output_dir
+from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed, module_output_dir, Dataset
 
 
 class Trainer:
@@ -21,17 +21,17 @@ class Trainer:
                  max_length: int = 64,
                  mode: str = 'average',
                  data: str = 'semeval2012',
-                 n_sample: int = 10,
+                 n_sample: int = 5,
                  template_type: str = 'a',
                  softmax_loss: bool = True,
                  in_batch_negative: bool = True,
                  parent_contrast: bool = True,
                  mse_margin: float = 1,
-                 epoch: int = 10,
-                 epoch_warmup: int = 10,
+                 epoch: int = 5,
                  batch: int = 64,
                  lr: float = 0.001,
                  lr_decay: bool = False,
+                 lr_warmup: int = 100,
                  weight_decay: float = 0,
                  optimizer: str = 'adam',
                  momentum: float = 0.9,
@@ -55,10 +55,10 @@ class Trainer:
         parent_contrast
         mse_margin
         epoch
-        epoch_warmup
         batch
         lr
         lr_decay
+        lr_warmup
         weight_decay
         optimizer
         momentum
@@ -95,7 +95,7 @@ class Trainer:
             parent_contrast=parent_contrast,
             mse_margin=mse_margin,
             epoch=epoch,
-            epoch_warmup=epoch_warmup,
+            lr_warmup=lr_warmup,
             batch=batch,
             lr=lr,
             lr_decay=lr_decay,
@@ -152,7 +152,7 @@ class Trainer:
         # scheduler
         self.scheduler = get_linear_schedule_with_warmup(
             self.optimizer,
-            num_warmup_steps=self.config.epoch_warmup,
+            num_warmup_steps=self.config.lr_warmup,
             num_training_steps=self.config.epoch if self.config.lr_decay else None)
 
         # GPU mixture precision
@@ -176,22 +176,25 @@ class Trainer:
             dataset = self.lm.preprocess(self.all_positive, self.all_negative)
 
         logging.info('start model training')
-        loader = torch.utils.data.DataLoader(
-            self.dataset, batch_size=self.config.batch, shuffle=True, num_workers=num_workers, drop_last=True)
         logging.info('\t * train data: {}, batch number: {}'.format(len(self.dataset), len(loader)))
+        batch_index = list(range(self.n_trial))
+        global_step = 0
 
         with torch.cuda.amp.autocast(enabled=self.config.fp16):
             for e in range(self.config.epoch):  # loop over the epoch
-                mean_loss = self.train_single_epoch(loader, epoch_n=e, writer=writer)
-                inst_lr = self.optimizer.param_groups[0]['lr']
-                logging.info('[epoch {}/{}] average loss: {}, lr: {}'.format(
-                    e, self.config.epoch, round(mean_loss, 3), inst_lr))
-
+                random.shuffle(batch_index)
+                for n, bi in enumerate(batch_index):
+                    dataset = Dataset(deterministic_index=bi, **dataset)
+                    loader = torch.utils.data.DataLoader(
+                        dataset, batch_size=self.config.batch, shuffle=True, num_workers=num_workers, drop_last=True)
+                    mean_loss, global_step = self.train_single_epoch(loader, global_step=global_step, writer=writer)
+                    inst_lr = self.optimizer.param_groups[0]['lr']
+                    logging.info('[epoch {}/{}, batch_id {}/{}] average loss: {}, lr: {}'.format(
+                        e, self.config.epoch, n, self.n_trial, round(mean_loss, 3), inst_lr))
                 if (e + 1) % epoch_save == 0 and (e + 1) != 0:
                     cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, e + 1)
                     os.makedirs(cache_dir, exist_ok=True)
                     self.lm.save(cache_dir)
-                self.scheduler.step()
 
         writer.close()
         cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, e + 1)
@@ -199,12 +202,13 @@ class Trainer:
         self.lm.save(cache_dir)
         logging.info('complete training: model ckpt was saved at {}'.format(self.checkpoint_dir))
 
-    def train_single_epoch(self, data_loader, epoch_n: int, writer):
+    def train_single_epoch(self, data_loader, global_step: int, writer):
         self.lm.train()
         total_loss = 0
         bce = nn.BCELoss()
         step_in_epoch = len(data_loader)
-        for i, x in enumerate(data_loader):
+        for x in data_loader:
+            global_step += 1
 
             self.optimizer.zero_grad()
 
@@ -245,16 +249,17 @@ class Trainer:
             self.scaler.scale(loss).backward()
 
             inst_loss = loss.cpu().item()
-            writer.add_scalar('train/loss', inst_loss, i + epoch_n * step_in_epoch)
+            writer.add_scalar('train/loss', inst_loss, global_step)
 
             # update optimizer
             inst_lr = self.optimizer.param_groups[0]['lr']
-            writer.add_scalar('train/learning_rate', inst_lr, i + epoch_n * step_in_epoch)
+            writer.add_scalar('train/learning_rate', inst_lr, global_step)
 
             # aggregate average loss over epoch
             total_loss += inst_loss
 
             self.scaler.step(self.optimizer)
             self.scaler.update()
+            self.scheduler.step()
 
-        return total_loss / step_in_epoch
+        return total_loss / step_in_epoch, global_step

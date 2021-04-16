@@ -261,10 +261,10 @@ class RelBERT:
             negative_embedding = negative_sample_list.restore_structure(negative_embedding)
             negative_embedding = {key[n]: v for n, v in enumerate(negative_embedding)}
 
-        return Dataset(positive_samples=positive_embedding,
-                       negative_samples=negative_embedding,
-                       relation_structure=relation_structure,
-                       pairwise_input=pairwise_input)
+        return dict(positive_samples=positive_embedding,
+                    negative_samples=negative_embedding,
+                    relation_structure=relation_structure,
+                    pairwise_input=pairwise_input)
 
     def to_embedding(self, encode):
         """ Compute embedding from batch of encode. """
@@ -294,6 +294,7 @@ class RelBERT:
         """
 
         data = self.preprocess(x, parallel=parallel, pairwise_input=False)
+        data = Dataset(**data)
         batch_size = len(x) if batch_size is None else batch_size
         data_loader = torch.utils.data.DataLoader(
             data, num_workers=num_worker, batch_size=batch_size, shuffle=False, drop_last=False)

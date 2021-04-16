@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 from .lm import RelBERT
 from .data import get_analogy_data
-from .util import module_output_dir
+from .util import module_output_dir, Dataset
 
 
 def cos_similarity(a_, b_):
@@ -78,6 +78,7 @@ def _evaluate(model,
                 all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
                 all_pairs = [tuple(i) for i in all_pairs]
                 data_ = lm.preprocess(all_pairs, parallel=True, pairwise_input=False)
+                data_ = Dataset(**data_)
                 batch = len(all_pairs) if batch is None else batch
                 data_loader_dict[loader_type][d] = torch.utils.data.DataLoader(
                     data_, num_workers=num_worker, batch_size=batch, shuffle=False, drop_last=False)
