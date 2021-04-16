@@ -6,6 +6,7 @@ import random
 from itertools import chain
 from typing import List
 from multiprocessing import Pool
+from itertools import combinations, product
 from tqdm import tqdm
 import torch
 
@@ -152,7 +153,6 @@ class GradientTriggerSearch:
                  n_trigger_b: int = 1,
                  n_trigger_e: int = 1,
                  n_iteration: int = 10,
-                 n_trial: int = 50,
                  filter_label: bool = False,
                  filter_pn: bool = False,
                  trigger_selection: str = 'random',
@@ -191,7 +191,6 @@ class GradientTriggerSearch:
             n_trigger_b=n_trigger_b,
             n_trigger_e=n_trigger_e,
             n_iteration=n_iteration,
-            n_trial=n_trial,
             filter_label=filter_label,
             filter_pn=filter_pn,
             trigger_selection=trigger_selection,
@@ -214,6 +213,9 @@ class GradientTriggerSearch:
             for n, i in enumerate(tmp['top'] + tmp['mid'] + tmp['bottom']):
                 self.prompter.update_trigger(n, i)
 
+        # calculate the number of trial to cover all combination in batch
+        self.n_trial = len(list(product(combinations(range(self.config.n_sample), 2), range(self.config.n_sample))))
+
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
         self.parallel = False
@@ -226,7 +228,8 @@ class GradientTriggerSearch:
         self.all_positive, self.all_negative, self.relation_structure = get_training_data(
             data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=cache_dir)
         assert self.all_negative.keys() == self.all_positive.keys()
-        logging.debug('{} positive data/{} negative data'.format(len(self.all_positive), len(self.all_negative)))
+        logging.info('{} positive data/{} negative data'.format(len(self.all_positive), len(self.all_negative)))
+        logging.info('{} trial'.format(self.n_trial))
 
     def get_filtering_matrix(self):
         key = list(self.all_positive.keys())
@@ -355,7 +358,7 @@ class GradientTriggerSearch:
             # gradients are aggregated from large enough sets to behave as a global gradient by conducting several
             # individual runs.
             batch = self.batch_no_grad if no_grad else self.batch
-            for d in tqdm(list(range(self.config.n_trial))):
+            for d in tqdm(list(range(self.n_trial))):
                 data = Dataset(deterministic_index=d, **shared_param)
                 loader = torch.utils.data.DataLoader(data, batch_size=batch, num_workers=num_workers)
                 sum_grad, n_grad, total_loss = aggregate_loss_single_trial(loader, sum_grad, n_grad, total_loss, no_grad)

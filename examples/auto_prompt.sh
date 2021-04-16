@@ -1,13 +1,12 @@
-relbert-prompt -n --n-trigger-i 3 --export-name 131
-relbert-prompt -n --n-trigger-i 4 --export-name 141
-relbert-prompt -n --n-trigger-i 5 --export-name 151
-relbert-prompt -n --n-trigger-i 6 --export-name 161 -b 32
+relbert-prompt -n --n-trigger-i 3 --export-name 131_rand --trigger-selection random
+relbert-prompt -n --n-trigger-i 4 --export-name 141_rand --trigger-selection random
+relbert-prompt -n --n-trigger-i 5 --export-name 151_rand --trigger-selection random
+relbert-prompt -n --n-trigger-i 6 --export-name 161_rand --trigger-selection random
 
-relbert-prompt -n -p --n-trigger-i 3 --export-name 131_p
-relbert-prompt -n -p --n-trigger-i 4 --export-name 141_p
-relbert-prompt -n -p --n-trigger-i 5 --export-name 151_p
-relbert-prompt -n -p --n-trigger-i 6 --export-name 161_p
-
+relbert-prompt -n -p --n-trigger-i 3 --export-name 131_rand_p --trigger-selection random
+relbert-prompt -n -p --n-trigger-i 4 --export-name 141_rand_p --trigger-selection random
+relbert-prompt -n -p --n-trigger-i 5 --export-name 151_rand_p --trigger-selection random
+relbert-prompt -n -p --n-trigger-i 6 --export-name 161_rand_p --trigger-selection random
 
 #relbert-prompt -n --n-trigger-i 3 --filter-label --export-name 131_label
 #relbert-prompt -n --n-trigger-i 4 --filter-label --export-name 141_label

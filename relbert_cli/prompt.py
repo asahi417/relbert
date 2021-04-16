@@ -13,7 +13,6 @@ def config(parser):
     parser.add_argument('--n-trigger-b', help='trigger number', default=1, type=int)
     parser.add_argument('--n-trigger-e', help='trigger number', default=1, type=int)
     parser.add_argument('-i', '--n-iteration', help='iteration', default=25, type=int)
-    parser.add_argument('--n-trial', help='individual trial to mitigate randomness', default=790, type=int)
     parser.add_argument('--filter-label', help='remove label token', action='store_true')
     parser.add_argument('--filter-pn', help='remove proper noun', action='store_true')
     # optimization
@@ -56,7 +55,6 @@ def main():
             n_trigger_b=opt.n_trigger_b,
             n_trigger_e=opt.n_trigger_e,
             n_iteration=opt.n_iteration,
-            n_trial=opt.n_trial,
             filter_label=opt.filter_label,
             filter_pn=opt.filter_pn,
             model=opt.model,
