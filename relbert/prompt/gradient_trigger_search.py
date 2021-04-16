@@ -383,50 +383,60 @@ class GradientTriggerSearch:
         average_grad, average_loss = aggregate_loss()
         logging.info('\t * tmp loss: {}'.format(average_loss))
 
+        # create trigger que: evaluation will be done in the order
         if self.config.trigger_selection == 'random':
-            trigger_to_flip = random.randrange(self.prompter.n_trigger)
+            # random
+            trigger_index = list(range(self.prompter.n_trigger))
+            random.shuffle(trigger_index)
         elif self.config.trigger_selection == 'best':
-            # choose trigger with the largest gradient norm
+            # choose trigger with the largest gradient norm (tend to be fixed to specific position)
             grad_norm = ((average_grad ** 2).sum(-1) ** 0.5).cpu().tolist()
-            trigger_to_flip = grad_norm.index(max(grad_norm))
+            trigger_index = [grad_norm.index(i) for i in sorted(grad_norm, reverse=True)]
         else:
             raise NotImplementedError()
-        candidate = self.top_candidate(average_grad[trigger_to_flip], filter_matrix)
 
-        logging.info('evaluate to get the best trigger: {}'.format(trigger_to_flip))
-        # candidate_with_score = []
-        best_trigger, best_loss = None, None
-        original_trigger = self.prompter.get_trigger(trigger_to_flip)
-        for m, c in enumerate(candidate):
-            self.prompter.update_trigger(trigger_to_flip, c)
-            with torch.no_grad():
-                _, _loss = aggregate_loss(no_grad=True)
-            if _loss is None:
-                logging.info('\t - candidate: {} \tSKIPPED'.format(self.tokenizer.convert_ids_to_tokens(c)))
-            logging.info('\t - candidate: {} \tloss: {}'.format(self.tokenizer.convert_ids_to_tokens(c), _loss))
-            if _loss < average_loss:
-                logging.info('\t * loss improved: {} < {}'.format(_loss, average_loss))
-                best_trigger, best_loss = c, _loss
-                break
-            if self.config.topk != -1 and m > self.config.topk:
-                break
-            # else:
-                # candidate_with_score.append([c, _loss])
-        if best_loss is None:
-            logging.info('no triggers updated')
+        original_trigger, trigger_to_flip, best_trigger, best_loss = None, None, None, None
+        logging.info('evaluate to get the best trigger: {}'.format(trigger_index))
+
+        # whenever it finds loss improvement, exit and update with it
+        for trigger_to_flip in trigger_index:
+            logging.info('evaluate trigger: {}'.format(trigger_to_flip))
+            candidate = self.top_candidate(average_grad[trigger_to_flip], filter_matrix)
+            original_trigger = self.prompter.get_trigger(trigger_to_flip)
+            for m, c in enumerate(candidate):
+                c_str = self.tokenizer.convert_ids_to_tokens(c)
+                self.prompter.update_trigger(trigger_to_flip, c)
+                with torch.no_grad():
+                    _, cand_loss = aggregate_loss(no_grad=True)
+                if cand_loss is None:
+                    logging.info('\t - candidate: {} \tSKIP (invalid token)'.format(c_str))
+                loss_gain = average_loss - cand_loss
+                if loss_gain < 0:
+                    logging.info('\t - candidate: {} \tUPDATE (loss gain: {})'.format(c_str, loss_gain))
+                    best_trigger, best_loss = c, cand_loss
+                    break
+                logging.info('\t - candidate: {} \tSKIP (no loss gain: {})'.format(c_str, loss_gain))
+                if self.config.topk != -1 and m > self.config.topk:
+                    logging.info('reached max candidate (no trigger found at {})'.format(trigger_to_flip))
+                    break
             self.prompter.update_trigger(trigger_to_flip, original_trigger)
+            if best_loss is not None:
+                break
+
+        if best_loss is None:
+            logging.info('no triggers found')
             return filter_matrix, None
-        # best_trigger, best_loss = sorted(candidate_with_score, key=lambda x: x[1])[0]
-        logging.info('update `{}`: {}'.format(trigger_to_flip, self.tokenizer.convert_ids_to_tokens(best_trigger)))
+        new = self.tokenizer.convert_ids_to_tokens(best_trigger)
+        old = self.tokenizer.convert_ids_to_tokens(original_trigger)
+        logging.info('update `{}`: {} -> {}'.format(trigger_to_flip, old, new))
         self.prompter.update_trigger(trigger_to_flip, best_trigger)
         return filter_matrix, best_loss
 
     def top_candidate(self, averaged_grad, filter_matrix):
         """ Returns the top candidate replacements."""
         with torch.no_grad():
-            # print(self.input_embeddings.weight.max(), averaged_grad.max())
-            gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
+            # gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
+            gradient_dot_embedding_matrix = - filter_matrix + torch.matmul(self.input_embeddings.weight, averaged_grad)
             logging.debug('\t - max gradient score:{}'.format(gradient_dot_embedding_matrix.max()))
-            # _, top_k_ids = gradient_dot_embedding_matrix.topk(self.config.topk)
             _, top_k_ids = gradient_dot_embedding_matrix.topk(len(gradient_dot_embedding_matrix))
         return top_k_ids.cpu().tolist()
