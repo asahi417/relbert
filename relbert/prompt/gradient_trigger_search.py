@@ -148,7 +148,7 @@ class GradientStorage:
 class GradientTriggerSearch:
 
     def __init__(self,
-                 topk: int = 10,
+                 topk: int = -1,
                  n_trigger_i: int = 1,
                  n_trigger_b: int = 1,
                  n_trigger_e: int = 1,
@@ -411,11 +411,11 @@ class GradientTriggerSearch:
                 if cand_loss is None:
                     logging.info('\t - candidate: {} \tSKIP (invalid token)'.format(c_str))
                 loss_gain = average_loss - cand_loss
-                if loss_gain < 0:
-                    logging.info('\t - candidate: {} \tUPDATE (loss gain: {})'.format(c_str, loss_gain))
+                if loss_gain > 0:
+                    logging.info('\t - candidate: {} \tUPDATE (loss decrease: {})'.format(c_str, loss_gain))
                     best_trigger, best_loss = c, cand_loss
                     break
-                logging.info('\t - candidate: {} \tSKIP (no loss gain: {})'.format(c_str, loss_gain))
+                logging.info('\t - candidate: {} \tSKIP (no loss decrease, loss:{})'.format(c_str, cand_loss))
                 if self.config.topk != -1 and m > self.config.topk:
                     logging.info('reached max candidate (no trigger found at {})'.format(trigger_to_flip))
                     break
@@ -436,7 +436,7 @@ class GradientTriggerSearch:
         """ Returns the top candidate replacements."""
         with torch.no_grad():
             # gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
-            gradient_dot_embedding_matrix = - filter_matrix + torch.matmul(self.input_embeddings.weight, averaged_grad)
+            gradient_dot_embedding_matrix = filter_matrix + torch.matmul(self.input_embeddings.weight, averaged_grad)
             logging.debug('\t - max gradient score:{}'.format(gradient_dot_embedding_matrix.max()))
             _, top_k_ids = gradient_dot_embedding_matrix.topk(len(gradient_dot_embedding_matrix))
         return top_k_ids.cpu().tolist()
