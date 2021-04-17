@@ -180,7 +180,7 @@ class Trainer:
             for e in range(self.config.epoch):  # loop over the epoch
                 random.shuffle(batch_index)
                 for n, bi in enumerate(batch_index):
-                    print(param)
+                    # print(param)
                     dataset = Dataset(deterministic_index=bi, **param)
                     loader = torch.utils.data.DataLoader(
                         dataset, batch_size=self.config.batch, shuffle=True, num_workers=num_workers, drop_last=True)
