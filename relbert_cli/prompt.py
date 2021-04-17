@@ -7,7 +7,7 @@ import relbert
 def config(parser):
     # prompt
     parser.add_argument('--method', help='prompting method', default='autoprompt', type=str)
-    parser.add_argument('-k', '--topk', help='top k', default=-1, type=int)
+    parser.add_argument('-k', '--topk', help='top k', default=100, type=int)
     parser.add_argument('--trigger-selection', help='method to select trigger', default='random', type=str)
     parser.add_argument('--n-trigger-i', help='trigger number', default=3, type=int)
     parser.add_argument('--n-trigger-b', help='trigger number', default=1, type=int)
