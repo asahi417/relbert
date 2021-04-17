@@ -279,17 +279,20 @@ class GradientTriggerSearch:
         """
         logging.info('start prompt generation')
         filter_matrix = None
+        loss = None
         for i in range(self.config.last_iter, self.config.n_iteration):
             filter_matrix, loss = self.__single_iteration(num_workers, filter_matrix)
             if loss is None:
-                continue
+                logging.info('early exit: no more updates')
+                break
             logging.info('iteration {}/{}: {}\t loss {}'.format(
                 i + 1, self.config.n_iteration, self.tokenizer.convert_ids_to_tokens(self.prompter.triggers), loss))
             self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i), loss)
             mode = 'a' if os.path.exists('{}/loss.txt'.format(self.config.cache_dir)) else 'w'
             with open('{}/loss.txt'.format(self.config.cache_dir), mode) as f:
                 f.write('{}\n'.format(loss))
-        self.prompter.save('{}/prompt.json'.format(self.config.cache_dir), loss)
+        if loss is not None:
+            self.prompter.save('{}/prompt.json'.format(self.config.cache_dir), loss)
 
     def __single_iteration(self, num_workers: int = 1, filter_matrix=None):
 
