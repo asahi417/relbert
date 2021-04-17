@@ -1,4 +1,5 @@
 export PROMPT_DIR='./relbert_output/prompt_files'
+
 relbert-prompt --n-trigger-b 0 --n-trigger-i 3 --n-trigger-e 0 --export ${PROMPT_DIR}/030
 relbert-prompt --n-trigger-b 0 --n-trigger-i 4 --n-trigger-e 0 --export ${PROMPT_DIR}/040
 relbert-prompt --n-trigger-b 0 --n-trigger-i 5 --n-trigger-e 0 --export ${PROMPT_DIR}/050

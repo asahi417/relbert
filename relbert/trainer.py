@@ -172,7 +172,7 @@ class Trainer:
             dataset = self.lm.preprocess(self.all_positive, self.all_negative)
 
         logging.info('start model training')
-        logging.info('\t * train data: {}, batch number: {}'.format(len(self.dataset), len(loader)))
+        # logging.info('\t * train data: {}, batch number: {}'.format(len(dataset), len(loader)))
         batch_index = list(range(self.n_trial))
         global_step = 0
 
