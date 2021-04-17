@@ -167,9 +167,9 @@ class Trainer:
         writer = SummaryWriter(log_dir=self.config.cache_dir)
 
         if self.config.parent_contrast:
-            dataset = self.lm.preprocess(self.all_positive, self.all_negative, self.relation_structure)
+            param = self.lm.preprocess(self.all_positive, self.all_negative, self.relation_structure)
         else:
-            dataset = self.lm.preprocess(self.all_positive, self.all_negative)
+            param = self.lm.preprocess(self.all_positive, self.all_negative)
 
         logging.info('start model training')
         # logging.info('\t * train data: {}, batch number: {}'.format(len(dataset), len(loader)))
@@ -180,7 +180,8 @@ class Trainer:
             for e in range(self.config.epoch):  # loop over the epoch
                 random.shuffle(batch_index)
                 for n, bi in enumerate(batch_index):
-                    dataset = Dataset(deterministic_index=bi, **dataset)
+                    print(param)
+                    dataset = Dataset(deterministic_index=bi, **param)
                     loader = torch.utils.data.DataLoader(
                         dataset, batch_size=self.config.batch, shuffle=True, num_workers=num_workers, drop_last=True)
                     mean_loss, global_step = self.train_single_epoch(loader, global_step=global_step, writer=writer)
