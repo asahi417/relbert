@@ -19,10 +19,10 @@ preset_templates = {
         "c": "Today, I finally discovered the relation between <subj> and <obj> : <mask>",
         "d": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>",
         "e": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is A’s <mask>",
-        "f": "The teacher explained how <subj> is related to <obj> : it is <obj> 's <mask>",
-        "g": "The teacher explained how <subj> is related to <obj> : it is <mask>",
-        "h": "The teacher explained how <subj> is related to <obj> : <mask>",
-        "i": "The teacher explained how <subj> is related to <obj> : it is the <mask>"
+        # "f": "The teacher explained how <subj> is related to <obj> : it is <obj> 's <mask>",
+        # "g": "The teacher explained how <subj> is related to <obj> : it is <mask>",
+        # "h": "The teacher explained how <subj> is related to <obj> : <mask>",
+        # "i": "The teacher explained how <subj> is related to <obj> : it is the <mask>"
     }
 
 

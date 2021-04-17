@@ -6,12 +6,12 @@ relbert-train -n -p -s -t a --export ${CKPT_DIR}/custom_a
 relbert-train -n -p -s -t b --export ${CKPT_DIR}/custom_b
 relbert-train -n -p -s -t c --export ${CKPT_DIR}/custom_c
 relbert-train -n -p -s -t d --export ${CKPT_DIR}/custom_d
-
 relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e
-relbert-train -n -p -s -t f --export ${CKPT_DIR}/custom_f
-relbert-train -n -p -s -t g --export ${CKPT_DIR}/custom_g
-relbert-train -n -p -s -t h --export ${CKPT_DIR}/custom_h
-relbert-train -n -p -s -t i --export ${CKPT_DIR}/custom_i
+
+#relbert-train -n -p -s -t f --export ${CKPT_DIR}/custom_f
+#relbert-train -n -p -s -t g --export ${CKPT_DIR}/custom_g
+#relbert-train -n -p -s -t h --export ${CKPT_DIR}/custom_h
+#relbert-train -n -p -s -t i --export ${CKPT_DIR}/custom_i
 
 # Train with autoprompt
 relbert-train -n -p -s -t ${PROMPT_DIR}/030 --export ${CKPT_DIR}/autoprompt_030

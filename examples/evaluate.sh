@@ -10,10 +10,10 @@ relbert-eval --debug -m roberta-large -t b --export-file ${EVAL_LM_CUSTOM}
 relbert-eval --debug -m roberta-large -t c --export-file ${EVAL_LM_CUSTOM}
 relbert-eval --debug -m roberta-large -t d --export-file ${EVAL_LM_CUSTOM}
 relbert-eval --debug -m roberta-large -t e --export-file ${EVAL_LM_CUSTOM}
-relbert-eval --debug -m roberta-large -t f --export-file ${EVAL_LM_CUSTOM}
-relbert-eval --debug -m roberta-large -t g --export-file ${EVAL_LM_CUSTOM}
-relbert-eval --debug -m roberta-large -t h --export-file ${EVAL_LM_CUSTOM}
-relbert-eval --debug -m roberta-large -t i --export-file ${EVAL_LM_CUSTOM}
+#relbert-eval --debug -m roberta-large -t f --export-file ${EVAL_LM_CUSTOM}
+#relbert-eval --debug -m roberta-large -t g --export-file ${EVAL_LM_CUSTOM}
+#relbert-eval --debug -m roberta-large -t h --export-file ${EVAL_LM_CUSTOM}
+#relbert-eval --debug -m roberta-large -t i --export-file ${EVAL_LM_CUSTOM}
 relbert-eval --debug -m roberta-large -t ${PROMPT_DIR}/030 --export-file ${EVAL_LM_AUTO}
 relbert-eval --debug -m roberta-large -t ${PROMPT_DIR}/040 --export-file ${EVAL_LM_AUTO}
 relbert-eval --debug -m roberta-large -t ${PROMPT_DIR}/050 --export-file ${EVAL_LM_AUTO}
@@ -29,10 +29,10 @@ relbert-eval -c ${CKPT_DIR}/custom_b --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_c --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_d --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_e --export-file ${EVAL_FT_CUSTOM}
-relbert-eval -c ${CKPT_DIR}/custom_f --export-file ${EVAL_FT_CUSTOM}
-relbert-eval -c ${CKPT_DIR}/custom_g --export-file ${EVAL_FT_CUSTOM}
-relbert-eval -c ${CKPT_DIR}/custom_h --export-file ${EVAL_FT_CUSTOM}
-relbert-eval -c ${CKPT_DIR}/custom_i --export-file ${EVAL_FT_CUSTOM}
+#relbert-eval -c ${CKPT_DIR}/custom_f --export-file ${EVAL_FT_CUSTOM}
+#relbert-eval -c ${CKPT_DIR}/custom_g --export-file ${EVAL_FT_CUSTOM}
+#relbert-eval -c ${CKPT_DIR}/custom_h --export-file ${EVAL_FT_CUSTOM}
+#relbert-eval -c ${CKPT_DIR}/custom_i --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/autprompt_030 --export-file ${EVAL_FT_AUTO}
 relbert-eval -c ${CKPT_DIR}/autprompt_040 --export-file ${EVAL_FT_AUTO}
 relbert-eval -c ${CKPT_DIR}/autprompt_050 --export-file ${EVAL_FT_AUTO}
