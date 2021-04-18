@@ -73,10 +73,6 @@ class EncodePlus:
     def __call__(self, word_pair: List):
         """ Encoding a word pair or sentence. If the word pair is given use custom template."""
         param = {'max_length': self.max_length, 'truncation': True, 'padding': 'max_length'}
-        # if all(type(i) is str for i in word_pair):
-        #     logging.warning('receive sentence instead of word: {}'.format(word_pair))
-        #     sentence = word_pair
-        # else:
         if self.template:
             top = self.template['top']
             mid = self.template['mid']

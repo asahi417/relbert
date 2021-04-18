@@ -291,8 +291,7 @@ class GradientTriggerSearch:
             mode = 'a' if os.path.exists('{}/loss.txt'.format(self.config.cache_dir)) else 'w'
             with open('{}/loss.txt'.format(self.config.cache_dir), mode) as f:
                 f.write('{}\n'.format(loss))
-        if loss is not None:
-            self.prompter.save('{}/prompt.json'.format(self.config.cache_dir), loss)
+        self.prompter.save('{}/prompt.json'.format(self.config.cache_dir), loss)
 
     def __single_iteration(self, num_workers: int = 1, filter_matrix=None):
 
