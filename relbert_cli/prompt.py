@@ -7,7 +7,7 @@ import relbert
 def config(parser):
     # prompt
     parser.add_argument('--method', help='prompting method', default='autoprompt', type=str)
-    parser.add_argument('-k', '--topk', help='top k', default=100, type=int)
+    parser.add_argument('-k', '--topk', help='top k', default=50, type=int)
     parser.add_argument('--trigger-selection', help='method to select trigger', default='random', type=str)
     parser.add_argument('--n-trigger-i', help='trigger number', default=3, type=int)
     parser.add_argument('--n-trigger-b', help='trigger number', default=1, type=int)
@@ -26,7 +26,6 @@ def config(parser):
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
     parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
-    # parser.add_argument('--export-dir', help='directory to export', default=None, type=str)
     parser.add_argument('--export', help='directory name', default=None, type=str)
     # language model
     parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
@@ -34,7 +33,7 @@ def config(parser):
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
     # data
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
-    parser.add_argument('--n-sample', help='sample size', default=10, type=int)
+    parser.add_argument('--n-sample', help='sample size', default=5, type=int)
     return parser
 
 

@@ -2,30 +2,17 @@ export CKPT_DIR='./relbert_output/ckpt'
 export PROMPT_DIR='./relbert_output/prompt_files'
 
 # Train with custom template
-relbert-train -n -p -s -t a --export ${CKPT_DIR}/custom_a -b 16 -e 5
-relbert-train -n -p -s -t b --export ${CKPT_DIR}/custom_b -b 16 -e 5
-relbert-train -n -p -s -t c --export ${CKPT_DIR}/custom_c -b 16 -e 5
-relbert-train -n -p -s -t d --export ${CKPT_DIR}/custom_d -b 16 -e 5
-relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e -b 16 -e 5
+relbert-train -n -p -s -t a --export ${CKPT_DIR}/custom_a
+relbert-train -n -p -s -t b --export ${CKPT_DIR}/custom_b
+relbert-train -n -p -s -t c --export ${CKPT_DIR}/custom_c
+relbert-train -n -p -s -t d --export ${CKPT_DIR}/custom_d
+relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e
 
-relbert-train -n -p -s -t a --export ${CKPT_DIR}/custom_a_no_mask --mode average_no_mask -b 16 -e 5
-relbert-train -n -p -s -t b --export ${CKPT_DIR}/custom_b_no_mask --mode average_no_mask -b 16 -e 5
-relbert-train -n -p -s -t c --export ${CKPT_DIR}/custom_c_no_mask --mode average_no_mask -b 16 -e 5
-relbert-train -n -p -s -t d --export ${CKPT_DIR}/custom_d_no_mask --mode average_no_mask -b 16 -e 5
-relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e_no_mask --mode average_no_mask -b 16 -e 5
-
-# Train with custom template (more data)
-relbert-train -n -p -s -t a --export ${CKPT_DIR}/custom_a_10 --n-sample 10 -b 8 -e 5
-relbert-train -n -p -s -t b --export ${CKPT_DIR}/custom_b_10 --n-sample 10 -b 8 -e 5
-relbert-train -n -p -s -t c --export ${CKPT_DIR}/custom_c_10 --n-sample 10 -b 8 -e 5
-relbert-train -n -p -s -t d --export ${CKPT_DIR}/custom_d_10 --n-sample 10 -b 8 -e 5
-relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e_10 --n-sample 10 -b 8 -e 5
-
-relbert-train -n -p -s -t a --export ${CKPT_DIR}/custom_a_no_mask_10 --mode average_no_mask --n-sample 10 -b 8 -e 5
-relbert-train -n -p -s -t b --export ${CKPT_DIR}/custom_b_no_mask_10 --mode average_no_mask --n-sample 10 -b 8 -e 5
-relbert-train -n -p -s -t c --export ${CKPT_DIR}/custom_c_no_mask_10 --mode average_no_mask --n-sample 10 -b 8 -e 5
-relbert-train -n -p -s -t d --export ${CKPT_DIR}/custom_d_no_mask_10 --mode average_no_mask --n-sample 10 -b 8 -e 5
-relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e_no_mask_10 --mode average_no_mask --n-sample 10 -b 8 -e 5
+relbert-train -n -p -s -t a --export ${CKPT_DIR}/custom_a_no_mask --mode average_no_mask
+relbert-train -n -p -s -t b --export ${CKPT_DIR}/custom_b_no_mask --mode average_no_mask
+relbert-train -n -p -s -t c --export ${CKPT_DIR}/custom_c_no_mask --mode average_no_mask
+relbert-train -n -p -s -t d --export ${CKPT_DIR}/custom_d_no_mask --mode average_no_mask
+relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e_no_mask --mode average_no_mask
 
 # Train with autoprompt
 relbert-train -n -p -s -t ${PROMPT_DIR}/030/prompt.json --export ${CKPT_DIR}/autoprompt_030
