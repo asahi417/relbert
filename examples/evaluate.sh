@@ -26,12 +26,16 @@ relbert-eval -c ${CKPT_DIR}/custom_c --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_d --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_e --export-file ${EVAL_FT_CUSTOM}
 
+relbert-eval -c ${CKPT_DIR}/custom_d_10 --export-file ${EVAL_FT_CUSTOM}
+
 # finetuned LM (average without mask)
 relbert-eval -c ${CKPT_DIR}/custom_a_no_mask --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_b_no_mask --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_c_no_mask --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_d_no_mask --export-file ${EVAL_FT_CUSTOM}
 relbert-eval -c ${CKPT_DIR}/custom_e_no_mask --export-file ${EVAL_FT_CUSTOM}
+
+relbert-eval -c ${CKPT_DIR}/custom_d_no_mask_10 --export-file ${EVAL_FT_CUSTOM}
 
 # vanilla LM (autoprompt): AutoPrompt shouldn't have mask so use average for all
 relbert-eval -m roberta-large -t ${PROMPT_DIR}/030/prompt.json --export-file ${EVAL_LM_AUTO}

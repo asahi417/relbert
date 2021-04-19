@@ -34,7 +34,7 @@ def config(parser):
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
     # data
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
-    parser.add_argument('--n-sample', help='sample size', default=5, type=int)
+    parser.add_argument('--n-sample', help='sample size', default=10, type=int)
     return parser
 
 
