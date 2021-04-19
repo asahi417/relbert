@@ -210,7 +210,9 @@ class GradientTriggerSearch:
                 self.prompter.update_trigger(n, i)
 
         # calculate the number of trial to cover all combination in batch
-        self.n_trial = len(list(product(combinations(range(self.config.n_sample), 2), range(self.config.n_sample))))
+        n_pos = min(len(i) for i in self.all_positive.values())
+        n_neg = min(len(i) for i in self.all_negative.values())
+        self.n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
 
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'

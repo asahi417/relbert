@@ -114,7 +114,6 @@ class Trainer:
         # calculate the number of trial to cover all combination in batch
         n_pos = min(len(i) for i in self.all_positive.values())
         n_neg = min(len(i) for i in self.all_negative.values())
-
         self.n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
 
         model_parameters = list(self.lm.model.named_parameters())
