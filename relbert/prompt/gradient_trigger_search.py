@@ -209,11 +209,6 @@ class GradientTriggerSearch:
             for n, i in enumerate(tmp['top'] + tmp['mid'] + tmp['bottom']):
                 self.prompter.update_trigger(n, i)
 
-        # calculate the number of trial to cover all combination in batch
-        n_pos = min(len(i) for i in self.all_positive.values())
-        n_neg = min(len(i) for i in self.all_negative.values())
-        self.n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
-
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
         self.parallel = False
@@ -225,6 +220,12 @@ class GradientTriggerSearch:
         # get dataset
         self.all_positive, self.all_negative, self.relation_structure = get_training_data(
             data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=cache_dir)
+
+        # calculate the number of trial to cover all combination in batch
+        n_pos = min(len(i) for i in self.all_positive.values())
+        n_neg = min(len(i) for i in self.all_negative.values())
+        self.n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
+
         assert self.all_negative.keys() == self.all_positive.keys()
         logging.info('{} positive data/{} negative data'.format(len(self.all_positive), len(self.all_negative)))
         logging.info('{} trial'.format(self.n_trial))
