@@ -32,7 +32,7 @@ def config(parser):
     parser.add_argument('--mode', help='lm mode', default='average', type=str)
     # data
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
-    parser.add_argument('--n-sample', help='sample size', default=5, type=int)
+    parser.add_argument('--n-sample', help='sample size', default=10, type=int)
     parser.add_argument('-t', '--template-type', help='template type or path to generated prompt file',
                         default='a', type=str)
     return parser
