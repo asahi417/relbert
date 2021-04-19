@@ -8,7 +8,7 @@ from .util import wget, home_dir
 
 
 def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_dir: str = None,
-                      validation_set: bool = False, v_rate: float = 0.2):
+                      validation_set: bool = False):
     """ Get RelBERT training data
     - SemEval 2012 task 2 dataset (case sensitive)
     - BATS (lowercased/truecased)
@@ -27,6 +27,9 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
     all_positive, all_negative, all_relation_type : dict
         Dictionary with relation type as key.
     """
+    v_rate = 0.2
+    n_sample_max = 10
+    assert n_sample <= n_sample_max
     cache_dir = cache_dir if cache_dir is not None else home_dir
     cache_dir = '{}/data'.format(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
@@ -57,9 +60,9 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
                                if not l.startswith('#') and len(l)]
                 lines_scale = sorted(lines_scale, key=lambda x: x[0])
                 _negative = [tuple(i.split(':')) for i in
-                             list(zip(*list(filter(lambda x: x[0] < 0, lines_scale[:n_sample]))))[1]]
+                             list(zip(*list(filter(lambda x: x[0] < 0, lines_scale[:n_sample_max]))))[1]]
                 _positive = [tuple(i.split(':')) for i in
-                             list(zip(*list(filter(lambda x: x[0] > 0, lines_scale[-n_sample:]))))[1]]
+                             list(zip(*list(filter(lambda x: x[0] > 0, lines_scale[-n_sample_max:]))))[1]]
                 v_negative = _negative[::int(len(_negative) * (1 - v_rate))]
                 v_positive = _positive[::int(len(_positive) * (1 - v_rate))]
                 t_negative = [i for i in _negative if i not in v_negative]
@@ -68,8 +71,8 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
                     all_negative[relation_id] = v_negative
                     all_positive[relation_id] = v_positive
                 else:
-                    all_negative[relation_id] = t_negative
-                    all_positive[relation_id] = t_positive
+                    all_negative[relation_id] = t_negative[:n_sample]
+                    all_positive[relation_id] = t_positive[-n_sample:]
 
             all_relation_type[relation_id] = relation_type
         parent = list(set([i[:-1] for i in all_relation_type.keys()]))
