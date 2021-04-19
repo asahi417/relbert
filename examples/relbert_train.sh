@@ -15,12 +15,11 @@ relbert-train -n -p -s -t d --export ${CKPT_DIR}/custom_d_no_mask --mode average
 relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e_no_mask --mode average_no_mask
 
 # Train with autoprompt
-relbert-train -n -p -s -t ${PROMPT_DIR}/030/prompt.json --export ${CKPT_DIR}/autoprompt_030
-relbert-train -n -p -s -t ${PROMPT_DIR}/141/prompt.json --export ${CKPT_DIR}/autoprompt_141
-relbert-train -n -p -s -t ${PROMPT_DIR}/040/prompt.json --export ${CKPT_DIR}/autoprompt_040
-relbert-train -n -p -s -t ${PROMPT_DIR}/050/prompt.json --export ${CKPT_DIR}/autoprompt_050
-relbert-train -n -p -s -t ${PROMPT_DIR}/131/prompt.json --export ${CKPT_DIR}/autoprompt_131
-relbert-train -n -p -s -t ${PROMPT_DIR}/151/prompt.json --export ${CKPT_DIR}/autoprompt_151
-relbert-train -n -p -s -t ${PROMPT_DIR}/232/prompt.json --export ${CKPT_DIR}/autoprompt_232
-relbert-train -n -p -s -t ${PROMPT_DIR}/242/prompt.json --export ${CKPT_DIR}/autoprompt_242
-relbert-train -n -p -s -t ${PROMPT_DIR}/252/prompt.json --export ${CKPT_DIR}/autoprompt_252
+relbert-train -n -p -s -t ${PROMPT_DIR}/822/prompt.json --export ${CKPT_DIR}/autoprompt_822
+relbert-train -n -p -s -t ${PROMPT_DIR}/833/prompt.json --export ${CKPT_DIR}/autoprompt_833
+relbert-train -n -p -s -t ${PROMPT_DIR}/823/prompt.json --export ${CKPT_DIR}/autoprompt_823
+relbert-train -n -p -s -t ${PROMPT_DIR}/832/prompt.json --export ${CKPT_DIR}/autoprompt_832
+relbert-train -n -p -s -t ${PROMPT_DIR}/922/prompt.json --export ${CKPT_DIR}/autoprompt_922
+relbert-train -n -p -s -t ${PROMPT_DIR}/933/prompt.json --export ${CKPT_DIR}/autoprompt_933
+relbert-train -n -p -s -t ${PROMPT_DIR}/923/prompt.json --export ${CKPT_DIR}/autoprompt_923
+relbert-train -n -p -s -t ${PROMPT_DIR}/932/prompt.json --export ${CKPT_DIR}/autoprompt_932

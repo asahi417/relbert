@@ -20,6 +20,11 @@ def config(parser):
     parser.add_argument('--test-type', help='test data', default='analogy', type=str)
     parser.add_argument('-t', '--template-type', help='template type or path to generated prompt file',
                         default='a', type=str)
+
+    # parser.add_argument('-n', '--in-batch-negative', help='in batch negative', action='store_true')
+    # parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
+    parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
+
     return parser
 
 
@@ -34,12 +39,10 @@ def main():
     if opt.ckpt is not None:
         ckpt = opt.ckpt.split(',')
         logging.info('* evaluate trained RelBERT: {}'.format(ckpt))
-        # assert len(ckpt), 'checkpoints not found at {}'.format(opt.ckpt)
     else:
         ckpt = opt.model.split(',')
         logging.info('* evaluate vanilla LM: {}'.format(ckpt))
 
-    data_loader_dict = None
     for n, i in enumerate(ckpt):
         logging.info('## start evaluation {}/{}: {} ##'.format(n + 1, len(ckpt), i))
         if os.path.exists('{}/trainer_config.json'.format(i)):
@@ -52,7 +55,7 @@ def main():
                 'parent_contrast': trainer_config['parent_contrast'],
                 'mse_margin': trainer_config['mse_margin']
             }
-            data_loader_dict = relbert.evaluate(
+            relbert.evaluate(
                 model=[os.path.dirname(i) for i in glob('{}/*/pytorch_model.bin'.format(i))],
                 max_length=trainer_config['max_length'],
                 test_type=opt.test_type,
@@ -60,14 +63,16 @@ def main():
                 cache_dir=opt.cache_dir,
                 batch=opt.batch,
                 num_worker=opt.num_workers,
-                shared_config=shared_config,
-                data_loader_dict=data_loader_dict
+                validation_data=trainer_config['data'],
+                # mse_margin=trainer_config['mse_margin'],
+                # in_batch_negative=trainer_config['in_batch_negative'],
+                shared_config=shared_config
             )
         else:
             shared_config = {
                 'data': None, 'softmax_loss': None, 'in_batch_negative': None, 'parent_contrast': None,
                 'mse_margin': None}
-            data_loader_dict = relbert.evaluate(
+            relbert.evaluate(
                 model=[i],
                 max_length=opt.max_length,
                 template_type=opt.template_type,
@@ -77,8 +82,10 @@ def main():
                 cache_dir=opt.cache_dir,
                 batch=opt.batch,
                 num_worker=opt.num_workers,
-                shared_config=shared_config,
-                data_loader_dict=data_loader_dict
+                validation_data=opt.data,
+                # mse_margin=opt.mse_margin,
+                # in_batch_negative=False,
+                shared_config=shared_config
             )
 
 

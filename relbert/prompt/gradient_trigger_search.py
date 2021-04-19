@@ -39,8 +39,6 @@ class EncodePlus:
             sentence, max_length=self.max_length, truncation=True, padding='max_length', add_special_tokens=False)
         assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
         if encode['input_ids'][:len(token_id)] != token_id:
-            # logging.debug('tokenization mismatch: {} != {}\n this trigger will ignored.'.
-            #               format(token_id, encode['input_ids'][:len(token_id)]))
             return None
         # label for token to be aggregated as an embedding
         encode['labels'] = list(map(lambda x: 0 if x == self.tokenizer.pad_token_id else 1, encode['input_ids']))
