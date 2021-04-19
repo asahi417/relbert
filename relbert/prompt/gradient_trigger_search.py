@@ -12,7 +12,7 @@ import torch
 
 from ..list_keeper import ListKeeper
 from ..config import Config
-from ..util import fix_seed, load_language_model, triplet_loss, Dataset, module_output_dir
+from ..util import fix_seed, load_language_model, triplet_loss, Dataset
 from ..data import get_training_data
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message

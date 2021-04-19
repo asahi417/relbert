@@ -25,7 +25,7 @@ def config(parser):
     parser.add_argument('--fp16', help='fp16 for training', action='store_true')
     parser.add_argument('--epoch-save', help='interval to save model weight', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
-    parser.add_argument('--export', help='directory to export model weight file', default=None, type=str)
+    parser.add_argument('--export', help='directory to export model weight file', required=True, type=str)
     # language model
     parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)

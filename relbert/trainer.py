@@ -10,7 +10,7 @@ from torch.utils.tensorboard import SummaryWriter
 from .lm import RelBERT
 from .data import get_training_data
 from .config import Config
-from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed, module_output_dir, Dataset
+from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed, Dataset
 
 
 class Trainer:
@@ -104,15 +104,18 @@ class Trainer:
             export=export,
         )
 
-        # calculate the number of trial to cover all combination in batch
-        self.n_trial = len(list(product(combinations(range(self.config.n_sample), 2), range(self.config.n_sample))))
-
         # model size
         self.checkpoint_dir = self.config.cache_dir
 
         # get dataset
         self.all_positive, self.all_negative, self.relation_structure = get_training_data(
             data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=self.cache_dir)
+
+        # calculate the number of trial to cover all combination in batch
+        n_pos = min(len(i) for i in self.all_positive.values())
+        n_neg = min(len(i) for i in self.all_negative.values())
+
+        self.n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
 
         model_parameters = list(self.lm.model.named_parameters())
         self.linear = None

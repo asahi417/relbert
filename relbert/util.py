@@ -15,7 +15,7 @@ from torch.optim.lr_scheduler import LambdaLR
 
 
 home_dir = '{}/.cache/relbert'.format(os.path.expanduser('~'))
-module_output_dir = './relbert_output'
+# module_output_dir = './relbert_output'
 
 
 def load_language_model(model_name, cache_dir: str = None):
