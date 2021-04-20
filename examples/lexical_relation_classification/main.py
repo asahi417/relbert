@@ -1,7 +1,7 @@
 """
 You may need additional libraries as below
 ```
-pip install sklearn first
+pip install sklearn
 pip install gensim==3.8.1
 ```
 """
@@ -120,7 +120,7 @@ def main(embedding_model: str, global_vocab):
 
 
 if __name__ == '__main__':
-    target_word_embedding = ['glove', 'fasttext', 'w2v']
+    target_word_embedding = ['w2v', 'glove', 'fasttext']
     vocab = get_shared_vocab(target_word_embedding)
     logging.info('shared vocab has {} word'.format(len(vocab)))
     full_result = []
