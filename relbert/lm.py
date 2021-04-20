@@ -97,7 +97,7 @@ class RelBERT:
 
     def __init__(self,
                  model: str,
-                 max_length: int = 128,
+                 max_length: int = 64,
                  cache_dir: str = None,
                  mode: str = 'average_no_mask',
                  template_type: str = 'a'):
@@ -268,7 +268,7 @@ class RelBERT:
             Batch size.
         num_worker : int
             Dataset worker number.
-        parallel : boo;
+        parallel : bool
             Parallelize data processing part over CPUs.
 
         Returns
