@@ -26,15 +26,14 @@ def get_word_embedding_model(model_name: str = 'fasttext'):
         path = './cache/GoogleNews-vectors-negative300.bin'
         if not os.path.exists(path):
             logging.info('downloading {}'.format(model_name))
-            wget(url="https://drive.google.com/u/0/uc?id=0B7XkCwpI5KDYNlNUTTlSS21pQmM&export=download",
-                 gdrive_filename='GoogleNews-vectors-negative300.bin.gz')
+            wget(url="https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/GoogleNews-vectors-negative300.bin.gz")
         model = KeyedVectors.load_word2vec_format(path, binary=True)
-    elif model_name == 'fasttext_cc':
-        path = './cache/crawl-300d-2M-subword.vec'
-        if not os.path.exists(path):
-            logging.info('downloading {}'.format(model_name))
-            wget(url='https://dl.fbaipublicfiles.com/fasttext/vectors-english/crawl-300d-2M-subword.zip')
-        model = fasttext.load_facebook_model(path)
+    # elif model_name == 'fasttext_cc':
+    #     path = './cache/crawl-300d-2M-subword.vec'
+    #     if not os.path.exists(path):
+    #         logging.info('downloading {}'.format(model_name))
+    #         wget(url='https://dl.fbaipublicfiles.com/fasttext/vectors-english/crawl-300d-2M-subword.zip')
+    #     model = fasttext.load_facebook_model(path)
     elif model_name == 'fasttext':
         path = './cache/wiki-news-300d-1M.vec'
         if not os.path.exists(path):
