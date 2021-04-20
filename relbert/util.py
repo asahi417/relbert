@@ -34,7 +34,7 @@ def load_language_model(model_name, cache_dir: str = None):
     return tokenizer, model, config
 
 
-def wget(url, cache_dir: str, gdrive_filename: str = None):
+def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
     """ wget and uncompress data_iterator """
     path = _wget(url, cache_dir, gdrive_filename=gdrive_filename)
     if path.endswith('.tar.gz') or path.endswith('.tgz') or path.endswith('.tar'):

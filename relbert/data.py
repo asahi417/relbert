@@ -128,3 +128,29 @@ def get_analogy_data(data_name: str, cache_dir: str = None):
         val_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
     return val_set, test_set
 
+
+def get_lexical_relation_data(cache_dir: str = None):
+    cache_dir = cache_dir if cache_dir is not None else home_dir
+    cache_dir = '{}/data'.format(cache_dir)
+    os.makedirs(cache_dir, exist_ok=True)
+    root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/LexicalRelation.tar.gz'
+    if not os.path.exists('{}/LexicalRelation'.format(cache_dir)):
+        wget(root_url_analogy, cache_dir)
+    full_data = {}
+    for i in glob('{}/LexicalRelation/*'.format(cache_dir)):
+        if not os.path.isdir(i):
+            continue
+        full_data[os.path.basename(i)] = {}
+        label = {}
+        for t in glob('{}/*tsv'.format(i)):
+            with open(t) as f:
+                data = [line.split('\t') for line in f.read().split('\n') if len(line) > 0]
+            x = [d[:2] for d in data]
+            y = [d[-1] for d in data]
+            for _y in list(set(y)):
+                if _y not in label:
+                    label[_y] = len(label)
+            y = [label[_y] for _y in y]
+            full_data[os.path.basename(i)][os.path.basename(t).replace('.tsv', '')] = {'x': x, 'y':y}
+        full_data[os.path.basename(i)]['label'] = label
+    return full_data
