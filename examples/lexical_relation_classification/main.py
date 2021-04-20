@@ -25,6 +25,7 @@ def get_word_embedding_model(model_name: str = 'fasttext'):
         path = './cache/GoogleNews-vectors-negative300.bin'
         if not os.path.exists(path):
             logging.info('downloading {}'.format(model_name))
+            # get the embedding from mirroring site
             wget(url="https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/GoogleNews-vectors-negative300.bin.gz")
         model = KeyedVectors.load_word2vec_format(path, binary=True)
     elif model_name == 'fasttext':
@@ -77,6 +78,8 @@ def get_shared_vocab(model_list):
         else:
             shared_vocab = shared_vocab.intersection(v)
         del model
+    with open(cache, 'w') as f:
+        f.write('\n'.join(list(shared_vocab)))
     return shared_vocab
 
 
