@@ -14,7 +14,6 @@ from relbert.data import get_lexical_relation_data
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
 from gensim.models import KeyedVectors
-from gensim.models import fasttext
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -28,12 +27,6 @@ def get_word_embedding_model(model_name: str = 'fasttext'):
             logging.info('downloading {}'.format(model_name))
             wget(url="https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/GoogleNews-vectors-negative300.bin.gz")
         model = KeyedVectors.load_word2vec_format(path, binary=True)
-    # elif model_name == 'fasttext_cc':
-    #     path = './cache/crawl-300d-2M-subword.vec'
-    #     if not os.path.exists(path):
-    #         logging.info('downloading {}'.format(model_name))
-    #         wget(url='https://dl.fbaipublicfiles.com/fasttext/vectors-english/crawl-300d-2M-subword.zip')
-    #     model = fasttext.load_facebook_model(path)
     elif model_name == 'fasttext':
         path = './cache/wiki-news-300d-1M.vec'
         if not os.path.exists(path):

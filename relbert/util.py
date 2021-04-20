@@ -2,6 +2,7 @@ import random
 import os
 import tarfile
 import zipfile
+import gzip
 import requests
 from typing import Dict
 from itertools import combinations, product
@@ -49,7 +50,11 @@ def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
         with zipfile.ZipFile(path, 'r') as zip_ref:
             zip_ref.extractall(cache_dir)
         os.remove(path)
-    # return path
+    elif path.endswith('.gz'):
+        with gzip.open(path, 'rb') as f:
+            with open(path.replace('.gz', ''), 'wb') as f_write:
+                f_write.write(f.read())
+        os.remove(path)
 
 
 def _wget(url: str, cache_dir, gdrive_filename: str = None):
