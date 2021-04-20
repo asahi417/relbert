@@ -7,13 +7,13 @@ pip install gensim==3.8.1
 """
 import os
 import logging
+import pandas as pd
+
+from sklearn.neural_network import MLPClassifier
+from gensim.models import KeyedVectors
 
 from relbert.util import wget
 from relbert.data import get_lexical_relation_data
-
-import pandas as pd
-from sklearn.neural_network import MLPClassifier
-from gensim.models import KeyedVectors
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -65,7 +65,7 @@ def get_word_embedding_model(model_name: str = 'fasttext'):
 
 
 def get_shared_vocab(model_list):
-    cache = './cache/global_vocab.{}.txt'.format('.'.join(model_list))
+    cache = './cache/global_vocab.txt'
     if os.path.exists(cache):
         with open(cache, 'r') as f:
             return {i for i in f.read().split('\n') if len(i) > 0}
@@ -120,7 +120,9 @@ if __name__ == '__main__':
     logging.info('shared vocab has {} word'.format(len(vocab)))
     full_result = []
     for m in target_word_embedding:
-        full_result += main('fasttext', vocab)
+        full_result += main(m, vocab)
     df = pd.DataFrame(full_result)
-    print(df)
     df.to_csv('./examples/lexical_relation_classification/result.csv')
+    print(df)
+
+
