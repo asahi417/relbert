@@ -24,7 +24,6 @@ class Config:
             self.cache_dir = checkpoint_path
             iters = [int(i.split('prompt.')[-1].replace('.json', '')) for i in
                      glob('{}/prompt.*.json'.format(checkpoint_path))]
-            print(iters)
             if len(iters) == 0:
                 self.last_iter = 0
             else:

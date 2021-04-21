@@ -205,6 +205,7 @@ class GradientTriggerSearch:
             with open(ckpt, 'r') as f:
                 tmp = json.load(f)
             for n, i in enumerate(tmp['top'] + tmp['mid'] + tmp['bottom']):
+                print(n, i)
                 self.prompter.update_trigger(n, i)
 
         # GPU setup
