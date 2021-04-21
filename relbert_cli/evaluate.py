@@ -55,6 +55,8 @@ def main():
                 'parent_contrast': trainer_config['parent_contrast'],
                 'mse_margin': trainer_config['mse_margin']
             }
+            print([os.path.dirname(i) for i in glob('{}/*/pytorch_model.bin'.format(i))])
+            input()
             relbert.evaluate(
                 model=[os.path.dirname(i) for i in glob('{}/*/pytorch_model.bin'.format(i))],
                 max_length=trainer_config['max_length'],
