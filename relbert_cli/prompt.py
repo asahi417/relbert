@@ -26,7 +26,7 @@ def config(parser):
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
     parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')
-    parser.add_argument('--export', help='directory name', required=True, type=str)
+    parser.add_argument('--export', help='directory name', default=None, type=str)
     # language model
     parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
     parser.add_argument('--checkpoint-path', help='checkpoint to load', default=None, type=str)

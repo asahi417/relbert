@@ -22,14 +22,15 @@ class Config:
             with open('{}/prompter_config.json'.format(checkpoint_path), 'r') as f:
                 self.config = json.load(f)
             self.cache_dir = checkpoint_path
-            iters = [i.split('prompt.')[-1].replace('.json', '') for i in glob('{}/prompt.*.json')]
+            iters = [i.split('prompt.')[-1].replace('.json', '') for i in glob('{}/prompt.*.json'.format(checkpoint_path))]
             print(iters)
             if len(iters) == 0:
                 self.last_iter = 0
             else:
                 self.last_iter = max(iters) + 1
         else:
-            assert export and not os.path.exists(export), '{} is taken, use different name'.format(export)
+            assert export, '`export` is required'
+            assert not os.path.exists(export), '{} is taken, use different name'.format(export)
             self.config = kwargs
             logging.info('hyperparameters')
             for k, v in self.config.items():
