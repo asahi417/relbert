@@ -203,7 +203,8 @@ class GradientTriggerSearch:
             # restore last prompt
             with open(ckpt, 'r') as f:
                 tmp = json.load(f)
-            self.prompter = PromptGenerator(len(tmp['top']), len(tmp['mid']), len(tmp['bottom']), self.tokenizer)
+            # self.prompter = PromptGenerator(len(tmp['top']), len(tmp['mid']), len(tmp['bottom']), self.tokenizer)
+            self.prompter = PromptGenerator(len(tmp['mid']), len(tmp['top']), len(tmp['bottom']), self.tokenizer)
             for n, i in enumerate(tmp['top'] + tmp['mid'] + tmp['bottom']):
                 self.prompter.update_trigger(n, i)
         else:
