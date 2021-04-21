@@ -45,12 +45,12 @@ relbert-eval -m roberta-large -t ${PROMPT_DIR}/932/prompt.json --export-file ${E
 relbert-eval -m roberta-large -t ${PROMPT_DIR}/933/prompt.json --export-file ${EVAL_LM_AUTO} --mode average_no_mask
 
 # finetuned LM (autoprompt): AutoPrompt shouldn't have mask so use average for all
-relbert-eval -c ${CKPT_DIR}/autprompt_822_no_mask --export-file ${EVAL_FT_AUTO}
-relbert-eval -c ${CKPT_DIR}/autprompt_833_no_mask --export-file ${EVAL_FT_AUTO}
-relbert-eval -c ${CKPT_DIR}/autprompt_823_no_mask --export-file ${EVAL_FT_AUTO}
-relbert-eval -c ${CKPT_DIR}/autprompt_832_no_mask --export-file ${EVAL_FT_AUTO}
-relbert-eval -c ${CKPT_DIR}/autprompt_922_no_mask --export-file ${EVAL_FT_AUTO}
-relbert-eval -c ${CKPT_DIR}/autprompt_923_no_mask --export-file ${EVAL_FT_AUTO}
+relbert-eval -c ${CKPT_DIR}/autoprompt_822_no_mask --export-file ${EVAL_FT_AUTO}
+relbert-eval -c ${CKPT_DIR}/autoprompt_833_no_mask --export-file ${EVAL_FT_AUTO}
+relbert-eval -c ${CKPT_DIR}/autoprompt_823_no_mask --export-file ${EVAL_FT_AUTO}
+relbert-eval -c ${CKPT_DIR}/autoprompt_832_no_mask --export-file ${EVAL_FT_AUTO}
+relbert-eval -c ${CKPT_DIR}/autoprompt_922_no_mask --export-file ${EVAL_FT_AUTO}
+relbert-eval -c ${CKPT_DIR}/autoprompt_923_no_mask --export-file ${EVAL_FT_AUTO}
 
-relbert-eval -c ${CKPT_DIR}/autprompt_932_no_mask --export-file ${EVAL_FT_AUTO}
-relbert-eval -c ${CKPT_DIR}/autprompt_933_no_mask --export-file ${EVAL_FT_AUTO}
+relbert-eval -c ${CKPT_DIR}/autoprompt_932_no_mask --export-file ${EVAL_FT_AUTO}
+relbert-eval -c ${CKPT_DIR}/autoprompt_933_no_mask --export-file ${EVAL_FT_AUTO}
