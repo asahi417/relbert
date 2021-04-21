@@ -189,7 +189,7 @@ class GradientTriggerSearch:
             mse_margin=mse_margin,
             random_seed=random_seed)
         # model setup
-        self.tokenizer, self.model, self.config = load_language_model(self.config.model, cache_dir)
+        self.tokenizer, self.model, _ = load_language_model(self.config.model, cache_dir)
         self.model.eval()
         self.input_embeddings = self.model.get_input_embeddings()
         self.gradient_store = GradientStorage(self.input_embeddings)
