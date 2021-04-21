@@ -168,14 +168,6 @@ class GradientTriggerSearch:
                  cache_dir: str = None,
                  checkpoint_path: str = None):
         fix_seed(random_seed)
-        # model setup
-        self.tokenizer, self.model, self.config = load_language_model(model, cache_dir)
-        self.model.eval()
-        self.input_embeddings = self.model.get_input_embeddings()
-        self.gradient_store = GradientStorage(self.input_embeddings)
-        # cache config
-        self.batch = batch
-        self.batch_no_grad = batch_no_grad
         self.config = Config(
             config_name='prompter_config',
             export=export,
@@ -196,17 +188,26 @@ class GradientTriggerSearch:
             parent_contrast=parent_contrast,
             mse_margin=mse_margin,
             random_seed=random_seed)
+        # model setup
+        self.tokenizer, self.model, self.config = load_language_model(self.config.model, cache_dir)
+        self.model.eval()
+        self.input_embeddings = self.model.get_input_embeddings()
+        self.gradient_store = GradientStorage(self.input_embeddings)
+        # cache config
+        self.batch = batch
+        self.batch_no_grad = batch_no_grad
         self.checkpoint_dir = self.config.cache_dir
-        self.prompter = PromptGenerator(n_trigger_i, n_trigger_b, n_trigger_e, self.tokenizer)
         if self.config.last_iter != 0:
             ckpt = '{}/prompt.{}.json'.format(self.config.cache_dir, self.config.last_iter - 1)
             logging.info('loading last prompt checkpoint from {}'.format(ckpt))
             # restore last prompt
             with open(ckpt, 'r') as f:
                 tmp = json.load(f)
+            self.prompter = PromptGenerator(len(tmp['top']), len(tmp['mid']), len(tmp['bottom']), self.tokenizer)
             for n, i in enumerate(tmp['top'] + tmp['mid'] + tmp['bottom']):
-                print(n, i)
                 self.prompter.update_trigger(n, i)
+        else:
+            self.prompter = PromptGenerator(n_trigger_i, n_trigger_b, n_trigger_e, self.tokenizer)
 
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
