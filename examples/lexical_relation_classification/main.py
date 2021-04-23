@@ -146,6 +146,8 @@ if __name__ == '__main__':
 
     logging.info("RUN WORD-EMBEDDING BASELINE")
     for m in target_word_embedding:
+        print(done_list, m)
+        input()
         if m in done_list:
             continue
         full_result += main(vocab, embedding_model=m)
