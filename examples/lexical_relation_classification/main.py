@@ -94,9 +94,11 @@ def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
 
     if relbert_ckpt:
         model = RelBERT(relbert_ckpt)
+        model_name = relbert_ckpt
         relbert_model = True
     else:
         model = get_word_embedding_model(embedding_model)
+        model_name = embedding_model
         relbert_model = False
     data = get_lexical_relation_data()
     report = []
@@ -123,7 +125,7 @@ def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
             x = [diff(a, b, model) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
         y = [y for y, flag in zip(v['test']['y'], in_vocab_index) if flag]
         accuracy = clf.score(x, y)
-        report_tmp = {'model': embedding_model, 'accuracy': accuracy, 'label_size': len(label_dict), 'oov': oov,
+        report_tmp = {'model': model_name, 'accuracy': accuracy, 'label_size': len(label_dict), 'oov': oov,
                       'test_total': len(x), 'data': data_name}
         logging.info('\t accuracy: \n{}'.format(report_tmp))
         report.append(report_tmp)

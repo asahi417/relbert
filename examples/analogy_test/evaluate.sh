@@ -6,11 +6,11 @@ export EVAL_FT_CUSTOM='./relbert_output/eval/finetuned.custom.csv'
 export EVAL_FT_AUTO='./relbert_output/eval/finetuned.autoprompt.csv'
 
 # vanilla LM (done)
-#relbert-eval -m roberta-large -t a --export-file ${EVAL_LM_CUSTOM}
-#relbert-eval -m roberta-large -t b --export-file ${EVAL_LM_CUSTOM}
-#relbert-eval -m roberta-large -t c --export-file ${EVAL_LM_CUSTOM}
-#relbert-eval -m roberta-large -t d --export-file ${EVAL_LM_CUSTOM}
-#relbert-eval -m roberta-large -t e --export-file ${EVAL_LM_CUSTOM}
+relbert-eval -m roberta-large -t a --export-file ${EVAL_LM_CUSTOM}
+relbert-eval -m roberta-large -t b --export-file ${EVAL_LM_CUSTOM}
+relbert-eval -m roberta-large -t c --export-file ${EVAL_LM_CUSTOM}
+relbert-eval -m roberta-large -t d --export-file ${EVAL_LM_CUSTOM}
+relbert-eval -m roberta-large -t e --export-file ${EVAL_LM_CUSTOM}
 
 # vanilla LM (average without mask)
 relbert-eval -m roberta-large -t a --export-file ${EVAL_LM_CUSTOM} --mode average_no_mask
@@ -18,13 +18,6 @@ relbert-eval -m roberta-large -t b --export-file ${EVAL_LM_CUSTOM} --mode averag
 relbert-eval -m roberta-large -t c --export-file ${EVAL_LM_CUSTOM} --mode average_no_mask
 relbert-eval -m roberta-large -t d --export-file ${EVAL_LM_CUSTOM} --mode average_no_mask
 relbert-eval -m roberta-large -t e --export-file ${EVAL_LM_CUSTOM} --mode average_no_mask
-
-# finetuned LM
-#relbert-eval -c ${CKPT_DIR}/custom_a --export-file ${EVAL_FT_CUSTOM}
-#relbert-eval -c ${CKPT_DIR}/custom_b --export-file ${EVAL_FT_CUSTOM}
-#relbert-eval -c ${CKPT_DIR}/custom_c --export-file ${EVAL_FT_CUSTOM}
-#relbert-eval -c ${CKPT_DIR}/custom_d --export-file ${EVAL_FT_CUSTOM}
-#relbert-eval -c ${CKPT_DIR}/custom_e --export-file ${EVAL_FT_CUSTOM}
 
 # finetuned LM (average without mask)
 relbert-eval -c ${CKPT_DIR}/custom_a_no_mask --export-file ${EVAL_FT_CUSTOM}
