@@ -141,14 +141,15 @@ if __name__ == '__main__':
     if os.path.exists(out_csv):
         df = pd.read_csv(out_csv, index_col=0)
         done_list = df['model'].values
+        full_result = df.values.tolist()
+        input(full_result)
     else:
         df = None
         done_list = []
-    full_result = []
+        full_result = []
 
     logging.info("RUN WORD-EMBEDDING BASELINE")
     for m in target_word_embedding:
-        print(m, done_list)
         if m in done_list:
             continue
         full_result += main(vocab, embedding_model=m)
