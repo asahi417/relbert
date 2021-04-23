@@ -7,15 +7,18 @@ pip install gensim==3.8.1
 """
 import os
 import logging
-import pandas as pd
+from glob import glob
 
+import pandas as pd
 from sklearn.neural_network import MLPClassifier
 from gensim.models import KeyedVectors
 
+from relbert import RelBERT
 from relbert.util import wget
 from relbert.data import get_lexical_relation_data
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
+batch_size = 512
 
 
 def get_word_embedding_model(model_name: str = 'fasttext'):
@@ -87,24 +90,41 @@ def diff(a, b, model):
     return model[a] - model[b]
 
 
-def main(embedding_model: str, global_vocab):
-    model = get_word_embedding_model(embedding_model)
+def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
+
+    if relbert_ckpt:
+        model = RelBERT(relbert_ckpt)
+        relbert_model = True
+    else:
+        model = get_word_embedding_model(embedding_model)
+        relbert_model = False
     data = get_lexical_relation_data()
     report = []
     for data_name, v in data.items():
         logging.info('train model with {} on {}'.format(embedding_model, data_name))
         label_dict = v.pop('label')
-        x = [diff(a, b, model) if a in global_vocab and b in global_vocab else None for a, b in v['train']['x']]
-        y = [t for n, t in enumerate(v['train']['y']) if x[n] is not None]
-        x = [t for n, t in enumerate(x) if x[n] is not None]
+        in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['train']['x']]
+
+        if relbert_model:
+            x = [(a, b) for (a, b), flag in zip(v['train']['x'], in_vocab_index) if flag]
+            x = model.get_embedding(x, batch_size=batch_size)
+        else:
+            x = [diff(a, b, model) for (a, b), flag in zip(v['train']['x'], in_vocab_index) if flag]
+
+        y = [y for y, flag in zip(v['train']['y'], in_vocab_index) if flag]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
         clf = MLPClassifier().fit(x, y)
-
         logging.info('\t run validation')
-        x = [diff(a, b, model) if a in global_vocab and b in global_vocab else None for a, b in v['test']['x']]
-        oov = len([_x for _x in x if _x is None])
-        y = [t for n, t in enumerate(v['test']['y']) if x[n] is not None]
-        x = [t for n, t in enumerate(x) if x[n] is not None]
+        in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['train']['x']]
+        oov = len(in_vocab_index) - sum(in_vocab_index)
+
+        if relbert_model:
+            x = [(a, b) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
+            x = model.get_embedding(x, batch_size=batch_size)
+        else:
+            x = [diff(a, b, model) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
+
+        y = [y for y, flag in zip(v['test']['y'], in_vocab_index) if flag]
         accuracy = clf.score(x, y)
         report_tmp = {'model': embedding_model, 'accuracy': accuracy, 'label_size': len(label_dict), 'oov': oov,
                       'test_total': len(x), 'data': data_name}
@@ -118,11 +138,30 @@ if __name__ == '__main__':
     target_word_embedding = ['w2v', 'glove', 'fasttext']
     vocab = get_shared_vocab(target_word_embedding)
     logging.info('shared vocab has {} word'.format(len(vocab)))
+    out_csv = './examples/lexical_relation_classification/result.csv'
+    if os.path.exists(out_csv):
+        df = pd.read_csv(out_csv, index_col=0)
+        done_list = df['model'].values
+    else:
+        df = None
+        done_list = []
     full_result = []
+
+    logging.info("RUN WORD-EMBEDDING BASELINE")
     for m in target_word_embedding:
-        full_result += main(m, vocab)
+        if m in done_list:
+            continue
+        full_result += main(vocab, embedding_model=m)
+
+    logging.info("RUN RELBERT")
+    ckpts = glob('relbert_output/ckpt/*/*')
+    for m in ckpts:
+        if m in done_list:
+            continue
+        full_result += main(vocab, relbert_ckpt=m)
+
     df = pd.DataFrame(full_result)
-    df.to_csv('./examples/lexical_relation_classification/result.csv')
+    df.to_csv()
     print(df)
 
 
