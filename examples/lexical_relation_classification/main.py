@@ -115,7 +115,7 @@ def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
         y = [y for y, flag in zip(v['train']['y'], in_vocab_index) if flag]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
         # clf = MLPClassifier().fit(x, y)
-        clf = LinearSVC().fit().fit(x, y)
+        clf = LinearSVC().fit(x, y)
 
         logging.info('\t run validation')
         in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['test']['x']]
