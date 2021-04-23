@@ -104,27 +104,23 @@ def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
         logging.info('train model with {} on {}'.format(embedding_model, data_name))
         label_dict = v.pop('label')
         in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['train']['x']]
-        print(in_vocab_index, len(in_vocab_index), sum(in_vocab_index))
-
         if relbert_model:
             x = [(a, b) for (a, b), flag in zip(v['train']['x'], in_vocab_index) if flag]
             x = model.get_embedding(x, batch_size=batch_size)
         else:
             x = [diff(a, b, model) for (a, b), flag in zip(v['train']['x'], in_vocab_index) if flag]
-
         y = [y for y, flag in zip(v['train']['y'], in_vocab_index) if flag]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
         clf = MLPClassifier().fit(x, y)
-        logging.info('\t run validation')
-        in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['train']['x']]
-        oov = len(in_vocab_index) - sum(in_vocab_index)
 
+        logging.info('\t run validation')
+        in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['test']['x']]
+        oov = len(in_vocab_index) - sum(in_vocab_index)
         if relbert_model:
             x = [(a, b) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
             x = model.get_embedding(x, batch_size=batch_size)
         else:
             x = [diff(a, b, model) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
-
         y = [y for y, flag in zip(v['test']['y'], in_vocab_index) if flag]
         accuracy = clf.score(x, y)
         report_tmp = {'model': embedding_model, 'accuracy': accuracy, 'label_size': len(label_dict), 'oov': oov,
