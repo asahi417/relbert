@@ -11,6 +11,7 @@ from glob import glob
 
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
+from sklearn.svm import LinearSVC
 from gensim.models import KeyedVectors
 
 from relbert import RelBERT
@@ -103,7 +104,7 @@ def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
     data = get_lexical_relation_data()
     report = []
     for data_name, v in data.items():
-        logging.info('train model with {} on {}'.format(embedding_model, data_name))
+        logging.info('train model with {} on {}'.format(model_name, data_name))
         label_dict = v.pop('label')
         in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['train']['x']]
         if relbert_model:
@@ -113,7 +114,8 @@ def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
             x = [diff(a, b, model) for (a, b), flag in zip(v['train']['x'], in_vocab_index) if flag]
         y = [y for y, flag in zip(v['train']['y'], in_vocab_index) if flag]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
-        clf = MLPClassifier().fit(x, y)
+        # clf = MLPClassifier().fit(x, y)
+        clf = LinearSVC().fit().fit(x, y)
 
         logging.info('\t run validation')
         in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['test']['x']]
