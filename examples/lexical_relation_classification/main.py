@@ -151,7 +151,7 @@ if __name__ == '__main__':
         full_result += main(vocab, embedding_model=m)
 
     logging.info("RUN RELBERT")
-    ckpts = glob('relbert_output/ckpt/*/*')
+    ckpts = glob('relbert_output/ckpt/*/epoch*')
     for m in ckpts:
         if m in done_list:
             continue
