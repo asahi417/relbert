@@ -146,11 +146,12 @@ if __name__ == '__main__':
 
     logging.info("RUN WORD-EMBEDDING BASELINE")
     for m in target_word_embedding:
-        print(done_list, m)
-        input()
+        print(m, done_list)
         if m in done_list:
             continue
         full_result += main(vocab, embedding_model=m)
+
+    pd.DataFrame(full_result).to_csv(out_csv)
 
     logging.info("RUN RELBERT")
     ckpts = glob('relbert_output/ckpt/*/epoch*')
@@ -159,8 +160,7 @@ if __name__ == '__main__':
             continue
         full_result += main(vocab, relbert_ckpt=m)
 
-    df = pd.DataFrame(full_result)
-    df.to_csv()
-    print(df)
+    pd.DataFrame(full_result).to_csv(out_csv)
+
 
 
