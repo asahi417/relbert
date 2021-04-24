@@ -142,9 +142,10 @@ if __name__ == '__main__':
     out_csv = './examples/lexical_relation_classification/result.csv'
     if os.path.exists(out_csv):
         df = pd.read_csv(out_csv, index_col=0)
-        done_list = df['model'].values
-        full_result = df.values.tolist()
-        input(full_result)
+        done_list = list(set(df['model'].values))
+        print(done_list)
+        full_result = df.to_numpy().tolist()
+        print(full_result)
     else:
         df = None
         done_list = []
@@ -155,17 +156,14 @@ if __name__ == '__main__':
         if m in done_list:
             continue
         full_result += main(vocab, embedding_model=m)
-
-    pd.DataFrame(full_result).to_csv(out_csv)
+        pd.DataFrame(full_result).to_csv(out_csv)
 
     logging.info("RUN RELBERT")
-    ckpts = glob('relbert_output/ckpt/*/epoch*')
+    ckpts = sorted(glob('relbert_output/ckpt/*/epoch*'))
     for m in ckpts:
         if m in done_list:
             continue
         full_result += main(vocab, relbert_ckpt=m)
-
-    pd.DataFrame(full_result).to_csv(out_csv)
-
+        pd.DataFrame(full_result).to_csv(out_csv)
 
 

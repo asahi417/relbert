@@ -123,7 +123,6 @@ class PromptGenerator:
         for i in self.triggers:
             token_ids[token_ids.index(-100)] = i
         assert self.n_trigger == sum(trigger), (self.triggers, sum(trigger), trigger)
-        # print(token_ids)
         return token_ids, trigger
 
 
