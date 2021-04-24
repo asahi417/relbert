@@ -144,7 +144,7 @@ if __name__ == '__main__':
         df = pd.read_csv(out_csv, index_col=0)
         done_list = list(set(df['model'].values))
         print(done_list)
-        full_result = df.to_numpy().tolist()
+        full_result = [i.to_dict() for _, i in df.iterrows()]
         print(full_result)
     else:
         df = None
