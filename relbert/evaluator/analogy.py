@@ -7,9 +7,9 @@ from tqdm import tqdm
 import pandas as pd
 import torch
 
-from .lm import RelBERT
-from .data import get_analogy_data, get_training_data
-from .util import Dataset, triplet_loss
+from relbert.lm import RelBERT
+from relbert.data import get_analogy_data, get_training_data
+from relbert.util import Dataset, triplet_loss
 
 
 def evaluate(model: List,

@@ -3,9 +3,9 @@ import logging
 from sklearn.svm import LinearSVC
 from gensim.models import KeyedVectors
 
-from . import RelBERT
-from .util import wget
-from .data import get_lexical_relation_data
+from relbert import RelBERT
+from relbert.util import wget
+from relbert.data import get_lexical_relation_data
 
 
 def get_word_embedding_model(model_name: str = 'fasttext'):

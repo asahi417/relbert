@@ -4,7 +4,7 @@ import json
 import argparse
 import logging
 from glob import glob
-from relbert.evaluator_analogy import evaluate
+from relbert.evaluator.analogy import evaluate
 
 
 def config(parser):

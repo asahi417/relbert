@@ -3,7 +3,7 @@ import logging
 import argparse
 from glob import glob
 import pandas as pd
-from relbert.evaluator_classification import evaluate, get_shared_vocab
+from relbert.evaluator.classification import evaluate, get_shared_vocab
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
 
