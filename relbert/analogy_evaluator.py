@@ -1,6 +1,5 @@
 import os
 import logging
-import json
 from itertools import chain, product, combinations
 from typing import List, Dict
 from tqdm import tqdm
@@ -18,7 +17,6 @@ def evaluate(model: List,
              max_length: int = 64,
              template_type: str = None,
              mode: str = 'average',
-             test_type: str = 'analogy',
              cache_dir: str = None,
              batch: int = 64,
              num_worker: int = 1,
@@ -33,7 +31,7 @@ def evaluate(model: List,
     for n, i in enumerate(model):
         logging.info('\t * checkpoint {}/{}: {}'.format(n + 1, len(model), i))
         tmp_result = _evaluate(
-            i, max_length, template_type, mode, test_type, cache_dir, batch, num_worker,
+            i, max_length, template_type, mode, cache_dir, batch, num_worker,
             validation_data, mse_margin, in_batch_negative
         )
         result += tmp_result
@@ -55,7 +53,6 @@ def _evaluate(model,
               max_length: int = 64,
               template_type: str = None,
               mode: str = 'mask',
-              test_type: str = 'analogy',
               cache_dir: str = None,
               batch: int = 64,
               num_worker: int = 1,
@@ -93,58 +90,56 @@ def _evaluate(model,
         valid_loss = total_loss / size
         logging.info('valid loss: {}'.format(valid_loss))
 
-        if test_type == 'analogy':
+        # Analogy test
+        data = {d: get_analogy_data(d, cache_dir=cache_dir) for d in ['bats', 'sat', 'u2', 'u4', 'google']}
+        for d, (val, test) in data.items():
+            logging.info('\t * data: {}'.format(d))
+            # preprocess data
+            all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
+            all_pairs = [tuple(i) for i in all_pairs]
+            data_ = lm.preprocess(all_pairs, pairwise_input=False)
+            batch = len(all_pairs) if batch is None else batch
+            data_loader = torch.utils.data.DataLoader(Dataset(**data_), num_workers=num_worker, batch_size=batch)
+            # get embedding
+            embeddings = []
+            for encode in data_loader:
+                embeddings += lm.to_embedding(encode).cpu().tolist()
+            assert len(embeddings) == len(all_pairs)
+            embeddings = {str(k_): v for k_, v in zip(all_pairs, embeddings)}
 
-            # Analogy test
-            data = {d: get_analogy_data(d, cache_dir=cache_dir) for d in ['bats', 'sat', 'u2', 'u4', 'google']}
-            for d, (val, test) in data.items():
-                logging.info('\t * data: {}'.format(d))
-                # preprocess data
-                all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
-                all_pairs = [tuple(i) for i in all_pairs]
-                data_ = lm.preprocess(all_pairs, pairwise_input=False)
-                batch = len(all_pairs) if batch is None else batch
-                data_loader = torch.utils.data.DataLoader(Dataset(**data_), num_workers=num_worker, batch_size=batch)
-                # get embedding
-                embeddings = []
-                for encode in data_loader:
-                    embeddings += lm.to_embedding(encode).cpu().tolist()
-                assert len(embeddings) == len(all_pairs)
-                embeddings = {str(k_): v for k_, v in zip(all_pairs, embeddings)}
+            def cos_similarity(a_, b_):
+                inner = sum(list(map(lambda y: y[0] * y[1], zip(a_, b_))))
+                norm_a = sum(list(map(lambda y: y * y, a_))) ** 0.5
+                norm_b = sum(list(map(lambda y: y * y, b_))) ** 0.5
+                if norm_b * norm_a == 0:
+                    return -100
+                return inner / (norm_b * norm_a)
 
-                def cos_similarity(a_, b_):
-                    inner = sum(list(map(lambda y: y[0] * y[1], zip(a_, b_))))
-                    norm_a = sum(list(map(lambda y: y * y, a_))) ** 0.5
-                    norm_b = sum(list(map(lambda y: y * y, b_))) ** 0.5
-                    if norm_b * norm_a == 0:
-                        return -100
-                    return inner / (norm_b * norm_a)
+            def prediction(_data):
+                accuracy = []
+                for single_data in _data:
+                    v_stem = embeddings[str(tuple(single_data['stem']))]
+                    v_choice = [embeddings[str(tuple(c))] for c in single_data['choice']]
+                    sims = [cos_similarity(v_stem, v) for v in v_choice]
+                    pred = sims.index(max(sims))
+                    if sims[pred] == -100:
+                        raise ValueError('failed to compute similarity')
+                    accuracy.append(single_data['answer'] == pred)
+                return sum(accuracy) / len(accuracy)
 
-                def prediction(_data):
-                    accuracy = []
-                    for single_data in _data:
-                        v_stem = embeddings[str(tuple(single_data['stem']))]
-                        v_choice = [embeddings[str(tuple(c))] for c in single_data['choice']]
-                        sims = [cos_similarity(v_stem, v) for v in v_choice]
-                        pred = sims.index(max(sims))
-                        if sims[pred] == -100:
-                            raise ValueError('failed to compute similarity')
-                        accuracy.append(single_data['answer'] == pred)
-                    return sum(accuracy) / len(accuracy)
-
-                # get prediction
-                acc_val = prediction(val)
-                acc_test = prediction(test)
-                acc = (acc_val * len(val) + acc_test * len(test)) / (len(val) + len(test))
-                result.append({
-                    'analogy_accuracy_valid': acc_val,
-                    'analogy_accuracy_test': acc_test,
-                    'analogy_accuracy_full': acc,
-                    'analogy_data': d,
-                    'valid_loss': valid_loss, 'validation_data': validation_data,
-                    'model': model, 'mode': lm.mode,
-                    'template_type': template_type
-                })
-                logging.info(str(result[-1]))
+            # get prediction
+            acc_val = prediction(val)
+            acc_test = prediction(test)
+            acc = (acc_val * len(val) + acc_test * len(test)) / (len(val) + len(test))
+            result.append({
+                'analogy_accuracy_valid': acc_val,
+                'analogy_accuracy_test': acc_test,
+                'analogy_accuracy_full': acc,
+                'analogy_data': d,
+                'valid_loss': valid_loss, 'validation_data': validation_data,
+                'model': model, 'mode': lm.mode,
+                'template_type': template_type
+            })
+            logging.info(str(result[-1]))
     return result
 

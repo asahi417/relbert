@@ -17,9 +17,8 @@ def config(parser):
     parser.add_argument('-m', '--model', help='vanilla language model', default='roberta-large', type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
     parser.add_argument('--mode', help='lm mode', default='average_no_mask', type=str)
-    parser.add_argument('--test-type', help='test data', default='analogy', type=str)
     parser.add_argument('-t', '--template-type', help='template type or path to generated prompt file',
-                        default='a', type=str)
+                        default=None, type=str)
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
 
     return parser
@@ -55,7 +54,6 @@ def main():
             relbert.evaluate(
                 model=[os.path.dirname(i) for i in glob('{}/*/pytorch_model.bin'.format(i))],
                 max_length=trainer_config['max_length'],
-                test_type=opt.test_type,
                 export_file=opt.export_file,
                 cache_dir=opt.cache_dir,
                 batch=opt.batch,
@@ -72,7 +70,6 @@ def main():
                 max_length=opt.max_length,
                 template_type=opt.template_type,
                 mode=opt.mode,
-                test_type=opt.test_type,
                 export_file=opt.export_file,
                 cache_dir=opt.cache_dir,
                 batch=opt.batch,

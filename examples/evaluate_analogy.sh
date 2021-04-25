@@ -1,7 +1,6 @@
 export CKPT_DIR='./relbert_output/ckpt'
 export PROMPT_DIR='./relbert_output/prompt_files'
 export EVAL_LM='./relbert_output/eval/analogy.lm.csv'
-export EVAL_FT='./relbert_output/eval/analogy.finetuned.csv'
 
 
 ##############
@@ -25,17 +24,17 @@ relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/d923/prompt.json --export
 ###########
 # RelBERT #
 ###########
-relbert-eval-analogy -c ${CKPT_DIR}/custom_a --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/custom_b --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/custom_c --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/custom_d --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/custom_e --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_832 --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_922 --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_833 --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_823 --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_932 --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_933 --export-file ${EVAL_FT}
+relbert-eval-analogy -c ${CKPT_DIR}/custom_a --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/custom_b --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/custom_c --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/custom_d --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/custom_e --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_832 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_922 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_833 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_823 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_932 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_933 --export-file ${EVAL_LM}
 
-relbert-eval-analogy -c ${CKPT_DIR}/auto_923 --export-file ${EVAL_FT}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_822 --export-file ${EVAL_FT}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_923 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_822 --export-file ${EVAL_LM}

@@ -1,6 +1,1 @@
-export CKPT_DIR='./relbert_output/ckpt'
-export PROMPT_DIR='./relbert_output/prompt_files'
-export EVAL_LM_CUSTOM='./relbert_output/eval/lm.custom.csv'
-export EVAL_LM_AUTO='./relbert_output/eval/lm.autoprompt.csv'
-export EVAL_FT_CUSTOM='./relbert_output/eval/finetuned.custom.csv'
-export EVAL_FT_AUTO='./relbert_output/eval/finetuned.autoprompt.csv'
+relbert-eval-classification --export-file ./relbert_output/eval/classification.lm.csv
