@@ -172,9 +172,9 @@ class RelBERT:
                 self.model_name, config=model_config, cache_dir=self.cache_dir, local_files_only=True)
 
         # property
-        self.hidden_size = model_config.hidden_size
-        self.embedding_size = model_config.embedding_size
-        self.num_hidden_layers = model_config.num_hidden_layers
+        self.hidden_size = self.model.config.hidden_size
+        self.embedding_size = self.model.config.embedding_size
+        self.num_hidden_layers = self.model.config.num_hidden_layers
         self.max_length = max_length
 
         # GPU setup
