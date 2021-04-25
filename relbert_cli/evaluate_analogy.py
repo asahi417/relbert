@@ -20,9 +20,6 @@ def config(parser):
     parser.add_argument('--test-type', help='test data', default='analogy', type=str)
     parser.add_argument('-t', '--template-type', help='template type or path to generated prompt file',
                         default='a', type=str)
-
-    # parser.add_argument('-n', '--in-batch-negative', help='in batch negative', action='store_true')
-    # parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
 
     return parser
@@ -64,8 +61,6 @@ def main():
                 batch=opt.batch,
                 num_worker=opt.num_workers,
                 validation_data=trainer_config['data'],
-                # mse_margin=trainer_config['mse_margin'],
-                # in_batch_negative=trainer_config['in_batch_negative'],
                 shared_config=shared_config
             )
         else:
@@ -83,8 +78,6 @@ def main():
                 batch=opt.batch,
                 num_worker=opt.num_workers,
                 validation_data=opt.data,
-                # mse_margin=opt.mse_margin,
-                # in_batch_negative=False,
                 shared_config=shared_config
             )
 

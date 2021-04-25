@@ -16,7 +16,7 @@ from .util import Dataset, triplet_loss
 def evaluate(model: List,
              export_file: str,
              max_length: int = 64,
-             template_type: str = 'a',
+             template_type: str = None,
              mode: str = 'average',
              test_type: str = 'analogy',
              cache_dir: str = None,
@@ -53,7 +53,7 @@ def evaluate(model: List,
 
 def _evaluate(model,
               max_length: int = 64,
-              template_type: str = 'a',
+              template_type: str = None,
               mode: str = 'mask',
               test_type: str = 'analogy',
               cache_dir: str = None,
@@ -102,7 +102,7 @@ def _evaluate(model,
                 # preprocess data
                 all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
                 all_pairs = [tuple(i) for i in all_pairs]
-                data_ = lm.preprocess(all_pairs, parallel=True, pairwise_input=False)
+                data_ = lm.preprocess(all_pairs, pairwise_input=False)
                 batch = len(all_pairs) if batch is None else batch
                 data_loader = torch.utils.data.DataLoader(Dataset(**data_), num_workers=num_worker, batch_size=batch)
                 # get embedding
@@ -142,9 +142,8 @@ def _evaluate(model,
                     'analogy_accuracy_full': acc,
                     'analogy_data': d,
                     'valid_loss': valid_loss, 'validation_data': validation_data,
-                    'model': model, 'mode': lm.mode, 'lm': lm.config.model_type,
-                    'custom_template_type': lm.custom_template_type,
-                    'template': json.dumps(lm.template) if lm.template is not None else None
+                    'model': model, 'mode': lm.mode,
+                    'template_type': template_type
                 })
                 logging.info(str(result[-1]))
     return result
