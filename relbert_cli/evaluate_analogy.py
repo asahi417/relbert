@@ -4,7 +4,7 @@ import json
 import argparse
 import logging
 from glob import glob
-import relbert
+from relbert.evaluator_analogy import evaluate
 
 
 def config(parser):
@@ -51,7 +51,7 @@ def main():
                 'parent_contrast': trainer_config['parent_contrast'],
                 'mse_margin': trainer_config['mse_margin']
             }
-            relbert.evaluate(
+            evaluate(
                 model=[os.path.dirname(i) for i in glob('{}/*/pytorch_model.bin'.format(i))],
                 max_length=trainer_config['max_length'],
                 export_file=opt.export_file,
@@ -65,7 +65,7 @@ def main():
             shared_config = {
                 'data': None, 'softmax_loss': None, 'in_batch_negative': None, 'parent_contrast': None,
                 'mse_margin': None}
-            relbert.evaluate(
+            evaluate(
                 model=[i],
                 max_length=opt.max_length,
                 template_type=opt.template_type,

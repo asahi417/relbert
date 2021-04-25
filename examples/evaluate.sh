@@ -1,7 +1,6 @@
 export CKPT_DIR='./relbert_output/ckpt'
 export PROMPT_DIR='./relbert_output/prompt_files'
-export EVAL_LM='./relbert_output/eval/analogy.lm.csv'
-
+export EVAL_LM='./relbert_output/eval/analogy.csv'
 
 ##############
 # vanilla LM #
@@ -29,12 +28,17 @@ relbert-eval-analogy -c ${CKPT_DIR}/custom_b --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/custom_c --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/custom_d --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/custom_e --export-file ${EVAL_LM}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_832 --export-file ${EVAL_LM}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_922 --export-file ${EVAL_LM}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_833 --export-file ${EVAL_LM}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_823 --export-file ${EVAL_LM}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_932 --export-file ${EVAL_LM}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_933 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_d832 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_d922 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_d833 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_d823 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_d932 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_d933 --export-file ${EVAL_LM}
 
 relbert-eval-analogy -c ${CKPT_DIR}/auto_923 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/auto_822 --export-file ${EVAL_LM}
+
+##################
+# Classification #
+##################
+relbert-eval-classification --export-file ./relbert_output/eval/classification.csv
