@@ -29,7 +29,7 @@ def config(parser):
     # language model
     parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
-    parser.add_argument('--mode', help='lm mode', default='average', type=str)
+    parser.add_argument('--mode', help='lm mode', default='average_no_mask', type=str)
     # data
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
     parser.add_argument('--n-sample', help='sample size', default=10, type=int)

@@ -4,7 +4,7 @@ import logging
 import json
 import random
 from itertools import chain
-from typing import List
+from typing import List, Dict
 from multiprocessing import Pool
 from itertools import combinations, product
 from tqdm import tqdm
@@ -14,37 +14,40 @@ from ..list_keeper import ListKeeper
 from ..config import Config
 from ..util import fix_seed, load_language_model, triplet_loss, Dataset
 from ..data import get_training_data
+from ..lm import EncodePlus
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'GradientTriggerSearch'
 MAX_GRADIENT_VALUE = 2000
 
 
-class EncodePlus:
-    """ Wrapper of encode_plus for multiprocessing for GradientTriggerSearch. """
+def preprocess(tokenizer, max_length, prompting_module, trigger_mode,
+               positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
+    """ Encoding data and returns torch.utils.data.Dataset. """
+    # use average aggregation while optimizing prompt
+    shared = {'tokenizer': tokenizer, 'max_length': max_length, 'trigger_mode': trigger_mode, 'mode': 'average'}
 
-    def __init__(self, tokenizer, max_length: int = None):
-        self.tokenizer = tokenizer
-        self.max_length = max_length or self.tokenizer.model_max_length
-        assert self.max_length <= self.tokenizer.model_max_length, '{} < {}'.format(
-            self.max_length, self.tokenizer.model_max_length)
+    def pool_map(_list):
+        pool = Pool()
+        out = pool.map(EncodePlus(**shared), _list)
+        pool.close()
+        return out
 
-    def __call__(self, token_id_trigger: tuple):
-        """ Get (sentence : str, trigger : list) """
-        assert len(token_id_trigger) == 2
-        token_id, trigger = token_id_trigger
-        assert type(token_id) is list and type(trigger) is list
-        sentence = self.tokenizer.decode(token_id)
-        encode = self.tokenizer.encode_plus(
-            sentence, max_length=self.max_length, truncation=True, padding='max_length', add_special_tokens=False)
-        assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
-        if encode['input_ids'][:len(token_id)] != token_id:
-            return None
-        # label for token to be aggregated as an embedding
-        encode['labels'] = list(map(lambda x: 0 if x == self.tokenizer.pad_token_id else 1, encode['input_ids']))
-        # binary mask for trigger tokens
-        encode['trigger'] = list(map(lambda x: trigger[x] if x < len(trigger) else 0, range(self.max_length)))
-        return encode
+    key = list(positive_samples.keys())
+    positive_samples_list = ListKeeper([positive_samples[k] for k in key])
+    p_prompt_out = prompting_module(positive_samples_list.flatten_list)
+    negative_samples_list = ListKeeper([negative_samples[k] for k in key])
+    n_prompt_out = prompting_module(negative_samples_list.flatten_list)
+    positive_embedding = pool_map(p_prompt_out)
+    negative_embedding = pool_map(n_prompt_out)
+    if any(i is None for i in positive_embedding) or any(i is None for i in negative_embedding):
+        return None
+    positive_embedding = positive_samples_list.restore_structure(positive_embedding)
+    positive_embedding = {key[n]: v for n, v in enumerate(positive_embedding)}
+    negative_embedding = negative_samples_list.restore_structure(negative_embedding)
+    negative_embedding = {key[n]: v for n, v in enumerate(negative_embedding)}
+    return dict(positive_samples=positive_embedding, negative_samples=negative_embedding,
+                relation_structure=relation_structure)
 
 
 class PromptGenerator:
@@ -86,17 +89,11 @@ class PromptGenerator:
         """
         return list(map(self.__single_word_pair_prompt, word_pair))
 
-    def save(self, export_file: str, loss: float = None):
+    def save(self, export_file: str):
         assert export_file.endswith('.json')
-        tmp = {'top': self.triggers[:self.b],
-               'top_str': self.tokenizer.convert_ids_to_tokens(self.triggers[:self.b]),
-               'mid': self.triggers[self.b:self.b + self.i],
-               'mid_str': self.tokenizer.convert_ids_to_tokens(self.triggers[self.b:self.b + self.i]),
-               'bottom': self.triggers[self.b + self.i:],
-               'bottom_str': self.tokenizer.convert_ids_to_tokens(self.triggers[self.b + self.i:]),
-               'loss': loss}
         with open(export_file, 'w') as f:
-            json.dump(tmp, f)
+            json.dump({'top': self.triggers[:self.b], 'mid': self.triggers[self.b:self.b + self.i],
+                       'bottom': self.triggers[self.b + self.i:]}, f)
         logging.debug('exported to {}'.format(export_file))
 
     @staticmethod
@@ -133,7 +130,6 @@ class GradientStorage:
     def __init__(self, module):
         self._stored_gradient = None
         module.register_backward_hook(self.hook)
-        # module.register_full_backward_hook(self.hook)
 
     def hook(self, module, grad_in, grad_out):
         self._stored_gradient = grad_out[0]
@@ -179,6 +175,8 @@ class GradientTriggerSearch:
             filter_label=filter_label,
             filter_pn=filter_pn,
             trigger_selection=trigger_selection,
+            batch=batch,
+            batch_no_grad=batch_no_grad,
             model=model,
             max_length=max_length,
             data=data,
@@ -193,8 +191,6 @@ class GradientTriggerSearch:
         self.input_embeddings = self.model.get_input_embeddings()
         self.gradient_store = GradientStorage(self.input_embeddings)
         # cache config
-        self.batch = batch
-        self.batch_no_grad = batch_no_grad
         self.checkpoint_dir = self.config.cache_dir
         if self.config.last_iter != 0:
             ckpt = '{}/prompt.{}.json'.format(self.config.cache_dir, self.config.last_iter - 1)
@@ -242,36 +238,6 @@ class GradientTriggerSearch:
             filter_vocab += list(filter(lambda x: x not in self.tokenizer.all_special_ids, v))
         return filter_vocab
 
-    def preprocess(self):
-        """ Encoding data and returns torch.utils.data.Dataset. """
-
-        shared = {'tokenizer': self.tokenizer, 'max_length': self.config.max_length}
-
-        def pool_map(_list):
-            pool = Pool()
-            out = pool.map(EncodePlus(**shared), _list)
-            pool.close()
-            return out
-
-        key = list(self.all_positive.keys())
-        positive_samples_list = ListKeeper([self.all_positive[k] for k in key])
-        p_prompt_out = self.prompter(positive_samples_list.flatten_list)
-        negative_samples_list = ListKeeper([self.all_negative[k] for k in key])
-        n_prompt_out = self.prompter(negative_samples_list.flatten_list)
-        positive_embedding = pool_map(p_prompt_out)
-        negative_embedding = pool_map(n_prompt_out)
-        if any(i is None for i in positive_embedding) or any(i is None for i in negative_embedding):
-            return None
-        positive_embedding = positive_samples_list.restore_structure(positive_embedding)
-        positive_embedding = {key[n]: v for n, v in enumerate(positive_embedding)}
-        negative_embedding = negative_samples_list.restore_structure(negative_embedding)
-        negative_embedding = {key[n]: v for n, v in enumerate(negative_embedding)}
-        if self.config.parent_contrast:
-            return dict(positive_samples=positive_embedding, negative_samples=negative_embedding,
-                        relation_structure=self.relation_structure)
-        else:
-            return dict(positive_samples=positive_embedding, negative_samples=negative_embedding)
-
     def get_prompt(self, num_workers: int = 1):
         """ Train prompter.
 
@@ -290,11 +256,11 @@ class GradientTriggerSearch:
                 break
             logging.info('iteration {}/{}: {}\t loss {}'.format(
                 i + 1, self.config.n_iteration, self.tokenizer.convert_ids_to_tokens(self.prompter.triggers), loss))
-            self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i), loss)
+            self.prompter.save('{}/prompt.{}.json'.format(self.config.cache_dir, i))
             mode = 'a' if os.path.exists('{}/loss.txt'.format(self.config.cache_dir)) else 'w'
             with open('{}/loss.txt'.format(self.config.cache_dir), mode) as f:
                 f.write('{}\n'.format(loss))
-        self.prompter.save('{}/prompt.json'.format(self.config.cache_dir), loss)
+        self.prompter.save('{}/prompt.json'.format(self.config.cache_dir))
 
     def __single_iteration(self, num_workers: int = 1, filter_matrix=None):
 
@@ -313,7 +279,6 @@ class GradientTriggerSearch:
 
                 # get model prediction
                 encode = {k: _v.to(self.device) for k, _v in encode.items()}
-                # print(encode['input_ids'])
                 labels = encode.pop('labels')
                 trigger = encode.pop('trigger')
                 output = self.model(**encode, return_dict=True)
@@ -349,7 +314,12 @@ class GradientTriggerSearch:
             return sum_grad, n_grad, total_loss
 
         def aggregate_loss(no_grad: bool = False):
-            shared_param = self.preprocess()
+            if self.config.parent_contrast:
+                shared_param = preprocess(self.tokenizer, self.config.max_length, self.prompter, True,
+                                          self.all_positive, self.all_negative, self.relation_structure)
+            else:
+                shared_param = preprocess(self.tokenizer, self.config.max_length, self.prompter, True,
+                                          self.all_positive, self.all_negative)
             if shared_param is None:
                 return None, None
             total_loss = 0
@@ -358,7 +328,7 @@ class GradientTriggerSearch:
             # As the data feeder is stochastic (randomly sample combination of positive and negative), we ensure the
             # gradients are aggregated from large enough sets to behave as a global gradient by conducting several
             # individual runs.
-            batch = self.batch_no_grad if no_grad else self.batch
+            batch = self.config.batch_no_grad if no_grad else self.config.batch
             for d in tqdm(list(range(self.n_trial))):
                 data = Dataset(deterministic_index=d, **shared_param)
                 loader = torch.utils.data.DataLoader(data, batch_size=batch, num_workers=num_workers)
@@ -437,9 +407,7 @@ class GradientTriggerSearch:
     def top_candidate(self, averaged_grad, filter_matrix):
         """ Returns the top candidate replacements."""
         with torch.no_grad():
-            # gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
             gradient_dot_embedding_matrix = filter_matrix - torch.matmul(self.input_embeddings.weight, averaged_grad)
-            # gradient_dot_embedding_matrix = - torch.matmul(self.input_embeddings.weight, averaged_grad)
             logging.debug('\t - max gradient score:{}'.format(gradient_dot_embedding_matrix.max()))
             _, top_k_ids = gradient_dot_embedding_matrix.topk(len(gradient_dot_embedding_matrix))
         return top_k_ids.cpu().tolist()

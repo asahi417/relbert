@@ -1,16 +1,10 @@
-"""
-You may need additional libraries as below
-```
-pip install sklearn
-pip install gensim==3.8.1
-```
-"""
 import os
 import logging
+import argparse
 from glob import glob
 
 import pandas as pd
-from sklearn.neural_network import MLPClassifier
+# from sklearn.neural_network import MLPClassifier
 from sklearn.svm import LinearSVC
 from gensim.models import KeyedVectors
 
@@ -19,7 +13,6 @@ from relbert.util import wget
 from relbert.data import get_lexical_relation_data
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
-batch_size = 512
 
 
 def get_word_embedding_model(model_name: str = 'fasttext'):
@@ -91,7 +84,7 @@ def diff(a, b, model):
     return model[a] - model[b]
 
 
-def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
+def run_classification_test(global_vocab, embedding_model: str = None, relbert_ckpt: str = None, batch_size: int = 512):
 
     if relbert_ckpt:
         model = RelBERT(relbert_ckpt)
@@ -135,19 +128,25 @@ def main(global_vocab, embedding_model: str = None, relbert_ckpt: str = None):
     return report
 
 
-if __name__ == '__main__':
+def config(parser):
+    parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
+    parser.add_argument('--export-file', help='export file', required=True, type=str)
+    return parser
+
+
+def main():
+    argument_parser = argparse.ArgumentParser(description='Evaluate on relation classification.')
+    argument_parser = config(argument_parser)
+    opt = argument_parser.parse_args()
+
     target_word_embedding = ['w2v', 'glove', 'fasttext']
     vocab = get_shared_vocab(target_word_embedding)
     logging.info('shared vocab has {} word'.format(len(vocab)))
-    out_csv = './examples/lexical_relation_classification/result.csv'
-    if os.path.exists(out_csv):
-        df = pd.read_csv(out_csv, index_col=0)
+    if os.path.exists(opt.export_file):
+        df = pd.read_csv(opt.export_file, index_col=0)
         done_list = list(set(df['model'].values))
-        print(done_list)
         full_result = [i.to_dict() for _, i in df.iterrows()]
-        print(full_result)
     else:
-        df = None
         done_list = []
         full_result = []
 
@@ -155,15 +154,17 @@ if __name__ == '__main__':
     for m in target_word_embedding:
         if m in done_list:
             continue
-        full_result += main(vocab, embedding_model=m)
-        pd.DataFrame(full_result).to_csv(out_csv)
+        full_result += run_classification_test(vocab, embedding_model=m, batch_size=opt.batch)
+        pd.DataFrame(full_result).to_csv(opt.export_file)
 
     logging.info("RUN RELBERT")
     ckpts = sorted(glob('relbert_output/ckpt/*/epoch*'))
     for m in ckpts:
         if m in done_list:
             continue
-        full_result += main(vocab, relbert_ckpt=m)
-        pd.DataFrame(full_result).to_csv(out_csv)
+        full_result += run_classification_test(vocab, relbert_ckpt=m, batch_size=opt.batch)
+        pd.DataFrame(full_result).to_csv(opt.export_file)
 
 
+if __name__ == '__main__':
+    main()

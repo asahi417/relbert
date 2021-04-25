@@ -16,7 +16,7 @@ def config(parser):
     parser.add_argument('--export-file', help='export file', required=True, type=str)
     parser.add_argument('-m', '--model', help='vanilla language model', default='roberta-large', type=str)
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
-    parser.add_argument('--mode', help='lm mode', default='average', type=str)
+    parser.add_argument('--mode', help='lm mode', default='average_no_mask', type=str)
     parser.add_argument('--test-type', help='test data', default='analogy', type=str)
     parser.add_argument('-t', '--template-type', help='template type or path to generated prompt file',
                         default='a', type=str)
