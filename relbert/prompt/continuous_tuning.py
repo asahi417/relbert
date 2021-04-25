@@ -106,9 +106,13 @@ class ContinuousTriggerEmbedding(BaseTrainer):
         self.tokenizer.add_special_tokens({'additional_special_tokens': [self.config.pseudo_token]})
         self.pseudo_token_id = self.tokenizer.convert_tokens_to_ids(self.config.pseudo_token)
         self.model.eval()
+        try:
+            embedding_size = self.model.config.embedding_size
+        except AttributeError:
+            embedding_size = self.model.config.hidden_size
         self.prompter = PromptEmbedding(
             pseudo_token_id=self.pseudo_token_id,
-            hidden_size=self.model.config.embedding_size,
+            hidden_size=embedding_size,
             n_trigger_b=self.config.n_trigger_b,
             n_trigger_i=self.config.n_trigger_i,
             n_trigger_e=self.config.n_trigger_e)

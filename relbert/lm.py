@@ -173,7 +173,6 @@ class RelBERT:
 
         # property
         self.hidden_size = self.model.config.hidden_size
-        self.embedding_size = self.model.config.embedding_size
         self.num_hidden_layers = self.model.config.num_hidden_layers
         self.max_length = max_length
 
