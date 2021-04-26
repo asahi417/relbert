@@ -33,7 +33,7 @@ def main():
     for m in target_word_embedding:
         if m in done_list:
             continue
-        for feature in [None, 'diff', 'dot']:
+        for feature in [None, ['diff'], ['dot'], ['diff', 'dot']]:
             full_result += evaluate(vocab, embedding_model=m, batch_size=opt.batch, feature_set=feature)
         pd.DataFrame(full_result).to_csv(opt.export_file)
 
