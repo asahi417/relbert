@@ -34,7 +34,7 @@ class Config:
             self.config = kwargs
             logging.info('hyperparameters')
             for k, v in self.config.items():
-                logging.info('\t * {}: {}'.format(k, v))
+                logging.info('\t * {}: {}'.format(k, str(v)[:min(100, len(str(v)))]))
             configs = {i: self.safe_open(i) for i in glob('{}/*/{}.json'.format(os.path.dirname(export), config_name))}
             configs = list(filter(lambda x: x[1] == self.config, configs.items()))
             if len(configs) != 0:

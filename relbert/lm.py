@@ -76,6 +76,7 @@ class EncodePlus:
             h, t = word_pair
             mask = self.tokenizer.mask_token
             assert h != mask and t != mask
+            print(' '.join([mask] * len(top) + [h] + [mask] * len(mid) + [t] + [mask] * len(bottom)))
             token_ids = self.tokenizer.encode(
                 ' '.join([mask] * len(top) + [h] + [mask] * len(mid) + [t] + [mask] * len(bottom)))
             token_ids = [-100 if i == self.tokenizer.mask_token_id else i for i in token_ids]
@@ -197,8 +198,8 @@ class RelBERT:
             self.template['pseudo_token_id'] = pseudo_token_id
             self.input_embeddings = self.model.get_input_embeddings()
         logging.info('language model running on {} GPU'.format(torch.cuda.device_count()))
-        logging.info('\t * template       : {}'.format(self.template))
-        logging.info('\t * custom template: {}'.format(self.custom_template_type))
+        logging.debug('\t * template       : {}'.format(self.template))
+        logging.debug('\t * custom template: {}'.format(self.custom_template_type))
 
     def train(self):
         self.model.train()
@@ -287,6 +288,7 @@ class RelBERT:
             input_ids[mask] = self.tokenizer.unk_token_id
             embedding = self.input_embeddings(input_ids)
             for i in range(len(mask)):
+                print(embedding[i][mask[i], :].shape(), self.prompt_embedding.shape())
                 embedding[i][mask[i], :] = self.prompt_embedding
             encode['inputs_embeds'] = embedding
             output = self.model(**encode, return_dict=True)
