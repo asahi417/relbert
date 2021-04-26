@@ -82,7 +82,7 @@ class EncodePlus:
             for i in top + mid + bottom:
                 token_ids[token_ids.index(-100)] = i
             sentence = self.tokenizer.decode(token_ids)
-            print(token_ids, sentence)
+            # print(token_ids, sentence)
         else:
             sentence = custom_prompter(word_pair, self.custom_template_type, self.tokenizer.mask_token)
         encode = self.tokenizer.encode_plus(sentence, **param)
@@ -193,8 +193,8 @@ class RelBERT:
             self.tokenizer.add_special_tokens({'additional_special_tokens': [self.template['pseudo_token']]})
             pseudo_token_id = self.tokenizer.convert_tokens_to_ids(self.template['pseudo_token'])
             self.template['top'] = [pseudo_token_id] * self.template['n_trigger_b']
-            self.template['mid'] = [pseudo_token_id] * self.template['n_trigger_b']
-            self.template['bottom'] = [pseudo_token_id] * self.template['n_trigger_b']
+            self.template['mid'] = [pseudo_token_id] * self.template['n_trigger_i']
+            self.template['bottom'] = [pseudo_token_id] * self.template['n_trigger_e']
             self.template['pseudo_token_id'] = pseudo_token_id
             self.input_embeddings = self.model.get_input_embeddings()
         logging.info('language model running on {} GPU'.format(torch.cuda.device_count()))
@@ -288,7 +288,7 @@ class RelBERT:
             input_ids[mask] = self.tokenizer.unk_token_id
             embedding = self.input_embeddings(input_ids)
             for i in range(len(mask)):
-                print(embedding[i][mask[i], :].shape, self.prompt_embedding.shape)
+                # print(embedding[i][mask[i], :].shape, self.prompt_embedding.shape)
                 embedding[i][mask[i], :] = self.prompt_embedding
             encode['inputs_embeds'] = embedding
             output = self.model(**encode, return_dict=True)
