@@ -188,7 +188,8 @@ class RelBERT:
         self.prompt_embedding = None
         self.prompt_embedding_input = None
         if self.template is not None and 'embedding' in self.template:
-            self.prompt_embedding = torch.nn.Embedding.from_pretrained(self.template['embedding']).to(self.device)
+            self.prompt_embedding = torch.nn.Embedding.from_pretrained(
+                torch.tensor(self.template['embedding'])).to(self.device)
             self.prompt_embedding_input = torch.arange(len(self.template['embedding'])).to(self.device)
             self.tokenizer.add_special_tokens({'additional_special_tokens': [self.template['pseudo_token']]})
             pseudo_token_id = self.tokenizer.convert_tokens_to_ids(self.template['pseudo_token'])
