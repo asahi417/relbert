@@ -129,7 +129,7 @@ def evaluate(global_vocab, embedding_model: str = None, relbert_ckpt: str = None
             x = [(a, b) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
             x = model.get_embedding(x, batch_size=batch_size)
         else:
-            x = [diff(a, b, model) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
+            x = [diff(a, b, model, feature_set) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
         y_true = [y for y, flag in zip(v['test']['y'], in_vocab_index) if flag]
         y_pred = clf.predict(x)
         # accuracy
