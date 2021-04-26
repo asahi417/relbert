@@ -20,6 +20,15 @@ relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/d933/prompt.json --export
 relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/d822/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/d923/prompt.json --export-file ${EVAL_LM}
 
+relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/c832/prompt.json --export-file ${EVAL_LM}
+relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/c922/prompt.json --export-file ${EVAL_LM}
+relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/c833/prompt.json --export-file ${EVAL_LM}
+relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/c823/prompt.json --export-file ${EVAL_LM}
+relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/c932/prompt.json --export-file ${EVAL_LM}
+relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/c933/prompt.json --export-file ${EVAL_LM}
+relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/c822/prompt.json --export-file ${EVAL_LM}
+relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/c923/prompt.json --export-file ${EVAL_LM}
+
 ###########
 # RelBERT #
 ###########
@@ -35,8 +44,19 @@ relbert-eval-analogy -c ${CKPT_DIR}/auto_d823 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/auto_d932 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/auto_d933 --export-file ${EVAL_LM}
 
-relbert-eval-analogy -c ${CKPT_DIR}/auto_923 --export-file ${EVAL_LM}
-relbert-eval-analogy -c ${CKPT_DIR}/auto_822 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_d923 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_d822 --export-file ${EVAL_LM}
+
+relbert-eval-analogy -c ${CKPT_DIR}/auto_c832 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_c922 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_c833 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_c823 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_c932 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_c933 --export-file ${EVAL_LM}
+
+relbert-eval-analogy -c ${CKPT_DIR}/auto_c923 --export-file ${EVAL_LM}
+relbert-eval-analogy -c ${CKPT_DIR}/auto_c822 --export-file ${EVAL_LM}
+
 
 ##################
 # Classification #

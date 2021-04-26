@@ -286,7 +286,8 @@ class RelBERT:
             mask = input_ids == self.template['pseudo_token_id']
             input_ids[mask] = self.tokenizer.unk_token_id
             embedding = self.input_embeddings(input_ids)
-            embedding[mask] = self.prompt_embedding
+            for i in range(len(mask)):
+                embedding[i][mask[i], :] = self.prompt_embedding
             encode['inputs_embeds'] = embedding
             output = self.model(**encode, return_dict=True)
             batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)

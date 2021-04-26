@@ -144,9 +144,8 @@ class ContinuousTriggerEmbedding(BaseTrainer):
         input_ids[mask] = self.tokenizer.unk_token_id
         embedding = self.input_embeddings(input_ids)
         trigger_embedding = self.prompter()
-        # [trigger_embedding]
-        # print(embedding[mask].shape, self.prompter().shape)
-        # embedding[mask] =
+        for i in range(len(mask)):
+            embedding[i][mask[i], :] = trigger_embedding
         encode['inputs_embeds'] = embedding
         output = self.model(**encode, return_dict=True)
         batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
@@ -156,7 +155,7 @@ class ContinuousTriggerEmbedding(BaseTrainer):
         def convert_pair_to_prompt(h, t):
             prompt = [self.config.pseudo_token] * self.config.n_trigger_b + [h]
             prompt += [self.config.pseudo_token] * self.config.n_trigger_i + [t]
-            prompt += [self.config.pseudo_token] * self.config.n_trigger_i
+            prompt += [self.config.pseudo_token] * self.config.n_trigger_e
             return ' '.join(prompt)
         return [convert_pair_to_prompt(_h, _t) for _h, _t in pairs]
 
