@@ -25,43 +25,45 @@ def get_word_embedding_model(model_name: str = 'fasttext'):
                  cache_dir=cache)
         model = KeyedVectors.load_word2vec_format(path, binary=True)
     elif model_name == 'fasttext':
-        path = './cache/wiki-news-300d-1M.vec'
+        path = '{}/wiki-news-300d-1M.vec'.format(cache)
         if not os.path.exists(path):
             logging.info('downloading {}'.format(model_name))
             wget(url='https://dl.fbaipublicfiles.com/fasttext/vectors-english/wiki-news-300d-1M.vec.zip',
                  cache_dir=cache)
         model = KeyedVectors.load_word2vec_format(path)
     elif model_name == 'glove':
-        path = './cache/glove.840B.300d.gensim.bin'
+        path = '{}/glove.840B.300d.gensim.bin'.format(cache)
         if not os.path.exists(path):
             logging.info('downloading {}'.format(model_name))
             wget(url='https://drive.google.com/u/0/uc?id=1DbLuxwDlTRDbhBroOVgn2_fhVUQAVIqN&export=download',
                  gdrive_filename='glove.840B.300d.gensim.bin.tar.gz',
                  cache_dir=cache)
         model = KeyedVectors.load_word2vec_format(path, binary=True)
-    elif model_name == 'relative_init.fasttext.concat':
-        path = './cache/relative_init.fasttext.concat.bin'
-        if not os.path.exists(path):
-            logging.info('downloading {}'.format(model_name))
-            wget(url='https://drive.google.com/u/0/uc?id=1EH0oywBo8OaNExyc5XTGIFhLvf8mZiBz&export=download',
-                 gdrive_filename='relative_init.fasttext.concat.bin.tar.gz',
-                 cache_dir=cache)
-        model = KeyedVectors.load_word2vec_format(path, binary=True)
-    elif model_name == 'relative_init.fasttext.truecase.concat':
-        path = './cache/relative_init.fasttext.truecase.concat.bin'
-        if not os.path.exists(path):
-            logging.info('downloading {}'.format(model_name))
-            wget(url="https://drive.google.com/u/0/uc?id=1iUuCYM_UJ6FHI5yxg5UIGkXN4qqU5S3G&export=download",
-                 gdrive_filename='relative_init.fasttext.truecase.concat.bin.tar.gz',
-                 cache_dir=cache)
-        model = KeyedVectors.load_word2vec_format(path, binary=True)
+    # elif model_name == 'relative_init.fasttext.concat':
+    #     path = './cache/relative_init.fasttext.concat.bin'
+    #     if not os.path.exists(path):
+    #         logging.info('downloading {}'.format(model_name))
+    #         wget(url='https://drive.google.com/u/0/uc?id=1EH0oywBo8OaNExyc5XTGIFhLvf8mZiBz&export=download',
+    #              gdrive_filename='relative_init.fasttext.concat.bin.tar.gz',
+    #              cache_dir=cache)
+    #     model = KeyedVectors.load_word2vec_format(path, binary=True)
+    # elif model_name == 'relative_init.fasttext.truecase.concat':
+    #     path = './cache/relative_init.fasttext.truecase.concat.bin'
+    #     if not os.path.exists(path):
+    #         logging.info('downloading {}'.format(model_name))
+    #         wget(url="https://drive.google.com/u/0/uc?id=1iUuCYM_UJ6FHI5yxg5UIGkXN4qqU5S3G&export=download",
+    #              gdrive_filename='relative_init.fasttext.truecase.concat.bin.tar.gz',
+    #              cache_dir=cache)
+    #     model = KeyedVectors.load_word2vec_format(path, binary=True)
+    # else:
+    #     path = './cache/{}.bin'.format(model_name)
+    #     if not os.path.exists(path):
+    #         logging.info('downloading {}'.format(model_name))
+    #         wget(url='https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/{}.bin.tar.gz'.format(model_name),
+    #              cache_dir=cache)
+    #     model = KeyedVectors.load_word2vec_format(path, binary=True)
     else:
-        path = './cache/{}.bin'.format(model_name)
-        if not os.path.exists(path):
-            logging.info('downloading {}'.format(model_name))
-            wget(url='https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/{}.bin.tar.gz'.format(model_name),
-                 cache_dir=cache)
-        model = KeyedVectors.load_word2vec_format(path, binary=True)
+        raise ValueError('unknown model: {}'.format(model_name))
     return model
 
 
