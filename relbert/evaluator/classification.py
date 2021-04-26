@@ -1,6 +1,10 @@
 import os
 import logging
+
+import numpy as np
 from sklearn.svm import LinearSVC
+from sklearn.metrics import f1_score
+from sklearn.neural_network import MLPClassifier
 from gensim.models import KeyedVectors
 
 from relbert import RelBERT
@@ -74,7 +78,10 @@ def get_shared_vocab(model_list):
 
 
 def diff(a, b, model):
-    return model[a] - model[b]
+    vec_a = model[a]
+    vec_b = model[b]
+    vec_diff = vec_a - vec_b
+    return np.concatenate([vec_a, vec_b, vec_diff])
 
 
 def evaluate(global_vocab, embedding_model: str = None, relbert_ckpt: str = None, batch_size: int = 512):
@@ -100,8 +107,8 @@ def evaluate(global_vocab, embedding_model: str = None, relbert_ckpt: str = None
             x = [diff(a, b, model) for (a, b), flag in zip(v['train']['x'], in_vocab_index) if flag]
         y = [y for y, flag in zip(v['train']['y'], in_vocab_index) if flag]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
-        # clf = MLPClassifier().fit(x, y)
-        clf = LinearSVC().fit(x, y)
+        clf = MLPClassifier().fit(x, y)
+        # clf = LinearSVC().fit(x, y)
 
         logging.info('\t run validation')
         in_vocab_index = [a in global_vocab and b in global_vocab for a, b in v['test']['x']]
@@ -111,9 +118,15 @@ def evaluate(global_vocab, embedding_model: str = None, relbert_ckpt: str = None
             x = model.get_embedding(x, batch_size=batch_size)
         else:
             x = [diff(a, b, model) for (a, b), flag in zip(v['test']['x'], in_vocab_index) if flag]
-        y = [y for y, flag in zip(v['test']['y'], in_vocab_index) if flag]
-        accuracy = clf.score(x, y)
-        report_tmp = {'model': model_name, 'accuracy': accuracy, 'label_size': len(label_dict), 'oov': oov,
+        y_true = [y for y, flag in zip(v['test']['y'], in_vocab_index) if flag]
+        y_pred = clf.predict(x)
+        # accuracy
+        accuracy = clf.score(x, y_true)
+        f_mac = f1_score(y_true, y_pred, average='macro')
+        f_mic = f1_score(y_true, y_pred, average='micro')
+
+        report_tmp = {'model': model_name, 'accuracy': accuracy, 'f1_macro': f_mac, 'f1_micro': f_mic,
+                      'label_size': len(label_dict), 'oov': oov,
                       'test_total': len(x), 'data': data_name}
         logging.info('\t accuracy: \n{}'.format(report_tmp))
         report.append(report_tmp)
