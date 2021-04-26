@@ -26,7 +26,7 @@ class PromptEmbedding(torch.nn.Module):
                  device: str = 'cpu'):
         super().__init__()
         self.pseudo_token_id = pseudo_token_id
-        self.embedding = torch.nn.Embedding(n_trigger_i + n_trigger_b + n_trigger_e, hidden_size)
+        self.embedding = torch.nn.Embedding(n_trigger_i + n_trigger_b + n_trigger_e, hidden_size).to(device)
         self.n_trigger_i, self.n_trigger_b, self.n_trigger_e = n_trigger_i, n_trigger_b, n_trigger_e
         self.lstm_head = torch.nn.LSTM(
             input_size=hidden_size, hidden_size=hidden_size // 2, num_layers=2, dropout=dropout,
