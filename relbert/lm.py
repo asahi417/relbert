@@ -151,7 +151,6 @@ class RelBERT:
             self.is_trained = True
             if 'template' in model_config.relbert_config:
                 self.template = model_config.relbert_config['template']
-                # self.parse_template(model_config.relbert_config['template'])
             else:
                 self.custom_template_type = model_config.relbert_config['custom_template_type']
         else:
@@ -162,7 +161,6 @@ class RelBERT:
                 self.custom_template_type = template_type
             else:
                 with open(template_type, 'r') as f:
-                    # self.parse_template(json.load(f))
                     self.template = json.load(f)
                 model_config.update({'relbert_config': {'mode': mode, 'template': self.template}})
         try:
@@ -188,8 +186,10 @@ class RelBERT:
         # prompting setup
         self.input_embeddings = None
         self.prompt_embedding = None
+        self.prompt_embedding_input = None
         if self.template is not None and 'embedding' in self.template:
-            self.prompt_embedding = torch.tensor(self.template['embedding']).to(self.device)
+            self.prompt_embedding = torch.nn.Embedding.from_pretrained(self.template['embedding']).to(self.device)
+            self.prompt_embedding_input = torch.arange(len(self.template['embedding'])).to(self.device)
             self.tokenizer.add_special_tokens({'additional_special_tokens': [self.template['pseudo_token']]})
             pseudo_token_id = self.tokenizer.convert_tokens_to_ids(self.template['pseudo_token'])
             self.template['top'] = [pseudo_token_id] * self.template['n_trigger_b']
@@ -287,9 +287,9 @@ class RelBERT:
             mask = input_ids == self.template['pseudo_token_id']
             input_ids[mask] = self.tokenizer.unk_token_id
             embedding = self.input_embeddings(input_ids)
+            prompt_embedding = self.prompt_embedding(self.prompt_embedding_input)
             for i in range(len(mask)):
-                # print(embedding[i][mask[i], :].shape, self.prompt_embedding.shape)
-                embedding[i][mask[i], :] = self.prompt_embedding
+                embedding[i][mask[i], :] = prompt_embedding
             encode['inputs_embeds'] = embedding
             output = self.model(**encode, return_dict=True)
             batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
