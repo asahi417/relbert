@@ -22,17 +22,19 @@ class PromptEmbedding(torch.nn.Module):
                  n_trigger_b: int = 1,
                  n_trigger_i: int = 1,
                  n_trigger_e: int = 1,
-                 dropout: float = 0.0):
+                 dropout: float = 0.0,
+                 device: str = 'cpu'):
         super().__init__()
         self.pseudo_token_id = pseudo_token_id
         self.embedding = torch.nn.Embedding(n_trigger_i + n_trigger_b + n_trigger_e, hidden_size)
         self.n_trigger_i, self.n_trigger_b, self.n_trigger_e = n_trigger_i, n_trigger_b, n_trigger_e
         self.lstm_head = torch.nn.LSTM(
             input_size=hidden_size, hidden_size=hidden_size // 2, num_layers=2, dropout=dropout,
-            bidirectional=True, batch_first=True)
+            bidirectional=True, batch_first=True).to(device)
         self.mlp_head = torch.nn.Sequential(
-            torch.nn.Linear(hidden_size, hidden_size), torch.nn.ReLU(), torch.nn.Linear(hidden_size, hidden_size))
-        self.seq_indices = torch.arange(self.embedding.num_embeddings)  # input
+            torch.nn.Linear(hidden_size, hidden_size), torch.nn.ReLU(), torch.nn.Linear(hidden_size, hidden_size)
+        ).to(device)
+        self.seq_indices = torch.arange(self.embedding.num_embeddings).to(device)  # input
 
     def forward(self):
         out = self.embedding(self.seq_indices).unsqueeze(0)
@@ -110,14 +112,7 @@ class ContinuousTriggerEmbedding(BaseTrainer):
             embedding_size = self.model.config.embedding_size
         except AttributeError:
             embedding_size = self.model.config.hidden_size
-        self.prompter = PromptEmbedding(
-            pseudo_token_id=self.pseudo_token_id,
-            hidden_size=embedding_size,
-            n_trigger_b=self.config.n_trigger_b,
-            n_trigger_i=self.config.n_trigger_i,
-            n_trigger_e=self.config.n_trigger_e)
         self.input_embeddings = self.model.get_input_embeddings()
-        self.model_parameters = list(self.prompter.named_parameters())
 
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
@@ -126,7 +121,15 @@ class ContinuousTriggerEmbedding(BaseTrainer):
             self.parallel = True
             self.model = torch.nn.DataParallel(self.model)
         self.model.to(self.device)
-        self.prompter.to(self.device)
+        self.prompter = PromptEmbedding(
+            pseudo_token_id=self.pseudo_token_id,
+            hidden_size=embedding_size,
+            n_trigger_b=self.config.n_trigger_b,
+            n_trigger_i=self.config.n_trigger_i,
+            n_trigger_e=self.config.n_trigger_e,
+            device=self.device)
+        self.model_parameters = list(self.prompter.named_parameters())
+
         logging.info('language model running on {} GPU'.format(torch.cuda.device_count()))
         self.setup()
 
