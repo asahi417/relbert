@@ -24,12 +24,12 @@ relbert-prompt-continuous --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --expo
 relbert-prompt-continuous --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/c932
 relbert-prompt-continuous --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/c933
 
-relbert-prompt-continuous -n -p -s --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/c822_nps
-relbert-prompt-continuous -n -p -s --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/c832_nps
-relbert-prompt-continuous -n -p -s --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/c833_nps
-relbert-prompt-continuous -n -p -s --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/c823_nps
-relbert-prompt-continuous -n -p -s --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/c922_nps
-relbert-prompt-continuous -n -p -s --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/c923_nps
-relbert-prompt-continuous -n -p -s --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/c932_nps
-relbert-prompt-continuous -n -p -s --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/c933_nps
+relbert-prompt-continuous -n -p --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/c822_np
+relbert-prompt-continuous -n -p --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/c832_np
+relbert-prompt-continuous -n -p --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/c833_np
+relbert-prompt-continuous -n -p --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/c823_np
+relbert-prompt-continuous -n -p --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/c922_np
+relbert-prompt-continuous -n -p --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/c923_np
+relbert-prompt-continuous -n -p --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/c932_np
+relbert-prompt-continuous -n -p --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/c933_np
 

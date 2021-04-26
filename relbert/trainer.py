@@ -34,6 +34,7 @@ class BaseTrainer:
         self.scaler = None
         self.device = None
         self.parallel = None
+        self.hidden_size = None
 
     def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
         raise NotImplementedError
@@ -55,7 +56,7 @@ class BaseTrainer:
 
         if self.config.softmax_loss:
             logging.info('add linear layer for softmax_loss')
-            self.linear = nn.Linear(self.model.hidden_size * 3, 1)  # three way feature
+            self.linear = nn.Linear(self.hidden_size * 3, 1)  # three way feature
             self.linear.weight.data.normal_(std=0.02)
             self.discriminative_loss = nn.BCELoss()
             self.linear.to(self.device)
@@ -224,6 +225,7 @@ class Trainer(BaseTrainer):
         self.model_parameters = list(self.model.model.named_parameters())
         assert not self.model.is_trained, '{} is already trained'.format(model)
         self.model.train()
+        self.hidden_size = self.model.hidden_size
 
         # config
         self.config = Config(
