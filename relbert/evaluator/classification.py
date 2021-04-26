@@ -84,14 +84,15 @@ def get_shared_vocab(model_list):
     return shared_vocab
 
 
-def diff(a, b, model, add_feature_set):
+def diff(a, b, model, add_feature_set = None):
     vec_a = model[a]
     vec_b = model[b]
     feature = [vec_a, vec_b]
-    if 'diff' in add_feature_set:
-        feature.append(vec_a - vec_b)
-    if 'dot' in add_feature_set:
-        feature.append(vec_a * vec_b)
+    if add_feature_set is not None:
+        if 'diff' in add_feature_set:
+            feature.append(vec_a - vec_b)
+        if 'dot' in add_feature_set:
+            feature.append(vec_a * vec_b)
     return np.concatenate(feature)
 
 
