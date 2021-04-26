@@ -33,7 +33,8 @@ def main():
     for m in target_word_embedding:
         if m in done_list:
             continue
-        full_result += evaluate(vocab, embedding_model=m, batch_size=opt.batch)
+        for feature in [None, 'diff', 'dot']:
+            full_result += evaluate(vocab, embedding_model=m, batch_size=opt.batch, feature_set=feature)
         pd.DataFrame(full_result).to_csv(opt.export_file)
 
     logging.info("RUN RELBERT")
