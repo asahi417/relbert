@@ -76,13 +76,13 @@ class EncodePlus:
             h, t = word_pair
             mask = self.tokenizer.mask_token
             assert h != mask and t != mask
-            print(' '.join([mask] * len(top) + [h] + [mask] * len(mid) + [t] + [mask] * len(bottom)))
             token_ids = self.tokenizer.encode(
                 ' '.join([mask] * len(top) + [h] + [mask] * len(mid) + [t] + [mask] * len(bottom)))
             token_ids = [-100 if i == self.tokenizer.mask_token_id else i for i in token_ids]
             for i in top + mid + bottom:
                 token_ids[token_ids.index(-100)] = i
             sentence = self.tokenizer.decode(token_ids)
+            print(token_ids, sentence)
         else:
             sentence = custom_prompter(word_pair, self.custom_template_type, self.tokenizer.mask_token)
         encode = self.tokenizer.encode_plus(sentence, **param)
@@ -288,7 +288,7 @@ class RelBERT:
             input_ids[mask] = self.tokenizer.unk_token_id
             embedding = self.input_embeddings(input_ids)
             for i in range(len(mask)):
-                print(embedding[i][mask[i], :].shape(), self.prompt_embedding.shape())
+                print(embedding[i][mask[i], :].shape, self.prompt_embedding.shape)
                 embedding[i][mask[i], :] = self.prompt_embedding
             encode['inputs_embeds'] = embedding
             output = self.model(**encode, return_dict=True)
