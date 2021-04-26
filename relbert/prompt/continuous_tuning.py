@@ -17,7 +17,7 @@ class PromptEmbedding(torch.nn.Module):
     """ LSTM trigger embedding for ptuning. """
 
     def __init__(self,
-                 pseudo_token_id: str,
+                 pseudo_token: str,
                  hidden_size: int,
                  n_trigger_b: int = 1,
                  n_trigger_i: int = 1,
@@ -25,7 +25,7 @@ class PromptEmbedding(torch.nn.Module):
                  dropout: float = 0.0,
                  device: str = 'cpu'):
         super().__init__()
-        self.pseudo_token_id = pseudo_token_id
+        self.pseudo_token = pseudo_token
         self.embedding = torch.nn.Embedding(n_trigger_i + n_trigger_b + n_trigger_e, hidden_size).to(device)
         self.n_trigger_i, self.n_trigger_b, self.n_trigger_e = n_trigger_i, n_trigger_b, n_trigger_e
         self.lstm_head = torch.nn.LSTM(
@@ -122,7 +122,7 @@ class ContinuousTriggerEmbedding(BaseTrainer):
             self.model = torch.nn.DataParallel(self.model)
         self.model.to(self.device)
         self.prompter = PromptEmbedding(
-            pseudo_token_id=self.pseudo_token_id,
+            pseudo_token=self.config.pseudo_token,
             hidden_size=embedding_size,
             n_trigger_b=self.config.n_trigger_b,
             n_trigger_i=self.config.n_trigger_i,
