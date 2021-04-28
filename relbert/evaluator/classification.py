@@ -15,15 +15,15 @@ def evaluate(relbert_ckpt: str = None, batch_size: int = 512):
     for data_name, v in data.items():
         logging.info('train model with {} on {}'.format(model_name, data_name))
         label_dict = v.pop('label')
-        print(v['train']['x'])
-        x = model.get_embedding(v['train']['x'], batch_size=batch_size)
+        x = [tuple(_x) for _x in v['train']['x']]
+        x = model.get_embedding(x, batch_size=batch_size)
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
         clf = MLPClassifier().fit(x, v['train']['y'])
-        logging.info('\t run validation')
-        x = model.get_embedding(v['test']['x'], batch_size=batch_size)
-        y_pred = clf.predict(x)
 
-        # accuracy
+        logging.info('\t run validation')
+        x = [tuple(_x) for _x in v['test']['x']]
+        x = model.get_embedding(x, batch_size=batch_size)
+        y_pred = clf.predict(x)
         accuracy = clf.score(x, v['test']['y'])
         f_mac = f1_score(v['test']['y'], y_pred, average='macro')
         f_mic = f1_score(v['test']['y'], y_pred, average='micro')
