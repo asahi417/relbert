@@ -2,7 +2,6 @@
 import os
 import json
 from glob import glob
-from itertools import chain, product
 
 from .util import wget, home_dir
 

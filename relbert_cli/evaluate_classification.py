@@ -2,6 +2,7 @@ import os
 import logging
 import argparse
 from glob import glob
+from itertools import combinations
 import pandas as pd
 from relbert.evaluator.classification import evaluate, get_shared_vocab
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
@@ -30,10 +31,11 @@ def main():
         full_result = []
 
     logging.info("RUN WORD-EMBEDDING BASELINE")
+    pattern = list(combinations(['diff', 'concat', 'dot'], 2)) + [('diff', 'concat', 'dot')] + ['diff', 'concat', 'dot']
     for m in target_word_embedding:
         if m in done_list:
             continue
-        for feature in [None, ['diff'], ['dot'], ['diff', 'dot']]:
+        for feature in pattern:
             full_result += evaluate(vocab, embedding_model=m, batch_size=opt.batch, feature_set=feature)
         pd.DataFrame(full_result).to_csv(opt.export_file)
 

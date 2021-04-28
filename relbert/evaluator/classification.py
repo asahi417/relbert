@@ -86,20 +86,22 @@ def get_shared_vocab(model_list):
     return shared_vocab
 
 
-def diff(a, b, model, add_feature_set = None):
+def diff(a, b, model, add_feature_set='concat'):
     vec_a = model[a]
     vec_b = model[b]
-    feature = [vec_a, vec_b]
-    if add_feature_set is not None:
-        if 'diff' in add_feature_set:
-            feature.append(vec_a - vec_b)
-        if 'dot' in add_feature_set:
-            feature.append(vec_a * vec_b)
+    if 'concat' in add_feature_set:
+        feature = [vec_a, vec_b]
+    else:
+        feature = []
+    if 'diff' in add_feature_set:
+        feature.append(vec_a - vec_b)
+    if 'dot' in add_feature_set:
+        feature.append(vec_a * vec_b)
     return np.concatenate(feature)
 
 
 def evaluate(global_vocab, embedding_model: str = None, relbert_ckpt: str = None, batch_size: int = 512,
-             feature_set=None):
+             feature_set='concat'):
 
     if relbert_ckpt:
         model = RelBERT(relbert_ckpt)

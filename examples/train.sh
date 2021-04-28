@@ -11,7 +11,6 @@ relbert-train -n -p -s -t e --export ${CKPT_DIR}/custom_e
 # Train with discrete tuned prompt
 relbert-train -n -p -s -t ${PROMPT_DIR}/d822/prompt.json --export ${CKPT_DIR}/auto_d822
 relbert-train -n -p -s -t ${PROMPT_DIR}/d923/prompt.json --export ${CKPT_DIR}/auto_d923
-
 relbert-train -n -p -s -t ${PROMPT_DIR}/d833/prompt.json --export ${CKPT_DIR}/auto_d833
 relbert-train -n -p -s -t ${PROMPT_DIR}/d823/prompt.json --export ${CKPT_DIR}/auto_d823
 relbert-train -n -p -s -t ${PROMPT_DIR}/d832/prompt.json --export ${CKPT_DIR}/auto_d832
