@@ -91,7 +91,7 @@ def _evaluate(model,
         logging.info('valid loss: {}'.format(valid_loss))
 
         # Analogy test
-        data = {d: get_analogy_data(d, cache_dir=cache_dir) for d in ['bats', 'sat', 'u2', 'u4', 'google']}
+        data = get_analogy_data(cache_dir)
         for d, (val, test) in data.items():
             logging.info('\t * data: {}'.format(d))
             # preprocess data

@@ -18,13 +18,12 @@ def main():
     argument_parser = config(argument_parser)
     opt = argument_parser.parse_args()
 
+    done_list = []
+    full_result = []
     if os.path.exists(opt.export_file):
         df = pd.read_csv(opt.export_file, index_col=0)
         done_list = list(set(df['model'].values))
         full_result = [i.to_dict() for _, i in df.iterrows()]
-    else:
-        done_list = []
-        full_result = []
 
     logging.info("RUN RELBERT")
     ckpts = sorted(glob('relbert_output/ckpt/*/epoch*'))

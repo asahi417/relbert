@@ -112,31 +112,33 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
     #     return all_positive, all_negative, relation_structure
 
 
-def get_analogy_data(data_name: str, cache_dir: str = None):
+def get_analogy_data(cache_dir: str = None):
     """ Get SAT-type dataset: a list of (answer: int, prompts: list, stem: list, choice: list)"""
     cache_dir = cache_dir if cache_dir is not None else home_dir
     cache_dir = '{}/data'.format(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
-    root_url_analogy = 'https://github.com/asahi417/AnalogyDataset/releases/download/0.0.0'
-    assert data_name in ['sat', 'u2', 'u4', 'google', 'bats'], 'unknown data_iterator: {}'.format(data_name)
-    if not os.path.exists('{}/{}'.format(cache_dir, data_name)):
-        wget('{}/{}.zip'.format(root_url_analogy, data_name), cache_dir)
-    with open('{}/{}/test.jsonl'.format(cache_dir, data_name), 'r') as f:
-        test_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
-    with open('{}/{}/valid.jsonl'.format(cache_dir, data_name), 'r') as f:
-        val_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
-    return val_set, test_set
+    root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset.tar.gz'
+    if not os.path.exists('{}/analogy_test_dataset'.format(cache_dir)):
+        wget(root_url_analogy, cache_dir)
+    data = {}
+    for d in ['bats', 'sat', 'u2', 'u4', 'google']:
+        with open('{}/analogy_test_dataset/{}/test.jsonl'.format(cache_dir, data_name), 'r') as f:
+            test_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
+        with open('{}/{}/valid.jsonl'.format(cache_dir, data_name), 'r') as f:
+            val_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
+        data[d] = (val_set, test_set)
+    return data
 
 
 def get_lexical_relation_data(cache_dir: str = None):
     cache_dir = cache_dir if cache_dir is not None else home_dir
     cache_dir = '{}/data'.format(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
-    root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/LexicalRelation.tar.gz'
-    if not os.path.exists('{}/LexicalRelation'.format(cache_dir)):
+    root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.tar.gz'
+    if not os.path.exists('{}/lexical_relation_dataset'.format(cache_dir)):
         wget(root_url_analogy, cache_dir)
     full_data = {}
-    for i in glob('{}/LexicalRelation/*'.format(cache_dir)):
+    for i in glob('{}/lexical_relation_dataset/*'.format(cache_dir)):
         if not os.path.isdir(i):
             continue
         full_data[os.path.basename(i)] = {}
