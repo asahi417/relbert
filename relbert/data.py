@@ -122,9 +122,9 @@ def get_analogy_data(cache_dir: str = None):
         wget(root_url_analogy, cache_dir)
     data = {}
     for d in ['bats', 'sat', 'u2', 'u4', 'google']:
-        with open('{}/analogy_test_dataset/{}/test.jsonl'.format(cache_dir, data_name), 'r') as f:
+        with open('{}/analogy_test_dataset/{}/test.jsonl'.format(cache_dir, d), 'r') as f:
             test_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
-        with open('{}/{}/valid.jsonl'.format(cache_dir, data_name), 'r') as f:
+        with open('{}/analogy_test_dataset/{}/valid.jsonl'.format(cache_dir, d), 'r') as f:
             val_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
         data[d] = (val_set, test_set)
     return data
