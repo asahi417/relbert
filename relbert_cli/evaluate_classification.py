@@ -2,9 +2,8 @@ import os
 import logging
 import argparse
 from glob import glob
-from itertools import combinations
 import pandas as pd
-from relbert.evaluator.classification import evaluate, get_shared_vocab
+from relbert.evaluator.classification import evaluate
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
 
@@ -19,9 +18,6 @@ def main():
     argument_parser = config(argument_parser)
     opt = argument_parser.parse_args()
 
-    # target_word_embedding = ['w2v', 'glove', 'fasttext']
-    # vocab = get_shared_vocab(target_word_embedding)
-    # logging.info('shared vocab has {} word'.format(len(vocab)))
     if os.path.exists(opt.export_file):
         df = pd.read_csv(opt.export_file, index_col=0)
         done_list = list(set(df['model'].values))
@@ -29,15 +25,6 @@ def main():
     else:
         done_list = []
         full_result = []
-
-    # logging.info("RUN WORD-EMBEDDING BASELINE")
-    # pattern = list(combinations(['diff', 'concat', 'dot'], 2)) + [('diff', 'concat', 'dot')] + ['diff', 'concat', 'dot']
-    # for m in target_word_embedding:
-    #     if m in done_list:
-    #         continue
-    #     for feature in pattern:
-    #         full_result += evaluate(vocab, embedding_model=m, batch_size=opt.batch, feature_set=feature)
-    #     pd.DataFrame(full_result).to_csv(opt.export_file)
 
     logging.info("RUN RELBERT")
     ckpts = sorted(glob('relbert_output/ckpt/*/epoch*'))
