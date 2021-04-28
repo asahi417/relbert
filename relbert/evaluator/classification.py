@@ -15,6 +15,7 @@ def evaluate(relbert_ckpt: str = None, batch_size: int = 512):
     for data_name, v in data.items():
         logging.info('train model with {} on {}'.format(model_name, data_name))
         label_dict = v.pop('label')
+        print(v['train']['x'])
         x = model.get_embedding(v['train']['x'], batch_size=batch_size)
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
         clf = MLPClassifier().fit(x, v['train']['y'])
