@@ -16,10 +16,10 @@ def evaluate(relbert_ckpt: str = None, batch_size: int = 512, both_direction: bo
     for data_name, v in data.items():
         logging.info('train model with {} on {}'.format(model_name, data_name))
         label_dict = v.pop('label')
-        x = [tuple(_x) for _x in v['train']['x']]
-        x = model.get_embedding(x, batch_size=batch_size)
+        x_tuple = [tuple(_x) for _x in v['train']['x']]
+        x = model.get_embedding(x_tuple, batch_size=batch_size)
         if both_direction:
-            x_back = model.get_embedding([(b, a) for a, b in x], batch_size=batch_size)
+            x_back = model.get_embedding([(b, a) for a, b in x_tuple], batch_size=batch_size)
             x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
         clf = MLPClassifier().fit(x, v['train']['y'])
@@ -29,10 +29,10 @@ def evaluate(relbert_ckpt: str = None, batch_size: int = 512, both_direction: bo
             if prefix not in v:
                 continue
             logging.info('\t run {}'.format(prefix))
-            x = [tuple(_x) for _x in v[prefix]['x']]
-            x = model.get_embedding(x, batch_size=batch_size)
+            x_tuple = [tuple(_x) for _x in v[prefix]['x']]
+            x = model.get_embedding(x_tuple, batch_size=batch_size)
             if both_direction:
-                x_back = model.get_embedding([(b, a) for a, b in x], batch_size=batch_size)
+                x_back = model.get_embedding([(b, a) for a, b in x_tuple], batch_size=batch_size)
                 x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
             y_pred = clf.predict(x)
             f_mac = f1_score(v[prefix]['y'], y_pred, average='macro')
