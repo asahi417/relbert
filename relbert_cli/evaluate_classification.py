@@ -30,7 +30,8 @@ def main():
     for m in ckpts:
         if m in done_list:
             continue
-        full_result += evaluate(relbert_ckpt=m, batch_size=opt.batch)
+        for if_both_direction in [True, False]:
+            full_result += evaluate(relbert_ckpt=m, batch_size=opt.batch, both_direction=if_both_direction)
         pd.DataFrame(full_result).to_csv(opt.export_file)
 
 

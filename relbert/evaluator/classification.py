@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 from sklearn.metrics import f1_score
 from sklearn.neural_network import MLPClassifier
 
@@ -6,7 +7,7 @@ from .. import RelBERT
 from ..data import get_lexical_relation_data
 
 
-def evaluate(relbert_ckpt: str = None, batch_size: int = 512):
+def evaluate(relbert_ckpt: str = None, batch_size: int = 512, both_direction: bool = False):
 
     model = RelBERT(relbert_ckpt)
     model_name = relbert_ckpt
@@ -17,19 +18,33 @@ def evaluate(relbert_ckpt: str = None, batch_size: int = 512):
         label_dict = v.pop('label')
         x = [tuple(_x) for _x in v['train']['x']]
         x = model.get_embedding(x, batch_size=batch_size)
+        if both_direction:
+            x_back = model.get_embedding([(b, a) for a, b in x], batch_size=batch_size)
+            x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
         clf = MLPClassifier().fit(x, v['train']['y'])
 
-        logging.info('\t run validation')
-        x = [tuple(_x) for _x in v['test']['x']]
-        x = model.get_embedding(x, batch_size=batch_size)
-        y_pred = clf.predict(x)
-        accuracy = clf.score(x, v['test']['y'])
-        f_mac = f1_score(v['test']['y'], y_pred, average='macro')
-        f_mic = f1_score(v['test']['y'], y_pred, average='micro')
+        report_tmp = {'model': model_name, 'both_direction': both_direction, 'label_size': len(label_dict), 'data': data_name}
+        for prefix in ['test', 'val']:
+            if prefix not in v:
+                continue
+            logging.info('\t run {}'.format(prefix))
+            x = [tuple(_x) for _x in v[prefix]['x']]
+            x = model.get_embedding(x, batch_size=batch_size)
+            if both_direction:
+                x_back = model.get_embedding([(b, a) for a, b in x], batch_size=batch_size)
+                x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
+            y_pred = clf.predict(x)
+            f_mac = f1_score(v[prefix]['y'], y_pred, average='macro')
+            f_mic = f1_score(v[prefix]['y'], y_pred, average='micro')
+            accuracy = sum([a == b for a, b in zip(v[prefix]['y'], y_pred.tolist())])/len(y_pred)
+            report_tmp.update(
+                {'accuracy/{}'.format(prefix): accuracy,
+                 'f1_macro/{}'.format(prefix): f_mac,
+                 'f1_micro/{}'.format(prefix): f_mic,
+                 'data_size/{}'.format(prefix): len(y_pred)}
+            )
 
-        report_tmp = {'model': model_name, 'accuracy': accuracy, 'f1_macro': f_mac, 'f1_micro': f_mic,
-                      'label_size': len(label_dict), 'test_total': len(x), 'data': data_name}
         logging.info('\t accuracy: \n{}'.format(report_tmp))
         report.append(report_tmp)
     del model
