@@ -23,10 +23,12 @@ for t, name in zip(['c',
 
 full_result = []
 for name in ['Manual', 'AutoPrompt', 'P-tuning']:
-    export = 'examples/analysis_data/ckpt/{}'.format(name)
+    export = 'examples/analysis_data/ckpt/{}/epoch_2'.format(name)
     full_result += evaluate(relbert_ckpt=export, target_relation=['HYPER', 'hyper', 'hypo', 'IsA'])
+    print(full_result[-1])
 
 for export in ['relbert_output/ckpt/auto_d922/epoch_2', 'relbert_output/ckpt/custom_c/epoch_2', 'relbert_output/ckpt/auto_c932/epoch_2']:
     full_result += evaluate(relbert_ckpt=export, target_relation=['HYPER', 'hyper', 'hypo', 'IsA'])
+    print(full_result[-1])
 
 pd.DataFrame(full_result).to_csv('examples/analysis_data/result.csv')

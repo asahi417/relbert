@@ -197,7 +197,10 @@ class RelBERT:
             self.template['mid'] = [pseudo_token_id] * self.template['n_trigger_i']
             self.template['bottom'] = [pseudo_token_id] * self.template['n_trigger_e']
             self.template['pseudo_token_id'] = pseudo_token_id
-            self.input_embeddings = self.model.get_input_embeddings()
+            if self.parallel:
+                self.input_embeddings = self.model.module.get_input_embeddings()
+            else:
+                self.input_embeddings = self.model.get_input_embeddings()
         logging.info('language model running on {} GPU'.format(torch.cuda.device_count()))
         logging.debug('\t * template       : {}'.format(self.template))
         logging.debug('\t * custom template: {}'.format(self.custom_template_type))
