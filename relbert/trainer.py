@@ -169,7 +169,7 @@ class BaseTrainer:
                 feature_negative = torch.cat([v_anchor, v_negative, torch.abs(v_anchor - v_negative)], dim=1)
                 feature = torch.cat([feature_positive, feature_negative])
                 logit = self.linear(feature)
-                pred = torch.sigmoid()
+                pred = torch.sigmoid(logit)
                 label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
                                      dtype=torch.float32, device=self.device)
                 print(pred, logit)
