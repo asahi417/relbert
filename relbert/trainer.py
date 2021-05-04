@@ -59,7 +59,7 @@ class BaseTrainer:
         if self.config.softmax_loss:
             logging.info('add linear layer for softmax_loss')
             self.linear = nn.Linear(self.hidden_size * 3, 1)  # three way feature
-            self.linear.weight.data.normal_(std=0.005)
+            self.linear.weight.data.normal_(std=0.00005)
             self.discriminative_loss = nn.BCELoss()
             self.linear.to(self.device)
             self.model_parameters += list(self.linear.named_parameters())
