@@ -130,7 +130,7 @@ class RelBERT:
         template_type : str
             Custom template type or path to prompt json file that contains 'top'/'mid'/'bottom'.
         """
-        assert 'bert' in model, '{} is not BERT'.format(model)
+        # assert 'bert' in model, '{} is not BERT'.format(model)
         self.model_name = model
         self.cache_dir = cache_dir
         try:
