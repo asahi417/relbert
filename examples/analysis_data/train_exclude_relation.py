@@ -27,7 +27,9 @@ for name in ['Manual', 'AutoPrompt', 'P-tuning']:
     full_result += evaluate(relbert_ckpt=export, target_relation=['HYPER', 'hyper', 'hypo', 'IsA'])
     print(full_result[-1])
 
-for export in ['relbert_output/ckpt/auto_d922/epoch_2', 'relbert_output/ckpt/custom_c/epoch_2', 'relbert_output/ckpt/auto_c932/epoch_2']:
+for export in ['relbert_output/ckpt/roberta_custom_c/epoch_2',
+               'relbert_output/ckpt/roberta_auto_d922/epoch_2',
+               'relbert_output/ckpt/roberta_auto_c932/epoch_2']:
     full_result += evaluate(relbert_ckpt=export, target_relation=['HYPER', 'hyper', 'hypo', 'IsA'])
     print(full_result[-1])
 

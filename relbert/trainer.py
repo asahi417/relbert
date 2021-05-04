@@ -171,6 +171,8 @@ class BaseTrainer:
                 pred = torch.sigmoid(self.linear(feature))
                 label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
                                      dtype=torch.float32, device=self.device)
+                print(pred)
+                input()
                 loss += bce(pred, label.unsqueeze(-1))
 
             # backward: calculate gradient
