@@ -42,12 +42,14 @@ class BaseTrainer:
     def save(self, current_epoch):
         raise NotImplementedError
 
-    def setup(self):
+    def setup(self, exclude_relation=None):
         fix_seed(self.config.random_seed)
         self.checkpoint_dir = self.config.cache_dir
         # get dataset
         self.all_positive, self.all_negative, self.relation_structure = get_training_data(
-            data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=self.cache_dir)
+            data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=self.cache_dir,
+            exclude_relation=exclude_relation
+        )
 
         # calculate the number of trial to cover all combination in batch
         n_pos = min(len(i) for i in self.all_positive.values())
@@ -198,16 +200,16 @@ class Trainer(BaseTrainer):
                  export: str = None,
                  model: str = 'roberta-large',
                  max_length: int = 64,
-                 mode: str = 'average',
+                 mode: str = 'average_no_mask',
                  data: str = 'semeval2012',
-                 n_sample: int = 5,
+                 n_sample: int = 10,
                  template_type: str = 'a',
                  softmax_loss: bool = True,
                  in_batch_negative: bool = True,
                  parent_contrast: bool = True,
                  mse_margin: float = 1,
                  epoch: int = 5,
-                 batch: int = 64,
+                 batch: int = 16,
                  lr: float = 0.001,
                  lr_decay: bool = False,
                  lr_warmup: int = 100,
@@ -216,7 +218,8 @@ class Trainer(BaseTrainer):
                  momentum: float = 0.9,
                  fp16: bool = False,
                  random_seed: int = 0,
-                 cache_dir: str = None):
+                 cache_dir: str = None,
+                 exclude_relation=None):
         super(Trainer, self).__init__(cache_dir=cache_dir)
 
         # load language model
@@ -254,7 +257,7 @@ class Trainer(BaseTrainer):
         )
         self.device = self.model.device
         self.parallel = self.model.parallel
-        self.setup()
+        self.setup(exclude_relation)
 
     def save(self, current_epoch):
         cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, current_epoch + 1)

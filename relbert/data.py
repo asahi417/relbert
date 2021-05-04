@@ -5,12 +5,24 @@ from glob import glob
 
 from .util import wget, home_dir
 
+semeval_relations = {
+    1: "Class Inclusion",  # Hypernym
+    2: "Part-Whole",  # Meronym, Substance Meronym
+    3: "Similar",  # Synonym, Co-hypornym
+    4: "Contrast",  # Antonym
+    5: "Attribute",  # Attribute, Event
+    6: "Non Attribute",
+    7: "Case Relation",
+    8: "Cause-Purpose",
+    9: "Space-Time",
+    10: "Representation"
+}
+
 
 def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_dir: str = None,
-                      validation_set: bool = False):
+                      validation_set: bool = False, exclude_relation: str = None):
     """ Get RelBERT training data
     - SemEval 2012 task 2 dataset (case sensitive)
-    - BATS (lowercased/truecased)
 
     Parameters
     ----------
@@ -32,6 +44,9 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
     cache_dir = cache_dir if cache_dir is not None else home_dir
     cache_dir = '{}/data'.format(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
+    remove_relation = None
+    if exclude_relation:
+        remove_relation = [k for k, v in semeval_relations.items() if exclude_relation == v]
 
     if data_name == 'semeval2012':
         path_answer = '{}/Phase2Answers'.format(cache_dir)
@@ -48,6 +63,8 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
         all_relation_type = {}
         for i in files_scale:
             relation_id = i.split('-')[-1].replace('.txt', '')
+            if remove_relation and int(relation_id[:-1]) in remove_relation:
+                continue
             with open('{}/{}'.format(path_answer, i), 'r') as f:
                 lines_answer = [l.replace('"', '').split('\t') for l in f.read().split('\n')
                                 if not l.startswith('#') and len(l)]
@@ -79,37 +96,6 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
         return all_positive, all_negative, relation_structure
     else:
         raise ValueError('unnknown data: {}'.format(data_name))
-    # elif data_name in ['bats']:
-    #     url = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/BATS_3.0.zip'
-    #     path = '{}/BATS_3.0'.format(cache_dir)
-    #     if not os.path.exists(path):
-    #         wget(url, cache_dir=cache_dir)
-    #     relation_structure = {}
-    #     all_positive = {}
-    #     for _file in glob('{}/*'.format(path)):
-    #         if not os.path.isdir(_file):
-    #             continue
-    #         relation_type = os.path.basename(_file).split('_')[0]
-    #         relation_structure[relation_type] = []
-    #         for c in glob('{}/*.txt'.format(_file)):
-    #             relation_type_c = os.path.basename(c).split(' ')[0]
-    #             relation_structure[relation_type].append(relation_type_c)
-    #
-    #             def flatten_pair(_pair):
-    #                 a, b = _pair
-    #                 a, b = a.replace('_', ' '), b.replace('_', ' ')
-    #                 return list(product(a.split('/'), b.split('/')))
-    #
-    #             with open(c, 'r') as f_read:
-    #                 pairs = list(chain(*[flatten_pair(i.split('\t')) for i in f_read.read().split('\n') if len(i)]))
-    #             all_positive[relation_type_c] = pairs
-    #
-    #     def get_parent(i):
-    #         return [k for k, v in relation_structure.items() if i in v][0]
-    #
-    #     all_negative = {k: list(chain(*[v for _k, v in all_positive.items()
-    #                                     if get_parent(_k) == get_parent(k) and _k != k])) for k in all_positive.keys()}
-    #     return all_positive, all_negative, relation_structure
 
 
 def get_analogy_data(cache_dir: str = None):
