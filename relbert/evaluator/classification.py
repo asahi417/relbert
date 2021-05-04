@@ -7,7 +7,8 @@ from .. import RelBERT
 from ..data import get_lexical_relation_data
 
 
-def evaluate(relbert_ckpt: str = None, batch_size: int = 512, both_direction: bool = False):
+def evaluate(relbert_ckpt: str = None, batch_size: int = 512, both_direction: bool = True,
+             target_relation=None):
 
     model = RelBERT(relbert_ckpt)
     model_name = relbert_ckpt
@@ -44,6 +45,14 @@ def evaluate(relbert_ckpt: str = None, batch_size: int = 512, both_direction: bo
                  'f1_micro/{}'.format(prefix): f_mic,
                  'data_size/{}'.format(prefix): len(y_pred)}
             )
+            if target_relation and prefix == 'test':
+                for _l in target_relation:
+                    if _l not in label_dict:
+                        continue
+                    _y_true = [i if i == label_dict[_l] else 0 for i in v[prefix]['y']]
+                    _y_pred = [i if i == label_dict[_l] else 0 for i in y_pred.tolist()]
+                    report_tmp['accuracy/{}/{}'.format(prefix, _l)] = \
+                        sum([a == b for a, b in zip(_y_true, _y_pred)]) / len(y_pred)
 
         logging.info('\t accuracy: \n{}'.format(report_tmp))
         report.append(report_tmp)
