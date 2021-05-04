@@ -59,7 +59,7 @@ class BaseTrainer:
         if self.config.softmax_loss:
             logging.info('add linear layer for softmax_loss')
             self.linear = nn.Linear(self.hidden_size * 3, 1)  # three way feature
-            self.linear.weight.data.normal_(std=0.00005)
+            self.linear.weight.data.normal_(std=0.02)
             self.discriminative_loss = nn.BCELoss()
             self.linear.to(self.device)
             self.model_parameters += list(self.linear.named_parameters())
@@ -168,12 +168,9 @@ class BaseTrainer:
                 feature_positive = torch.cat([v_anchor, v_positive, torch.abs(v_anchor - v_positive)], dim=1)
                 feature_negative = torch.cat([v_anchor, v_negative, torch.abs(v_anchor - v_negative)], dim=1)
                 feature = torch.cat([feature_positive, feature_negative])
-                logit = self.linear(feature)
-                pred = torch.sigmoid(logit)
+                pred = torch.sigmoid(self.linear(feature))
                 label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
                                      dtype=torch.float32, device=self.device)
-                print(pred, logit)
-                input()
                 loss += bce(pred, label.unsqueeze(-1))
 
             # backward: calculate gradient
