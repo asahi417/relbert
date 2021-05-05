@@ -9,7 +9,12 @@ import relbert
 from relbert.data import get_lexical_relation_data
 from relbert.evaluator.classification import evaluate
 
-logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger()
+file_handler = logging.FileHandler('examples/experiments/ablation_study/output/log.log')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
+logger.addHandler(file_handler)
 shared_relation = {
     'Random': ['random', 'RANDOM', 'false'],
     'Meronym': ['PartOf', 'PART_OF', 'mero', 'MadeOf'],
