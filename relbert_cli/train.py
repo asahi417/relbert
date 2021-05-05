@@ -21,7 +21,7 @@ def config(parser):
     parser.add_argument("--momentum", help="sgd momentum", default=0.9, type=float)
     # training environment
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
-    parser.add_argument('--num-workers', help='workers for dataloder', default=1, type=int)
+    parser.add_argument('--num-workers', help='workers for dataloder', default=5, type=int)
     parser.add_argument('--fp16', help='fp16 for training', action='store_true')
     parser.add_argument('--epoch-save', help='interval to save model weight', default=1, type=int)
     parser.add_argument('--debug', help='log level', action='store_true')

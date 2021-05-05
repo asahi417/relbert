@@ -33,30 +33,29 @@ relbert-train -m roberta-large -n -p -s -t ${PROMPT_DIR}/roberta_c933/prompt.jso
 # ALBERT #
 ##########
 # Train with custom template
-relbert-train -m albert-xxlarge-v2 -n -p -s -t a --export ${CKPT_DIR}/albert_custom_a
-relbert-train -m albert-xxlarge-v2 -n -p -s -t b --export ${CKPT_DIR}/albert_custom_b
-relbert-train -m albert-xxlarge-v2 -n -p -s -t c --export ${CKPT_DIR}/albert_custom_c
-relbert-train -m albert-xxlarge-v2 -n -p -s -t d --export ${CKPT_DIR}/albert_custom_d
-relbert-train -m albert-xxlarge-v2 -n -p -s -t e --export ${CKPT_DIR}/albert_custom_e
+relbert-train -m albert-xlarge-v1 -n -p -s -t a --export ${CKPT_DIR}/albert_custom_a
+relbert-train -m albert-xlarge-v1 -n -p -s -t b --export ${CKPT_DIR}/albert_custom_b
+relbert-train -m albert-xlarge-v1 -n -p -s -t c --export ${CKPT_DIR}/albert_custom_c
+relbert-train -m albert-xlarge-v1 -n -p -s -t d --export ${CKPT_DIR}/albert_custom_d
+relbert-train -m albert-xlarge-v1 -n -p -s -t e --export ${CKPT_DIR}/albert_custom_e
 # Train with discrete tuned prompt
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_d822/prompt.json --export ${CKPT_DIR}/albert_auto_d822
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_d923/prompt.json --export ${CKPT_DIR}/albert_auto_d923
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_d833/prompt.json --export ${CKPT_DIR}/albert_auto_d833
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_d823/prompt.json --export ${CKPT_DIR}/albert_auto_d823
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_d832/prompt.json --export ${CKPT_DIR}/albert_auto_d832
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_d922/prompt.json --export ${CKPT_DIR}/albert_auto_d922
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_d932/prompt.json --export ${CKPT_DIR}/albert_auto_d932
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_d933/prompt.json --export ${CKPT_DIR}/albert_auto_d933
-
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_d822/prompt.json --export ${CKPT_DIR}/albert_auto_d822
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_d923/prompt.json --export ${CKPT_DIR}/albert_auto_d923
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_d833/prompt.json --export ${CKPT_DIR}/albert_auto_d833
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_d823/prompt.json --export ${CKPT_DIR}/albert_auto_d823
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_d832/prompt.json --export ${CKPT_DIR}/albert_auto_d832
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_d922/prompt.json --export ${CKPT_DIR}/albert_auto_d922
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_d932/prompt.json --export ${CKPT_DIR}/albert_auto_d932
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_d933/prompt.json --export ${CKPT_DIR}/albert_auto_d933
 # Train with continuous tuned prompt
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_c822/prompt.json --export ${CKPT_DIR}/albert_auto_c822
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_c923/prompt.json --export ${CKPT_DIR}/albert_auto_c923
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_c833/prompt.json --export ${CKPT_DIR}/albert_auto_c833
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_c823/prompt.json --export ${CKPT_DIR}/albert_auto_c823
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_c832/prompt.json --export ${CKPT_DIR}/albert_auto_c832
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_c922/prompt.json --export ${CKPT_DIR}/albert_auto_c922
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_c932/prompt.json --export ${CKPT_DIR}/albert_auto_c932
-relbert-train -m albert-xxlarge-v2 -n -p -s -t ${PROMPT_DIR}/albert_c933/prompt.json --export ${CKPT_DIR}/albert_auto_c933
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_c822/prompt.json --export ${CKPT_DIR}/albert_auto_c822
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_c923/prompt.json --export ${CKPT_DIR}/albert_auto_c923
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_c833/prompt.json --export ${CKPT_DIR}/albert_auto_c833
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_c823/prompt.json --export ${CKPT_DIR}/albert_auto_c823
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_c832/prompt.json --export ${CKPT_DIR}/albert_auto_c832
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_c922/prompt.json --export ${CKPT_DIR}/albert_auto_c922
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_c932/prompt.json --export ${CKPT_DIR}/albert_auto_c932
+relbert-train -m albert-xlarge-v1 -n -p -s -t ${PROMPT_DIR}/albert_c933/prompt.json --export ${CKPT_DIR}/albert_auto_c933
 
 
 ########

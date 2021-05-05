@@ -12,20 +12,18 @@ relbert-prompt-discrete -m roberta-large --n-trigger-b 9 --n-trigger-i 2 --n-tri
 relbert-prompt-discrete -m roberta-large --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/roberta_d932
 relbert-prompt-discrete -m roberta-large --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/roberta_d933
 
-relbert-prompt-discrete -m albert-xxlarge-v2 --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_d822 -b 8
-relbert-prompt-discrete -m albert-xxlarge-v2 --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_d832 -b 8
-relbert-prompt-discrete -m albert-xxlarge-v2 --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_d833 -b 8
-relbert-prompt-discrete -m albert-xxlarge-v2 --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_d823 -b 8
-relbert-prompt-discrete -m albert-xxlarge-v2 --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_d922 -b 8
-relbert-prompt-discrete -m albert-xxlarge-v2 --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_d923 -b 8
-relbert-prompt-discrete -m albert-xxlarge-v2 --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_d932 -b 8
-relbert-prompt-discrete -m albert-xxlarge-v2 --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_d933 -b 8
+relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_d822
+relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_d832
+relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_d833
+relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_d823
+relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_d922
+relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_d923
+relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_d932
+relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_d933
 
-export PROMPT_DIR='./relbert_output/prompt_files'
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/bert_d822
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/bert_d832
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/bert_d833
-
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/bert_d823
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/bert_d922
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/bert_d923
@@ -45,14 +43,14 @@ relbert-prompt-continuous -m roberta-large --n-trigger-b 9 --n-trigger-i 2 --n-t
 relbert-prompt-continuous -m roberta-large --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/c932
 relbert-prompt-continuous -m roberta-large --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/c933
 
-relbert-prompt-continuous -m albert-xxlarge-v2 --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_c822
-relbert-prompt-continuous -m albert-xxlarge-v2 --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_c832
-relbert-prompt-continuous -m albert-xxlarge-v2 --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_c833
-relbert-prompt-continuous -m albert-xxlarge-v2 --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_c823
-relbert-prompt-continuous -m albert-xxlarge-v2 --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_c922
-relbert-prompt-continuous -m albert-xxlarge-v2 --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_c923
-relbert-prompt-continuous -m albert-xxlarge-v2 --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_c932
-relbert-prompt-continuous -m albert-xxlarge-v2 --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_c933
+relbert-prompt-continuous -m albert-xlarge-v1 --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_c822
+relbert-prompt-continuous -m albert-xlarge-v1 --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_c832
+relbert-prompt-continuous -m albert-xlarge-v1 --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_c833
+relbert-prompt-continuous -m albert-xlarge-v1 --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_c823
+relbert-prompt-continuous -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_c922
+relbert-prompt-continuous -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_c923
+relbert-prompt-continuous -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/albert_c932
+relbert-prompt-continuous -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 3 --n-trigger-e 3 --export ${PROMPT_DIR}/albert_c933
 
 relbert-prompt-continuous -m bert-large-cased --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ${PROMPT_DIR}/bert_c822
 relbert-prompt-continuous -m bert-large-cased --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ${PROMPT_DIR}/bert_c832
