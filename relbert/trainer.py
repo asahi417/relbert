@@ -210,7 +210,7 @@ class Trainer(BaseTrainer):
                  mse_margin: float = 1,
                  epoch: int = 5,
                  batch: int = 16,
-                 lr: float = 0.001,
+                 lr: float = 0.00005,
                  lr_decay: bool = False,
                  lr_warmup: int = 100,
                  weight_decay: float = 0,

@@ -89,14 +89,12 @@ if not os.path.exists(export):
     trainer.train()
 
 full_result = []
-export_full = 'examples/experiments/ablation_study/ckpt/manual/epoch_2'
 target_relation = list(chain(*list(shared_relation.values())))
-full_result += evaluate(relbert_ckpt=export_full,
+full_result += evaluate(relbert_ckpt='examples/experiments/ablation_study/ckpt/manual/epoch_2',
                         target_relation=target_relation)
 full_result += evaluate(relbert_ckpt='relbert_output/ckpt/roberta_custom_c/epoch_2',
                         target_relation=target_relation)
 
-pd.DataFrame(full_result).to_csv('examples/experiments/ablation_study/output/dataset_analysis_tmp.csv')
 full_result_new = []
 for x in full_result:
     i = deepcopy(x)

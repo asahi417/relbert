@@ -27,6 +27,8 @@ relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/roberta_c932/prompt.json 
 relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/roberta_c933/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/roberta_c822/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m roberta-large -t ${PROMPT_DIR}/roberta_c923/prompt.json --export-file ${EVAL_LM}
+
+# Not yet
 relbert-eval-analogy -m bert-cased-large -t ${PROMPT_DIR}/bert_d832/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m bert-cased-large -t ${PROMPT_DIR}/bert_d922/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m bert-cased-large -t ${PROMPT_DIR}/bert_d833/prompt.json --export-file ${EVAL_LM}
@@ -43,7 +45,6 @@ relbert-eval-analogy -m bert-cased-large -t ${PROMPT_DIR}/bert_c932/prompt.json 
 relbert-eval-analogy -m bert-cased-large -t ${PROMPT_DIR}/bert_c933/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m bert-cased-large -t ${PROMPT_DIR}/bert_c822/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m bert-cased-large -t ${PROMPT_DIR}/bert_c923/prompt.json --export-file ${EVAL_LM}
-
 relbert-eval-analogy -m albert-xlarge-v1 -t ${PROMPT_DIR}/albert_d832/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m albert-xlarge-v1 -t ${PROMPT_DIR}/albert_d922/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m albert-xlarge-v1 -t ${PROMPT_DIR}/albert_d833/prompt.json --export-file ${EVAL_LM}
@@ -60,6 +61,7 @@ relbert-eval-analogy -m albert-xlarge-v1 -t ${PROMPT_DIR}/albert_c932/prompt.jso
 relbert-eval-analogy -m albert-xlarge-v1 -t ${PROMPT_DIR}/albert_c933/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m albert-xlarge-v1 -t ${PROMPT_DIR}/albert_c822/prompt.json --export-file ${EVAL_LM}
 relbert-eval-analogy -m albert-xlarge-v1 -t ${PROMPT_DIR}/albert_c923/prompt.json --export-file ${EVAL_LM}
+##
 
 ###########
 # RelBERT #
@@ -85,12 +87,13 @@ relbert-eval-analogy -c ${CKPT_DIR}/roberta_auto_c932 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/roberta_auto_c933 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/roberta_auto_c923 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/roberta_auto_c822 --export-file ${EVAL_LM}
-
 relbert-eval-analogy -c ${CKPT_DIR}/bert_custom_a --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_custom_b --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_custom_c --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_custom_d --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_custom_e --export-file ${EVAL_LM}
+
+# Not yet
 relbert-eval-analogy -c ${CKPT_DIR}/bert_auto_d832 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_auto_d922 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_auto_d833 --export-file ${EVAL_LM}
@@ -107,7 +110,6 @@ relbert-eval-analogy -c ${CKPT_DIR}/bert_auto_c932 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_auto_c933 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_auto_c923 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/bert_auto_c822 --export-file ${EVAL_LM}
-
 relbert-eval-analogy -c ${CKPT_DIR}/albert_custom_a --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/albert_custom_b --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/albert_custom_c --export-file ${EVAL_LM}
@@ -129,7 +131,7 @@ relbert-eval-analogy -c ${CKPT_DIR}/albert_auto_c932 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/albert_auto_c933 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/albert_auto_c923 --export-file ${EVAL_LM}
 relbert-eval-analogy -c ${CKPT_DIR}/albert_auto_c822 --export-file ${EVAL_LM}
-
+##
 
 ##################
 # Classification #
