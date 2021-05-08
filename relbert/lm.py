@@ -15,12 +15,12 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'RelBERT'
 preset_templates = {
         "a": "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>",
-        "b": "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is A's <mask>",
+        "b": "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>",
         "c": "Today, I finally discovered the relation between <subj> and <obj> : <mask>",
         "d": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>",
-        "e": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is A’s <mask>"
+        "e": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>"
     }
-
+# be
 
 def custom_prompter(word_pair, template_type: str = 'a', mask_token: str = None):
     """ Transform word pair into string prompt. """
