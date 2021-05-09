@@ -9,8 +9,9 @@ from relbert.util import wget
 
 
 def config(parser):
-    parser.add_argument('--ckpt', help='checkpoint', default='relbert_output/relbert_custom', type=str)
-    parser.add_argument('--batch', help='checkpoint', default=8192, type=int)
+    parser.add_argument('-c', '--ckpt', help='checkpoint', default='relbert_output/relbert_custom', type=str)
+    parser.add_argument('-b', '--batch', help='batch', default=2048, type=int)
+    parser.add_argument('-e', '--export', help='export path', default='gensim_model.bin', type=str)
     return parser
 
 argument_parser = argparse.ArgumentParser(description='Qualitative analysis')
@@ -31,11 +32,12 @@ chunk_size = 2 * opt.batch
 chunk_start = list(range(0, len(pair_data), chunk_size))
 chunk_end = chunk_start[1:] + [len(pair_data)]
 print('Start embedding extraction')
-with open('gensim_model.txt', 'w', encoding='utf-8') as f:
+with open(opt.export + '.txt', 'w', encoding='utf-8') as f:
     f.write(str(len(pair_data)) + " " + str(model.hidden_size) + "\n")
     for s, e in zip(chunk_start, chunk_end):
         vector = model.get_embedding(pair_data[s:e], batch_size=opt.batch)
         for n, (token_i, token_j) in enumerate(pair_data[s:e]):
+            token_i, token_j = token_i.replace(' ', '_'), token_j.replace(' ', '_')
             f.write('__'.join([token_i, token_j]))
             for y in vector[n]:
                 f.write(' ' + str(y))
@@ -43,7 +45,7 @@ with open('gensim_model.txt', 'w', encoding='utf-8') as f:
         pbar.update(e-s)
 
 print('\nConvert to binary file')
-model = KeyedVectors.load_word2vec_format('gensim_model.txt')
-model.wv.save_word2vec_format('gensim_model.bin', binary=True)
+model = KeyedVectors.load_word2vec_format(opt.export + '.txt')
+model.wv.save_word2vec_format(opt.export, binary=True)
 print("new embeddings are available at `gensim_model.bin`")
-os.remove('gensim_model.txt')
+os.remove(opt.export + '.txt')
