@@ -10,6 +10,7 @@ from relbert.util import wget
 
 def config(parser):
     parser.add_argument('--ckpt', help='checkpoint', default='relbert_output/relbert_custom', type=str)
+    parser.add_argument('--batch', help='checkpoint', default=8192, type=int)
     return parser
 
 argument_parser = argparse.ArgumentParser(description='Qualitative analysis')
@@ -26,15 +27,14 @@ with open(path_pair, 'rb') as f:
     pair_data = pickle.load(f)
 pbar = tqdm(total=len(pair_data))
 model = relbert.RelBERT(opt.ckpt)
-batch_size = 512
-chunk_size = 10 * batch_size
+chunk_size = 2 * opt.batch
 chunk_start = list(range(0, len(pair_data), chunk_size))
 chunk_end = chunk_start[1:] + [len(pair_data)]
 print('Start embedding extraction')
 with open('gensim_model.txt', 'w', encoding='utf-8') as f:
     f.write(str(len(pair_data)) + " " + str(model.hidden_size) + "\n")
     for s, e in zip(chunk_start, chunk_end):
-        vector = model.get_embedding(pair_data[s:e], batch_size=batch_size)
+        vector = model.get_embedding(pair_data[s:e], batch_size=opt.batch)
         for n, (token_i, token_j) in enumerate(pair_data[s:e]):
             f.write('__'.join([token_i, token_j]))
             for y in vector[n]:
