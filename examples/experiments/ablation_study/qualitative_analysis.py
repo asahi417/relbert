@@ -18,10 +18,10 @@ opt = argument_parser.parse_args()
 
 
 # get embedding for the common word pairs and store it in gensim w2v format
-path_pair = './common_word_pairs.pkl'
+path_pair = './cache/common_word_pairs.pkl'
 
 if not os.path.exists(path_pair):
-    wget(url='https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/common_word_pairs.pkl', cache_dir='./')
+    wget(url='https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/common_word_pairs.pkl', cache_dir='./cache')
 with open(path_pair, 'rb') as f:
     pair_data = pickle.load(f)
 pbar = tqdm(total=len(pair_data))
