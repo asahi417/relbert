@@ -1,10 +1,21 @@
 import pickle
 import os
+import argparse
 from gensim.models import KeyedVectors
 
 from tqdm import tqdm
 import relbert
 from relbert.util import wget
+
+
+def config(parser):
+    parser.add_argument('--ckpt', help='checkpoint', default='relbert_output/relbert_custom', type=str)
+    return parser
+
+argument_parser = argparse.ArgumentParser(description='Qualitative analysis')
+argument_parser = config(argument_parser)
+opt = argument_parser.parse_args()
+
 
 # get embedding for the common word pairs and store it in gensim w2v format
 path_pair = './common_word_pairs.pkl'
@@ -14,7 +25,7 @@ if not os.path.exists(path_pair):
 with open(path_pair, 'rb') as f:
     pair_data = pickle.load(f)
 pbar = tqdm(total=len(pair_data))
-model = relbert.RelBERT('relbert_output/ckpt/roberta_custom_c/epoch_2')
+model = relbert.RelBERT(opt.ckpt)
 batch_size = 512
 chunk_size = 10 * batch_size
 chunk_start = list(range(0, len(pair_data), chunk_size))
