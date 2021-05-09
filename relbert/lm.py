@@ -20,7 +20,7 @@ preset_templates = {
         "d": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>",
         "e": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>"
     }
-# be
+
 
 def custom_prompter(word_pair, template_type: str = 'a', mask_token: str = None):
     """ Transform word pair into string prompt. """
@@ -315,6 +315,8 @@ class RelBERT:
         -------
         Embedding (len(x), n_hidden).
         """
+        if not all(type(i) is tuple for i in x):
+            x = [tuple(i) for i in x]
 
         data = self.preprocess(x, pairwise_input=False)
         data = Dataset(**data)
