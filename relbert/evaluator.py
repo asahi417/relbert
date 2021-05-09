@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.metrics import f1_score
 from sklearn.neural_network import MLPClassifier
 
-from . import RelBERT
+from .lm import RelBERT
 from .data import get_lexical_relation_data, get_analogy_data, get_training_data
 from .util import Dataset, triplet_loss
 
