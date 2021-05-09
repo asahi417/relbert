@@ -21,7 +21,7 @@ opt = argument_parser.parse_args()
 path_pair = './common_word_pairs.pkl'
 
 if not os.path.exists(path_pair):
-    wget('https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/common_word_pairs.pkl')
+    wget(url='https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/common_word_pairs.pkl', cache_dir='./')
 with open(path_pair, 'rb') as f:
     pair_data = pickle.load(f)
 pbar = tqdm(total=len(pair_data))
