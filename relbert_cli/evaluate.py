@@ -15,7 +15,7 @@ def config(parser):
     parser.add_argument('-l', '--max-length', help='for vanilla LM', default=64, type=int)
     parser.add_argument('-m', '--mode', help='for vanilla LM', default='average_no_mask', type=str)
     parser.add_argument('-t', '--template-type', help='for vanilla LM', default=None, type=str)
-    parser.add_argument('--vanilla-lm', type='store_true')
+    parser.add_argument('--vanilla-lm', action='store_true')
     return parser
 
 
