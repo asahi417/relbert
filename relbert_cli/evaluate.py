@@ -36,10 +36,8 @@ def main():
         ckpts = opt.ckpt_dir.split(',')
     else:
         logging.info("RUN RelBERT")
-        ckpts = sorted(glob(opt.ckpt_dir))
+        ckpts = [i for i in sorted(glob(opt.ckpt_dir)) if os.path.exists(i)]
     for m in ckpts:
-        if not os.path.isdir(m):
-            continue
         if m in done_list:
             continue
         if opt.type == 'classification':
