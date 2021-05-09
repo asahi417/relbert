@@ -28,7 +28,10 @@ def main():
     full_result = []
     if os.path.exists(opt.export_file):
         df = pd.read_csv(opt.export_file, index_col=0)
-        done_list = list(set(df['model'].values))
+        if opt.vanilla_lm:
+            done_list = list(set(df['model'].values))
+        else:
+            done_list = list(set(df['model'].values))
         full_result = [i.to_dict() for _, i in df.iterrows()]
 
     if opt.vanilla_lm:
@@ -36,10 +39,8 @@ def main():
         ckpts = opt.ckpt_dir.split(',')
     else:
         logging.info("RUN RelBERT")
-        ckpts = [i for i in sorted(glob(opt.ckpt_dir)) if os.path.exists(i)]
+        ckpts = [i for i in sorted(glob(opt.ckpt_dir)) if os.path.exists(i) and i not in done_list]
     for m in ckpts:
-        if m in done_list:
-            continue
         if opt.type == 'classification':
             full_result += evaluate_classification(relbert_ckpt=m, batch_size=opt.batch)
         elif opt.type == 'analogy':
@@ -47,7 +48,7 @@ def main():
                                             mode=opt.mode, template_type=opt.template_type, max_length=opt.max_length)
         else:
             raise ValueError('unknown test type: {}'.format(opt.type))
-        pd.DataFrame(full_result).to_csv(opt.export_file)
+        pd.DataFrame(full_result).drop_duplicates().to_csv(opt.export_file)
 
 
 if __name__ == '__main__':
