@@ -34,6 +34,8 @@ def main():
     logging.info("RUN RelBERT")
     ckpts = sorted(glob(opt.ckpt_dir))
     for m in ckpts:
+        if not os.path.isdir(m):
+            continue
         if m in done_list:
             continue
         if opt.type == 'classification':
