@@ -15,7 +15,7 @@ def config(parser):
     parser.add_argument('-l', '--max-length', help='for vanilla LM', default=64, type=int)
     parser.add_argument('-m', '--mode', help='for vanilla LM', default='average_no_mask', type=str)
     parser.add_argument('-t', '--template-type', help='for vanilla LM', default=None, type=str)
-
+    parser.add_argument('--vanilla-lm', type='store_true')
     return parser
 
 
@@ -31,8 +31,12 @@ def main():
         done_list = list(set(df['model'].values))
         full_result = [i.to_dict() for _, i in df.iterrows()]
 
-    logging.info("RUN RelBERT")
-    ckpts = sorted(glob(opt.ckpt_dir))
+    if opt.vanilla_lm:
+        logging.info('RUN Vanilla LM')
+        ckpts = opt.ckpt_dir.split(',')
+    else:
+        logging.info("RUN RelBERT")
+        ckpts = sorted(glob(opt.ckpt_dir))
     for m in ckpts:
         if not os.path.isdir(m):
             continue

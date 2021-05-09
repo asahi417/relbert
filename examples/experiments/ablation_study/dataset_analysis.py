@@ -7,11 +7,11 @@ from itertools import chain
 import pandas as pd
 import relbert
 from relbert.data import get_lexical_relation_data
-from relbert.evaluator.classification import evaluate
+from relbert.evaluator import evaluate_classification
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger()
-file_handler = logging.FileHandler('examples/experiments/ablation_study/output/log.log')
+file_handler = logging.FileHandler('relbert_output/ablation_study/exclusion_test/log.log')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
 logger.addHandler(file_handler)
@@ -26,11 +26,11 @@ shared_relation = {
     'Co-hypornym': ['COORD', 'coord', 'sibl'],
     'Attribute': ['attri', 'HasProperty']
 }
-os.makedirs('examples/experiments/ablation_study/output', exist_ok=True)
+os.makedirs('relbert_output/ablation_study/exclusion_test', exist_ok=True)
 ##################
 # Get Data Stats #
 ##################
-export = 'examples/experiments/ablation_study/output/data_stats.csv'
+export = 'relbert_output/ablation_study/exclusion_test/data_stats.csv'
 if not os.path.exists(export):
 
     def freq(_list, prefix=None):
@@ -82,7 +82,8 @@ if not os.path.exists(export):
 # Model without Hypernym #
 ##########################
 
-export = 'examples/experiments/ablation_study/ckpt/manual'
+export = 'relbert_output/ablation_study/exclusion_test/ckpt'
+os.makedirs(export, exist_ok=True)
 if not os.path.exists(export):
     trainer = relbert.Trainer(
         model='roberta-large',
@@ -95,10 +96,10 @@ if not os.path.exists(export):
 
 full_result = []
 target_relation = list(chain(*list(shared_relation.values())))
-full_result += evaluate(relbert_ckpt='examples/experiments/ablation_study/ckpt/manual/epoch_2',
-                        target_relation=target_relation)
-full_result += evaluate(relbert_ckpt='relbert_output/ckpt/roberta_custom_c/epoch_2',
-                        target_relation=target_relation)
+full_result += evaluate_classification(relbert_ckpt='relbert_output/ablation_study/exclusion_test/ckpt/epoch_2',
+                                       target_relation=target_relation)
+full_result += evaluate_classification(relbert_ckpt='relbert_output/ckpt/roberta_custom_c/epoch_2',
+                                       target_relation=target_relation)
 
 full_result_new = []
 for x in full_result:
@@ -110,4 +111,5 @@ for x in full_result:
                 if _k in __v:
                     x[k.replace(_k, __k)] = x.pop(k)
     full_result_new.append(x)
-pd.DataFrame(full_result_new).to_csv('examples/experiments/ablation_study/output/dataset_analysis.csv')
+os.makedirs('relbert_output/eval/summary', exist_ok=True)
+pd.DataFrame(full_result_new).to_csv('relbert_output/eval/summary/ablation_study.exclusion_test.csv')
