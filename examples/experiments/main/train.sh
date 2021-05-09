@@ -67,7 +67,6 @@ relbert-train -m bert-large-cased -n -p -s -t b --export ${CKPT_DIR}/bert_custom
 relbert-train -m bert-large-cased -n -p -s -t c --export ${CKPT_DIR}/bert_custom_c
 relbert-train -m bert-large-cased -n -p -s -t d --export ${CKPT_DIR}/bert_custom_d
 relbert-train -m bert-large-cased -n -p -s -t e --export ${CKPT_DIR}/bert_custom_e
-
 # Train with discrete tuned prompt
 relbert-train -m bert-large-cased -n -p -s -t ${PROMPT_DIR}/bert_d822/prompt.json --export ${CKPT_DIR}/bert_auto_d822
 relbert-train -m bert-large-cased -n -p -s -t ${PROMPT_DIR}/bert_d923/prompt.json --export ${CKPT_DIR}/bert_auto_d923
@@ -77,7 +76,6 @@ relbert-train -m bert-large-cased -n -p -s -t ${PROMPT_DIR}/bert_d832/prompt.jso
 relbert-train -m bert-large-cased -n -p -s -t ${PROMPT_DIR}/bert_d922/prompt.json --export ${CKPT_DIR}/bert_auto_d922
 relbert-train -m bert-large-cased -n -p -s -t ${PROMPT_DIR}/bert_d932/prompt.json --export ${CKPT_DIR}/bert_auto_d932
 relbert-train -m bert-large-cased -n -p -s -t ${PROMPT_DIR}/bert_d933/prompt.json --export ${CKPT_DIR}/bert_auto_d933
-
 # Train with continuous tuned prompt
 relbert-train -m bert-large-cased -n -p -s -t ${PROMPT_DIR}/bert_c822/prompt.json --export ${CKPT_DIR}/bert_auto_c822
 relbert-train -m bert-large-cased -n -p -s -t ${PROMPT_DIR}/bert_c923/prompt.json --export ${CKPT_DIR}/bert_auto_c923

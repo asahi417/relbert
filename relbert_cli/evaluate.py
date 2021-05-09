@@ -10,7 +10,7 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logg
 def config(parser):
     parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
     parser.add_argument('--export-file', help='export file', required=True, type=str)
-    parser.add_argument('--ckpt-dir', help='epoch of checkpoint', default='relbert_output/ckpt/*/*', type=str)
+    parser.add_argument('-c', '--ckpt-dir', help='epoch of checkpoint', default='relbert_output/ckpt/*/*', type=str)
     parser.add_argument('--type', help='test type (analogy/classification)', default='analogy', type=str)
     parser.add_argument('-l', '--max-length', help='for vanilla LM', default=64, type=int)
     parser.add_argument('-m', '--mode', help='for vanilla LM', default='average_no_mask', type=str)
