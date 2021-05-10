@@ -9,7 +9,7 @@ from relbert.util import wget
 
 
 def config(parser):
-    parser.add_argument('-c', '--ckpt', help='checkpoint', default='relbert_output/relbert_custom', type=str)
+    parser.add_argument('-c', '--ckpt', help='checkpoint', default="asahi417/relbert_roberta_custom_c", type=str)
     parser.add_argument('-b', '--batch', help='batch', default=2048, type=int)
     parser.add_argument('-e', '--export', help='export path', default='gensim_model.bin', type=str)
     return parser
