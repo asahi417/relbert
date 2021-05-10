@@ -83,8 +83,8 @@ if not os.path.exists(export):
 # Model without Hypernym #
 ##########################
 
+# os.makedirs(export, exist_ok=True)
 export = 'relbert_output/ablation_study/exclusion_test/ckpt'
-os.makedirs(export, exist_ok=True)
 if not os.path.exists(export):
     trainer = relbert.Trainer(
         model='roberta-large',
