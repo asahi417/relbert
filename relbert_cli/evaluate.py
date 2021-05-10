@@ -39,7 +39,7 @@ def main():
         ckpts = opt.ckpt_dir.split(',')
     else:
         logging.info("RUN RelBERT")
-        ckpts = [i for i in sorted(glob(opt.ckpt_dir)) if os.path.exists(i) and i not in done_list]
+        ckpts = [i for i in sorted(glob(opt.ckpt_dir)) if os.path.isdir(i) and i not in done_list]
     for m in ckpts:
         if opt.type == 'classification':
             full_result += evaluate_classification(relbert_ckpt=m, batch_size=opt.batch)
