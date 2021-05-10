@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 import torch
 import numpy as np
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, precision_recall_fscore_support
 from sklearn.neural_network import MLPClassifier
 
 from .lm import RelBERT
@@ -43,24 +43,29 @@ def evaluate_classification(
             x_back = model.get_embedding([(b, a) for a, b in x_tuple], batch_size=batch_size)
             x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
             y_pred = clf.predict(x)
-            f_mac = f1_score(v[prefix]['y'], y_pred, average='macro')
-            f_mic = f1_score(v[prefix]['y'], y_pred, average='micro')
+
+            p_mac, r_mac, f_mac, _ = precision_recall_fscore_support(v[prefix]['y'], y_pred, average='macro')
+            p_mic, r_mic, f_mic, _ = precision_recall_fscore_support(v[prefix]['y'], y_pred, average='micro')
+
             accuracy = sum([a == b for a, b in zip(v[prefix]['y'], y_pred.tolist())])/len(y_pred)
             report_tmp.update(
                 {'accuracy/{}'.format(prefix): accuracy,
                  'f1_macro/{}'.format(prefix): f_mac,
                  'f1_micro/{}'.format(prefix): f_mic,
+                 'p_macro/{}'.format(prefix): p_mac,
+                 'p_micro/{}'.format(prefix): p_mic,
+                 'r_macro/{}'.format(prefix): r_mac,
+                 'r_micro/{}'.format(prefix): r_mic,
                  'data_size/{}'.format(prefix): len(y_pred)}
             )
             if target_relation and prefix == 'test':
                 for _l in target_relation:
                     if _l not in label_dict:
                         continue
-                    _y_true = [i if i == label_dict[_l] else 0 for i in v[prefix]['y']]
-                    _y_pred = [i if i == label_dict[_l] else 0 for i in y_pred.tolist()]
-                    report_tmp['accuracy/{}/{}'.format(prefix, _l)] = \
-                        sum([a == b for a, b in zip(_y_true, _y_pred)]) / len(y_pred)
-
+                    p, r, f, _ = precision_recall_fscore_support(v[prefix]['y'], y_pred, labels=[label_dict[_l]])
+                    report_tmp['f1/{}/{}'.format(prefix, _l)] = f[0]
+                    report_tmp['p/{}/{}'.format(prefix, _l)] = p[0]
+                    report_tmp['r/{}/{}'.format(prefix, _l)] = r[0]
         logging.info('\t accuracy: \n{}'.format(report_tmp))
         result.append(report_tmp)
     del model
