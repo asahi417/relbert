@@ -9,6 +9,7 @@ import relbert
 from relbert.data import get_lexical_relation_data
 from relbert.evaluator import evaluate_classification
 
+os.makedirs('relbert_output/ablation_study/exclusion_test', exist_ok=True)
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger()
 file_handler = logging.FileHandler('relbert_output/ablation_study/exclusion_test/log.log')
@@ -26,7 +27,7 @@ shared_relation = {
     'Co-hypornym': ['COORD', 'coord', 'sibl'],
     'Attribute': ['attri', 'HasProperty']
 }
-os.makedirs('relbert_output/ablation_study/exclusion_test', exist_ok=True)
+
 ##################
 # Get Data Stats #
 ##################
