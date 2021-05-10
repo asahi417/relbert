@@ -4,11 +4,11 @@ import pandas as pd
 os.makedirs('./relbert_output/eval/summary', exist_ok=True)
 
 # Analogy result
-# ',accuracy/valid,accuracy/test,accuracy/full,data,validation_loss,validation_data,model,mode,template_type'
 df = pd.read_csv('./relbert_output/eval/analogy.csv', index_col=0)
 df = df.sort_values(by=['validation_loss', 'data'])
 
 df_vanilla = df[df.template_type == df.template_type]
+print(df_vanilla)
 df = df[df.template_type != df.template_type]
 
 best_models = {}

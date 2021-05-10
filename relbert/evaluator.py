@@ -80,7 +80,6 @@ def evaluate_analogy(
         mode: str = 'mask',
         cache_dir: str = None,
         validation_data: str = 'semeval2012'):
-    bi_direction = True
     model = RelBERT(relbert_ckpt, max_length=max_length, mode=mode, template_type=template_type)
     model.eval()
 
@@ -118,8 +117,6 @@ def evaluate_analogy(
             # preprocess data
             all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in val + test]))
             all_pairs = [tuple(i) for i in all_pairs]
-            if bi_direction:
-                all_pairs += [(i[1], i[0]) for i in all_pairs]
             data_ = model.preprocess(all_pairs, pairwise_input=False)
             batch = len(all_pairs) if batch_size is None else batch_size
             data_loader = torch.utils.data.DataLoader(Dataset(**data_), batch_size=batch)
@@ -143,11 +140,6 @@ def evaluate_analogy(
                 for single_data in _data:
                     v_stem = embeddings[str(tuple(single_data['stem']))]
                     v_choice = [embeddings[str(tuple(c))] for c in single_data['choice']]
-                    if bi_direction:
-                        reverse_key = str((single_data['stem'][1], single_data['stem'][0]))
-                        v_stem = np.concatenate([v_stem, embeddings[reverse_key]])
-                        v_choice_r = [embeddings[str((c[1], c[0]))] for c in single_data['choice']]
-                        v_choice = [np.concatenate(i) for i in zip(v_choice, v_choice_r)]
                     sims = [cos_similarity(v_stem, v) for v in v_choice]
                     pred = sims.index(max(sims))
                     if sims[pred] == -100:
