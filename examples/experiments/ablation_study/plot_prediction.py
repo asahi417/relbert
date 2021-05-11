@@ -51,79 +51,84 @@ else:
     with open('relbert_output/ablation_study/prediction_breakdown/prediction.json', 'r') as f:
         predictions = json.load(f)
 
-# for i in ['google', 'bats']:
-#     df = pd.DataFrame(predictions[i])
-#     df['accuracy'] = df['prediction'] == df['answer']
-#     if i == 'bats':
-#         df['prefix'] = df['prefix'].apply(lambda x: x.split(' [')[-1].split(']')[0].replace('_', ' ').
-#                                           replace(' - ', ':').replace(' reg', '').replace('V', 'v+').replace(' irreg', ''))
-#         meta = {
-#             'Morphological': [
-#                 'adj:comparative', 'adj:superlative', 'adj+ly', 'adj+ness', 'verb 3pSg:v+ed', 'verb v+ing:3pSg',
-#                 'verb v+ing:v+ed', 'verb inf:3pSg', 'verb inf:v+ed', 'verb inf:v+ing', 'verb+able', 'verb+er',
-#                 'verb+ment', 'verb+tion', 'un+adj', 'noun+less', 'over+adj',
-#             ],
-#             'Lexical': [
-#                 'hypernyms:animals', 'hypernyms:misc', 'hyponyms:misc', 'antonyms:binary', 'antonyms:gradable',
-#                 'meronyms:member', 'meronyms:part', 'meronyms:substance', 'synonyms:exact', 'synonyms:intensity',
-#                 're+verb'
-#             ],
-#             'Encyclopedic': [
-#                 'UK city:county', 'animal:shelter', 'animal:sound', 'animal:young', 'country:capital',
-#                 'country:language', 'male:female', 'name:nationality', 'name:occupation', 'noun:plural',
-#                 'things:color',
-#             ]
-#         }
-#         df['prefix'] = df['prefix'].apply(lambda x: [k for k, v in meta.items() if x in v][0])
-#
-#     fig = plt.figure()
-#     fig.clear()
-#
-#     plt.xticks(rotation=15)
-#     ax = sns.barplot(x='prefix', y='accuracy', hue='model', data=f, order=order,
-#                      hue_order=model_order)
-#     handles, labels = ax.get_legend_handles_labels()
-#     ax.legend(handles=handles, labels=labels)
-#     plt.setp(ax.get_legend().get_texts(), fontsize='15')
-#     ax.set_xlabel(None)
-#     ax.set_ylabel('Accuracy', fontsize=15)
-#     ax.tick_params(labelsize=15)
-#     fig = ax.get_figure()
-#     plt.tight_layout()
-#     fig.savefig('./experiments_results/summary/figure/bar.{}.{}.png'.format(d, m))
-#     plt.close()
-#
-#         plt.xticks(rotation=15)
-#     if order:
-#         f['order'] = f['prefix'].apply(lambda x: order.index(x))
-#     else:
-#         f['order'] = f['prefix']
-#     f = f.sort_values(by=['order', 'model'])
-#     ax = sns.lineplot(x='prefix', y='accuracy', hue='model', data=f, sort=False,
-#                       style="model", markers=True, dashes=[(1, 0), (1, 0), (1, 0), (2, 1), (1, 0)],
-#                       hue_order=model_order)
-#     handles, labels = ax.get_legend_handles_labels()
-#     ax.legend(handles=handles, labels=labels)
-#     plt.setp(ax.get_legend().get_texts(), fontsize='15')
-#     ax.set_xlabel(None)
-#     ax.set_ylabel('Accuracy', fontsize=15)
-#     ax.tick_params(labelsize=15)
-#     fig = ax.get_figure()
-#     plt.tight_layout()
-#     fig.savefig('./experiments_results/summary/figure/line.{}.{}.png'.format(d, m))
-#     plt.close()
-#
-#     df['data'] = [i.replace('bats', 'BATS').replace('u2', 'U2').replace('u4', 'U4').replace('google', 'Google').replace('sat', 'SAT') for i in df.data]
-#     df['accuracy'] = df['custom'].astype(float)
-#     ax = sns.barplot(data=df, x='data', y='accuracy', hue='lm', order=['SAT', 'U2', 'U4', 'BATS', 'Google'], hue_order=['ALBERT', 'BERT', 'RoBERTa'])
-#     # ax.set(ylim=(0, 100))
-#     handles, labels = ax.get_legend_handles_labels()
-#     ax.legend(handles=handles, labels=labels)
-#     plt.setp(ax.get_legend().get_texts(), fontsize='15')
-#     ax.set_xlabel(None)
-#     ax.set_ylabel('Accuracy', fontsize=15)
-#     ax.tick_params(labelsize=15)
-#     fig = ax.get_figure()
-#     plt.tight_layout()
-#     fig.savefig('./relbert_output/eval/summary/fig.lm.comparison.png')
-#     plt.close()
+for i in ['google', 'bats']:
+    df = pd.DataFrame(predictions[i])
+    if i == 'bats':
+        df['prefix'] = df['prefix'].apply(lambda x: x.split(' [')[-1].split(']')[0].replace('_', ' ').
+                                          replace(' - ', ':').replace(' reg', '').replace('V', 'v+').replace(' irreg', ''))
+        meta = {
+            'Morphological': [
+                'adj:comparative', 'adj:superlative', 'adj+ly', 'adj+ness', 'verb 3pSg:v+ed', 'verb v+ing:3pSg',
+                'verb v+ing:v+ed', 'verb inf:3pSg', 'verb inf:v+ed', 'verb inf:v+ing', 'verb+able', 'verb+er',
+                'verb+ment', 'verb+tion', 'un+adj', 'noun+less', 'over+adj',
+            ],
+            'Lexical': [
+                'hypernyms:animals', 'hypernyms:misc', 'hyponyms:misc', 'antonyms:binary', 'antonyms:gradable',
+                'meronyms:member', 'meronyms:part', 'meronyms:substance', 'synonyms:exact', 'synonyms:intensity',
+                're+verb'
+            ],
+            'Encyclopedic': [
+                'UK city:county', 'animal:shelter', 'animal:sound', 'animal:young', 'country:capital',
+                'country:language', 'male:female', 'name:nationality', 'name:occupation', 'noun:plural',
+                'things:color',
+            ]
+        }
+        df['prefix_high'] = df['prefix'].apply(lambda x: [k for k, v in meta.items() if x in v][0])
+    elif i == 'google':
+        df['prefix_high'] = df['prefix'].apply(lambda x: 'Morphological' if 'gram' in x else "Semantic")
+
+    df_main = []
+    for m in ['manual', 'autoprompt', 'ptuning']:
+        df['accuracy'] = df['pred/{}'.format(m)] == df['answer']
+        tmp = df[['accuracy', 'prefix', 'prefix_high']].copy()
+        tmp['type'] = m.replace('manual', 'Manual').replace('autoprompt', 'AutoPrompt').replace('ptuning', 'P-tuning')
+        df_main.append(tmp)
+    df_main = pd.concat(df_main)
+    df_main['accuracy'] = df_main.accuracy.astype(float) * 100
+
+    fig = plt.figure()
+    fig.clear()
+    ax = sns.barplot(x='prefix_high', y='accuracy', hue='type', data=df_main, hue_order=['Manual', 'AutoPrompt', 'P-tuning'],
+                     ci=None)
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles=handles, labels=labels)
+    plt.setp(ax.get_legend().get_texts(), fontsize=18)
+    ax.set_xlabel(None)
+    ax.set_ylabel('Accuracy', fontsize=18)
+    ax.tick_params(labelsize=18)
+    fig = ax.get_figure()
+    plt.tight_layout()
+    fig.savefig('./relbert_output/eval/summary/fig.prediction.bar.{}.png'.format(i))
+    plt.close()
+
+    fig = plt.figure()
+    fig.clear()
+    plt.xticks(rotation=90)
+    ax = sns.barplot(x='prefix', y='accuracy', hue='type', data=df_main, hue_order=['Manual', 'AutoPrompt', 'P-tuning'],
+                     ci=None)
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles=handles, labels=labels)
+    plt.setp(ax.get_legend().get_texts(), fontsize=18)
+    ax.set_xlabel(None)
+    ax.set_ylabel('Accuracy', fontsize=18)
+    ax.tick_params(labelsize=18)
+    fig = ax.get_figure()
+    plt.tight_layout()
+    fig.savefig('./relbert_output/eval/summary/fig.prediction.fine.bar.{}.png'.format(i))
+    plt.close()
+
+    fig = plt.figure()
+    fig.clear()
+    ax = sns.lineplot(x='prefix_high', y='accuracy', hue='type', data=df_main, sort=True,
+                      style="type", markers=True, dashes=[(1, 0), (1, 0), (1, 0)],
+                      hue_order=['Manual', 'AutoPrompt', 'P-tuning'], ci=None)
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles=handles, labels=labels)
+    plt.setp(ax.get_legend().get_texts(), fontsize=18)
+    ax.set_xlabel(None)
+    ax.set_ylabel('Accuracy', fontsize=18)
+    ax.tick_params(labelsize=18)
+    fig = ax.get_figure()
+    plt.tight_layout()
+    fig.savefig('./relbert_output/eval/summary/fig.prediction.line.{}.png'.format(i))
+    plt.close()

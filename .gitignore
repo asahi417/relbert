@@ -5,3 +5,4 @@ relbert_output
 cache
 common_word_pairs.pkl
 gensim-vector.tmp
+model_hub
