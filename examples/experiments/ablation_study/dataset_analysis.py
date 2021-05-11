@@ -31,42 +31,42 @@ shared_relation = {
 ##################
 # Get Data Stats #
 ##################
-export = 'relbert_output/ablation_study/exclusion_test/data_stats.csv'
-if not os.path.exists(export):
-
-    def freq(_list, prefix=None):
-        def _get(_x):
-            if prefix:
-                return _x[prefix]
-            return _x
-
-        f_dict = {}
-        for e in _list:
-            if _get(e) in f_dict:
-                f_dict[_get(e)] += 1
-            else:
-                f_dict[_get(e)] = 1
-        return f_dict
+export = 'relbert_output/ablation_study/exclusion_test/data_stats'
 
 
-    semeval_relations = {
-        1: "Class Inclusion",  # Hypernym
-        2: "Part-Whole",  # Meronym, Substance Meronym
-        3: "Similar",  # Synonym, Co-hypornym
-        4: "Contrast",  # Antonym
-        5: "Attribute",  # Attribute, Event
-        6: "Non Attribute",
-        7: "Case Relation",
-        8: "Cause-Purpose",
-        9: "Space-Time",
-        10: "Representation"
-    }
+def freq(_list, prefix=None):
+    def _get(_x):
+        if prefix:
+            return _x[prefix]
+        return _x
 
+    f_dict = {}
+    for e in _list:
+        if _get(e) in f_dict:
+            f_dict[_get(e)] += 1
+        else:
+            f_dict[_get(e)] = 1
+    return f_dict
+
+
+semeval_relations = {
+    1: "Class Inclusion",  # Hypernym
+    2: "Part-Whole",  # Meronym, Substance Meronym
+    3: "Similar",  # Synonym, Co-hypornym
+    4: "Contrast",  # Antonym
+    5: "Attribute",  # Attribute, Event
+    6: "Non Attribute",
+    7: "Case Relation",
+    8: "Cause-Purpose",
+    9: "Space-Time",
+    10: "Representation"
+}
+for _type in ['train', 'test']:
     data_freq = {}
     data = get_lexical_relation_data()
     for k, v in data.items():
         label = {v: k for k, v in v['label'].items()}
-        data_freq[k] = {label[k]: v for k, v in freq(v['test']['y']).items()}
+        data_freq[k] = {label[k]: v for k, v in freq(v[_type]['y']).items()}
     relations_in_train = ['Meronym', 'Antonym', 'Synonym', 'Attribute', 'Hypernym', 'Co-hypornym', 'Substance Meronym']
 
     data_freq_ = deepcopy(data_freq)
@@ -77,12 +77,11 @@ if not os.path.exists(export):
                     data_freq_[k][__k] = data_freq_[k].pop(_k)
 
     df = pd.DataFrame(data_freq_)
-    df.to_csv(export)
+    df.to_csv(export + '.{}.csv'.format(_type))
 
 ##########################
 # Model without Hypernym #
 ##########################
-
 # os.makedirs(export, exist_ok=True)
 export = 'relbert_output/ablation_study/exclusion_test/ckpt'
 if not os.path.exists(export):
