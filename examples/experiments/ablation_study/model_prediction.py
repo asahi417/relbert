@@ -20,7 +20,7 @@ if not os.path.exists('relbert_output/ablation_study/prediction_breakdown/predic
             v_choice = [embedding_dict[str(tuple(c))] for c in single_data['choice']]
             sims = [cos_similarity(v_stem, v) for v in v_choice]
             single_data['pred'] = sims.index(max(sims))
-        return data
+        return _data
 
     model = relbert.RelBERT("asahi417/relbert_roberta_custom_c")
     analogy_data = relbert.data.get_analogy_data()
@@ -33,7 +33,6 @@ if not os.path.exists('relbert_output/ablation_study/prediction_breakdown/predic
         embeddings = model.get_embedding(all_pairs, batch_size=batch_size)
         assert len(embeddings) == len(all_pairs)
         embeddings = {str(k_): v for k_, v in zip(all_pairs, embeddings)}
-        print(embeddings.keys())
         predictions[data] = get_prediction(test, embeddings)
 
     with open('relbert_output/ablation_study/prediction_breakdown/prediction.json', 'w') as f:
