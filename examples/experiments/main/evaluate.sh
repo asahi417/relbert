@@ -71,16 +71,7 @@ relbert-eval --vanilla-lm -c roberta-large -t ./relbert_output/prompt_files/robe
 # RelBERT #
 ###########
 # analogy
-relbert-eval -c 'relbert_output/ckpt/roberta_custom*/*' --export-file ./relbert_output/eval/analogy_0.csv
-relbert-eval -c 'relbert_output/ckpt/roberta_auto*/*' --export-file ./relbert_output/eval/analogy_1.csv
-relbert-eval -c 'relbert_output/ckpt/bert_*/*' --export-file ./relbert_output/eval/analogy_2.csv
-relbert-eval -c 'relbert_output/ckpt/albert_*/*' --export-file ./relbert_output/eval/analogy_3.csv
-
+relbert-eval -c 'relbert_output/ckpt/*/*' --export-file ./relbert_output/eval/analogy.csv
 # classification
-relbert-eval -c 'relbert_output/ckpt/roberta_auto_c*/*' --type classification --export-file ./relbert_output/eval/relation_classification_0.csv
-relbert-eval -c 'relbert_output/ckpt/roberta_auto_d*/*' --type classification --export-file ./relbert_output/eval/relation_classification_1.csv
-relbert-eval -c 'relbert_output/ckpt/roberta_custom*/*' --type classification --export-file ./relbert_output/eval/relation_classification_2.csv
-relbert-eval -c 'relbert_output/ckpt/bert_custom*/*' --type classification --export-file ./relbert_output/eval/relation_classification_3.csv
-relbert-eval -c 'relbert_output/ckpt/albert_custom*/*' --type classification --export-file ./relbert_output/eval/relation_classification_4.csv
-
+relbert-eval -c 'relbert_output/ckpt/*/*' --type classification --export-file ./relbert_output/eval/relation_classification.csv
 

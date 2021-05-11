@@ -31,7 +31,7 @@ def evaluate_classification(
         x_back = model.get_embedding([(b, a) for a, b in x_tuple], batch_size=batch_size)
         x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
-        clf = MLPClassifier().fit(x, v['train']['y'])
+        clf = MLPClassifier(random_state=0).fit(x, v['train']['y'])
 
         report_tmp = {'model': relbert_ckpt, 'label_size': len(label_dict), 'data': data_name}
         for prefix in ['test', 'val']:
