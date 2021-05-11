@@ -99,7 +99,10 @@ target_relation = list(chain(*list(shared_relation.values())))
 full_result += evaluate_classification(relbert_ckpt='relbert_output/ablation_study/exclusion_test/ckpt/epoch_2',
                                        target_relation=target_relation)
 # load checkpoint from model hub
-full_result += evaluate_classification(relbert_ckpt="asahi417/relbert_roberta_custom_c", target_relation=target_relation)
+# full_result += evaluate_classification(relbert_ckpt="asahi417/relbert_roberta_custom_c", target_relation=target_relation)
+full_result += evaluate_classification(relbert_ckpt='relbert_output/ckpt/roberta_custom_c/epoch_2',
+                                       target_relation=target_relation)
+
 
 full_result_new = []
 for x in full_result:
