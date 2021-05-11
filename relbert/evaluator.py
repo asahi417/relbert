@@ -104,7 +104,7 @@ def evaluate_analogy(
                           x['positive_a'].keys()}
                 embedding = model.to_embedding(encode)
                 v_anchor, v_positive, v_negative = embedding.chunk(3)
-                loss = triplet_loss(v_anchor, v_positive, v_negative, in_batch_negative=False)
+                loss = triplet_loss(v_anchor, v_positive, v_negative, in_batch_negative=True)
                 total_loss += loss.cpu().item()
                 size += len(v_anchor)
         valid_loss = total_loss / size
