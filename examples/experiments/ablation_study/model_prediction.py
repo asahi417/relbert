@@ -29,6 +29,7 @@ if not os.path.exists('relbert_output/ablation_study/prediction_breakdown/predic
         _, test = analogy_data[data]
         # preprocess data
         all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in test]))
+        all_pairs = [tuple(i) for i in all_pairs]
         embeddings = model.get_embedding(all_pairs, batch_size=batch_size)
         assert len(embeddings) == len(all_pairs)
         embeddings = {str(k_): v for k_, v in zip(all_pairs, embeddings)}
