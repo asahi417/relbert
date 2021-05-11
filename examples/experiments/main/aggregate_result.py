@@ -4,7 +4,7 @@ import pandas as pd
 os.makedirs('./relbert_output/eval/summary', exist_ok=True)
 
 # Analogy result
-df = pd.read_csv('./relbert_output/eval/analogy.csv', index_col=0)
+df = pd.read_csv('./relbert_output/eval/analogy_tmp.csv', index_col=0)
 df = df.sort_values(by=['validation_loss', 'data'])
 df_vanilla = df[df.template_type == df.template_type]
 df = df[df.template_type != df.template_type]
@@ -52,11 +52,15 @@ for lm in ['roberta', 'bert', 'albert']:
         print(df_out_v)
         df_out_v.to_csv('./relbert_output/eval/summary/analogy.vanilla.{}.csv'.format(lm))
         print()
-
 print(best_models)
 # lexical relation classification
-# df = pd.read_csv('./relbert_output/eval/classification.csv', index_col=0)
-# df = df.sort_values(by=['data'])
-# lm = 'roberta'
-# for method in ['custom', 'auto_c', 'auto_d']:
-#     df_tmp = df[df.model == best_models[lm][method]]
+df = pd.read_csv('./relbert_output/eval/relation_classification.csv', index_col=0)
+df = df.sort_values(by=['data'])
+for lm in ['roberta']:
+    for method in ['custom', 'auto_c', 'auto_d']:
+        df_tmp = df[df.model == best_models[lm][method]]
+        tmp = df_tmp[['data', 'f1_macro/test', 'f1_micro/test']]
+        print(lm, method)
+        print(tmp)
+        print()
+        tmp.to_csv('./relbert_output/eval/summary/classification.{}.{}.csv'.format(lm, method))
