@@ -26,6 +26,7 @@ def main():
 
     done_list = []
     full_result = []
+    os.makedirs(os.path.dirname(opt.export_file), exist_ok=True)
     if os.path.exists(opt.export_file):
         df = pd.read_csv(opt.export_file, index_col=0)
         if opt.vanilla_lm:
