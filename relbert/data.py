@@ -144,7 +144,7 @@ def get_lexical_relation_data(cache_dir: str = None):
                 data = [line.split('\t') for line in f.read().split('\n') if len(line) > 0]
             x = [d[:2] for d in data]
             y = [d[-1] for d in data]
-            for _y in list(set(y)):
+            for _y in y:
                 if _y not in label:
                     label[_y] = len(label)
             y = [label[_y] for _y in y]
