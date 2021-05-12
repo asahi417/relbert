@@ -61,6 +61,7 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
         all_positive = {}
         all_negative = {}
         all_relation_type = {}
+        # tmp = []
         for i in files_scale:
             relation_id = i.split('-')[-1].replace('.txt', '')
             if remove_relation and int(relation_id[:-1]) in remove_relation:
@@ -79,6 +80,14 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
                              list(zip(*list(filter(lambda x: x[0] < 0, lines_scale[:n_sample_max]))))[1]]
                 _positive = [tuple(i.split(':')) for i in
                              list(zip(*list(filter(lambda x: x[0] > 0, lines_scale[-n_sample_max:]))))[1]]
+                # print(len(_positive))
+                # print(len(_positive))
+                # __negative = [tuple(i.split(':')) for i in
+                #               list(zip(*list(filter(lambda x: x[0] < 0, lines_scale))))[1]]
+                # __positive = [tuple(i.split(':')) for i in
+                #               list(zip(*list(filter(lambda x: x[0] > 0, lines_scale))))[1]]
+                # tmp.append(len(__positive) + len(__negative))
+                # input()
                 v_negative = _negative[::int(len(_negative) * (1 - v_rate))]
                 v_positive = _positive[::int(len(_positive) * (1 - v_rate))]
                 t_negative = [i for i in _negative if i not in v_negative]
@@ -93,9 +102,10 @@ def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_
             all_relation_type[relation_id] = relation_type
         parent = list(set([i[:-1] for i in all_relation_type.keys()]))
         relation_structure = {p: [i for i in all_relation_type.keys() if p == i[:-1]] for p in parent}
+        # print(sum(tmp)/len(tmp))
         return all_positive, all_negative, relation_structure
     else:
-        raise ValueError('unnknown data: {}'.format(data_name))
+        raise ValueError('unknown data: {}'.format(data_name))
 
 
 def get_analogy_data(cache_dir: str = None):

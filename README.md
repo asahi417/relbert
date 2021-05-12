@@ -22,5 +22,11 @@ sh examples/experiments/main/train.sh
 sh examples/experiments/main/evaluate.sh
 ```
 
-
+## TODO
+- large batch size
+- augmentation for classification loss
+- test other LM
+- put custom template in the config for model hub
+- make autoprompt more efficient
+- to add word embedding prediction file to analogy tools
 
