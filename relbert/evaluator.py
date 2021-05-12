@@ -9,7 +9,7 @@ from sklearn.neural_network import MLPClassifier
 
 from .lm import RelBERT
 from .data import get_lexical_relation_data, get_analogy_data, get_training_data
-from .util import Dataset, triplet_loss
+from .util import Dataset, triplet_loss, fix_seed
 
 __all__ = ['evaluate_classification', 'evaluate_analogy']
 
@@ -18,8 +18,9 @@ def evaluate_classification(
         relbert_ckpt: str = None,
         batch_size: int = 512,
         target_relation=None,
-        cache_dir: str = None):
-
+        cache_dir: str = None,
+        random_seed: int = 0):
+    fix_seed(random_seed)
     model = RelBERT(relbert_ckpt)
     data = get_lexical_relation_data(cache_dir)
     result = []
@@ -31,7 +32,7 @@ def evaluate_classification(
         x_back = model.get_embedding([(b, a) for a, b in x_tuple], batch_size=batch_size)
         x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
         logging.info('\t training data info: data size {}, label size {}'.format(len(x), len(label_dict)))
-        clf = MLPClassifier(random_state=0).fit(x, v['train']['y'])
+        clf = MLPClassifier(random_state=random_seed).fit(x, v['train']['y'])
 
         report_tmp = {'model': relbert_ckpt, 'label_size': len(label_dict), 'data': data_name}
         for prefix in ['test', 'val']:
