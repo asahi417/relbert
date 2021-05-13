@@ -10,6 +10,7 @@ path_fasttext_pred = {'bats': 'asset/prediction.bats.fasttext.csv', 'google': 'a
 
 
 def cap(_list):
+    print(_list)
     return [i.capitalize() for i in _list]
 
 
