@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import seaborn as sns
 from matplotlib import pylab as plt
@@ -5,13 +6,15 @@ from matplotlib import pylab as plt
 plt.rcParams.update({"text.usetex": True, "font.family": "sans-serif", "font.sans-serif": ["Helvetica"]})
 sns.set_theme(style="darkgrid")
 
+root_dir = './relbert_output/eval/figure'
+os.makedirs(root_dir)
 main_df_vanilla = pd.read_csv('./relbert_output/eval/summary/analogy.vanilla.roberta.csv', index_col=0).T
 main_df_vanilla['data'] = main_df_vanilla.index
 main_df_vanilla['type'] = 'Vanilla LM'
 main_df_relbert = pd.read_csv('./relbert_output/eval/summary/analogy.relbert.roberta.csv', index_col=0).T
 main_df_relbert['data'] = main_df_relbert.index
 main_df_relbert['type'] = 'RelBERT'
-
+fontsize = 20
 for i in ['custom', 'auto_c', 'auto_d']:
     fig = plt.figure()
     fig.clear()
@@ -27,11 +30,11 @@ for i in ['custom', 'auto_c', 'auto_d']:
     ax.set(ylim=(0, 100))
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles=handles, labels=labels)
-    plt.setp(ax.get_legend().get_texts(), fontsize=18)
+    plt.setp(ax.get_legend().get_texts(), fontsize=fontsize)
     ax.set_xlabel(None)
-    ax.set_ylabel('Accuracy', fontsize=18)
-    ax.tick_params(labelsize=18)
+    ax.set_ylabel('Accuracy', fontsize=fontsize)
+    ax.tick_params(labelsize=fontsize)
     fig = ax.get_figure()
     plt.tight_layout()
-    fig.savefig('./relbert_output/eval/summary/fig.vanilla.{}.png'.format(i))
+    fig.savefig('{}/fig.vanilla.{}.png'.format(root_dir, i))
     plt.close()

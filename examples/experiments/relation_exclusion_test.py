@@ -6,7 +6,6 @@ from itertools import chain
 
 import pandas as pd
 import relbert
-from relbert.data import get_lexical_relation_data
 from relbert.evaluator import evaluate_classification
 
 os.makedirs('relbert_output/ablation_study/exclusion_test', exist_ok=True)
@@ -28,57 +27,6 @@ shared_relation = {
     'Attribute': ['attri', 'HasProperty']
 }
 
-##################
-# Get Data Stats #
-##################
-export = 'relbert_output/ablation_study/exclusion_test/data_stats'
-
-
-def freq(_list, prefix=None):
-    def _get(_x):
-        if prefix:
-            return _x[prefix]
-        return _x
-
-    f_dict = {}
-    for e in _list:
-        if _get(e) in f_dict:
-            f_dict[_get(e)] += 1
-        else:
-            f_dict[_get(e)] = 1
-    return f_dict
-
-
-semeval_relations = {
-    1: "Class Inclusion",  # Hypernym
-    2: "Part-Whole",  # Meronym, Substance Meronym
-    3: "Similar",  # Synonym, Co-hypornym
-    4: "Contrast",  # Antonym
-    5: "Attribute",  # Attribute, Event
-    6: "Non Attribute",
-    7: "Case Relation",
-    8: "Cause-Purpose",
-    9: "Space-Time",
-    10: "Representation"
-}
-for _type in ['train', 'test']:
-    data_freq = {}
-    data = get_lexical_relation_data()
-    for k, v in data.items():
-        label = {v: k for k, v in v['label'].items()}
-        data_freq[k] = {label[k]: v for k, v in freq(v[_type]['y']).items()}
-    relations_in_train = ['Meronym', 'Antonym', 'Synonym', 'Attribute', 'Hypernym', 'Co-hypornym', 'Substance Meronym']
-
-    data_freq_ = deepcopy(data_freq)
-    for k, v in data_freq.items():
-        for _k, _v in v.items():
-            for __k, __v in shared_relation.items():
-                if _k in __v:
-                    data_freq_[k][__k] = data_freq_[k].pop(_k)
-
-    df = pd.DataFrame(data_freq_)
-    df.to_csv(export + '.{}.csv'.format(_type))
-
 ##########################
 # Model without Hypernym #
 ##########################
@@ -95,9 +43,9 @@ if not os.path.exists(export):
 
 full_result = []
 target_relation = list(chain(*list(shared_relation.values())))
-# full_result += evaluate_classification(relbert_ckpt='relbert_output/ckpt/roberta_custom_c/epoch_2', target_relation=target_relation)
 # load checkpoint from model hub
-full_result += evaluate_classification(relbert_ckpt="asahi417/relbert_roberta_custom_c", target_relation=target_relation)
+full_result += evaluate_classification(relbert_ckpt="asahi417/relbert_roberta_custom_c",
+                                       target_relation=target_relation)
 full_result += evaluate_classification(relbert_ckpt='relbert_output/ablation_study/exclusion_test/ckpt/epoch_2',
                                        target_relation=target_relation)
 

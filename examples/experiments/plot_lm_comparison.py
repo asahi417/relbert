@@ -13,18 +13,18 @@ for i in ['bert', 'albert', 'roberta']:
     df.append(main_df[['data', 'custom', 'lm']])
 df = pd.concat(df)
 
+fontsize = 20
 fig = plt.figure()
 fig.clear()
 df['data'] = [i.replace('bats', 'BATS').replace('u2', 'U2').replace('u4', 'U4').replace('google', 'Google').replace('sat', 'SAT') for i in df.data]
 df['accuracy'] = df['custom'].astype(float)
 ax = sns.barplot(data=df, x='data', y='accuracy', hue='lm', order=['SAT', 'U2', 'U4', 'BATS', 'Google'], hue_order=['ALBERT', 'BERT', 'RoBERTa'])
-# ax.set(ylim=(0, 100))
 handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles=handles, labels=labels)
-plt.setp(ax.get_legend().get_texts(), fontsize=18)
+plt.setp(ax.get_legend().get_texts(), fontsize=fontsize)
 ax.set_xlabel(None)
-ax.set_ylabel('Accuracy', fontsize=18)
-ax.tick_params(labelsize=18)
+ax.set_ylabel('Accuracy', fontsize=fontsize)
+ax.tick_params(labelsize=fontsize)
 fig = ax.get_figure()
 plt.tight_layout()
 fig.savefig('./relbert_output/eval/summary/fig.lm.comparison.png')

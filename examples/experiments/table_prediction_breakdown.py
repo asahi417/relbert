@@ -7,6 +7,11 @@ import relbert
 
 path_relbert_pred = 'asset/prediction.relbert.json'
 path_fasttext_pred = {'bats': 'asset/prediction.bats.fasttext.csv', 'google': 'asset/prediction.google.fasttext.csv'}
+
+def cap(_list):
+    return [i.capitalize() for i in _list]
+
+
 if not os.path.exists(path_relbert_pred):
     batch_size = 512
 
@@ -28,9 +33,13 @@ if not os.path.exists(path_relbert_pred):
 
     analogy_data = relbert.data.get_analogy_data()
     predictions = {}
-    for data in ['google', 'bats']:
-        _, test = analogy_data[data]
-        all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in test]))
+    for data in ['google', 'bats', 'bats_cap']:
+        if data == 'bats_cap':
+            _, test = analogy_data['bats']
+            all_pairs = list(chain(*[[cap(o['stem'])] + cap(o['choice']) for o in test]))
+        else:
+            _, test = analogy_data[data]
+            all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in test]))
         all_pairs = [tuple(i) for i in all_pairs]
         for n, i in zip(['manual', 'autoprompt', 'ptuning'],
                         ["asahi417/relbert_roberta_custom_c", "asahi417/relbert_roberta_autoprompt", "asahi417/relbert_roberta_ptuning"]):
