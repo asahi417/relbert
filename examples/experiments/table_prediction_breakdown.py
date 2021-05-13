@@ -5,8 +5,9 @@ import pandas as pd
 import relbert
 
 
-path_relbert_pred = 'asset/prediction.relbert.json'
+path_relbert_pred = 'cache/prediction.relbert.json'
 path_fasttext_pred = {'bats': 'asset/prediction.bats.fasttext.csv', 'google': 'asset/prediction.google.fasttext.csv'}
+
 
 def cap(_list):
     return [i.capitalize() for i in _list]
