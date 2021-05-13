@@ -37,12 +37,12 @@ data = list(chain(*[i.index.tolist() for i in cat]))
 df = pd.DataFrame([index, accuracy, data], index=['Model', 'Accuracy', 'Data']).T
 df['Data'] = [i.replace('bats', 'BATS').replace('u2', 'U2').replace('u4', 'U4').
               replace('google', 'Google').replace('sat', 'SAT') for i in df.Data]
-df['Model'] = [i.replace('albert', 'ALBERT').replace('roberta', 'RoBERTa').replace('/', ' (vanilla)').
+df['Model'] = [i.replace('albert', 'ALBERT').replace('roberta', 'RoBERTa').replace('/vanilla', ' (vanilla)').
                replace('bert', 'BERT') for i in df.Model]
 
 # plot
 plt.rcParams.update({"text.usetex": True, "font.family": "sans-serif", "font.sans-serif": ["Helvetica"]})
-sns.set_theme(style="darkgrid")
+# sns.set_theme(style="darkgrid")
 root_dir = './asset/figure'
 os.makedirs(root_dir, exist_ok=True)
 fontsize = 20
