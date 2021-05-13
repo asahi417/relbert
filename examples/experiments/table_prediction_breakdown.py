@@ -39,7 +39,7 @@ if not os.path.exists(path_relbert_pred):
 
     analogy_data = relbert.data.get_analogy_data()
     predictions = {}
-    for data in ['google', 'bats', 'bats_cap']:
+    for data in ['bats_cap', 'google', 'bats']:
         if data == 'bats_cap':
             _, test = analogy_data['bats']
             all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in test]))
@@ -54,7 +54,7 @@ if not os.path.exists(path_relbert_pred):
             embeddings = model.get_embedding(all_pairs, batch_size=batch_size)
             assert len(embeddings) == len(all_pairs)
             embeddings = {str(k_): v for k_, v in zip(all_pairs, embeddings)}
-            test = get_prediction(test, embeddings, n, data == 'batas_cap')
+            test = get_prediction(test, embeddings, n, data == 'bats_cap')
         predictions[data] = test
     with open(path_relbert_pred, 'w') as f:
         json.dump(predictions, f)
