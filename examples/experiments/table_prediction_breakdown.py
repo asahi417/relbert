@@ -10,7 +10,7 @@ path_fasttext_pred = {'bats': 'asset/prediction.bats.fasttext.csv', 'google': 'a
 
 
 def cap(_list):
-    print(_list)
+    print(_list, [i.capitalize() for i in _list])
     return [i.capitalize() for i in _list]
 
 
@@ -24,10 +24,14 @@ if not os.path.exists(path_relbert_pred):
         return inner / (norm_b * norm_a)
 
 
-    def get_prediction(_data, embedding_dict, model_name):
+    def get_prediction(_data, embedding_dict, model_name, capitalize=False):
         for single_data in _data:
-            v_stem = embedding_dict[str(tuple(single_data['stem']))]
-            v_choice = [embedding_dict[str(tuple(c))] for c in single_data['choice']]
+            if capitalize:
+                v_stem = embedding_dict[str(tuple(cap(single_data['stem'])))]
+                v_choice = [embedding_dict[str(tuple(cap(c)))] for c in single_data['choice']]
+            else:
+                v_stem = embedding_dict[str(tuple(single_data['stem']))]
+                v_choice = [embedding_dict[str(tuple(c))] for c in single_data['choice']]
             sims = [cos_similarity(v_stem, v) for v in v_choice]
             single_data['pred/{}'.format(model_name)] = sims.index(max(sims))
         return _data
