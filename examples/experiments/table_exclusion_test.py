@@ -25,9 +25,10 @@ shared_relation = {
     'syn': ['SYN', 'Synonym']
 }
 dataset = ['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']
-path = 'relbert_output/eval/relation_classification.exclusion_test.csv'
+path = 'asset/relation_classification.exclusion_test.csv'
 if not os.path.exists(path):
-    os.makedirs('relbert_output/ablation_study/exclusion_test', exist_ok=True)
+    export = 'relbert_output/ablation_study/exclusion_test/ckpt'
+    os.makedirs(os.path.dirname(export), exist_ok=True)
     logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
     logger = logging.getLogger()
     file_handler = logging.FileHandler('relbert_output/ablation_study/exclusion_test/log.log')
@@ -38,7 +39,6 @@ if not os.path.exists(path):
     ##########################
     # Model without Hypernym #
     ##########################
-    export = 'relbert_output/ablation_study/exclusion_test/ckpt'
     if not os.path.exists(export):
         trainer = relbert.Trainer(
             model='roberta-large',
@@ -54,7 +54,7 @@ if not os.path.exists(path):
     # load checkpoint from model hub
     full_result += evaluate_classification(relbert_ckpt="asahi417/relbert_roberta_custom_c",
                                            target_relation=target_relation)
-    full_result += evaluate_classification(relbert_ckpt='relbert_output/ablation_study/exclusion_test/ckpt/epoch_2',
+    full_result += evaluate_classification(relbert_ckpt='{}/epoch_2'.format(export),
                                            target_relation=target_relation)
 
 
@@ -68,8 +68,8 @@ if not os.path.exists(path):
                     if _k in __v:
                         x[k.replace(_k, __k)] = x.pop(k)
         full_result_new.append(x)
-    os.makedirs('relbert_output/eval/summary', exist_ok=True)
-    pd.DataFrame(full_result_new).to_csv('relbert_output/eval/summary/relation_classification.exclusion_test.csv')
+    os.makedirs(os.path.dirname(export), exist_ok=True)
+    pd.DataFrame(full_result_new).to_csv(export)
 
 df = pd.read_csv(path, index_col=0)
 df = df[[c for c in df.columns if 'f1' in c or c in ['model', 'data']]]

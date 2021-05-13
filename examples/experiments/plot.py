@@ -1,7 +1,46 @@
 import os
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from matplotlib import pylab as plt
+
+# get the best config in terms of loss realization
+df = pd.read_csv('./asset/analogy.csv', index_col=0)
+df_vanilla = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
+df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
+cat = []
+index = []
+for lm in ['roberta', 'bert', 'albert']:
+    df_tmp = df[[lm == i.split('/')[-2].split('_')[0] for i in df.model]]
+
+    if lm != 'roberta' and method != 'custom':
+        continue
+    df_tmp_tmp = df_tmp[[method in i for i in df_tmp.model]]
+    tmp = df_tmp_tmp.head(5)[['accuracy/test', 'accuracy/full']] * 100
+    tmp.columns = [method, 'accuracy_full']
+    tmp.index = df_tmp_tmp.head(5)['data'].to_list()
+    sat_full = tmp['accuracy_full'].T['sat']
+    tmp = tmp[method]
+    tmp['sat_full'] = sat_full
+    cat.append(tmp)
+    index.append('{}/{}'.format(lm, method))
+
+
+df = pd.read_csv('./asset/relation_classification.csv', index_col=0)
+df = df.sort_values(by=['data'])
+dataset = ['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']
+for lm in ['roberta', 'bert', 'albert']:
+    for method in ['custom', 'auto_d', 'auto_c']:
+        if lm != 'roberta' and method != 'custom':
+            continue
+
+        f1 = []
+        for method in ['custom', 'auto_d', 'auto_c']:
+            df_tmp = df[df.model == best_models[lm][method]]
+            tmp = df_tmp[['f1_macro/test', 'f1_micro/test']].round(3) * 100
+            tmp.index = df_tmp.data
+            f1 += [np.concatenate([tmp.T[i].values for i in dataset])]
+df = pd.DataFrame(f1)  #, columns=['tmp'] * 2 + ['macro', 'micro'] * 5)
 
 plt.rcParams.update({"text.usetex": True, "font.family": "sans-serif", "font.sans-serif": ["Helvetica"]})
 sns.set_theme(style="darkgrid")
@@ -84,30 +123,3 @@ for lm in ['roberta', 'bert', 'albert']:
         # print(df_out_v.to_latex())
         # input()
         # df_out_v.to_csv('./relbert_output/eval/summary/analogy.vanilla.{}.csv'.format(lm))
-
-# print(best_models)
-# # lexical relation classification
-# df = pd.read_csv('./relbert_output/eval/relation_classification.csv', index_col=0)
-# df = df.sort_values(by=['data'])
-# dataset = ['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']
-# lm = 'roberta'
-# f1 = []
-# for method in ['custom', 'auto_d', 'auto_c']:
-#     df_tmp = df[df.model == best_models[lm][method]]
-#     tmp = df_tmp[['f1_macro/test', 'f1_micro/test']].round(3) * 100
-#     tmp.index = df_tmp.data
-#     f1 += [np.concatenate([tmp.T[i].values for i in dataset])]
-# f1 = [[' ', x] + i for x, i in zip(['Manual', 'AutoPrompt', 'P-tuning'], np.array(f1).tolist())]
-# df = pd.DataFrame(f1, columns=['tmp'] * 2 + ['macro', 'micro'] * 5)
-# tmp = df.to_latex(index=False)
-# tmp = tmp.replace('  &     Manual', r"\multirow{3}{*}{\rotatebox{90}{RelBERT}} &     Manual")
-# tmp = tmp.replace(r'tmp &        tmp &',
-# r'\multicolumn{2}{c}{\multirow{2}{*}{\textbf{Model}}} ' \
-# r'& \multicolumn{2}{c}{\textbf{BLESS}} ' \
-# r'& \multicolumn{2}{c}{\textbf{CogALexV}} ' \
-# r'& \multicolumn{2}{c}{\textbf{EVALution}} ' \
-# r'& \multicolumn{2}{c}{\textbf{K\&H+N}} ' \
-# r'& \multicolumn{2}{c}{\textbf{ROOT09}} \\' + '\n  &  &')
-# print('\n******* main table *******\n')
-# print(tmp)
-# print()

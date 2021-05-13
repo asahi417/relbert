@@ -29,5 +29,6 @@ sh examples/experiments/main/evaluate.sh
 - put custom template in the config for model hub
 - make autoprompt more efficient
 - to add word embedding prediction file to analogy tools
-- better way to organize lexical classification (save classifier checkpoint?) 
+- better way to organize lexical classification (save classifier checkpoint?)
+- analogy for bert albert 
 

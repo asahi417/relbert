@@ -38,7 +38,8 @@ if not os.path.exists(path_relbert_pred):
     for data in ['google', 'bats', 'bats_cap']:
         if data == 'bats_cap':
             _, test = analogy_data['bats']
-            all_pairs = list(chain(*[[cap(o['stem'])] + cap(o['choice']) for o in test]))
+            all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in test]))
+            all_pairs = [cap(i) for i in all_pairs]
         else:
             _, test = analogy_data[data]
             all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in test]))
