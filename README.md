@@ -1,5 +1,6 @@
 # RelBERT
-Relational knowledge distilled BERT.
+The official implementation to reproduce the result in **Distilling Relation Embeddings from Pretrained Language Models**.
+Datasets and models used in experiments will be downloaded automatically from each resource. 
 
 ## Get Started
 ```shell script
@@ -7,34 +8,21 @@ pip install -e .
 ``` 
 
 ## Run Experiment
-- Prompt Search 
+- **Prompt Search**  
+Run prompt search with AutoPrompt/P-tuning 
 ```shell script
 sh examples/experiments/main/propmt.sh
 ```
 
-- Model Training
+- **Model Training**  
+RelBERT training
 ```shell script
 sh examples/experiments/main/train.sh
 ```
 
-- Evaluation
+- **Evaluation**  
+Evaluate on Analogy Test/Lexical Relation Classification.
 ```shell script
 sh examples/experiments/main/evaluate.sh
 ```
-
-## TODO
-- large batch size
-- augmentation for classification loss
-- test other LM
-- put custom template in the config for model hub
-- make autoprompt more efficient
-- to add word embedding prediction file to analogy tools
-- better way to organize lexical classification (save classifier checkpoint?)
-- analogy for bert albert
-- AnalogyTools
-    - add sample for analogy test
-    - change name from analogy test to question
-    - add prediction files
-    - 'pmi_pred'
-    - Gridsearch on MLP hyperparameter 
 
