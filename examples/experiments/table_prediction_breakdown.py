@@ -74,16 +74,16 @@ meta_bats = {
             'Morphological': [
                 'adj:comparative', 'adj:superlative', 'adj+ly', 'adj+ness', 'verb 3pSg:v+ed', 'verb v+ing:3pSg',
                 'verb v+ing:v+ed', 'verb inf:3pSg', 'verb inf:v+ed', 'verb inf:v+ing', 'verb+able', 'verb+er',
-                'verb+ment', 'verb+tion', 'un+adj', 'noun+less', 'over+adj',
+                'verb+ment', 'verb+tion', 'un+adj', 'noun+less', 'over+adj', 'noun:plural', 're+verb'
             ],
             'Lexical': [
                 'hypernyms:animals', 'hypernyms:misc', 'hyponyms:misc', 'antonyms:binary', 'antonyms:gradable',
                 'meronyms:member', 'meronyms:part', 'meronyms:substance', 'synonyms:exact', 'synonyms:intensity',
-                're+verb'
+
             ],
             'Encyclopedic': [
                 'UK city:county', 'animal:shelter', 'animal:sound', 'animal:young', 'country:capital',
-                'country:language', 'male:female', 'name:nationality', 'name:occupation', 'noun:plural',
+                'country:language', 'male:female', 'name:nationality', 'name:occupation',
                 'things:color',
             ]
         }
