@@ -3,19 +3,25 @@ import os
 from itertools import chain
 import pandas as pd
 import relbert
+from relbert.util import wget
+
+wget('https://raw.githubusercontent.com/asahi417/AnalogyTools/master/results/analogy.prediction.json', './cache')
+with open('./cache/analogy.prediction.json') as f:
+    we_predictions = json.load(f)
+
+path_relbert_pred = 'asset/prediction/prediction.relbert.json'
 
 
-path_relbert_pred = 'cache/prediction.relbert.json'
-path_fasttext_pred = {'bats': 'asset/prediction.bats.fasttext.csv', 'google': 'asset/prediction.google.fasttext.csv'}
-
-
-def cap(_list):
-    print(_list, [i.capitalize() for i in _list])
-    return [i.capitalize() for i in _list]
+def clean_latex(string):
+    return string.replace(r'\textbackslash ', '\\').replace(r'\{', '{').replace(r'\}', '}').replace(r'\$', r'$')
 
 
 if not os.path.exists(path_relbert_pred):
     batch_size = 512
+
+    def cap(_list):
+        return [i.capitalize() for i in _list]
+
 
     def cos_similarity(a_, b_):
         inner = sum(list(map(lambda y: y[0] * y[1], zip(a_, b_))))
@@ -58,20 +64,13 @@ if not os.path.exists(path_relbert_pred):
         predictions[data] = test
     with open(path_relbert_pred, 'w') as f:
         json.dump(predictions, f)
-else:
-    with open(path_relbert_pred, 'r') as f:
-        predictions = json.load(f)
 
-for i in ['google', 'bats']:
-    df_fasttext = pd.read_csv(path_fasttext_pred[i], index_col=0).sort_values(by=['stem'])
-    df = pd.DataFrame(predictions[i]).sort_values(by=['stem'])
-    df['pred/fasttext'] = df_fasttext.prediction
-    for method in ['manual', 'autoprompt', 'ptuning', 'fasttext']:
-        df['accuracy/{}'.format(method)] = df['pred/{}'.format(method)] == df['answer']
-    if i == 'bats':
-        df['prefix'] = df['prefix'].apply(lambda x: x.split(' [')[-1].split(']')[0].replace('_', ' ').
-                                          replace(' - ', ':').replace(' reg', '').replace('V', 'v+').replace(' irreg', ''))
-        meta = {
+with open(path_relbert_pred, 'r') as f:
+    model_predictions = json.load(f)
+
+high_level = []
+low_level = []
+meta_bats = {
             'Morphological': [
                 'adj:comparative', 'adj:superlative', 'adj+ly', 'adj+ness', 'verb 3pSg:v+ed', 'verb v+ing:3pSg',
                 'verb v+ing:v+ed', 'verb inf:3pSg', 'verb inf:v+ed', 'verb inf:v+ing', 'verb+able', 'verb+er',
@@ -88,10 +87,61 @@ for i in ['google', 'bats']:
                 'things:color',
             ]
         }
-        df['prefix_high'] = df['prefix'].apply(lambda x: [k for k, v in meta.items() if x in v][0])
+for i in ['google', 'bats']:
+    val, test = we_predictions[i]
+    df = pd.DataFrame(model_predictions[i]).sort_values(by=['stem'])
+    df_we = pd.DataFrame(test).sort_values(by=['stem'])
+    df['pred/fasttext'] = df_we['pred/fasttext']
+    for method in ['manual', 'autoprompt', 'ptuning', 'fasttext']:
+        df['accuracy/{}'.format(method)] = df['pred/{}'.format(method)] == df['answer']
+    if i in ['bats', 'bats_cap']:
+        df['prefix'] = df['prefix'].apply(lambda x: x.split(' [')[-1].split(']')[0].replace('_', ' ').
+                                          replace(' - ', ':').replace(' reg', '').replace('V', 'v+').replace(' irreg', ''))
+        df['prefix_high'] = df['prefix'].apply(lambda x: [k for k, v in meta_bats.items() if x in v][0])
     elif i == 'google':
         df['prefix_high'] = df['prefix'].apply(lambda x: 'Morphological' if 'gram' in x else "Semantic")
+    # if i == 'bats_cap':
+    #     g = df.groupby('prefix')
+    #     df_new = g.aggregate('mean')[[c for c in df.columns if 'accuracy' in c]] * 100
+    #     # case = ['UK city:county', 'country:capital', 'country:language', 'name:nationality', 'name:occupation']
+    #     # bats_cap = df_new.T[case].T[['accuracy/fasttext', 'accuracy/manual',  'accuracy/autoprompt',  'accuracy/ptuning']]
+    #     bats_cap = df_new[['accuracy/fasttext', 'accuracy/manual', 'accuracy/autoprompt', 'accuracy/ptuning']]
+    #     bats_cap.index = [i + ' (cased)' for i in bats_cap.index]
+    #     bats_cap.columns = ['FastText', 'Manual', 'AutoPrompt', 'P-tuning']
+    # else:
+    # g = df.groupby('prefix_high')
+    g = df.groupby('prefix_high')
+    df_new = g.aggregate('mean')[[c for c in df.columns if 'accuracy' in c]] * 100
+    df_new = df_new[['accuracy/fasttext', 'accuracy/manual',  'accuracy/autoprompt',  'accuracy/ptuning']]
+    df_new.columns = ['FastText', 'Manual', 'AutoPrompt', 'P-tuning']
+    high_level.append(df_new.sort_index().round(1))
+
     g = df.groupby('prefix')
     df_new = g.aggregate('mean')[[c for c in df.columns if 'accuracy' in c]] * 100
-    df_new['relation_class'] = [df[df.prefix == c].prefix_high.values[0] for c in df_new.index]
-    df_new.to_csv('relbert_output/eval/summary/prediction.{}.csv'.format(i))
+    df_new = df_new[['accuracy/fasttext', 'accuracy/manual', 'accuracy/autoprompt', 'accuracy/ptuning']]
+    df_new.columns = ['FastText', 'Manual', 'AutoPrompt', 'P-tuning']
+    low_level.append(df_new.sort_index().round(1))
+
+df = pd.concat(high_level)
+df['Relation'] = df.index
+df.index = ['Google'] * len(high_level[0]) + ['BATS'] * len(high_level[1])
+df = df[['Relation', 'FastText', 'Manual', 'AutoPrompt', 'P-tuning']]
+df.columns = [r'\textbf{' + i + r'}' for i in df.columns]
+table = clean_latex(df.to_latex())
+print('\n******* high level relation breakdown *******\n')
+print(table)
+print()
+
+df = low_level[1].copy()
+df.index.name = ''
+df['Relation'] = [[k for k, v in meta_bats.items() if i in v][0] for i in df.index]
+df['Relation_low'] = df.index
+# df.index = df['Relation_high']
+df = df.sort_values(by=['Relation', 'Relation_low'])
+df.index = df['Relation']
+df = df[['Relation_low', 'FastText', 'Manual', 'AutoPrompt', 'P-tuning']]
+df.columns = [r'\textbf{' + i.replace('_low', '') + r'}' for i in df.columns]
+table = clean_latex(df.to_latex())
+print('\n******* low level relation breakdown of bats *******\n')
+print(table)
+print()

@@ -74,7 +74,7 @@ df_classification_we.columns = [''] + ['macro', 'micro'] * 5
 #####################
 # RelBERT (analogy) #
 #####################
-df = pd.read_csv('./asset/analogy.csv', index_col=0)
+df = pd.read_csv('./asset/accuracy.analogy.csv', index_col=0)
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 lm = 'roberta'
 df_tmp = df[[lm == i.split('/')[-2].split('_')[0] for i in df.model]]
@@ -97,7 +97,7 @@ df_analogy = pd.concat([df_analogy_we, df_out])
 ############################
 # RelBERT (classification) #
 ############################
-df = pd.read_csv('./asset/relation_classification.csv', index_col=0)
+df = pd.read_csv('./asset/accuracy.classification.csv', index_col=0)
 df = df.sort_values(by=['data'])
 f1 = []
 for method in ['custom', 'auto_d', 'auto_c']:

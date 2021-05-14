@@ -25,7 +25,7 @@ shared_relation = {
     'syn': ['SYN', 'Synonym']
 }
 dataset = ['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']
-path = 'asset/relation_classification.exclusion_test.csv'
+path = 'asset/accuracy.classification.exclusion_test.csv'
 if not os.path.exists(path):
     export = 'relbert_output/ablation_study/exclusion_test/ckpt'
     os.makedirs(os.path.dirname(export), exist_ok=True)
@@ -101,7 +101,7 @@ df_new = (df_new*100).round(1)
 df_new = df_new.T[dataset]
 
 
-df_diff = df_new - df_new_ex
+df_diff = df_new_ex - df_new
 df_new_ex = df_new_ex.astype(str).applymap(lambda y: '-' if y == '0.0' else y)
 df_diff = df_diff.round(1).astype(str).applymap(lambda y: r'\,(+{})'.format(y) if '-' not in y else r'\,({})'.format(y))
 df_diff = df_diff.applymap(lambda y: '' if y == r'\,(+0.0)' else y)

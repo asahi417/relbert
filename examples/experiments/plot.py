@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib import pylab as plt
 
 # get the best config in terms of loss realization
-df = pd.read_csv('./asset/analogy.csv', index_col=0)
+df = pd.read_csv('./asset/accuracy.analogy.csv', index_col=0)
 df_vanilla = df[df.template_type == df.template_type].sort_values(by=['validation_loss', 'data'])
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 cat = []
@@ -74,7 +74,7 @@ plt.close()
 
 ################################################
 # get the best config in terms of loss realization
-df = pd.read_csv('./asset/analogy.csv', index_col=0)
+df = pd.read_csv('./asset/accuracy.analogy.csv', index_col=0)
 df_vanilla = df[df.template_type == df.template_type].sort_values(by=['validation_loss', 'data'])
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 cat = []
