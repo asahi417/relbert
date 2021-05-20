@@ -2,18 +2,22 @@
 # Manual template #
 ###################
 # Train with custom template
-relbert-train -m albert-xxlarge-v1 -n -p -s -t a --export ./relbert_output/ckpt/albert_custom_a
-relbert-train -m albert-xlarge-v1 -n -p -s -t b --export ./relbert_output/ckpt/albert_custom_b
-relbert-train -m albert-xlarge-v1 -n -p -s -t c --export ./relbert_output/ckpt/albert_custom_c
-relbert-train -m albert-xlarge-v1 -n -p -s -t d --export ./relbert_output/ckpt/albert_custom_d
-relbert-train -m albert-xlarge-v1 -n -p -s -t e --export ./relbert_output/ckpt/albert_custom_e
-
-# Train with custom template
 relbert-train -m roberta-large -n -p -s -t a --export ./relbert_output/ckpt/roberta_custom_a
 relbert-train -m roberta-large -n -p -s -t b --export ./relbert_output/ckpt/roberta_custom_b
 relbert-train -m roberta-large -n -p -s -t c --export ./relbert_output/ckpt/roberta_custom_c
 relbert-train -m roberta-large -n -p -s -t d --export ./relbert_output/ckpt/roberta_custom_d
 relbert-train -m roberta-large -n -p -s -t e --export ./relbert_output/ckpt/roberta_custom_e
+relbert-train -m albert-xlarge-v1 -n -p -s -t a --export ./relbert_output/ckpt/albert_custom_a
+relbert-train -m albert-xlarge-v1 -n -p -s -t b --export ./relbert_output/ckpt/albert_custom_b
+relbert-train -m albert-xlarge-v1 -n -p -s -t c --export ./relbert_output/ckpt/albert_custom_c
+relbert-train -m albert-xlarge-v1 -n -p -s -t d --export ./relbert_output/ckpt/albert_custom_d
+relbert-train -m albert-xlarge-v1 -n -p -s -t e --export ./relbert_output/ckpt/albert_custom_e
+relbert-train -m bert-large-cased -n -p -s -t a --export ./relbert_output/ckpt/bert_custom_a
+relbert-train -m bert-large-cased -n -p -s -t b --export ./relbert_output/ckpt/bert_custom_b
+relbert-train -m bert-large-cased -n -p -s -t c --export ./relbert_output/ckpt/bert_custom_c
+relbert-train -m bert-large-cased -n -p -s -t d --export ./relbert_output/ckpt/bert_custom_d
+relbert-train -m bert-large-cased -n -p -s -t e --export ./relbert_output/ckpt/bert_custom_e
+
 
 # Train with discrete tuned prompt
 relbert-train -m roberta-large -n -p -s -t ./relbert_output/prompt_files/roberta_d822/prompt.json --export ./relbert_output/ckpt/roberta_auto_d822
@@ -61,12 +65,6 @@ relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albe
 ########
 # BERT #
 ########
-# Train with custom template
-relbert-train -m bert-large-cased -n -p -s -t a --export ./relbert_output/ckpt/bert_custom_a
-relbert-train -m bert-large-cased -n -p -s -t b --export ./relbert_output/ckpt/bert_custom_b
-relbert-train -m bert-large-cased -n -p -s -t c --export ./relbert_output/ckpt/bert_custom_c
-relbert-train -m bert-large-cased -n -p -s -t d --export ./relbert_output/ckpt/bert_custom_d
-relbert-train -m bert-large-cased -n -p -s -t e --export ./relbert_output/ckpt/bert_custom_e
 # Train with continuous tuned prompt
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_c822/prompt.json --export ./relbert_output/ckpt/bert_auto_c822
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_c923/prompt.json --export ./relbert_output/ckpt/bert_auto_c923

@@ -229,7 +229,7 @@ class Trainer(BaseTrainer):
             mode=mode,
             data=data,
             n_sample=n_sample,
-            custom_template_type=self.model.custom_template_type,
+            custom_template=self.model.custom_template,
             template=self.model.template,
             softmax_loss=softmax_loss,
             in_batch_negative=in_batch_negative,
