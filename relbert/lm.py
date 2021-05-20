@@ -22,12 +22,11 @@ preset_templates = {
     }
 
 
-def custom_prompter(word_pair, template_type: str = 'a', mask_token: str = None):
+def custom_prompter(word_pair, template: str, mask_token: str = None):
     """ Transform word pair into string prompt. """
     token_mask = '<mask>'
     token_subject = '<subj>'
     token_object = '<obj>'
-    template = preset_templates[template_type]
     assert len(word_pair) == 2, word_pair
     subj, obj = word_pair
     assert token_subject not in subj and token_object not in subj and token_mask not in subj
@@ -44,12 +43,12 @@ class EncodePlus:
     def __init__(self,
                  tokenizer,
                  max_length: int,
-                 custom_template_type: str = 'a',
+                 custom_template: str = 'a',
                  template: Dict = None,
                  mode: str = 'average',
                  trigger_mode: bool = False):
-        assert custom_template_type or template
-        self.custom_template_type = custom_template_type
+        assert custom_template or template
+        self.custom_template = custom_template
         self.template = template
         self.trigger_mode = trigger_mode
         self.tokenizer = tokenizer
@@ -84,7 +83,7 @@ class EncodePlus:
             sentence = self.tokenizer.decode(token_ids)
             # print(token_ids, sentence)
         else:
-            sentence = custom_prompter(word_pair, self.custom_template_type, self.tokenizer.mask_token)
+            sentence = custom_prompter(word_pair, self.custom_template, self.tokenizer.mask_token)
         encode = self.tokenizer.encode_plus(sentence, **param)
         assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
         encode['labels'] = self.input_ids_to_labels(encode['input_ids'])
@@ -144,7 +143,7 @@ class RelBERT:
             model_config = transformers.AutoConfig.from_pretrained(model, cache_dir=cache_dir, local_files_only=True)
         # check if the language model is RelBERT trained or not.
         self.template = None
-        self.custom_template_type = None
+        self.custom_template = None
         if 'relbert_config' in model_config.to_dict().keys():
             logging.info('loading finetuned RelBERT model')
             self.mode = model_config.relbert_config['mode']
@@ -152,13 +151,15 @@ class RelBERT:
             if 'template' in model_config.relbert_config:
                 self.template = model_config.relbert_config['template']
             else:
-                self.custom_template_type = model_config.relbert_config['custom_template_type']
+                # self.custom_template_type = model_config.relbert_config['custom_template_type']
+                self.custom_template = model_config.relbert_config['custom_template']
         else:
             self.mode = mode
             self.is_trained = False
             if template_type in preset_templates:
-                model_config.update({'relbert_config': {'mode': mode, 'custom_template_type': template_type}})
-                self.custom_template_type = template_type
+                # model_config.update({'relbert_config': {'mode': mode, 'custom_template_type': template_type}})
+                self.custom_template = preset_templates[template_type]
+                model_config.update({'relbert_config': {'mode': mode, 'custom_template': self.custom_template}})
             else:
                 with open(template_type, 'r') as f:
                     self.template = json.load(f)
@@ -203,7 +204,7 @@ class RelBERT:
                 self.input_embeddings = self.model.get_input_embeddings()
         logging.info('language model running on {} GPU'.format(torch.cuda.device_count()))
         logging.debug('\t * template       : {}'.format(self.template))
-        logging.debug('\t * custom template: {}'.format(self.custom_template_type))
+        logging.debug('\t * custom template: {}'.format(self.custom_template))
 
     def train(self):
         self.model.train()
@@ -256,7 +257,7 @@ class RelBERT:
             negative_sample_list = ListKeeper([negative_samples[k] for k in key])
 
         shared = {'tokenizer': self.tokenizer, 'max_length': self.max_length, 'mode': self.mode,
-                  'template': self.template, 'custom_template_type': self.custom_template_type}
+                  'template': self.template, 'custom_template': self.custom_template}
 
         def pool_map(_list):
             pool = Pool()
