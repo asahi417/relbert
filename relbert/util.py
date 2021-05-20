@@ -11,6 +11,7 @@ from random import randint
 import gdown
 import numpy as np
 import torch
+from torch import nn
 import transformers
 from torch.optim.lr_scheduler import LambdaLR
 
@@ -106,41 +107,63 @@ def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_st
     return LambdaLR(optimizer, lr_lambda, last_epoch)
 
 
-def triplet_loss(tensor_positive_0, tensor_positive_1, tensor_negative,
-                 tensor_positive_parent=None, tensor_negative_parent=None,
-                 margin: int = 1, in_batch_negative: bool = True):
+def triplet_loss(tensor_anchor,
+                 tensor_positive,
+                 tensor_negative,
+                 tensor_positive_parent=None,
+                 tensor_negative_parent=None,
+                 margin: int = 1,
+                 in_batch_negative: bool = True,
+                 linear=None,
+                 device: str = 'gpu'):
     """ Compute contrastive triplet loss with in batch augmentation which enables to propagate error on quadratic
     of batch size. """
     loss = 0
-    n_backward = 0
     boundary = 0
+    bce = nn.BCELoss()
 
-    # the main contrastive loss
-    distance_positive = torch.sum((tensor_positive_0 - tensor_positive_1) ** 2, -1) ** 0.5
-    for tensor_positive in [tensor_positive_0, tensor_positive_1]:
-        distance_negative = torch.sum((tensor_positive - tensor_negative) ** 2, -1) ** 0.5
-        loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=boundary))
-        n_backward += len(distance_positive)
+    def get_contrastive_loss(v_anchor, v_positive, v_negative):
+        distance_positive = torch.sum((v_anchor - v_positive) ** 2, -1) ** 0.5
+        distance_negative = torch.sum((v_anchor - v_negative) ** 2, -1) ** 0.5
+        _loss = torch.sum(torch.clip(distance_positive - distance_negative - margin, min=boundary))
+        if linear is not None:
+            # the 3-way discriminative loss used in SBERT
+            feature_positive = torch.cat([v_anchor, v_positive, torch.abs(v_anchor - v_positive)], dim=1)
+            feature_negative = torch.cat([v_anchor, v_negative, torch.abs(v_anchor - v_negative)], dim=1)
+            feature = torch.cat([feature_positive, feature_negative])
+            pred = torch.sigmoid(linear(feature))
+            label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
+                                 dtype=torch.float32, device=device)
+            _loss += bce(pred, label.unsqueeze(-1))
+        return _loss
+
+    def sample_augmentation(v_anchor, v_positive):
+        v_anchor_aug = v_anchor.unsqueeze(-1).permute(2, 0, 1).repeat(
+            len(v_anchor), 1, 1).reshape(len(v_anchor), -1)
+        v_positive_aug = v_positive.unsqueeze(-1).permute(2, 0, 1).repeat(
+            len(v_positive), 1, 1).reshape(len(v_positive), -1)
+        v_negative_aug = v_positive.unsqueeze(-1).permute(0, 2, 1).repeat(
+            1, len(v_positive), 1).reshape(len(v_positive), -1)
+        return v_anchor_aug, v_positive_aug, v_negative_aug
+
+    def get_contrastive_loss_aug(v_anchor, v_positive):
+        a, p, n = sample_augmentation(v_anchor, v_positive)
+        return get_contrastive_loss(a, p, n)
+
+    loss += get_contrastive_loss(tensor_anchor, tensor_positive, tensor_negative)
+    loss += get_contrastive_loss(tensor_positive, tensor_anchor, tensor_negative)
 
     if in_batch_negative:
         # No elements in single batch share same relation type, so here we construct negative sample within batch
         # by regarding positive sample from other entries as its negative. The original negative is the hard
         # negatives from same relation type and the in batch negative is easy negative from other relation types.
-        distance_negative_batch = torch.sum((tensor_positive_0.unsqueeze(-1).permute(0, 2, 1) -
-                                             tensor_positive_1.unsqueeze(-1).permute(2, 0, 1)) ** 2, -1) ** 0.5
-        distance_positive_batch = distance_positive.unsqueeze(-1)
-        loss_batch = torch.clip(distance_positive_batch - distance_negative_batch - margin, min=boundary)
-        loss += torch.sum(loss_batch)
-        n_backward += len(loss_batch)
+        loss += get_contrastive_loss_aug(tensor_anchor, tensor_positive)
+        loss += get_contrastive_loss_aug(tensor_positive, tensor_anchor)
 
     if tensor_positive_parent is not None and tensor_negative_parent is not None:
         # contrastive loss of the parent class
-        for tensor_positive in [tensor_positive_0, tensor_positive_1]:
-            distance_positive = torch.sum((tensor_positive - tensor_positive_parent) ** 2, -1) ** 0.5
-            distance_negative = torch.sum((tensor_positive - tensor_negative_parent) ** 2, -1) ** 0.5
-            loss += torch.sum(torch.clip(distance_positive - distance_negative - margin, min=boundary))
-            n_backward += len(distance_positive)
-    # loss = loss
+        loss += get_contrastive_loss(tensor_anchor, tensor_positive_parent, tensor_negative_parent)
+        loss += get_contrastive_loss(tensor_positive_parent, tensor_anchor, tensor_negative_parent)
     return loss
 
 

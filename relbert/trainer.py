@@ -161,17 +161,9 @@ class BaseTrainer:
 
                 # contrastive loss
                 loss = triplet_loss(v_anchor, v_positive, v_negative,
-                                    margin=self.config.mse_margin, in_batch_negative=self.config.in_batch_negative)
+                                    margin=self.config.mse_margin, in_batch_negative=self.config.in_batch_negative,
+                                    linear=self.linear, device=self.device)
 
-            if self.linear is not None:
-                # the 3-way discriminative loss used in SBERT
-                feature_positive = torch.cat([v_anchor, v_positive, torch.abs(v_anchor - v_positive)], dim=1)
-                feature_negative = torch.cat([v_anchor, v_negative, torch.abs(v_anchor - v_negative)], dim=1)
-                feature = torch.cat([feature_positive, feature_negative])
-                pred = torch.sigmoid(self.linear(feature))
-                label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
-                                     dtype=torch.float32, device=self.device)
-                loss += bce(pred, label.unsqueeze(-1))
 
             # backward: calculate gradient
             self.scaler.scale(loss).backward()
