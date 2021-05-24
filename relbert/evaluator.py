@@ -101,7 +101,7 @@ def evaluate_classification(
             x = model.get_embedding(x_tuple, batch_size=batch_size)
             x_back = model.get_embedding([(b, a) for a, b in x_tuple], batch_size=batch_size)
             x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
-            dataset[_k] = {'x': x, 'y': _v['y']}
+            dataset[_k] = [x, _v['y']]
         # clf = MLPClassifier(random_state=random_seed).fit(x, v['train']['y'])
         shared_config = {'model': relbert_ckpt, 'label_size': len(label_dict), 'data': data_name}
         # grid serach
