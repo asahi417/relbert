@@ -50,21 +50,21 @@ ttmp = []
 for i in ['glove', 'fasttext']:
     for n, p in zip(['cat', 'cat+dot', 'diff', 'diff+dot'],
                     ['concat', "('concat', 'dot')", 'diff', "('diff', 'dot')"]):
-        tmp = df[df.feature_set == p][df.model == i]
+        tmp = df[df.feature == p][df.model == i]
         _tmp = tmp[tmp.add_pair2vec == False][tmp.add_relative == False]
         _tmp.index = _tmp.data.tolist()
-        _tmp = (_tmp[['f1_macro/test', 'f1_micro/test']] * 100).round(1)
+        _tmp = (_tmp[['metric/test/f1_macro', 'metric/test/f1_micro']] * 100).round(1)
         data = list(chain(*[_tmp.T[i].tolist() for i in dataset]))
         ttmp.append([i, n] + data)
         if n not in ['cat', 'diff']:
             _tmp = tmp[tmp.add_pair2vec == True]
             _tmp.index = _tmp.data.tolist()
-            _tmp = (_tmp[['f1_macro/test', 'f1_micro/test']] * 100).round(1)
+            _tmp = (_tmp[['metric/test/f1_macro', 'metric/test/f1_micro']] * 100).round(1)
             data = list(chain(*[_tmp.T[i].tolist() for i in dataset]))
             ttmp.append([i, n+'+pair'] + data)
             _tmp = tmp[tmp.add_relative == True]
             _tmp.index = _tmp.data.tolist()
-            _tmp = (_tmp[['f1_macro/test', 'f1_micro/test']] * 100).round(1)
+            _tmp = (_tmp[['metric/test/f1_macro', 'metric/test/f1_micro']] * 100).round(1)
             data = list(chain(*[_tmp.T[i].tolist() for i in dataset]))
             ttmp.append([i, n + '+rel'] + data)
 df_classification_we = pd.DataFrame(ttmp)
@@ -94,6 +94,8 @@ df_out = pd.concat(cat, axis=1).T.round(1)[['sat_full', 'sat', 'u2', 'u4', 'goog
 df_out.index = [r'$\cdot$ Manual', r'$\cdot$ AutoPrompt', r'$\cdot$ P-tuning']
 df_analogy = pd.concat([df_analogy_we, df_out])
 
+input(df_analogy)
+
 ############################
 # RelBERT (classification) #
 ############################
@@ -102,7 +104,7 @@ df = df.sort_values(by=['data'])
 f1 = []
 for method in ['custom', 'auto_d', 'auto_c']:
     df_tmp = df[df.model == best_models[method]]
-    tmp = df_tmp[['f1_macro/test', 'f1_micro/test']].round(3) * 100
+    tmp = df_tmp[['test/f1_macro', 'test/f1_micro']].round(3) * 100
     tmp.index = df_tmp.data
     f1 += [np.concatenate([tmp.T[i].values for i in dataset])]
 f1 = [['RelBERT', x] + i for x, i in zip(['Manual', 'AutoPrompt', 'P-tuning'], np.array(f1).tolist())]
