@@ -5,11 +5,11 @@ import relbert
 
 
 def config(parser):
-    parser.add_argument('-e', '--epoch', help='training epochs', default=2, type=int)
-    parser.add_argument('--lr', help='learning rate', default=0.00001, type=float)
+    parser.add_argument('-e', '--epoch', help='training epochs', default=1, type=int)
+    parser.add_argument('--lr', help='learning rate', default=0.00002, type=float)
     parser.add_argument('-s', '--softmax-loss', help='softmax loss', action='store_true')
     parser.add_argument('--lr-decay', help='linear decay of learning rate after warmup', action='store_true')
-    parser.add_argument("--lr-warmup", help="linear warmup of lr", default=100, type=int)
+    parser.add_argument("--lr-warmup", help="linear warmup of lr", default=10, type=int)
     parser.add_argument("--weight-decay", help="l2 penalty for weight decay", default=0, type=float)
     parser.add_argument('--optimizer', help='optimizer `adam`/`adamax`/`adam`', default='adam', type=str)
     parser.add_argument("--momentum", help="sgd momentum", default=0.9, type=float)
@@ -22,7 +22,7 @@ def config(parser):
     parser.add_argument('-n', '--in-batch-negative', help='in batch negative', action='store_true')
     parser.add_argument('-p', '--parent-contrast', help='hierarchical contrastive loss', action='store_true')
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
-    parser.add_argument('-b', '--batch', help='batch size', default=16, type=int)
+    parser.add_argument('-b', '--batch', help='batch size', default=64, type=int)
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
     # training environment
     parser.add_argument('--cache-dir', help='cache directory to store dataset', default=None, type=str)
@@ -34,7 +34,7 @@ def config(parser):
     parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
     # data
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
-    parser.add_argument('--n-sample', help='sample size', default=5, type=int)
+    parser.add_argument('--n-sample', help='sample size', default=10, type=int)
     return parser
 
 

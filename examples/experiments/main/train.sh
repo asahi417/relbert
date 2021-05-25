@@ -6,36 +6,17 @@ relbert-train -m roberta-large -n -p -s -t b --export ./relbert_output/ckpt/robe
 relbert-train -m roberta-large -n -p -s -t c --export ./relbert_output/ckpt/roberta_custom_c
 relbert-train -m roberta-large -n -p -s -t d --export ./relbert_output/ckpt/roberta_custom_d
 relbert-train -m roberta-large -n -p -s -t e --export ./relbert_output/ckpt/roberta_custom_e
-
-relbert-train -m roberta-large -n -p -s -t a --export ./relbert_output/ckpt/roberta_custom_a_b32 -e 1 -b 32
-relbert-train -m roberta-large -n -p -s -t b --export ./relbert_output/ckpt/roberta_custom_b_b32 -e 1 -b 32
-relbert-train -m roberta-large -n -p -s -t c --export ./relbert_output/ckpt/roberta_custom_c_b32 -e 1 -b 32
-relbert-train -m roberta-large -n -p -s -t d --export ./relbert_output/ckpt/roberta_custom_d_b32 -e 1 -b 32
-relbert-train -m roberta-large -n -p -s -t e --export ./relbert_output/ckpt/roberta_custom_e_b32 -e 1 -b 32
-
-relbert-train -m roberta-large -n -p -s -t a --export ./relbert_output/ckpt/roberta_custom_a_b64_l -e 2 -b 64 --lr-warmup 50 --lr 0.000025 --epoch-save 1
-relbert-train -m roberta-large -n -p -s -t b --export ./relbert_output/ckpt/roberta_custom_b_b64_l -e 2 -b 64 --lr-warmup 50 --lr 0.000025 --epoch-save 1
-relbert-train -m roberta-large -n -p -s -t c --export ./relbert_output/ckpt/roberta_custom_c_b64_l -e 2 -b 64 --lr-warmup 50 --lr 0.000025 --epoch-save 1
-relbert-train -m roberta-large -n -p -s -t d --export ./relbert_output/ckpt/roberta_custom_d_b64_l -e 2 -b 64 --lr-warmup 50 --lr 0.000025 --epoch-save 1
-relbert-train -m roberta-large -n -p -s -t e --export ./relbert_output/ckpt/roberta_custom_e_b64_l -e 2 -b 64 --lr-warmup 50 --lr 0.000025 --epoch-save 1
-
-relbert-train -m roberta-large -n -p -s -t a --export ./relbert_output/ckpt/roberta_custom_a_b64_s -e 2 -b 64 --lr-warmup 50 --lr 0.000001 --epoch-save 1
-relbert-train -m roberta-large -n -p -s -t b --export ./relbert_output/ckpt/roberta_custom_b_b64_s -e 2 -b 64 --lr-warmup 50 --lr 0.000001 --epoch-save 1
-relbert-train -m roberta-large -n -p -s -t c --export ./relbert_output/ckpt/roberta_custom_c_b64_s -e 2 -b 64 --lr-warmup 50 --lr 0.000001 --epoch-save 1
-relbert-train -m roberta-large -n -p -s -t d --export ./relbert_output/ckpt/roberta_custom_d_b64_s -e 2 -b 64 --lr-warmup 50 --lr 0.000001 --epoch-save 1
-relbert-train -m roberta-large -n -p -s -t e --export ./relbert_output/ckpt/roberta_custom_e_b64_s -e 2 -b 64 --lr-warmup 50 --lr 0.000001 --epoch-save 1
-
+relbert-train -m bert-large-cased -n -p -s -t a --export ./relbert_output/ckpt/bert_custom_a
+relbert-train -m bert-large-cased -n -p -s -t b --export ./relbert_output/ckpt/bert_custom_b
+relbert-train -m bert-large-cased -n -p -s -t c --export ./relbert_output/ckpt/bert_custom_c
+relbert-train -m bert-large-cased -n -p -s -t d --export ./relbert_output/ckpt/bert_custom_d
+relbert-train -m bert-large-cased -n -p -s -t e --export ./relbert_output/ckpt/bert_custom_e
 
 relbert-train -m albert-xlarge-v1 -n -p -s -t a --export ./relbert_output/ckpt/albert_custom_a
 relbert-train -m albert-xlarge-v1 -n -p -s -t b --export ./relbert_output/ckpt/albert_custom_b
 relbert-train -m albert-xlarge-v1 -n -p -s -t c --export ./relbert_output/ckpt/albert_custom_c
 relbert-train -m albert-xlarge-v1 -n -p -s -t d --export ./relbert_output/ckpt/albert_custom_d
 relbert-train -m albert-xlarge-v1 -n -p -s -t e --export ./relbert_output/ckpt/albert_custom_e
-relbert-train -m bert-large-cased -n -p -s -t a --export ./relbert_output/ckpt/bert_custom_a
-relbert-train -m bert-large-cased -n -p -s -t b --export ./relbert_output/ckpt/bert_custom_b
-relbert-train -m bert-large-cased -n -p -s -t c --export ./relbert_output/ckpt/bert_custom_c
-relbert-train -m bert-large-cased -n -p -s -t d --export ./relbert_output/ckpt/bert_custom_d
-relbert-train -m bert-large-cased -n -p -s -t e --export ./relbert_output/ckpt/bert_custom_e
 
 
 ############
