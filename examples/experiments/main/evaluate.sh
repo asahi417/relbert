@@ -74,3 +74,5 @@ relbert-eval --vanilla-lm -c roberta-large -t ./relbert_output/prompt_files/robe
 relbert-eval -c 'relbert_output/ckpt/*/*' --export-file ./relbert_output/eval/accuracy.analogy.csv
 # classification
 relbert-eval -c 'relbert_output/ckpt/*/*' --type classification --export-file ./relbert_output/eval/accuracy.classification.csv
+
+relbert-eval -c 'relbert_output/ckpt/*/*' --type classification --export-file ./relbert_output/eval/accuracy.classification.csv
