@@ -11,12 +11,11 @@ relbert-train -m bert-large-cased -n -p -s -t b --export ./relbert_output/ckpt/b
 relbert-train -m bert-large-cased -n -p -s -t c --export ./relbert_output/ckpt/bert_custom_c
 relbert-train -m bert-large-cased -n -p -s -t d --export ./relbert_output/ckpt/bert_custom_d
 relbert-train -m bert-large-cased -n -p -s -t e --export ./relbert_output/ckpt/bert_custom_e
-
-relbert-train -m albert-xlarge-v1 -n -p -s -t a --export ./relbert_output/ckpt/albert_custom_a
-relbert-train -m albert-xlarge-v1 -n -p -s -t b --export ./relbert_output/ckpt/albert_custom_b
-relbert-train -m albert-xlarge-v1 -n -p -s -t c --export ./relbert_output/ckpt/albert_custom_c
-relbert-train -m albert-xlarge-v1 -n -p -s -t d --export ./relbert_output/ckpt/albert_custom_d
-relbert-train -m albert-xlarge-v1 -n -p -s -t e --export ./relbert_output/ckpt/albert_custom_e
+relbert-train -m albert-xlarge-v1 -n -p -s -t a --export ./relbert_output/ckpt/albert_custom_a -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t b --export ./relbert_output/ckpt/albert_custom_b -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t c --export ./relbert_output/ckpt/albert_custom_c -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t d --export ./relbert_output/ckpt/albert_custom_d -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t e --export ./relbert_output/ckpt/albert_custom_e -b 32
 
 
 ############
@@ -38,14 +37,14 @@ relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_c922/prompt.json --export ./relbert_output/ckpt/bert_auto_c922
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_c932/prompt.json --export ./relbert_output/ckpt/bert_auto_c932
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_c933/prompt.json --export ./relbert_output/ckpt/bert_auto_c933
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c822/prompt.json --export ./relbert_output/ckpt/albert_auto_c822
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c923/prompt.json --export ./relbert_output/ckpt/albert_auto_c923
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c833/prompt.json --export ./relbert_output/ckpt/albert_auto_c833
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c823/prompt.json --export ./relbert_output/ckpt/albert_auto_c823
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c832/prompt.json --export ./relbert_output/ckpt/albert_auto_c832
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c922/prompt.json --export ./relbert_output/ckpt/albert_auto_c922
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c932/prompt.json --export ./relbert_output/ckpt/albert_auto_c932
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c933/prompt.json --export ./relbert_output/ckpt/albert_auto_c933
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c822/prompt.json --export ./relbert_output/ckpt/albert_auto_c822 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c923/prompt.json --export ./relbert_output/ckpt/albert_auto_c923 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c833/prompt.json --export ./relbert_output/ckpt/albert_auto_c833 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c823/prompt.json --export ./relbert_output/ckpt/albert_auto_c823 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c832/prompt.json --export ./relbert_output/ckpt/albert_auto_c832 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c922/prompt.json --export ./relbert_output/ckpt/albert_auto_c922 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c932/prompt.json --export ./relbert_output/ckpt/albert_auto_c932 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_c933/prompt.json --export ./relbert_output/ckpt/albert_auto_c933 -b 32
 
 ##############
 # AutoPrompt #
