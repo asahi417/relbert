@@ -148,6 +148,6 @@ def get_lexical_relation_data(cache_dir: str = None):
                 if _y not in label:
                     label[_y] = len(label)
             y = [label[_y] for _y in y]
-            full_data[os.path.basename(i)][os.path.basename(t).replace('.tsv', '')] = {'x': x, 'y':y}
+            full_data[os.path.basename(i)][os.path.basename(t).replace('.tsv', '')] = {'x': x, 'y': y}
         full_data[os.path.basename(i)]['label'] = label
     return full_data

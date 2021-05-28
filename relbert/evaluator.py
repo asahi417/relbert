@@ -26,9 +26,12 @@ class Evaluate:
         if default_config:
             self.configs = [{'random_state': 0}]
         else:
-            learning_rate_init = [0.001, 0.0001, 0.00001]
-            max_iter = [25, 50, 75]
-            hidden_layer_sizes = [100, 150, 200]
+            # learning_rate_init = [0.001, 0.0001, 0.00001]
+            # max_iter = [25, 50, 75]
+            # hidden_layer_sizes = [100, 150, 200]
+            learning_rate_init = [0.001, 0.0001]
+            max_iter = [25]
+            hidden_layer_sizes = [100]
             self.configs = [{
                 'random_state': 0, 'learning_rate_init': i[0], 'max_iter': i[1],
                 'hidden_layer_sizes': i[2]} for i in
@@ -93,6 +96,8 @@ def evaluate_classification(
     data = get_lexical_relation_data(cache_dir)
     report = []
     for data_name, v in data.items():
+        if data_name not in ['BLESS', 'CogALexV']:
+            continue
         logging.info('train model with {} on {}'.format(relbert_ckpt, data_name))
         label_dict = v.pop('label')
         dataset = {}
@@ -107,12 +112,13 @@ def evaluate_classification(
         # grid serach
         if 'val' not in dataset:
             evaluator = Evaluate(dataset, shared_config, label_dict, target_relation=target_relation, default_config=True)
-            report += evaluator(0)
+            report += [evaluator(0)]
         else:
             pool = Pool()
             evaluator = Evaluate(dataset, shared_config, label_dict, target_relation=target_relation)
             report += pool.map(evaluator, evaluator.config_indices)
             pool.close()
+        print(report)
     del model
     return report
 
