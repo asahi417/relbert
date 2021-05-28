@@ -26,12 +26,12 @@ class Evaluate:
         if default_config:
             self.configs = [{'random_state': 0}]
         else:
-            # learning_rate_init = [0.001, 0.0001, 0.00001]
-            # max_iter = [25, 50, 75]
-            # hidden_layer_sizes = [100, 150, 200]
-            learning_rate_init = [0.001, 0.0001]
-            max_iter = [25]
-            hidden_layer_sizes = [100]
+            learning_rate_init = [0.001, 0.0001, 0.00001]
+            max_iter = [25, 50, 75]
+            hidden_layer_sizes = [100, 150, 200]
+            # learning_rate_init = [0.001, 0.0001]
+            # max_iter = [25]
+            # hidden_layer_sizes = [100]
             self.configs = [{
                 'random_state': 0, 'learning_rate_init': i[0], 'max_iter': i[1],
                 'hidden_layer_sizes': i[2]} for i in
@@ -96,8 +96,8 @@ def evaluate_classification(
     data = get_lexical_relation_data(cache_dir)
     report = []
     for data_name, v in data.items():
-        if data_name not in ['BLESS', 'CogALexV']:
-            continue
+        # if data_name not in ['BLESS', 'CogALexV']:
+        #     continue
         logging.info('train model with {} on {}'.format(relbert_ckpt, data_name))
         label_dict = v.pop('label')
         dataset = {}
@@ -107,7 +107,6 @@ def evaluate_classification(
             x_back = model.get_embedding([(b, a) for a, b in x_tuple], batch_size=batch_size)
             x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
             dataset[_k] = [x, _v['y']]
-        # clf = MLPClassifier(random_state=random_seed).fit(x, v['train']['y'])
         shared_config = {'model': relbert_ckpt, 'label_size': len(label_dict), 'data': data_name}
         # grid serach
         if 'val' not in dataset:
@@ -118,7 +117,6 @@ def evaluate_classification(
             evaluator = Evaluate(dataset, shared_config, label_dict, target_relation=target_relation)
             report += pool.map(evaluator, evaluator.config_indices)
             pool.close()
-        print(report)
     del model
     return report
 
