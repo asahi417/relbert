@@ -49,7 +49,7 @@ def main():
                                             mode=opt.mode, template_type=opt.template_type, max_length=opt.max_length)
         else:
             raise ValueError('unknown test type: {}'.format(opt.type))
-        pd.DataFrame(full_result).drop_duplicates().to_csv(opt.export_file)
+        pd.DataFrame(full_result).to_csv(opt.export_file)
 
 
 if __name__ == '__main__':
