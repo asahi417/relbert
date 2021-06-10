@@ -57,14 +57,6 @@ relbert-train -m roberta-large -n -p -s -t ./relbert_output/prompt_files/roberta
 relbert-train -m roberta-large -n -p -s -t ./relbert_output/prompt_files/roberta_d922/prompt.json --export ./relbert_output/ckpt/roberta_auto_d922
 relbert-train -m roberta-large -n -p -s -t ./relbert_output/prompt_files/roberta_d932/prompt.json --export ./relbert_output/ckpt/roberta_auto_d932
 relbert-train -m roberta-large -n -p -s -t ./relbert_output/prompt_files/roberta_d933/prompt.json --export ./relbert_output/ckpt/roberta_auto_d933
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d822/prompt.json --export ./relbert_output/ckpt/albert_auto_d822
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d923/prompt.json --export ./relbert_output/ckpt/albert_auto_d923
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d833/prompt.json --export ./relbert_output/ckpt/albert_auto_d833
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d823/prompt.json --export ./relbert_output/ckpt/albert_auto_d823
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d832/prompt.json --export ./relbert_output/ckpt/albert_auto_d832
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d922/prompt.json --export ./relbert_output/ckpt/albert_auto_d922
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d932/prompt.json --export ./relbert_output/ckpt/albert_auto_d932
-relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d933/prompt.json --export ./relbert_output/ckpt/albert_auto_d933
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_d822/prompt.json --export ./relbert_output/ckpt/bert_auto_d822
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_d923/prompt.json --export ./relbert_output/ckpt/bert_auto_d923
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_d833/prompt.json --export ./relbert_output/ckpt/bert_auto_d833
@@ -73,3 +65,11 @@ relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_d922/prompt.json --export ./relbert_output/ckpt/bert_auto_d922
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_d932/prompt.json --export ./relbert_output/ckpt/bert_auto_d932
 relbert-train -m bert-large-cased -n -p -s -t ./relbert_output/prompt_files/bert_d933/prompt.json --export ./relbert_output/ckpt/bert_auto_d933
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d822/prompt.json --export ./relbert_output/ckpt/albert_auto_d822 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d923/prompt.json --export ./relbert_output/ckpt/albert_auto_d923 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d833/prompt.json --export ./relbert_output/ckpt/albert_auto_d833 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d823/prompt.json --export ./relbert_output/ckpt/albert_auto_d823 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d832/prompt.json --export ./relbert_output/ckpt/albert_auto_d832 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d922/prompt.json --export ./relbert_output/ckpt/albert_auto_d922 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d932/prompt.json --export ./relbert_output/ckpt/albert_auto_d932 -b 32
+relbert-train -m albert-xlarge-v1 -n -p -s -t ./relbert_output/prompt_files/albert_d933/prompt.json --export ./relbert_output/ckpt/albert_auto_d933 -b 32

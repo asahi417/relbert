@@ -113,14 +113,14 @@ def get_analogy_data(cache_dir: str = None):
     cache_dir = cache_dir if cache_dir is not None else home_dir
     cache_dir = '{}/data'.format(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
-    root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset.tar.gz'
-    if not os.path.exists('{}/analogy_test_dataset'.format(cache_dir)):
+    root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset_with_prediction.zip'
+    if not os.path.exists('{}/analogy_test_dataset_with_prediction'.format(cache_dir)):
         wget(root_url_analogy, cache_dir)
     data = {}
     for d in ['bats', 'sat', 'u2', 'u4', 'google']:
-        with open('{}/analogy_test_dataset/{}/test.jsonl'.format(cache_dir, d), 'r') as f:
+        with open('{}/analogy_test_dataset_with_prediction/{}/test.jsonl'.format(cache_dir, d), 'r') as f:
             test_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
-        with open('{}/analogy_test_dataset/{}/valid.jsonl'.format(cache_dir, d), 'r') as f:
+        with open('{}/analogy_test_dataset_with_prediction/{}/valid.jsonl'.format(cache_dir, d), 'r') as f:
             val_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
         data[d] = (val_set, test_set)
     return data
@@ -130,7 +130,7 @@ def get_lexical_relation_data(cache_dir: str = None):
     cache_dir = cache_dir if cache_dir is not None else home_dir
     cache_dir = '{}/data'.format(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
-    root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.tar.gz'
+    root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.zip'
     if not os.path.exists('{}/lexical_relation_dataset'.format(cache_dir)):
         wget(root_url_analogy, cache_dir)
     full_data = {}

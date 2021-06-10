@@ -52,7 +52,6 @@ relbert-prompt-discrete -m albert-xlarge-v1 --n-trigger-b 9 --n-trigger-i 3 --n-
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 2 --export ./relbert_output/prompt_files/bert_d822
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 2 --export ./relbert_output/prompt_files/bert_d832
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 8 --n-trigger-i 3 --n-trigger-e 3 --export ./relbert_output/prompt_files/bert_d833
-
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 8 --n-trigger-i 2 --n-trigger-e 3 --export ./relbert_output/prompt_files/bert_d823
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 2 --export ./relbert_output/prompt_files/bert_d922
 relbert-prompt-discrete -m bert-large-cased --n-trigger-b 9 --n-trigger-i 2 --n-trigger-e 3 --export ./relbert_output/prompt_files/bert_d923
