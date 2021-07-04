@@ -57,7 +57,6 @@ if not os.path.exists(path):
     full_result += evaluate_classification(relbert_ckpt='{}/epoch_2'.format(export),
                                            target_relation=target_relation)
 
-
     full_result_new = []
     for x in full_result:
         i = deepcopy(x)

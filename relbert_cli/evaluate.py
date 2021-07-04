@@ -29,10 +29,7 @@ def main():
     os.makedirs(os.path.dirname(opt.export_file), exist_ok=True)
     if os.path.exists(opt.export_file):
         df = pd.read_csv(opt.export_file, index_col=0)
-        if opt.vanilla_lm:
-            done_list = list(set(df['model'].values))
-        else:
-            done_list = list(set(df['model'].values))
+        done_list = list(set(df['model'].values))
         full_result = [i.to_dict() for _, i in df.iterrows()]
 
     if opt.vanilla_lm:
