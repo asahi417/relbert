@@ -26,6 +26,8 @@ class Evaluate:
                  config=None):
         self.dataset = dataset
         self.label_dict = label_dict
+        print(self.label_dict)
+        input()
         self.target_relation = target_relation
         if default_config:
             self.configs = [{'random_state': 0}]
@@ -58,7 +60,7 @@ class Evaluate:
         }
         if per_class_metric and self.target_relation is not None:
             for _l in self.target_relation:
-                print(self.label_dict, l)
+                print(self.label_dict, _l)
                 p, r, f, _ = precision_recall_fscore_support(y, y_pred, labels=[self.label_dict[_l]])
                 tmp['f1/{}'.format(_l)] = f[0]
                 tmp['p/{}'.format(_l)] = p[0]
