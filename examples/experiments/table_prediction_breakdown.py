@@ -10,9 +10,9 @@ with open('./cache/analogy.prediction.json') as f:
     we_predictions = json.load(f)
 
 path_relbert_pred = './relbert_output/prediction/prediction.relbert.json'
-models = ["relbert_output/ckpt/roberta_custom_d/epoch_1",
-          "relbert_output/ckpt/roberta_auto_d933/epoch_1",
-          "relbert_output/ckpt/roberta_auto_c923/epoch_1"]
+models = ["asahi417/relbert-roberta-large",
+          "asahi417/relbert-roberta-large-autprompt",
+          "asahi417/relbert-roberta-large-ptuning"]
 
 
 def clean_latex(string):
