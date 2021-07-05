@@ -86,8 +86,8 @@ if not os.path.exists(path):
                     if _k in __v:
                         x[k.replace(_k, __k)] = x.pop(k)
         full_result_new.append(x)
-    os.makedirs(os.path.dirname(export), exist_ok=True)
-    pd.DataFrame(full_result_new).to_csv(export)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    pd.DataFrame(full_result_new).to_csv(path)
 
 df = pd.read_csv(path, index_col=0)
 df = df[[c for c in df.columns if 'f1' in c or c in ['model', 'data']]]
