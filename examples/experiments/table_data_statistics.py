@@ -3,6 +3,8 @@ from copy import deepcopy
 
 import pandas as pd
 from relbert.data import get_lexical_relation_data
+import warnings
+warnings.filterwarnings("ignore")
 
 shared_relation = {
     'Random': ['random', 'RANDOM', 'false'],

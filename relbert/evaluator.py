@@ -26,8 +26,6 @@ class Evaluate:
                  config=None):
         self.dataset = dataset
         self.label_dict = label_dict
-        print(self.label_dict)
-        input()
         self.target_relation = target_relation
         if default_config:
             self.configs = [{'random_state': 0}]

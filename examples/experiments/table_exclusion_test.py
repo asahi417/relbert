@@ -8,6 +8,9 @@ import pandas as pd
 import relbert
 from relbert.evaluator import evaluate_classification
 
+import warnings
+warnings.filterwarnings("ignore")
+
 # anchor model checkpoint
 ckpt = 'relbert_output/ckpt/roberta_custom_d/epoch_1'
 # new model
