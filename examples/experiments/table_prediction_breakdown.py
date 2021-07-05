@@ -9,7 +9,7 @@ wget('https://raw.githubusercontent.com/asahi417/AnalogyTools/master/results/ana
 with open('./cache/analogy.prediction.json') as f:
     we_predictions = json.load(f)
 
-path_relbert_pred = 'asset/prediction/prediction.relbert.json'
+path_relbert_pred = './relbert_output/prediction/prediction.relbert.json'
 models = ["relbert_output/ckpt/roberta_custom_d/epoch_1",
           "relbert_output/ckpt/roberta_auto_d933/epoch_1",
           "relbert_output/ckpt/roberta_auto_c923/epoch_1"]

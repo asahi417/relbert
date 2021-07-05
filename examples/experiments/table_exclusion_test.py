@@ -12,7 +12,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # anchor model checkpoint
-ckpt = 'relbert_output/ckpt/roberta_custom_d/epoch_1'
+ckpt = 'asahi417/relbert-roberta-large'
 # new model
 epoch = 1
 template_type = 'd'
@@ -25,8 +25,8 @@ config = {
     'K&H+N': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': 200, 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'max_fun': 15000, 'max_iter': 75, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False},
     'ROOT09': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': 100, 'learning_rate': 'constant', 'learning_rate_init': 0.0001, 'max_fun': 15000, 'max_iter': 50, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False}
 }
-path = 'asset/accuracy.classification.exclusion_test.csv'
-export = 'relbert_output/ablation_study/exclusion_test/ckpt'
+path = './relbert_output/eval/accuracy.classification.exclusion_test.csv'
+export = './relbert_output/ablation_study/exclusion_test/ckpt'
 
 
 def clean_latex(string):
@@ -91,23 +91,23 @@ if not os.path.exists(path):
 
 df = pd.read_csv(path, index_col=0)
 df = df[[c for c in df.columns if 'f1' in c or c in ['model', 'data']]]
-df_new = df[['model', 'data', 'f1_macro/test', 'f1_micro/test']].copy()
+df_new = df[['model', 'data', 'test/f1_macro', 'test/f1_micro']].copy()
 for k, v in shared_relation.items():
     tmp = 0
 
     for _v in v:
         if _v == 'PartOf':
-            tmp += df['f1/test/{}'.format(_v)].fillna(0).to_numpy() * 145 / (145 + 86)
+            tmp += df['test/f1/{}'.format(_v)].fillna(0).to_numpy() * 145 / (145 + 86)
         elif _v == 'MadeOf':
-            tmp += df['f1/test/{}'.format(_v)].fillna(0).to_numpy() * 86 / (145 + 86)
+            tmp += df['test/f1/{}'.format(_v)].fillna(0).to_numpy() * 86 / (145 + 86)
         else:
-            tmp += df['f1/test/{}'.format(_v)].fillna(0).to_numpy()
+            tmp += df['test/f1/{}'.format(_v)].fillna(0).to_numpy()
     df_new[k] = tmp
 df_new.index = df_new.pop('data').tolist()
 model_ex = [i for i in df.model.unique() if 'exclusion' in i][0]
 model = [i for i in df.model.unique() if 'exclusion' not in i][0]
-df_new['macro'] = df_new.pop('f1_macro/test')
-df_new['micro'] = df_new.pop('f1_micro/test')
+df_new['macro'] = df_new.pop('test/f1_macro')
+df_new['micro'] = df_new.pop('test/f1_micro')
 df_new_ex = df_new[df_new.model == model_ex]
 df_new_ex.pop('model')
 df_new_ex = (df_new_ex*100).round(1)
