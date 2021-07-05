@@ -8,6 +8,21 @@ import pandas as pd
 import relbert
 from relbert.evaluator import evaluate_classification
 
+# anchor model checkpoint
+ckpt = 'relbert_output/ckpt/roberta_custom_d/epoch_1'
+# new model
+epoch = 1
+template_type = 'd'
+model = 'roberta-large'
+# best configuration among the main experiment
+config = {
+    'BLESS': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': 150, 'learning_rate': 'constant', 'learning_rate_init': 0.0001, 'max_fun': 15000, 'max_iter': 50, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False},
+    'CogALexV': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': (100,), 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'max_fun': 15000, 'max_iter': 200, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False},
+    'EVALution': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': 100, 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'max_fun': 15000, 'max_iter': 50, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False},
+    'K&H+N': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': 200, 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'max_fun': 15000, 'max_iter': 75, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False},
+    'ROOT09': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': 100, 'learning_rate': 'constant', 'learning_rate_init': 0.0001, 'max_fun': 15000, 'max_iter': 50, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False}
+}
+
 
 def clean_latex(string):
     return string.replace(r'\textbackslash ', '\\').replace(r'\{', '{').replace(r'\}', '}').replace(r'\$', r'$')
@@ -41,9 +56,8 @@ if not os.path.exists(path):
     ##########################
     if not os.path.exists(export):
         trainer = relbert.Trainer(
-            model='roberta-large',
-            template_type='c',
-            epoch=2,
+            model=model,
+            template_type=template_type,
             export=export,
             exclude_relation="Class Inclusion"
         )
@@ -52,10 +66,12 @@ if not os.path.exists(path):
     full_result = []
     target_relation = list(chain(*list(shared_relation.values())))
     # load checkpoint from model hub
-    full_result += evaluate_classification(relbert_ckpt="asahi417/relbert_roberta_custom_c",
-                                           target_relation=target_relation)
-    full_result += evaluate_classification(relbert_ckpt='{}/epoch_2'.format(export),
-                                           target_relation=target_relation)
+    full_result += evaluate_classification(relbert_ckpt=ckpt,
+                                           target_relation=target_relation,
+                                           config=config)
+    full_result += evaluate_classification(relbert_ckpt='{}/epoch_{}'.format(export, epoch),
+                                           target_relation=target_relation,
+                                           config=config)
 
     full_result_new = []
     for x in full_result:

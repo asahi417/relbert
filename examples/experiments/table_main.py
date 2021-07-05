@@ -4,6 +4,8 @@ from itertools import chain
 import numpy as np
 import pandas as pd
 from relbert.util import wget
+import warnings
+warnings.filterwarnings("ignore")
 
 # get word embedding result
 os.makedirs('./cache', exist_ok=True)
@@ -92,9 +94,11 @@ for method in ['custom', 'auto_d', 'auto_c']:
     best_models[method] = df_tmp_tmp.head(1).model.values[0].replace('./', '')
 df_out = pd.concat(cat, axis=1).T.round(1)[['sat_full', 'sat', 'u2', 'u4', 'google', 'bats']]
 df_out.index = [r'$\cdot$ Manual', r'$\cdot$ AutoPrompt', r'$\cdot$ P-tuning']
-df_analogy = pd.concat([df_analogy_we, df_out])
+df_analogy = pd.concat([df_analogy_we, df_out]).round(1)
 
-input(df_analogy)
+print('\n******* config [ANALOGY] *******\n')
+print(best_models)
+
 
 ############################
 # RelBERT (classification) #
@@ -102,16 +106,32 @@ input(df_analogy)
 df = pd.read_csv('./asset/accuracy.classification.csv', index_col=0)
 df = df.sort_values(by=['data'])
 f1 = []
+config = {}
+valid = 'val/f1_macro'
 for method in ['custom', 'auto_d', 'auto_c']:
+    config[method] = {}
     df_tmp = df[df.model == best_models[method]]
-    tmp = df_tmp[['test/f1_macro', 'test/f1_micro']].round(3) * 100
-    tmp.index = df_tmp.data
-    f1 += [np.concatenate([tmp.T[i].values for i in dataset])]
+    # tmp = df_tmp[['test/f1_macro', 'test/f1_micro', valid]].round(3) * 100
+    df_tmp.index = df_tmp.data
+    _f1 = []
+    for i in dataset:
+        if i == 'CogALexV':
+            tmp = df_tmp.T[['CogALexV']].T
+        else:
+            tmp = df_tmp.T[i].T.sort_values(by=[valid], ascending=False).head(1)
+        config[method][i] = tmp['classifier_config'].values[0]
+        _f1.append((tmp[['test/f1_macro', 'test/f1_micro']].values[0] * 100))
+    f1.append(np.concatenate(_f1))
+
 f1 = [['RelBERT', x] + i for x, i in zip(['Manual', 'AutoPrompt', 'P-tuning'], np.array(f1).tolist())]
 df = pd.DataFrame(f1, columns=['tmp', ''] + ['macro', 'micro'] * 5)
 df.index = df.pop('tmp')
 df_classification = pd.concat([df_classification_we, df])
 df_classification.index.name = ''
+df_classification = df_classification.round(1)
+
+print('\n******* config [CLASSIFICATION] *******\n')
+print(config)
 
 ####################
 # Formatting latex #
@@ -122,6 +142,7 @@ def clean_latex(string):
     return string.replace(r'\textbackslash ', '\\').replace(r'\{', '{').replace(r'\}', '}').replace(r'\$', r'$')
 
 
+print('\n******* main table [ANALOGY] *******\n')
 # analogy
 df_analogy.columns = [r'\textbf{SAT\dag}',
                       r'\textbf{SAT}',
@@ -133,8 +154,10 @@ df_analogy.index.name = r'\textbf{Model}'
 table = df_analogy.to_latex()
 block = table.split('\n')
 table = clean_latex('\n'.join(block[:9] + [r'\midrule \\', r'\multicolumn{7}{l}{RelBERT} \\'] + block[9:]))
+print(table)
+print()
 
-print('\n******* main table [ANALOGY] *******\n')
+print('\n******* main table [CLASSIFICATION] *******\n')
 # classification
 df_classification.index = [' '] * len(df_classification.index)
 df_classification[''] = [r'\textit{' + i + '}' if i not in ['Manual', 'AutoPrompt', 'P-tuning'] else i for i in df_classification['']]
@@ -149,6 +172,5 @@ table = clean_latex('\n'.join(
     [r'\midrule', r'\multirow{8}{*}{FastText}' + block[12]] + block[13:20] +
     [r'\midrule', r"\multirow{3}{*}{RelBERT}" + block[20]] + block[21:]))
 
-print('\n******* main table [VLASSIFICATION] *******\n')
 print(table)
 print()

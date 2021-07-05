@@ -17,21 +17,24 @@ __all__ = ['evaluate_classification', 'evaluate_analogy']
 
 class Evaluate:
 
-    def __init__(self, dataset, shared_config, label_dict,
+    def __init__(self,
+                 dataset,
+                 shared_config,
+                 label_dict,
                  target_relation=None,
-                 default_config: bool = False):
+                 default_config: bool = False,
+                 config=None):
         self.dataset = dataset
         self.label_dict = label_dict
         self.target_relation = target_relation
         if default_config:
             self.configs = [{'random_state': 0}]
+        elif config is not None:
+            self.configs = [config]
         else:
             learning_rate_init = [0.001, 0.0001, 0.00001]
             max_iter = [25, 50, 75]
             hidden_layer_sizes = [100, 150, 200]
-            # learning_rate_init = [0.001, 0.0001]
-            # max_iter = [25]
-            # hidden_layer_sizes = [100]
             self.configs = [{
                 'random_state': 0, 'learning_rate_init': i[0], 'max_iter': i[1],
                 'hidden_layer_sizes': i[2]} for i in
@@ -90,14 +93,13 @@ def evaluate_classification(
         batch_size: int = 512,
         target_relation=None,
         cache_dir: str = None,
-        random_seed: int = 0):
+        random_seed: int = 0,
+        config=None):
     fix_seed(random_seed)
     model = RelBERT(relbert_ckpt)
     data = get_lexical_relation_data(cache_dir)
     report = []
     for data_name, v in data.items():
-        # if data_name not in ['BLESS', 'CogALexV']:
-        #     continue
         logging.info('train model with {} on {}'.format(relbert_ckpt, data_name))
         label_dict = v.pop('label')
         dataset = {}
@@ -110,9 +112,18 @@ def evaluate_classification(
         shared_config = {'model': relbert_ckpt, 'label_size': len(label_dict), 'data': data_name}
         # grid serach
         if 'val' not in dataset:
-            evaluator = Evaluate(dataset, shared_config, label_dict, target_relation=target_relation, default_config=True)
+            logging.info('run default config')
+            evaluator = Evaluate(dataset, shared_config, label_dict, target_relation=target_relation,
+                                 default_config=True)
             report += [evaluator(0)]
+        elif config is not None and data_name in config:
+            logging.info('run with given config')
+            evaluator = Evaluate(dataset, shared_config, label_dict, target_relation=target_relation,
+                                 default_config=True, config=config[data_name])
+            report += [evaluator(0)]
+
         else:
+            logging.info('run grid search')
             pool = Pool()
             evaluator = Evaluate(dataset, shared_config, label_dict, target_relation=target_relation)
             report += pool.map(evaluator, evaluator.config_indices)

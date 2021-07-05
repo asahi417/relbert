@@ -46,10 +46,10 @@ setup(
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'relbert-train = relbert_cli.train:main',
-            'relbert-eval = relbert_cli.evaluate:main',
-            'relbert-prompt-discrete = relbert_cli.prompt_discrete:main',
-            'relbert-prompt-continuous = relbert_cli.prompt_continuous:main'
+            'relbert-train = relbert_cl.train:main',
+            'relbert-eval = relbert_cl.evaluate:main',
+            'relbert-prompt-discrete = relbert_cl.prompt_discrete:main',
+            'relbert-prompt-continuous = relbert_cl.prompt_continuous:main'
         ]
     }
 )
