@@ -22,6 +22,8 @@ config = {
     'K&H+N': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': 200, 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'max_fun': 15000, 'max_iter': 75, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False},
     'ROOT09': {'activation': 'relu', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': 100, 'learning_rate': 'constant', 'learning_rate_init': 0.0001, 'max_fun': 15000, 'max_iter': 50, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': 0, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False}
 }
+path = 'asset/accuracy.classification.exclusion_test.csv'
+export = 'relbert_output/ablation_study/exclusion_test/ckpt'
 
 
 def clean_latex(string):
@@ -40,9 +42,7 @@ shared_relation = {
     'syn': ['SYN', 'Synonym']
 }
 dataset = ['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']
-path = 'asset/accuracy.classification.exclusion_test.csv'
 if not os.path.exists(path):
-    export = 'relbert_output/ablation_study/exclusion_test/ckpt'
     os.makedirs(os.path.dirname(export), exist_ok=True)
     logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
     logger = logging.getLogger()
@@ -59,7 +59,7 @@ if not os.path.exists(path):
             model=model,
             template_type=template_type,
             export=export,
-            exclude_relation="Class Inclusion"
+            exclude_relation="Class Inclusion",
         )
         trainer.train()
 

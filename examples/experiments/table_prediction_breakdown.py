@@ -10,6 +10,9 @@ with open('./cache/analogy.prediction.json') as f:
     we_predictions = json.load(f)
 
 path_relbert_pred = 'asset/prediction/prediction.relbert.json'
+models = ["relbert_output/ckpt/roberta_custom_d/epoch_1",
+          "relbert_output/ckpt/roberta_auto_d933/epoch_1",
+          "relbert_output/ckpt/roberta_auto_c923/epoch_1"]
 
 
 def clean_latex(string):
@@ -42,7 +45,6 @@ if not os.path.exists(path_relbert_pred):
             single_data['pred/{}'.format(model_name)] = sims.index(max(sims))
         return _data
 
-
     analogy_data = relbert.data.get_analogy_data()
     predictions = {}
     for data in ['bats_cap', 'google', 'bats']:
@@ -55,7 +57,7 @@ if not os.path.exists(path_relbert_pred):
             all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in test]))
         all_pairs = [tuple(i) for i in all_pairs]
         for n, i in zip(['manual', 'autoprompt', 'ptuning'],
-                        ["asahi417/relbert_roberta_custom_c", "asahi417/relbert_roberta_autoprompt", "asahi417/relbert_roberta_ptuning"]):
+                        models):
             model = relbert.RelBERT(i)
             embeddings = model.get_embedding(all_pairs, batch_size=batch_size)
             assert len(embeddings) == len(all_pairs)
