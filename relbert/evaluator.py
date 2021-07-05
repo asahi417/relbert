@@ -60,11 +60,11 @@ class Evaluate:
         }
         if per_class_metric and self.target_relation is not None:
             for _l in self.target_relation:
-                print(self.label_dict, _l)
-                p, r, f, _ = precision_recall_fscore_support(y, y_pred, labels=[self.label_dict[_l]])
-                tmp['f1/{}'.format(_l)] = f[0]
-                tmp['p/{}'.format(_l)] = p[0]
-                tmp['r/{}'.format(_l)] = r[0]
+                if _l in self.label_dict:
+                    p, r, f, _ = precision_recall_fscore_support(y, y_pred, labels=[self.label_dict[_l]])
+                    tmp['f1/{}'.format(_l)] = f[0]
+                    tmp['p/{}'.format(_l)] = p[0]
+                    tmp['r/{}'.format(_l)] = r[0]
         return tmp
 
     @property
