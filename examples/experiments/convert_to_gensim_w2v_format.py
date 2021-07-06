@@ -9,7 +9,7 @@ from relbert.util import wget
 
 
 def config(parser):
-    parser.add_argument('-c', '--ckpt', help='checkpoint', default="asahi417/relbert_roberta_custom_c", type=str)
+    parser.add_argument('-c', '--ckpt', help='checkpoint', default="asahi417/relbert-roberta-large", type=str)
     parser.add_argument('-b', '--batch', help='batch', default=2048, type=int)
     parser.add_argument('-e', '--export', help='export path', default='gensim_model.bin', type=str)
     return parser
@@ -24,7 +24,8 @@ if not os.path.exists(opt.export):
     path_pair = './cache/common_word_pairs.pkl'
 
     if not os.path.exists(path_pair):
-        wget(url='https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/common_word_pairs.pkl', cache_dir='./cache')
+        wget(url='https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/common_word_pairs.pkl',
+             cache_dir='./cache')
     with open(path_pair, 'rb') as f:
         pair_data = pickle.load(f)
     pbar = tqdm(total=len(pair_data))

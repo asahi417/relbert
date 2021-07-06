@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib import pylab as plt
 
 # get the best config in terms of loss realization
-df = pd.read_csv('./asset/accuracy.analogy.csv', index_col=0)
+df = pd.read_csv('./relbert_outpu/eval/accuracy.analogy.csv', index_col=0)
 df_vanilla = df[df.template_type == df.template_type].sort_values(by=['validation_loss', 'data'])
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 cat = []
@@ -52,7 +52,7 @@ df['Model'] = [i.replace('albert', 'ALBERT').replace('roberta', 'RoBERTa').repla
 # plot
 plt.rcParams.update({"text.usetex": True, "font.family": "sans-serif", "font.sans-serif": ["Helvetica"]})
 # sns.set_theme(style="darkgrid")
-root_dir = './asset/figure'
+root_dir = './relbert_outpu/figure'
 os.makedirs(root_dir, exist_ok=True)
 fontsize = 18
 
@@ -74,7 +74,7 @@ plt.close()
 
 ################################################
 # get the best config in terms of loss realization
-df = pd.read_csv('./asset/accuracy.analogy.csv', index_col=0)
+df = pd.read_csv('./relbert_outpu/eval/accuracy.analogy.csv', index_col=0)
 df_vanilla = df[df.template_type == df.template_type].sort_values(by=['validation_loss', 'data'])
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 cat = []
@@ -119,7 +119,7 @@ df['Model'] = [i.replace('custom', 'Manual').replace('auto_c', 'P-tuning').repla
 # plot
 plt.rcParams.update({"text.usetex": True, "font.family": "sans-serif", "font.sans-serif": ["Helvetica"]})
 # sns.set_theme(style="darkgrid")
-root_dir = './asset/figure'
+root_dir = './relbert_outpu/figure'
 os.makedirs(root_dir, exist_ok=True)
 fontsize = 15
 

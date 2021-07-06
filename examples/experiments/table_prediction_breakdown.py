@@ -11,7 +11,7 @@ with open('./cache/analogy.prediction.json') as f:
 
 path_relbert_pred = './relbert_output/prediction/prediction.relbert.json'
 models = ["asahi417/relbert-roberta-large",
-          "asahi417/relbert-roberta-large-autprompt",
+          "asahi417/relbert-roberta-large-autoprompt",
           "asahi417/relbert-roberta-large-ptuning"]
 
 
@@ -20,6 +20,7 @@ def clean_latex(string):
 
 
 if not os.path.exists(path_relbert_pred):
+    os.makedirs(os.path.dirname(path_relbert_pred), exist_ok=True)
     batch_size = 512
 
     def cap(_list):
@@ -56,8 +57,7 @@ if not os.path.exists(path_relbert_pred):
             _, test = analogy_data[data]
             all_pairs = list(chain(*[[o['stem']] + o['choice'] for o in test]))
         all_pairs = [tuple(i) for i in all_pairs]
-        for n, i in zip(['manual', 'autoprompt', 'ptuning'],
-                        models):
+        for n, i in zip(['manual', 'autoprompt', 'ptuning'], models):
             model = relbert.RelBERT(i)
             embeddings = model.get_embedding(all_pairs, batch_size=batch_size)
             assert len(embeddings) == len(all_pairs)
