@@ -33,7 +33,7 @@ class Evaluate:
             self.configs = [config]
         else:
             learning_rate_init = [0.001, 0.0001, 0.00001]
-            max_iter = [25, 50, 75]
+            # max_iter = [25, 50, 75]
             hidden_layer_sizes = [100, 150, 200]
             self.configs = [{
                 'random_state': 0, 'learning_rate_init': i[0], 'max_iter': i[1],
@@ -120,7 +120,7 @@ def evaluate_classification(
         elif config is not None and data_name in config:
             logging.info('run with given config')
             evaluator = Evaluate(dataset, shared_config, label_dict, target_relation=target_relation,
-                                 default_config=True, config=config[data_name])
+                                 config=config[data_name])
             report += [evaluator(0)]
 
         else:

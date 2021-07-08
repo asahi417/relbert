@@ -131,7 +131,7 @@ df_classification.index.name = ''
 df_classification = df_classification.round(1)
 
 print('\n******* config [CLASSIFICATION] *******\n')
-print(config)
+print(config['custom'])
 
 ####################
 # Formatting latex #
