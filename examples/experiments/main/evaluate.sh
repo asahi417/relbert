@@ -1,6 +1,6 @@
-##############
-# vanilla LM #
-##############
+###########################
+# analogy with vanilla LM #
+###########################
 relbert-eval --vanilla-lm -c roberta-large -t a --export-file ./relbert_output/eval/accuracy.analogy.csv
 relbert-eval --vanilla-lm -c roberta-large -t b --export-file ./relbert_output/eval/accuracy.analogy.csv
 relbert-eval --vanilla-lm -c roberta-large -t c --export-file ./relbert_output/eval/accuracy.analogy.csv

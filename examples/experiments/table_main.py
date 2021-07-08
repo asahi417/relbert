@@ -1,4 +1,4 @@
-""" Export Latex Table for main results """
+""" Export Latex Table for main results: Table 1 & 2 (Analogy and relation classification accuracy) """
 import os
 from itertools import chain
 import numpy as np

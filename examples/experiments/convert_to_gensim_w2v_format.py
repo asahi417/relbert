@@ -1,3 +1,4 @@
+""" Generate gensim embedding model for qualitative analysis on Table 4. """
 import pickle
 import os
 import argparse

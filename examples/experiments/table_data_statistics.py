@@ -1,4 +1,4 @@
-""" Export Latex Table for statistics of lexical relation classification """
+""" Export Latex Table for statistics of lexical relation classification dataset """
 from copy import deepcopy
 
 import pandas as pd

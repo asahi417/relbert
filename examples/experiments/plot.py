@@ -1,4 +1,4 @@
-""" Get figure """
+""" Plot figure 3 """
 import os
 from itertools import chain
 import pandas as pd
@@ -120,7 +120,7 @@ df['Model'] = [i.replace('custom', 'Manual').replace('auto_c', 'P-tuning').repla
 # plot
 plt.rcParams.update({"text.usetex": True, "font.family": "sans-serif", "font.sans-serif": ["Helvetica"]})
 # sns.set_theme(style="darkgrid")
-root_dir = './relbert_outpu/figure'
+root_dir = './relbert_output/figure'
 os.makedirs(root_dir, exist_ok=True)
 fontsize = 15
 

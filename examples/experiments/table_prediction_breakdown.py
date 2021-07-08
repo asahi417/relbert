@@ -1,3 +1,4 @@
+""" Export Latex Table for main results: Table 5 (prediction breakdown for Google/BATS) """
 import json
 import os
 from itertools import chain
@@ -128,6 +129,7 @@ df = pd.concat(high_level)
 df['Relation'] = df.index
 df.index = ['Google'] * len(high_level[0]) + ['BATS'] * len(high_level[1])
 df = df[['Relation', 'FastText', 'Manual', 'AutoPrompt', 'P-tuning']]
+# print(df.sort_values(by=['Relation']).sort_index())
 df.columns = [r'\textbf{' + i + r'}' for i in df.columns]
 table = clean_latex(df.to_latex())
 print('\n******* high level relation breakdown *******\n')

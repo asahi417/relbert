@@ -1,4 +1,4 @@
-""" Ablation study: Train model without hypernym """
+""" Export Latex Table for main results: Table 3 (overlap analysis) """
 import os
 import logging
 from copy import deepcopy
