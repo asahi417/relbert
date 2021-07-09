@@ -36,9 +36,8 @@ class Evaluate:
             # max_iter = [25, 50, 75]
             hidden_layer_sizes = [100, 150, 200]
             self.configs = [{
-                'random_state': 0, 'learning_rate_init': i[0], 'max_iter': i[1],
-                'hidden_layer_sizes': i[2]} for i in
-                            list(product(learning_rate_init, max_iter, hidden_layer_sizes))]
+                'random_state': 0, 'learning_rate_init': i[0], 'hidden_layer_sizes': i[2]} for i in
+                            list(product(learning_rate_init, hidden_layer_sizes))]
         self.shared_config = shared_config
 
     def run_test(self, clf, x, y, per_class_metric: bool = False):
