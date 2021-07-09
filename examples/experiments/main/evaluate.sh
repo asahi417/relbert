@@ -73,5 +73,6 @@ relbert-eval --vanilla-lm -c albert-xlarge-v1 -t ./relbert_output/prompt_files/a
 # analogy
 relbert-eval -c 'relbert_output/ckpt/*/*' --export-file ./relbert_output/eval/accuracy.analogy.csv
 # classification
-relbert-eval -c 'relbert_output/ckpt/roberta_*/*' --type classification --export-file ./relbert_output/eval/accuracy.classification.csv
+relbert-eval -c 'relbert_output/ckpt/*/*' --type classification --export-file ./relbert_output/eval/accuracy.classification.csv
+#relbert-eval -c 'relbert_output/ckpt/roberta_*/*' --type classification --export-file ./relbert_output/eval/accuracy.classification.csv
 
