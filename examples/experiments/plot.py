@@ -29,7 +29,7 @@ for lm in ['roberta', 'bert', 'albert']:
     if method == 'custom':
         template = template.split('custom_')[1][0]
     else:
-        template = './' + template.replace('ckpt', 'prompt_files').replace('auto_', '').replace('epoch_2', 'prompt.json')
+        template = './' + template.replace('ckpt', 'prompt_files').replace('auto_', '').replace('epoch_1', 'prompt.json')
 
     df_tmp_tmp = df_vanilla[[lm in i.split('-')[0] for i in df_vanilla.model]]
     df_tmp_tmp = df_tmp_tmp[df_tmp_tmp.template_type == template]

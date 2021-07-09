@@ -79,6 +79,8 @@ df_classification_we.columns = [''] + ['macro', 'micro'] * 5
 df = pd.read_csv('./relbert_output/eval/accuracy.analogy.csv', index_col=0)
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 lm = 'roberta'
+# lm = 'albert'
+# lm = 'bert'
 df_tmp = df[[lm == i.split('/')[-2].split('_')[0] for i in df.model]]
 cat = []
 best_models = {}
