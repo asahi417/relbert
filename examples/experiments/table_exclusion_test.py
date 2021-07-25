@@ -66,6 +66,10 @@ if not os.path.exists(path):
             export=export,
             epoch=epoch,
             exclude_relation="Class Inclusion",
+            batch=64,
+            parent_contrast=True,
+            softmax_loss=True,
+            in_batch_negative=True
         )
         trainer.train()
 
