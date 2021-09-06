@@ -19,6 +19,12 @@ from torch.optim.lr_scheduler import LambdaLR
 home_dir = '{}/.cache/relbert'.format(os.path.expanduser('~'))
 
 
+def cosine_similarity(a, b):
+    norm_a = sum(map(lambda x: x * x, a)) ** 0.5
+    norm_b = sum(map(lambda x: x * x, b)) ** 0.5
+    return sum(map(lambda x: x[0] * x[1], zip(a, b)))/norm_a/norm_b
+
+
 def load_language_model(model_name, cache_dir: str = None):
     try:
         tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)

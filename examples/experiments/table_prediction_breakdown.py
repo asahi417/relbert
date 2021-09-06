@@ -10,7 +10,7 @@ wget('https://raw.githubusercontent.com/asahi417/AnalogyTools/master/results/ana
 with open('./cache/analogy.prediction.json') as f:
     we_predictions = json.load(f)
 
-path_relbert_pred = './relbert_output/prediction/prediction.relbert.json'
+path_relbert_pred = 'examples/experiments/output/prediction/prediction.relbert.json'
 models = ["asahi417/relbert-roberta-large",
           "asahi417/relbert-roberta-large-autoprompt",
           "asahi417/relbert-roberta-large-ptuning"]

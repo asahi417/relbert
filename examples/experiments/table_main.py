@@ -1,4 +1,5 @@
 """ Export Latex Table for main results: Table 1 & 2 (Analogy and relation classification accuracy) """
+import json
 import os
 from itertools import chain
 import numpy as np
@@ -76,7 +77,7 @@ df_classification_we.columns = [''] + ['macro', 'micro'] * 5
 #####################
 # RelBERT (analogy) #
 #####################
-df = pd.read_csv('./relbert_output/eval/accuracy.analogy.csv', index_col=0)
+df = pd.read_csv('examples/experiments/output/eval/accuracy.analogy.csv', index_col=0)
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 lm = 'roberta'
 # lm = 'albert'
@@ -105,7 +106,7 @@ print(best_models)
 ############################
 # RelBERT (classification) #
 ############################
-df = pd.read_csv('./relbert_output/eval/accuracy.classification.csv', index_col=0)
+df = pd.read_csv('examples/experiments/output/eval/accuracy.classification.csv', index_col=0)
 df = df.sort_values(by=['data'])
 f1 = []
 config = {}
@@ -113,7 +114,6 @@ valid = 'val/f1_macro'
 for method in ['custom', 'auto_d', 'auto_c']:
     config[method] = {}
     df_tmp = df[df.model == best_models[method]]
-    # tmp = df_tmp[['test/f1_macro', 'test/f1_micro', valid]].round(3) * 100
     df_tmp.index = df_tmp.data
     _f1 = []
     for i in dataset:
@@ -133,7 +133,13 @@ df_classification.index.name = ''
 df_classification = df_classification.round(1)
 
 print('\n******* config [CLASSIFICATION] *******\n')
-print(config['custom'])
+for method in ['custom', 'auto_d', 'auto_c']:
+    print(method)
+    print(json.dumps(config[method], indent=4, sort_keys=True))
+    print()
+# print(tmp)
+# target_key = ['hidden_layer_sizes', 'learning_rate_init']
+# tmp = {k: {_k: json.loads(v)[_k] for _k in target_key} for k, v in tmp.items()}
 
 ####################
 # Formatting latex #
