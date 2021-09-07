@@ -13,7 +13,7 @@ In the paper, we propose RelBERT, that is the state-of-the-art lexical relation 
 In this repository, we release a python package `relbert` to work around with RelBERT and its checkpoints via [huggingface modelhub](https://huggingface.co/models) and [gensim](https://radimrehurek.com/gensim/).
 In brief, what you can do with the `relbert` are summarized as below:
 - **Get a high quality embedding vector** given a pair of word
-- **Get similar word pairs (nearest neighbors)** given a pair of word
+- **Get similar word pairs (nearest neighbors)**
 - **Reproduce the results** of our EMNLP 2021 paper.
 
 ## Get Started
