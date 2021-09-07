@@ -75,9 +75,6 @@ model.most_similar('Tokyo__Japan')
       ('Beijing__China', 0.9996539354324341)]
 ```
 
-
-
-
 ## Reproduce the Experiments
 To reproduce the experimental result of our EMNLP 2021 paper, you have to clone the repository.
 ```shell
