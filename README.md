@@ -35,18 +35,18 @@ As the model checkpoint, we release following three models on the huggingface mo
 Then you just give a list of word to the model to get the embedding.
 ```python
 # the vector has (1, 1024)
-v_tokyo_japan = model.get_embedding([['Tokyo', 'Japan']])
+v_tokyo_japan = model.get_embedding(['Tokyo', 'Japan'])
 ```
 
 Let's run a quick experiment to check the embedding quality. Given candidate lists `['Paris', 'France']`, `['apple', 'fruit']`, and `['London', 'Tokyo']`, the pair which shares
 the same relation with the `['Tokyo', 'Japan']` is `['Paris', 'France']`. Would the RelBERT embedding be possible to retain it with simple cosine similarity?  
 ```python
 from relbert import cosine_similarity
-v_paris_france, v_apple_fruit, v_london_tokyo = model.get_embedding([['Paris', 'France'], ['apple', 'fruit'], ['London', 'Tokyo']])
+v_paris_france, v_music_pizza, v_london_tokyo = model.get_embedding([['Paris', 'France'], ['music', 'pizza'], ['London', 'Tokyo']])
 cosine_similarity(v_tokyo_japan, v_paris_france)
 >>> 0.999
-cosine_similarity(v_tokyo_japan, v_apple_fruit)
->>> 0.993
+cosine_similarity(v_tokyo_japan, v_music_pizza)
+>>> 0.991
 cosine_similarity(v_tokyo_japan, v_london_tokyo)
 >>> 0.996
 ```

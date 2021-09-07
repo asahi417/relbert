@@ -316,6 +316,11 @@ class RelBERT:
         -------
         Embedding (len(x), n_hidden).
         """
+        is_single_list = False
+        if len(x) == 2 and type(x[0]) is str and type(x[1]) is str:
+            x = [x]
+            is_single_list = True
+
         if not all(type(i) is tuple for i in x):
             x = [tuple(i) for i in x]
 
@@ -330,4 +335,6 @@ class RelBERT:
         with torch.no_grad():
             for encode in data_loader:
                 h_list += self.to_embedding(encode).cpu().tolist()
+        if is_single_list:
+            return h_list[0]
         return h_list

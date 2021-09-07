@@ -35,12 +35,15 @@ def freq(_list, prefix=None):
 
 
 df_all = {}
-for _type in ['train', 'test']:
+for _type in ['train', 'test', 'val']:
     data_freq = {}
     data = get_lexical_relation_data()
     for k, v in data.items():
-        label = {v: k for k, v in v['label'].items()}
-        data_freq[k] = {label[k]: v for k, v in freq(v[_type]['y']).items()}
+        if _type not in v.keys():
+            data_freq[k] = {}
+        else:
+            label = {v: k for k, v in v['label'].items()}
+            data_freq[k] = {label[k]: v for k, v in freq(v[_type]['y']).items()}
     relations_in_train = ['Meronym', 'Antonym', 'Synonym', 'Attribute', 'Hypernym', 'Co-hypornym', 'Substance Meronym']
 
     data_freq_ = deepcopy(data_freq)
@@ -54,11 +57,15 @@ for _type in ['train', 'test']:
 df_all['train'].applymap(lambda x: "{:,}".format(x))
 a = df_all['train'].fillna(0).applymap(lambda x: "{:,}".format(round(x)))
 b = df_all['test'].fillna(0).applymap(lambda x: "{:,}".format(round(x)))
-c = a + '/' + b
-c = c.applymap(lambda x: '-' if x == '0/0' else x)
+c = df_all['val'].fillna(0).applymap(lambda x: "{:,}".format(round(x)))
+c = a + '/' + b + '/' + c
+c = c.applymap(lambda x: '-' if x == '0/0/0' else x)
+c = c.applymap(lambda x: x[:-2] if x[-2:] == '/0' else x)
 c.index = [i.replace('Antonym', 'ant').replace('Attribute', 'attr').replace('Co-hypornym', 'cohyp').
-               replace('Event', 'event').replace('Hypernym', 'hyp').replace('Meronym', 'mero').
-               replace('Random', 'rand').replace('Substance Meronym', 'subs').replace('Synonym', 'syn') for i in c.index]
+               replace('Event', 'event').replace('Substance Meronym', 'subs').replace('Hypernym', 'hyp').replace('Meronym', 'mero').
+               replace('Random', 'rand').replace('Synonym', 'syn') for i in c.index]
 
 c = c[['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']]
+c = c.T[['rand', 'mero', 'event', 'hyp', 'cohyp', 'attr', 'subs', 'ant', 'syn']].T
+
 print(c.to_latex())
