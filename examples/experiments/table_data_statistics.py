@@ -56,16 +56,18 @@ for _type in ['train', 'test', 'val']:
     df_all[_type] = pd.DataFrame(data_freq_)
 df_all['train'].applymap(lambda x: "{:,}".format(x))
 a = df_all['train'].fillna(0).applymap(lambda x: "{:,}".format(round(x)))
-b = df_all['test'].fillna(0).applymap(lambda x: "{:,}".format(round(x)))
-c = df_all['val'].fillna(0).applymap(lambda x: "{:,}".format(round(x)))
+b = df_all['val'].fillna(0).applymap(lambda x: "{:,}".format(round(x)))
+c = df_all['test'].fillna(0).applymap(lambda x: "{:,}".format(round(x)))
 c = a + '/' + b + '/' + c
 c = c.applymap(lambda x: '-' if x == '0/0/0' else x)
 c = c.applymap(lambda x: x[:-2] if x[-2:] == '/0' else x)
-c.index = [i.replace('Antonym', 'ant').replace('Attribute', 'attr').replace('Co-hypornym', 'cohyp').
-               replace('Event', 'event').replace('Substance Meronym', 'subs').replace('Hypernym', 'hyp').replace('Meronym', 'mero').
-               replace('Random', 'rand').replace('Synonym', 'syn') for i in c.index]
+c = c.applymap(lambda x: x.replace('/0/', '/'))
+c = c.T[['Random', 'Meronym', 'Event', 'Hypernym', 'Co-hypornym', 'Attribute', 'Substance Meronym', 'Antonym', 'Synonym']].T
+# c.index = [i.replace('Antonym', 'ant').replace('Attribute', 'attr').replace('Co-hypornym', 'cohyp').
+#                replace('Event', 'event').replace('Substance Meronym', 'subs').replace('Hypernym', 'hyp').replace('Meronym', 'mero').
+#                replace('Random', 'rand').replace('Synonym', 'syn') for i in c.index]
 
 c = c[['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']]
-c = c.T[['rand', 'mero', 'event', 'hyp', 'cohyp', 'attr', 'subs', 'ant', 'syn']].T
+
 
 print(c.to_latex())
