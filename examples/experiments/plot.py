@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib import pylab as plt
 
 # get the best config in terms of loss realization
-df = pd.read_csv('output/eval/accuracy.analogy.csv', index_col=0)
+df = pd.read_csv('examples/experiments/output/eval/accuracy.analogy.csv', index_col=0)
 df_vanilla = df[df.template_type == df.template_type].sort_values(by=['validation_loss', 'data'])
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 cat = []
@@ -124,14 +124,23 @@ root_dir = 'examples/experiments/output/figure'
 os.makedirs(root_dir, exist_ok=True)
 fontsize = 15
 
+list_tmp = []
+for data_name in ['BATS', 'Google', 'SAT', 'U2', 'U4']:
+    _df = df[df.Data == data_name]
+    for m in ['Manual', 'AutoPrompt', 'P-tuning']:
+        a = _df[_df.Model == m]['Accuracy'].values[0] - _df[_df.Model == m + ' (vanilla)']['Accuracy'].values[0]
+        list_tmp.append([m, a, data_name])
+df_tmp = pd.DataFrame(list_tmp, columns=['Model', 'Accuracy', 'Data'])
+df = df_tmp
 fig = plt.figure()
 fig.clear()
-order = ['Manual', 'Manual (vanilla)',
-         'AutoPrompt', 'AutoPrompt (vanilla)',
-         'P-tuning', 'P-tuning (vanilla)']
+# order = ['Manual', 'Manual (vanilla)',
+#          'AutoPrompt', 'AutoPrompt (vanilla)',
+#          'P-tuning', 'P-tuning (vanilla)']
+order = ['Manual', 'AutoPrompt', 'P-tuning']
 ax = sns.barplot(data=df, x='Data', y='Accuracy', hue='Model', order=['SAT', 'U2', 'U4', 'BATS', 'Google'],
                  hue_order=order)
-ax.set(ylim=(0, 100))
+# ax.set(ylim=(0, 60))
 handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles=handles, labels=labels)
 plt.setp(ax.get_legend().get_texts(), fontsize=10)
