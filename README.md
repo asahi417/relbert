@@ -58,7 +58,7 @@ Then you give a list of word to the model to get the embedding.
 v_tokyo_japan = model.get_embedding(['Tokyo', 'Japan'])
 ```
 
-Let's run a quick experiment to check the embedding quality. Given candidate lists `['Paris', 'France']`, `['apple', 'fruit']`, and `['London', 'Tokyo']`, the pair which shares
+Let's run a quick experiment to check the embedding quality. Given candidate lists `['Paris', 'France']`, `['music', 'pizza']`, and `['London', 'Tokyo']`, the pair which shares
 the same relation with the `['Tokyo', 'Japan']` is `['Paris', 'France']`. Would the RelBERT embedding be possible to retain it with simple cosine similarity?  
 ```python
 from relbert import euclidean_distance
