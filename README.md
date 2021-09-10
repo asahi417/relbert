@@ -24,7 +24,7 @@ in analogy question in zeroshot transfer and even outperform fewshot models such
 | [GPT-2 (tuned AP)](https://aclanthology.org/2021.acl-long.280/)     | 57.8 | 56.7 | 50.9 | 49.5 | 95.2 | 81.2 |
 | [RoBERTa (tuned AP)](https://aclanthology.org/2021.acl-long.280/)   | 55.8 | 53.4 | 58.3 | 57.4 | 93.6 | 78.4 | 
 | [GPT3 (zeroshot)](https://arxiv.org/abs/2005.14165)               |     53.7   |  - | - | - |  - | - |
-| [GPT3 (fewshot)](https://arxiv.org/abs/2005.14165)               |     53.7   |  - | - | - |  - | - |
+| [GPT3 (fewshot)](https://arxiv.org/abs/2005.14165)               |     65.2   |  - | - | - |  - | - |
 | ***RelBERT***      |      *69.5* |  *70.6* | *66.2* | *65.3* |     *92.4* |   *78.8* |
 
 Please have a look our paper to know more about RelBERT and [AnalogyTool](https://github.com/asahi417/AnalogyTools) or [AP paper](https://aclanthology.org/2021.acl-long.280/) for more information about the analogy question datasets.
