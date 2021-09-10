@@ -98,6 +98,8 @@ for method in ['custom', 'auto_d', 'auto_c']:
 df_out = pd.concat(cat, axis=1).T.round(1)[['sat_full', 'sat', 'u2', 'u4', 'google', 'bats']]
 df_out.index = [r'$\cdot$ Manual', r'$\cdot$ AutoPrompt', r'$\cdot$ P-tuning']
 df_analogy = pd.concat([df_analogy_we, df_out]).round(1)
+print(df_analogy.to_markdown())
+# input()
 
 print('\n******* config [ANALOGY] *******\n')
 print(best_models)

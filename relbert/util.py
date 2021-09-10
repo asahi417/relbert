@@ -25,6 +25,10 @@ def cosine_similarity(a, b):
     return sum(map(lambda x: x[0] * x[1], zip(a, b)))/norm_a/norm_b
 
 
+def euclidean_distance(a, b):
+    return sum(map(lambda x: (x[0] - x[1])**2, zip(a, b))) ** 0.5
+
+
 def load_language_model(model_name, cache_dir: str = None):
     try:
         tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)

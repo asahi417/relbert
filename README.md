@@ -4,12 +4,32 @@
 [![PyPI status](https://img.shields.io/pypi/status/relbert.svg)](https://pypi.python.org/pypi/relbert/)
 
 # RelBERT
-This is the official implementation of
+We release the package `relbert` that includes the official implementation of
 ***Distilling Relation Embeddings from Pre-trained Language Models***
-(the camera-ready version of the paper will be soon available!)
-which has been accepted by the [**EMNLP 2021 main conference**](https://2021.emnlp.org/).
+which has been accepted by the [**EMNLP 2021 main conference**](https://2021.emnlp.org/)
+(check the camera-ready version [here](https://github.com/asahi417/relbert/blob/master/asset/EMNLP21_RelBERT_camera.pdf)).
 
-In the paper, we propose RelBERT, that is the state-of-the-art lexical relation embedding model based on large scale pretrained masked language models.
+### What's RelBERT?
+RelBERT is the state-of-the-art lexical relation embedding model based on large scale pretrained masked language models that establishes a very strong baseline 
+in analogy question in zeroshot transfer and even outperform fewshot models such as [GPT-3](https://arxiv.org/abs/2005.14165) and [Analogical Proportion (AP)](https://aclanthology.org/2021.acl-long.280/).
+
+|                    |   SAT (full) |   SAT |   U2 |   U4 |   Google |   BATS |
+|:-------------------|-----------:|------:|-----:|-----:|---------:|-------:|
+| [GloVe](https://nlp.stanford.edu/projects/glove/)              |       48.9 |  47.8 | 46.5 | 39.8 |     96   |   68.7 |
+| [FastText](https://fasttext.cc/)           |       49.7 |  47.8 | 43   | 40.7 |     96.6 |   72   |
+| [RELATIVE](http://josecamachocollados.com/papers/relative_ijcai2019.pdf)           |       24.9 |  24.6 | 32.5 | 27.1 |     62   |   39   |
+| [pair2vec](https://arxiv.org/abs/1810.08854)           |       33.7 |  34.1 | 25.4 | 28.2 |     66.6 |   53.8 |
+| [GPT-2 (AP)](https://aclanthology.org/2021.acl-long.280/)           | 41.4 | 35.9 | 41.2 | 44.9 | 80.4 | 63.5 |
+| [RoBERTa (AP)](https://aclanthology.org/2021.acl-long.280/)         | 49.6 | 42.4 | 49.1 | 49.1 | 90.8 | 69.7 |
+| [GPT-2 (tuned AP)](https://aclanthology.org/2021.acl-long.280/)     | 57.8 | 56.7 | 50.9 | 49.5 | 95.2 | 81.2 |
+| [RoBERTa (tuned AP)](https://aclanthology.org/2021.acl-long.280/)   | 55.8 | 53.4 | 58.3 | 57.4 | 93.6 | 78.4 | 
+| [GPT3 (zeroshot)](https://arxiv.org/abs/2005.14165)               |     53.7   |  - | - | - |  - | - |
+| [GPT3 (fewshot)](https://arxiv.org/abs/2005.14165)               |     53.7   |  - | - | - |  - | - |
+| ***RelBERT***      |      *69.5* |  *70.6* | *66.2* | *65.3* |     *92.4* |   *78.8* |
+
+Please have a look our paper to know more about RelBERT and [AnalogyTool](https://github.com/asahi417/AnalogyTools) or [AP paper](https://aclanthology.org/2021.acl-long.280/) for more information about the analogy question datasets.
+
+### What can we do with `relbert`?
 In this repository, we release a python package `relbert` to work around with RelBERT and its checkpoints via [huggingface modelhub](https://huggingface.co/models) and [gensim](https://radimrehurek.com/gensim/).
 In brief, what you can do with the `relbert` are summarized as below:
 - **Get a high quality embedding vector** given a pair of word
@@ -32,25 +52,25 @@ As the model checkpoint, we release following three models on the huggingface mo
 - [`asahi417/relbert-roberta-large-autoprompt`](https://huggingface.co/asahi417/relbert-roberta-large-autoprompt): RelBERT based on RoBERTa large with AutoPrompt.  
 - [`asahi417/relbert-roberta-large-ptuning`](https://huggingface.co/asahi417/relbert-roberta-large-ptuning): RelBERT based on RoBERTa large with P-tuning.
 
-Then you just give a list of word to the model to get the embedding.
+Then you give a list of word to the model to get the embedding.
 ```python
-# the vector has (1, 1024)
+# the vector has (1024,)
 v_tokyo_japan = model.get_embedding(['Tokyo', 'Japan'])
 ```
 
 Let's run a quick experiment to check the embedding quality. Given candidate lists `['Paris', 'France']`, `['apple', 'fruit']`, and `['London', 'Tokyo']`, the pair which shares
 the same relation with the `['Tokyo', 'Japan']` is `['Paris', 'France']`. Would the RelBERT embedding be possible to retain it with simple cosine similarity?  
 ```python
-from relbert import cosine_similarity
+from relbert import euclidean_distance
 v_paris_france, v_music_pizza, v_london_tokyo = model.get_embedding([['Paris', 'France'], ['music', 'pizza'], ['London', 'Tokyo']])
-cosine_similarity(v_tokyo_japan, v_paris_france)
->>> 0.999
-cosine_similarity(v_tokyo_japan, v_music_pizza)
->>> 0.991
-cosine_similarity(v_tokyo_japan, v_london_tokyo)
->>> 0.996
+euclidean_distance(v_tokyo_japan, v_paris_france)
+>>> 18.8
+euclidean_distance(v_tokyo_japan, v_music_pizza)
+>>> 100.7
+euclidean_distance(v_tokyo_japan, v_london_tokyo)
+>>> 67.8
 ```
-Bravo! The similarity between `['Tokyo', 'Japan']` and `['Paris', 'France']` is the highest among the candidates.
+Bravo! The distance between `['Tokyo', 'Japan']` and `['Paris', 'France']` is the closest among the candidates.
 
 ### Nearest Neighbours of RelBERT
 To get the similar word pairs in terms of the RelBERT embedding, we convert the RelBERT embedding to a gensim model file with a fixed vocabulary.
@@ -95,3 +115,17 @@ Once models are trained, you can evaluate them.
 sh ./examples/experiments/main/evaluate.sh
 ```
 
+## Citation
+If you use any of these resources, please cite the following paper:
+```
+@inproceedings{ushio-etal-2021-distilling-relation-embeddings,
+    title = "{D}istilling {R}elation {E}mbeddings from {P}re-trained {L}anguage {M}odels",
+    author = "Ushio, Asahi  and
+      Schockaert, Steven  and
+      Camacho-Collados, Jose",
+    booktitle = "EMNLP 2021",
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+}
+```
