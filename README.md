@@ -61,14 +61,14 @@ v_tokyo_japan = model.get_embedding(['Tokyo', 'Japan'])
 Let's run a quick experiment to check the embedding quality. Given candidate lists `['Paris', 'France']`, `['music', 'pizza']`, and `['London', 'Tokyo']`, the pair which shares
 the same relation with the `['Tokyo', 'Japan']` is `['Paris', 'France']`. Would the RelBERT embedding be possible to retain it with simple cosine similarity?  
 ```python
-from relbert import euclidean_distance
+from relbert import cosine_similarity
 v_paris_france, v_music_pizza, v_london_tokyo = model.get_embedding([['Paris', 'France'], ['music', 'pizza'], ['London', 'Tokyo']])
-euclidean_distance(v_tokyo_japan, v_paris_france)
->>> 18.8
-euclidean_distance(v_tokyo_japan, v_music_pizza)
->>> 100.7
-euclidean_distance(v_tokyo_japan, v_london_tokyo)
->>> 67.8
+cosine_similarity(v_tokyo_japan, v_paris_france)
+>>> 0.999
+cosine_similarity(v_tokyo_japan, v_music_pizza)
+>>> 0.991
+cosine_similarity(v_tokyo_japan, v_london_tokyo)
+>>> 0.996
 ```
 Bravo! The distance between `['Tokyo', 'Japan']` and `['Paris', 'France']` is the closest among the candidates.
 
