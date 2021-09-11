@@ -6,7 +6,7 @@
 # RelBERT
 We release the package `relbert` that includes the official implementation of
 ***Distilling Relation Embeddings from Pre-trained Language Models***
-which has been accepted by the [**EMNLP 2021 main conference**](https://2021.emnlp.org/)
+that has been accepted by the [**EMNLP 2021 main conference**](https://2021.emnlp.org/)
 (check the camera-ready version [here](https://github.com/asahi417/relbert/blob/master/asset/EMNLP21_RelBERT_camera.pdf)).
 
 ### What's RelBERT?
@@ -25,9 +25,11 @@ in analogy question in zeroshot transfer and even outperform fewshot models such
 | [RoBERTa (tuned AP)](https://aclanthology.org/2021.acl-long.280/)   | 55.8 | 53.4 | 58.3 | 57.4 | 93.6 | 78.4 | 
 | [GPT3 (zeroshot)](https://arxiv.org/abs/2005.14165)               |     53.7   |  - | - | - |  - | - |
 | [GPT3 (fewshot)](https://arxiv.org/abs/2005.14165)               |     65.2   |  - | - | - |  - | - |
-| ***RelBERT***      |      *69.5* |  *70.6* | *66.2* | *65.3* |     *92.4* |   *78.8* |
+| ***RelBERT***      |      ***69.5* |  ***70.6*** | ***66.2*** | ***65.3*** |     ***92.4*** |   ***78.8*** |
 
-Please have a look our paper to know more about RelBERT and [AnalogyTool](https://github.com/asahi417/AnalogyTools) or [AP paper](https://aclanthology.org/2021.acl-long.280/) for more information about the analogy question datasets.
+We also report the performance of RelBERT on lexical relation classification, showing RelBERT's superiority in majority of the datasets. 
+Those datasets are public and available in this following links: [analogy question](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset.zip), [lexical relation classification](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.zip)
+Please have a look our paper to know more about RelBERT and [AnalogyTool](https://github.com/asahi417/AnalogyTools) or [AP paper](https://aclanthology.org/2021.acl-long.280/) for more information about the datasets.
 
 ### What can we do with `relbert`?
 In this repository, we release a python package `relbert` to work around with RelBERT and its checkpoints via [huggingface modelhub](https://huggingface.co/models) and [gensim](https://radimrehurek.com/gensim/).
