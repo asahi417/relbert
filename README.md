@@ -54,7 +54,7 @@ As the model checkpoint, we release following three models on the huggingface mo
 - [`asahi417/relbert-roberta-large-autoprompt`](https://huggingface.co/asahi417/relbert-roberta-large-autoprompt): RelBERT based on RoBERTa large with AutoPrompt.  
 - [`asahi417/relbert-roberta-large-ptuning`](https://huggingface.co/asahi417/relbert-roberta-large-ptuning): RelBERT based on RoBERTa large with P-tuning.
 
-Then you give a list of word to the model to get the embedding.
+Then you give a word pair to the model to get the embedding.
 ```python
 # the vector has (1024,)
 v_tokyo_japan = model.get_embedding(['Tokyo', 'Japan'])
@@ -73,6 +73,7 @@ cosine_similarity(v_tokyo_japan, v_london_tokyo)
 >>> 0.996
 ```
 Bravo! The distance between `['Tokyo', 'Japan']` and `['Paris', 'France']` is the closest among the candidates.
+In fact, this pipeline is how we evaluate the RelBERT on the analogy question.
 
 ### Nearest Neighbours of RelBERT
 To get the similar word pairs in terms of the RelBERT embedding, we convert the RelBERT embedding to a gensim model file with a fixed vocabulary.
