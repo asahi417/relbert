@@ -10,8 +10,7 @@ that has been accepted by the [**EMNLP 2021 main conference**](https://2021.emnl
 (check the camera-ready version [here](https://github.com/asahi417/relbert/blob/master/asset/EMNLP21_RelBERT_camera.pdf)).
 
 ### What's RelBERT?
-RelBERT is the state-of-the-art lexical relation embedding model based on large scale pretrained masked language models that establishes a very strong baseline 
-in analogy question in zeroshot transfer and even outperform fewshot models such as [GPT-3](https://arxiv.org/abs/2005.14165) and [Analogical Proportion (AP)](https://aclanthology.org/2021.acl-long.280/).
+RelBERT is a state-of-the-art lexical relation embedding model (i.e. model representing any word pair such as "Paris-France" as a fixed-length vector) based on large-scale pretrained masked language models. RelBERT also establishes a very strong baseline to solve analogies in a zero-shot transfer fashion and even outperform strong few-shot models such as [GPT-3](https://arxiv.org/abs/2005.14165) and [Analogical Proportion (AP)](https://aclanthology.org/2021.acl-long.280/).
 
 |                    |   SAT (full) |   SAT |   U2 |   U4 |   Google |   BATS |
 |:-------------------|-----------:|------:|-----:|-----:|---------:|-------:|
@@ -27,13 +26,13 @@ in analogy question in zeroshot transfer and even outperform fewshot models such
 | [GPT3 (fewshot)](https://arxiv.org/abs/2005.14165)               |     65.2   |  - | - | - |  - | - |
 | ***RelBERT***      |      ***69.5* |  ***70.6*** | ***66.2*** | ***65.3*** |     ***92.4*** |   ***78.8*** |
 
-We also report the performance of RelBERT on lexical relation classification, showing RelBERT's superiority in majority of the datasets. 
-Those datasets are public and available in this following links: [analogy question](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset.zip), [lexical relation classification](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.zip)
+We also report the performance of RelBERT universal relation embeddings on lexical relation classification datasets, which reinforces the capability of RelBERT to model relations. 
+All datasets are public and available in this following links: [analogy questions](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset.zip), [lexical relation classification](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.zip)
 Please have a look our paper to know more about RelBERT and [AnalogyTool](https://github.com/asahi417/AnalogyTools) or [AP paper](https://aclanthology.org/2021.acl-long.280/) for more information about the datasets.
 
 ### What can we do with `relbert`?
 In this repository, we release a python package `relbert` to work around with RelBERT and its checkpoints via [huggingface modelhub](https://huggingface.co/models) and [gensim](https://radimrehurek.com/gensim/).
-In brief, what you can do with the `relbert` are summarized as below:
+In brief, what you can do with the `relbert` is summarized as below:
 - **Get a high quality embedding vector** given a pair of word
 - **Get similar word pairs (nearest neighbors)**
 - **Reproduce the results** of our EMNLP 2021 paper.
