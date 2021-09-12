@@ -24,7 +24,7 @@ RelBERT is a state-of-the-art lexical relation embedding model (i.e. model repre
 | [RoBERTa (tuned AP)](https://aclanthology.org/2021.acl-long.280/)   | 55.8 | 53.4 | 58.3 | 57.4 | 93.6 | 78.4 | 
 | [GPT3 (zeroshot)](https://arxiv.org/abs/2005.14165)               |     53.7   |  - | - | - |  - | - |
 | [GPT3 (fewshot)](https://arxiv.org/abs/2005.14165)               |     65.2   |  - | - | - |  - | - |
-| ***RelBERT***      |      ***69.5* |  ***70.6*** | ***66.2*** | ***65.3*** |     ***92.4*** |   ***78.8*** |
+| ***RelBERT***      |      ***69.5*** |  ***70.6*** | ***66.2*** | ***65.3*** |     ***92.4*** |   ***78.8*** |
 
 We also report the performance of RelBERT universal relation embeddings on lexical relation classification datasets, which reinforces the capability of RelBERT to model relations. 
 All datasets are public and available in this following links: [analogy questions](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset.zip), [lexical relation classification](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.zip)
