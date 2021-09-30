@@ -27,7 +27,7 @@ RelBERT is a state-of-the-art lexical relation embedding model (i.e. model repre
 | ***RelBERT***      |      ***69.5*** |  ***70.6*** | ***66.2*** | ***65.3*** |     ***92.4*** |   ***78.8*** |
 
 We also report the performance of RelBERT universal relation embeddings on lexical relation classification datasets, which reinforces the capability of RelBERT to model relations. 
-All datasets are public and available in this following links: [analogy questions](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset.zip), [lexical relation classification](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.zip)
+All datasets are public and available in the following links: [analogy questions](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset.zip), [lexical relation classification](https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.zip).
 Please have a look our paper to know more about RelBERT and [AnalogyTool](https://github.com/asahi417/AnalogyTools) or [AP paper](https://aclanthology.org/2021.acl-long.280/) for more information about the datasets.
 
 ### What can we do with `relbert`?
