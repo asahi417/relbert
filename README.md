@@ -7,7 +7,7 @@
 We release the package `relbert` that includes the official implementation of
 ***Distilling Relation Embeddings from Pre-trained Language Models***
 that has been accepted by the [**EMNLP 2021 main conference**](https://2021.emnlp.org/)
-(check the camera-ready version [here](https://github.com/asahi417/relbert/blob/master/asset/EMNLP21_RelBERT_camera.pdf)).
+(check the camera-ready version [here](https://arxiv.org/abs/2110.15705)).
 
 ### What's RelBERT?
 RelBERT is a state-of-the-art lexical relation embedding model (i.e. model representing any word pair such as "Paris-France" as a fixed-length vector) based on large-scale pretrained masked language models. RelBERT also establishes a very strong baseline to solve analogies in a zero-shot transfer fashion and even outperform strong few-shot models such as [GPT-3](https://arxiv.org/abs/2005.14165) and [Analogical Proportion (AP)](https://aclanthology.org/2021.acl-long.280/).
@@ -118,7 +118,7 @@ sh ./examples/experiments/main/evaluate.sh
 ```
 
 ## Citation
-If you use any of these resources, please cite the following paper:
+If you use any of these resources, please cite the following [paper](https://arxiv.org/abs/2110.15705):
 ```
 @inproceedings{ushio-etal-2021-distilling-relation-embeddings,
     title = "{D}istilling {R}elation {E}mbeddings from {P}re-trained {L}anguage {M}odels",
