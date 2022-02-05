@@ -2,8 +2,7 @@
 python -m spacy download en_core_web_sm
 """
 import os
-import re
-from typing import List
+import json
 from itertools import chain
 from tqdm import tqdm
 import spacy
@@ -28,10 +27,12 @@ def filter_text(corpus, word_pairs, path):
             for single_text in tqdm(corpus):
                 for single_sentence in split_sentence(str(single_text)):
                     tokens = single_sentence.split(' ')
-                    if any(w[0] in tokens and w[1] in tokens for w in word_pairs):
-                        f.write(single_sentence + '\n')
+                    in_word_pairs = [w for w in word_pairs if w[0] in tokens and w[1] in tokens]
+                    if len(in_word_pairs) == 0:
+                        continue
+                    f.write(json.dumps({'sentence': single_sentence, 'word_pairs': in_word_pairs}) + '\n')
     with open(path) as f:
-        output = f.read().split('\n')
+        output = [json.loads(i) for i in f.read().split('\n') if len(i) > 0]
     print('\t * finish filtering: {} documents --> {} sentences'.format(len(corpus), len(output)))
     return output
 
