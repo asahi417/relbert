@@ -1,3 +1,6 @@
+"""
+python -m spacy download en_core_web_sm
+"""
 import os
 import re
 from typing import List
@@ -23,12 +26,12 @@ def filter_text(corpus, word_pairs, path):
     if not os.path.exists(path):
         with open(path, 'w') as f:
             for single_text in tqdm(corpus):
-                single_text = str(single_text)
-                if any(w[0] in single_text and w[1] in single_text for w in word_pairs):
-                    f.write(single_text + '\n')
+                for single_sentence in split_sentence(str(single_text)):
+                    if any(w[0] in single_sentence and w[1] in single_sentence for w in word_pairs):
+                        f.write(single_sentence + '\n')
     with open(path) as f:
         output = f.read().split('\n')
-    print('\t * finish filtering: {} --> {}'.format(len(corpus), len(output)))
+    print('\t * finish filtering: {} documents --> {} sentences'.format(len(corpus), len(output)))
     return output
 
 
@@ -45,7 +48,7 @@ if __name__ == '__main__':
     # filter the corpus
     path_filtered_corpus = '{}/filtered_wiki.txt'.format(export_dir)
     text = filter_text(text, all_word_pairs, path_filtered_corpus)
-    
+
 
 
 
