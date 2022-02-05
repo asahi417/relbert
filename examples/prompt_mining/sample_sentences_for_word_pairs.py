@@ -26,7 +26,7 @@ def filter_text(corpus, word_pairs, path):
         with open(path, 'w') as f:
             for single_text in tqdm(corpus):
                 for single_sentence in split_sentence(str(single_text)):
-                    tokens = single_sentence.split(' ')
+                    tokens = single_sentence.lower().split(' ')
                     in_word_pairs = [w for w in word_pairs if w[0] in tokens and w[1] in tokens]
                     if len(in_word_pairs) == 0:
                         continue
