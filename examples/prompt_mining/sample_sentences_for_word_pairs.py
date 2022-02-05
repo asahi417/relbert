@@ -29,8 +29,6 @@ def filter_text(corpus, word_pairs, path):
                 for single_sentence in split_sentence(str(single_text)):
                     tokens = single_sentence.split(' ')
                     if any(w[0] in tokens and w[1] in tokens for w in word_pairs):
-                        print([w for w in word_pairs if w[0] in tokens and w[1] in tokens])
-                        input(single_sentence)
                         f.write(single_sentence + '\n')
     with open(path) as f:
         output = f.read().split('\n')
