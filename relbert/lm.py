@@ -86,7 +86,7 @@ class EncodePlus:
         else:
             sentence = custom_prompter(word_pair, self.custom_template, self.tokenizer.mask_token)
         encode = self.tokenizer.encode_plus(sentence, **param)
-        if self.truncate_exceed_tokens:
+        if not self.truncate_exceed_tokens:
             assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
         encode['labels'] = self.input_ids_to_labels(encode['input_ids'])
         if self.trigger_mode:
