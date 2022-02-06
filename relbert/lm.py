@@ -46,7 +46,8 @@ class EncodePlus:
                  custom_template: str = 'a',
                  template: Dict = None,
                  mode: str = 'average',
-                 trigger_mode: bool = False):
+                 trigger_mode: bool = False,
+                 truncate_exceed_tokens: bool = True):
         assert custom_template or template
         self.custom_template = custom_template
         self.template = template
@@ -54,6 +55,7 @@ class EncodePlus:
         self.tokenizer = tokenizer
         self.max_length = self.tokenizer.model_max_length
         self.mode = mode
+        self.truncate_exceed_tokens = truncate_exceed_tokens
         if max_length is not None:
             assert self.max_length >= max_length, '{} < {}'.format(self.max_length, max_length)
             self.max_length = max_length
@@ -81,11 +83,11 @@ class EncodePlus:
             for i in top + mid + bottom:
                 token_ids[token_ids.index(-100)] = i
             sentence = self.tokenizer.decode(token_ids)
-            # print(token_ids, sentence)
         else:
             sentence = custom_prompter(word_pair, self.custom_template, self.tokenizer.mask_token)
         encode = self.tokenizer.encode_plus(sentence, **param)
-        assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
+        if self.truncate_exceed_tokens:
+            assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
         encode['labels'] = self.input_ids_to_labels(encode['input_ids'])
         if self.trigger_mode:
             # binary mask for trigger tokens
@@ -112,7 +114,8 @@ class RelBERT:
                  max_length: int = 64,
                  cache_dir: str = None,
                  mode: str = 'average_no_mask',
-                 template_type: str = 'a'):
+                 template_type: str = 'a',
+                 truncate_exceed_tokens: bool = True):
         """ Get embedding from transformers language model.
 
         Parameters
@@ -132,6 +135,7 @@ class RelBERT:
         # assert 'bert' in model, '{} is not BERT'.format(model)
         self.model_name = model
         self.cache_dir = cache_dir
+        self.truncate_exceed_tokens = truncate_exceed_tokens
         try:
             self.tokenizer = transformers.AutoTokenizer.from_pretrained(model, cache_dir=cache_dir)
         except ValueError:
@@ -257,7 +261,8 @@ class RelBERT:
             negative_sample_list = ListKeeper([negative_samples[k] for k in key])
 
         shared = {'tokenizer': self.tokenizer, 'max_length': self.max_length, 'mode': self.mode,
-                  'template': self.template, 'custom_template': self.custom_template}
+                  'template': self.template, 'custom_template': self.custom_template,
+                  'truncate_exceed_tokens': self.truncate_exceed_tokens}
 
         def pool_map(_list):
             pool = Pool()

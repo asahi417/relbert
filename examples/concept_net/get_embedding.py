@@ -12,7 +12,7 @@ BATCH = int(os.getenv("BATCH", "32"))
 CHUNK = int(os.getenv("BATCH", "3200"))
 
 concept_net_processed_file_dir = './examples/concept_net/data'
-model = RelBERT(MODEL_ALIAS)
+model = RelBERT(MODEL_ALIAS, max_length=128)
 
 # get word_pairs
 word_pairs = []
