@@ -6,6 +6,7 @@ from glob import glob
 from relbert import RelBERT
 from gensim.models import KeyedVectors
 
+
 MODEL_ALIAS = os.getenv("MODEL_ALIAS", "asahi417/relbert-roberta-large")
 GENSIM_FILE = os.getenv("GENSIM_FILE", "examples/concept_net/relbert_embedding")
 BATCH = int(os.getenv("BATCH", "32"))
@@ -20,6 +21,11 @@ for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
     with open(i) as f:
         tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
     word_pairs += [(os.path.basename(t['arg1']), os.path.basename(t['arg2'])) for t in tmp]
+# remove single character
+word_pairs = [(a, b) for a, b in word_pairs if len(a) != 1 and len(b) != 1]
+# remove duplicate
+word_pairs = [t for t in (set(tuple(i) for i in word_pairs))]
+
 print('found {} word pairs'.format(len(word_pairs)))
 
 # cache embeddings
@@ -47,5 +53,5 @@ with open('{}.txt'.format(GENSIM_FILE), 'w', encoding='utf-8') as f:
 
 print('Convert to binary file')
 model = KeyedVectors.load_word2vec_format('{}.txt'.format(GENSIM_FILE))
-model.wv.save_word2vec_format(GENSIM_FILE, binary=True)
+model.wv.save_word2vec_format('{}.bin'.format(GENSIM_FILE), binary=True)
 os.remove('{}.txt'.format(GENSIM_FILE))
