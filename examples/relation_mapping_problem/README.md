@@ -26,3 +26,10 @@ The [dataset file](./data.jsonl) is a jsonline where each line is a json data co
 Given `source` and `target_random`, the task is to predict the correct order of `target_random` so that it matches `target`.
 In average 7 terms are in the set, so the total number of possible order is 5040.
   
+
+## Approach
+As an approach to solve the relation mapping with RelBERT (or relation embedding model in general), we can follow something like this.
+In a permutation `P:=[(a_1, b_1), ..., (a_7, b_7)]`, we compute a relation embedding of each word pair `(a_i, b_i)`
+and intuitively the permutation is valid if all the word pairs hold same relation, meaning their relation embeddings are
+close each other. So we can somehow calculate coherence of the relation embeddings and choose the most coherent permutation. 
+
