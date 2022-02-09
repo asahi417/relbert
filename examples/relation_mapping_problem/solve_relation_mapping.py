@@ -45,15 +45,15 @@ if __name__ == '__main__':
 
     for data_id, i in enumerate(data):
         print('Processing {}/{}'.format(data_id + 1, len(data)))
-        # pred_as_ro = analogy_score(i['source'], i['target_random'],
-        #                            model='roberta-large',
-        #                            cache_file='cache/analogy_score.roberta_large.{}.json'.format(data_id))
+        pred_as_ro = analogy_score(i['source'], i['target_random'],
+                                   model='roberta-large',
+                                   cache_file='cache/analogy_score.roberta_large.{}.json'.format(data_id))
         # print(pred_as_ro)
         # prediction = analogy_score(i['source'], i['target_random'],
         #                            model='gpt2-xl',
         #                            cache_file='cache/analogy_score.gpt2_Xl.{}.json'.format(data_id))
-        prediction = analogy_score(i['source'], i['target_random'],
-                                   model='bert-large-cased',
-                                   cache_file='cache/analogy_score.bert_large_cased.{}.json'.format(data_id))
-        print(prediction)
-        input(i['target'])
+        # prediction = analogy_score(i['source'], i['target_random'],
+        #                            model='bert-large-cased',
+        #                            cache_file='cache/analogy_score.bert_large_cased.{}.json'.format(data_id))
+        print(pred_as_ro)
+        print(i['target'])
