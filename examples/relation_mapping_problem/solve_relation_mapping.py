@@ -70,6 +70,7 @@ def compute_score(source_list,
         # scores for all possible pairs apart from the reference
         score = model_input['{}-{}'.format(source_n, target_n)]
         # matrix of assignment cost: source x target
+        print(size, len(score))
         matrix = np.array([score[size * i:size * (1 + i)] for i in range(size)])
         print(matrix)
         # compute the cheapest assignments and get the overall cost by summing up each cost
