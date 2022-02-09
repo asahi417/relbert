@@ -71,9 +71,7 @@ def compute_score(source_list,
         # scores for all possible pairs apart from the reference
         score = model_input['{}-{}'.format(source_n, target_n)]
         # matrix of assignment cost: source x target
-        print(size, len(score))
         matrix = np.array([score[size * i:size * (1 + i)] for i in range(size)])
-        print(matrix)
         # compute the cheapest assignments and get the overall cost by summing up each cost
         best_assignment = m.compute(matrix)
         scores['{}-{}'.format(source_n, target_n)] = np.sum([matrix[a][b] for a, b in best_assignment])
@@ -86,8 +84,8 @@ def compute_score(source_list,
     best_assignment = assignments[best_assignment_key]
     # get the final order of the target term
     target_order = [i[1] for i in best_assignment]
-    print(target_order)
-    return target_order
+    target_list_fixed = [target_list[i] for i in target_order]
+    return target_list_fixed
 
 
 if __name__ == '__main__':
@@ -102,6 +100,7 @@ if __name__ == '__main__':
         pred = compute_score(
             i['source'], i['target_random'], model_type='analogy_score', model='roberta-large',
             cache_file='cache/analogy_score.roberta_large.{}.json'.format(data_id))
+        print(pred)
         accuracy['analogy_score (roberta)'].append(int(pred == i['target']))
 
         print('Processing [RelBERT] {}/{}'.format(data_id + 1, len(data)))
