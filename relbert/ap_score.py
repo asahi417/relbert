@@ -200,7 +200,7 @@ class AnalogyScore:
         )
         return data_loader, partition
 
-    def get_perplexity(self, word_pairs: List, template_type: str = 'is-to-what', batch_size: int = 16):
+    def get_perplexity(self, word_pairs: List, template_type: str = 'is-to-what', batch_size: int = 32):
         """ (pseudo) Perplexity """
         data_loader, partition = self.batch_encode_plus_perplexity(
             template_type=template_type,
