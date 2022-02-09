@@ -15,27 +15,36 @@ def analogy_score(source_list, target_list, cache_file='tmp.json', model='bert-l
         "bert-large-cased": {"weight_head": -0.2, "weight_tail": -0.4, "template": 'what-is-to',
                              "positive_permutation": 4, "negative_permutation": 4, "weight_negative": 0.2}
     }
-    config = configs[model]
-    scorer = AnalogyScore(model=model)
-    perms = list(permutations(target_list))
     if os.path.exists(cache_file):
         with open(cache_file) as f:
-            scores = json.load(f)
+            model_input = json.load(f)
     else:
-        scores = {}
-        for n, candidate in enumerate(perms):
-            print('\t permutation: {}/{}'.format(n + 1, len(perms)))
-            score = scorer.analogy_score(query_word_pair=[source_list[0], candidate[0]],
-                                         option_word_pairs=[[source_list[i+1], candidate[i+1]] for i in range(len(source_list) - 1)],
-                                         batch_size=int(256*4),
-                                         **config)
-            scores[str(n)] = score
+        config = configs[model]
+        scorer = AnalogyScore(model=model)
+        model_input = {}
+        size = len(source_list)
+        for source_n in range(size):
+            for target_n in range(size):
+                query = [source_list[source_n], target_list[target_n]]
+                options = []
+                for source_pair_n in range(size):
+                    if source_n == source_pair_n:
+                        continue
+                    for target_pair_n in range(size):
+                        if target_n == target_pair_n:
+                            continue
+                        options.append([source_list[source_pair_n], target_list[target_pair_n]])
+                score = scorer.analogy_score(query_word_pair=query, option_word_pairs=options, batch_size=1024,
+                                             **config)
+                key = '-'.join([str(source_n), str(target_n)])
+                model_input[key] = score
         with open(cache_file, 'w') as f:
-            json.dump(scores, f)
-    score = [(k, aggregation(v)) for k, v in scores.items()]
-    pred = int(sorted(score, key=lambda x: x[1], reverse=True)[0][0])
-    pred_permutation = perms[pred]
-    return pred_permutation
+            json.dump(model_input, f)
+    print(model_input)
+    # score = [(k, aggregation(v)) for k, v in scores.items()]
+    # pred = int(sorted(score, key=lambda x: x[1], reverse=True)[0][0])
+    # pred_permutation = perms[pred]
+    # return pred_permutation
 
 
 if __name__ == '__main__':

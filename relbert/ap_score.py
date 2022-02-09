@@ -214,14 +214,16 @@ class AnalogyScore:
                       option_word_pairs: List,
                       weight_head: float = 0.5,
                       weight_tail: float = 0.5,
+                      score_type: str = 'pmi',
                       template: str = 'is-to-what',
                       batch_size: int = 32,
                       positive_permutation: int = 0,
                       negative_permutation: int = None,
                       weight_negative: float = 1.0):
 
+        length = len(option_word_pairs)
+
         def compute_negative_pmi(ppl):
-            length = len(option_word_pairs)
 
             # conditional negative log likelihood (fixed head and tail tokens)
             ppl_in_option = list(map(lambda x: ppl[length * x + x], range(length)))
@@ -239,23 +241,30 @@ class AnalogyScore:
             neg_pmi = list(map(
                 lambda x: x[0] - weight_head * x[1] - weight_tail * x[2],
                 zip(negative_log_likelihood_cond, negative_log_likelihood_mar_h, negative_log_likelihood_mar_t)))
-
             return neg_pmi
 
-        # setup language model/data
-        option_combination = list(chain(*[[[i[0], m[1]] for m in option_word_pairs] for i in option_word_pairs]))
-        model_input = [query_word_pair + list(i) for i in option_combination]
+        if score_type == 'pmi':
+            # setup language model/data
+            option_word_pairs = list(chain(*[[[i[0], m[1]] for m in option_word_pairs] for i in option_word_pairs]))
+
+        model_input = [query_word_pair + list(i) for i in option_word_pairs]
 
         logging.info('get prediction from language model')
         model_input_positive = [get_permutation(i)[positive_permutation] for i in model_input]
         ppl_positive = self.get_perplexity(model_input_positive, batch_size=batch_size, template_type=template)
-        score = compute_negative_pmi(ppl_positive)
+        if score_type == 'pmi':
+            score = compute_negative_pmi(ppl_positive)
+        else:
+            score = ppl_positive
 
         if negative_permutation is not None:
             logging.info('get prediction from language model (negative permutation)')
             model_input_negative = [get_permutation(i, positive=False)[negative_permutation] for i in model_input]
             ppl_negative = self.get_perplexity(model_input_negative, batch_size=batch_size, template_type=template)
-            score_negative = compute_negative_pmi(ppl_negative)
+            if score_type == 'pmi':
+                score_negative = compute_negative_pmi(ppl_negative)
+            else:
+                score_negative = ppl_negative
         else:
             score_negative = [0] * len(score)
         score = [neg * weight_negative - pos for neg, pos in zip(score_negative, score)]
