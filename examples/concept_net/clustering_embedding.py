@@ -6,8 +6,8 @@ import hdbscan
 from gensim.models import KeyedVectors
 
 # load gensim model
-model = KeyedVectors.load_word2vec_format("./relbert_embedding.bin", binary=True)
-concept_net_processed_file_dir = 'data'
+model = KeyedVectors.load_word2vec_format("data/relbert_embedding.bin", binary=True)
+concept_net_processed_file_dir = 'data/conceptnet'
 
 
 for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):

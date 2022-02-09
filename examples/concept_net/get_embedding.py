@@ -8,11 +8,11 @@ from gensim.models import KeyedVectors
 
 
 MODEL_ALIAS = os.getenv("MODEL_ALIAS", "asahi417/relbert-roberta-large")
-GENSIM_FILE = os.getenv("GENSIM_FILE", "./relbert_embedding")
+GENSIM_FILE = os.getenv("GENSIM_FILE", "./data/relbert_embedding")
 BATCH = int(os.getenv("BATCH", "32"))
 CHUNK = int(os.getenv("BATCH", "3200"))
 
-concept_net_processed_file_dir = './data'
+concept_net_processed_file_dir = './data/conceptnet'
 model = RelBERT(MODEL_ALIAS, max_length=128)
 
 # get word_pairs
