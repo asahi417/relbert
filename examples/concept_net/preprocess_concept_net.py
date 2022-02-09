@@ -55,7 +55,7 @@ from tqdm import tqdm
 from glob import glob
 from datasets import load_dataset
 
-export_dir = './examples/concept_net/data'
+export_dir = './data'
 os.makedirs(export_dir, exist_ok=True)
 dataset = load_dataset("conceptnet5", "conceptnet5", split="train")
 dataset = dataset.filter(lambda example: example['lang'] == 'en')

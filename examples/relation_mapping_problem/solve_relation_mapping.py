@@ -100,7 +100,6 @@ if __name__ == '__main__':
         pred = compute_score(
             i['source'], i['target_random'], model_type='analogy_score', model='roberta-large',
             cache_file='cache/analogy_score.roberta_large.{}.json'.format(data_id))
-        print(pred)
         accuracy['analogy_score (roberta)'].append(int(pred == i['target']))
 
         print('Processing [RelBERT] {}/{}'.format(data_id + 1, len(data)))

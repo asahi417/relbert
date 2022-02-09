@@ -53,5 +53,10 @@ if __name__ == '__main__':
 
 
 
+{'sentence': 'This New Deal-era mural was designed by the Italian artist Attilio Pusterla and painted by him and a team of artists working under his direction from 1934 and 1936, under sponsorship from the Federal Art Project of the Works Project Administration.', 'word_pairs': [['artist', 'art']]}
+{'sentence': 'He was the minister of Bukka-devaraya of the Yadava Dynasty of Karnataka, his younger brother was Sayana, and Bhogantha, father was Mayana and Mother Srimati.', 'word_pairs': [['father', 'mother']]}
+{'sentence': '\n\nA 2018 article by Popular Science suggests that "Dark mode is easier on the eyes and battery" and displaying white on full brightness uses roughly six times as much power as pure black on a Google Pixel, which has an OLED display.', 'word_pairs': [['black', 'white']]}
+{'sentence': '\n\nIssues with the web\n\nSome argue that a color scheme with light text on a dark background is easier to read on the screen, because the lower overall brightness causes less eyestrain.', 'word_pairs': [['dark', 'light']]}
+{'sentence': 'This South Stream pipeline would extend under the Black Sea to Bulgaria with a south fork to Italy and a north fork to Hungary.', 'word_pairs': [['north', 'south']]}
 
 

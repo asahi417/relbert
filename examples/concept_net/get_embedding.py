@@ -8,21 +8,25 @@ from gensim.models import KeyedVectors
 
 
 MODEL_ALIAS = os.getenv("MODEL_ALIAS", "asahi417/relbert-roberta-large")
-GENSIM_FILE = os.getenv("GENSIM_FILE", "examples/concept_net/relbert_embedding")
+GENSIM_FILE = os.getenv("GENSIM_FILE", "./relbert_embedding")
 BATCH = int(os.getenv("BATCH", "32"))
 CHUNK = int(os.getenv("BATCH", "3200"))
 
-concept_net_processed_file_dir = './examples/concept_net/data'
+concept_net_processed_file_dir = './data'
 model = RelBERT(MODEL_ALIAS, max_length=128)
 
 # get word_pairs
+
+
+def get_term(arg):
+    return arg.split('/en/')[-1].split('/')[0]
+
+
 word_pairs = []
 for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
     with open(i) as f:
         tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
-    word_pairs += [(os.path.basename(t['arg1']), os.path.basename(t['arg2'])) for t in tmp]
-# remove single character
-word_pairs = [(a, b) for a, b in word_pairs if len(a) != 1 and len(b) != 1]
+    word_pairs += [(get_term(t['arg1']), get_term(t['arg2'])) for t in tmp]
 # remove duplicate
 word_pairs = [t for t in (set(tuple(i) for i in word_pairs))]
 
