@@ -7,7 +7,6 @@ from typing import Dict
 
 import torch
 from torch import nn
-from torch.utils.tensorboard import SummaryWriter
 
 from .lm import RelBERT
 from .data import get_training_data
@@ -103,8 +102,6 @@ class BaseTrainer:
         epoch_save : int
             Epoch to run validation eg) Every 100000 epoch, it will save model weight as default.
         """
-        writer = SummaryWriter(log_dir=self.config.cache_dir)
-
         if self.config.parent_contrast:
             param = self.preprocess(self.all_positive, self.all_negative, self.relation_structure)
         else:
@@ -121,21 +118,20 @@ class BaseTrainer:
                     dataset = Dataset(deterministic_index=bi, **param)
                     loader = torch.utils.data.DataLoader(
                         dataset, batch_size=self.config.batch, shuffle=True, num_workers=num_workers, drop_last=True)
-                    mean_loss, global_step = self.train_single_epoch(loader, global_step=global_step, writer=writer)
+                    mean_loss, global_step = self.train_single_epoch(loader, global_step=global_step)
                     inst_lr = self.optimizer.param_groups[0]['lr']
                     logging.info('[epoch {}/{}, batch_id {}/{}] average loss: {}, lr: {}'.format(
                         e, self.config.epoch, n, self.n_trial, round(mean_loss, 3), inst_lr))
                 if (e + 1) % epoch_save == 0 and (e + 1) != 0:
                     self.save(e)
 
-        writer.close()
         self.save(e)
         logging.info('complete training: model ckpt was saved at {}'.format(self.checkpoint_dir))
 
     def model_output(self, encode):
         raise NotImplementedError
 
-    def train_single_epoch(self, data_loader, global_step: int, writer):
+    def train_single_epoch(self, data_loader, global_step: int):
         total_loss = 0
         bce = nn.BCELoss()
         step_in_epoch = len(data_loader)
@@ -169,11 +165,6 @@ class BaseTrainer:
             self.scaler.scale(loss).backward()
 
             inst_loss = loss.cpu().item()
-            writer.add_scalar('train/loss', inst_loss, global_step)
-
-            # update optimizer
-            inst_lr = self.optimizer.param_groups[0]['lr']
-            writer.add_scalar('train/learning_rate', inst_lr, global_step)
 
             # aggregate average loss over epoch
             total_loss += inst_loss
