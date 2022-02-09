@@ -215,7 +215,7 @@ class AnalogyScore:
                       weight_head: float = 0.5,
                       weight_tail: float = 0.5,
                       template: str = 'is-to-what',
-                      batch_size: int = 8,
+                      batch_size: int = 32,
                       positive_permutation: int = 0,
                       negative_permutation: int = None,
                       weight_negative: float = 1.0):
