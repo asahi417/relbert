@@ -66,6 +66,7 @@ def compute_score(source_list,
     scores = {}
     assignments = {}
     m = Munkres()
+    size = size - 1
     for n, (source_n, target_n) in enumerate(product(range(size), range(size))):
         # scores for all possible pairs apart from the reference
         score = model_input['{}-{}'.format(source_n, target_n)]
