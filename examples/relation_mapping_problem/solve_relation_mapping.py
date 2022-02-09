@@ -27,7 +27,7 @@ def analogy_score(source_list, target_list, cache_file='tmp.json', model='bert-l
             print('\t permutation: {}/{}'.format(n + 1, len(perms)))
             score = scorer.analogy_score(query_word_pair=[source_list[0], candidate[0]],
                                          option_word_pairs=[[source_list[i+1], candidate[i+1]] for i in range(len(source_list) - 1)],
-                                         batch_size=256,
+                                         batch_size=int(256*4),
                                          **config)
             scores[str(n)] = score
         with open(cache_file, 'w') as f:
