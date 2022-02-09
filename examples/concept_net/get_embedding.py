@@ -9,8 +9,8 @@ from gensim.models import KeyedVectors
 
 MODEL_ALIAS = os.getenv("MODEL_ALIAS", "asahi417/relbert-roberta-large")
 GENSIM_FILE = os.getenv("GENSIM_FILE", "./data/relbert_embedding")
-BATCH = int(os.getenv("BATCH", "32"))
-CHUNK = int(os.getenv("BATCH", "3200"))
+BATCH = int(os.getenv("BATCH", "1024"))
+CHUNK = int(os.getenv("CHUNK", "10240"))
 
 concept_net_processed_file_dir = './data/conceptnet'
 model = RelBERT(MODEL_ALIAS, max_length=128)
