@@ -1,6 +1,6 @@
 import os
 import json
-from itertools import permutations
+from itertools import permutations, product
 from relbert import AnalogyScore, RelBERT
 
 os.makedirs('cache', exist_ok=True)
@@ -23,21 +23,21 @@ def analogy_score(source_list, target_list, cache_file='tmp.json', model='bert-l
         scorer = AnalogyScore(model=model)
         model_input = {}
         size = len(source_list)
-        for source_n in range(size):
-            for target_n in range(size):
-                query = [source_list[source_n], target_list[target_n]]
-                options = []
-                for source_pair_n in range(size):
-                    if source_n == source_pair_n:
+        for n, (source_n, target_n) in enumerate(product(range(size), range(size))):
+            print('\t compute score: {}/{}'.format(n + 1, size*size))
+            query = [source_list[source_n], target_list[target_n]]
+            options = []
+            for source_pair_n in range(size):
+                if source_n == source_pair_n:
+                    continue
+                for target_pair_n in range(size):
+                    if target_n == target_pair_n:
                         continue
-                    for target_pair_n in range(size):
-                        if target_n == target_pair_n:
-                            continue
-                        options.append([source_list[source_pair_n], target_list[target_pair_n]])
-                score = scorer.analogy_score(query_word_pair=query, option_word_pairs=options, batch_size=1024,
-                                             **config)
-                key = '-'.join([str(source_n), str(target_n)])
-                model_input[key] = score
+                    options.append([source_list[source_pair_n], target_list[target_pair_n]])
+            score = scorer.analogy_score(query_word_pair=query, option_word_pairs=options, batch_size=1024,
+                                         **config)
+            key = '-'.join([str(source_n), str(target_n)])
+            model_input[key] = score
         with open(cache_file, 'w') as f:
             json.dump(model_input, f)
     print(model_input)

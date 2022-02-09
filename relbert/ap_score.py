@@ -283,6 +283,6 @@ if __name__ == '__main__':
     _options = [['paint', 'portrait'], ['poetry', 'rhythm'], ['note', 'music'], ['tale', 'story'], ['week', 'year']]
 
     _scorer = AnalogyScore(config_roberta.pop('model'))
-    _s = _scorer.analogy_score(_q, _options, **config_roberta)
+    _s = _scorer.analogy_score(_q, _options, score_type='ppl', **config_roberta)
     print(_s)
     print(_options[_s.index(max(_s))])
