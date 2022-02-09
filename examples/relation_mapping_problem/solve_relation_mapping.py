@@ -71,9 +71,10 @@ def compute_score(source_list,
         score = model_input['{}-{}'.format(source_n, target_n)]
         # matrix of assignment cost: source x target
         matrix = np.array([score[size * i:size * (1 + i)] for i in range(size)])
+        print(matrix)
         # compute the cheapest assignments and get the overall cost by summing up each cost
         best_assignment = m.compute(matrix)
-        scores['{}-{}'.format(source_n, target_n)] = np.sum([matrix[a, b] for a, b in best_assignment])
+        scores['{}-{}'.format(source_n, target_n)] = np.sum([matrix[a][b] for a, b in best_assignment])
         # get the best assignment's pairs
         best_assignment = [[a if a < source_n else a + 1, b if b < target_n else b + 1] for a, b in best_assignment]
         best_assignment = best_assignment + [[source_n, target_n]]
