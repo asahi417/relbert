@@ -15,8 +15,6 @@ CHUNK = int(os.getenv("CHUNK", "10240"))
 concept_net_processed_file_dir = './data/conceptnet'
 model = RelBERT(MODEL_ALIAS, max_length=128)
 
-# get word_pairs
-
 
 def get_term(arg):
     return arg.split('/en/')[-1].split('/')[0]
