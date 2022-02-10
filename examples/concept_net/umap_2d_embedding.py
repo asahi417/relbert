@@ -21,13 +21,15 @@ def get_term(arg):
 if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
         not os.path.exists('data/conceptnet_2d_embeddings.relation_type.txt'):
 
-    top_n = 10
+    top_n = 20
     max_sample_size = 1000
     sample_size = 100000
     concept_net_processed_file_dir = 'data/conceptnet'
     data = {}
     for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
         relation_type = os.path.basename(i).replace('.jsonl', '').replace('cache_', '')
+        if relation_type == 'None':
+            continue
         with open(i) as f:
             tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
             tmp = [(get_term(i['arg1']), get_term(i['arg2'])) for i in tmp]
