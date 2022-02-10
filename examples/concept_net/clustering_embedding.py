@@ -50,7 +50,12 @@ for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
         keys.append(key)
         embeddings.append(model[key])
     data = np.stack(embeddings)  # data x dimension
+
+    # clustering
     clusterer = hdbscan.HDBSCAN()
     clusterer.fit(data)
     print('{} clusters'.format(clusterer.labels_.max()))
     cluster_info[relation_type] = {k: i for i, k in zip(clusterer.labels_, keys) if i != -1}
+
+with open('data/conceptnet_clusters.json', 'w') as f:
+    json.dump(cluster_info, f)
