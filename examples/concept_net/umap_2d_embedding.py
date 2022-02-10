@@ -18,10 +18,11 @@ from gensim.models import KeyedVectors
 def get_term(arg):
     return arg.split('/en/')[-1].split('/')[0]
 
+
 if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
         not os.path.exists('data/conceptnet_2d_embeddings.relation_type.txt'):
 
-    top_n = 20
+    top_n = 10
     max_sample_size = 1000
     sample_size = 100000
     concept_net_processed_file_dir = 'data/conceptnet'
@@ -37,7 +38,6 @@ if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
         data[relation_type] = tmp
     top_types = [a for a, b in sorted(data.items(), key=lambda kv: len(kv[1]), reverse=True)[:top_n]]
     size = {k: min(max_sample_size, len(v)) for k, v in data.items()}
-
 
     # load gensim model
     print('Collect embeddings')
@@ -88,9 +88,8 @@ scatter = plt.scatter(
 )
 plt.gca().set_aspect('equal', 'datalim')
 plt.title('2-d Embedding Space', fontsize=12)
-plt.legend(handles=scatter.legend_elements()[0],
+plt.legend(handles=scatter.legend_elements(num=len(relation_type_dict))[0],
            labels=unique_relation_types,
            bbox_to_anchor=(1.04, 1),
            borderaxespad=0)
-# plt.legend(fontsize=2)
 plt.savefig('data/conceptnet_2d_embeddings.png', bbox_inches='tight')
