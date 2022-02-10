@@ -18,46 +18,42 @@ from gensim.models import KeyedVectors
 def get_term(arg):
     return arg.split('/en/')[-1].split('/')[0]
 
-
-top_n = 10
-max_sample_size = 1000
-sample_size = 100000
-concept_net_processed_file_dir = 'data/conceptnet'
-stats = {}
-for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
-    relation_type = os.path.basename(i).replace('.jsonl', '')
-    with open(i) as f:
-        tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
-    stats[relation_type] = len(tmp)
-stats = {k: min(max_sample_size, int(v * sample_size / sum(stats.values()))) for k, v in stats.items()}
-top_types = [a for a, b in sorted(stats.items(), key=lambda kv: kv[1], reverse=True)[:top_n]]
-
 if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
         not os.path.exists('data/conceptnet_2d_embeddings.relation_type.txt'):
 
+    top_n = 10
+    max_sample_size = 1000
+    sample_size = 100000
+    concept_net_processed_file_dir = 'data/conceptnet'
+    data = {}
+    for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
+        relation_type = os.path.basename(i).replace('.jsonl', '').replace('cache_', '')
+        with open(i) as f:
+            tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
+            tmp = [(get_term(i['arg1']), get_term(i['arg2'])) for i in tmp]
+            tmp = [i for i in tmp if '_' not in i[0] and '_' not in i[1]]
+        data[relation_type] = tmp
+    top_types = [a for a, b in sorted(data.items(), key=lambda kv: len(kv[1]), reverse=True)[:top_n]]
+    size = {k: min(max_sample_size, len(v)) for k, v in data.items()}
+
+
     # load gensim model
+    print('Collect embeddings')
     model = KeyedVectors.load_word2vec_format("data/relbert_embedding.bin", binary=True)
 
     embeddings = []
     relation_types = []
-    for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
-        relation_type = os.path.basename(i).replace('.jsonl', '')
+    for relation_type, v in data.items():
         if relation_type not in top_types:
             continue
-
-        print('relation type: {}'.format(relation_type))
-        with open(i) as f:
-            tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
-
         # down sample
         seed(0)
-        shuffle(tmp)
-        tmp = tmp[:stats[relation_type]]
+        shuffle(v)
+        v = v[:size[relation_type]]
 
         # get embedding
-        for _tmp in tmp:
-            key = '{}__{}'.format(get_term(_tmp['arg1']), get_term(_tmp['arg2']))
-            embeddings.append(model[key])
+        for a, b in v:
+            embeddings.append(model['{}__{}'.format(a, b)])
             relation_types.append(relation_type)
 
     data = np.stack(embeddings)  # data x dimension
@@ -72,8 +68,11 @@ else:
     embedding_2d = np.load('data/conceptnet_2d_embeddings.npy')
     with open('data/conceptnet_2d_embeddings.relation_type.txt') as f:
         relation_types = [i for i in f.read().split('\n') if len(i) > 0]
+
+print('Embedding shape: {}'.format(embedding_2d.shape))
 assert len(embedding_2d) == len(relation_types)
-print(embedding_2d.shape)
+
+print('Plot')
 unique_relation_types = sorted(list(set(relation_types)))
 relation_type_dict = {v: n for n, v in enumerate(unique_relation_types)}
 
@@ -88,7 +87,7 @@ scatter = plt.scatter(
 plt.gca().set_aspect('equal', 'datalim')
 plt.title('2-d Embedding Space', fontsize=12)
 plt.legend(handles=scatter.legend_elements()[0],
-           labels=[i.replace('cache_', '') for i in unique_relation_types],
+           labels=unique_relation_types,
            bbox_to_anchor=(1.04, 1),
            borderaxespad=0)
 # plt.legend(fontsize=2)
