@@ -14,34 +14,37 @@ import seaborn as sns
 from umap import UMAP
 from gensim.models import KeyedVectors
 
+
+def get_term(arg):
+    return arg.split('/en/')[-1].split('/')[0]
+
+
+top_n = 10
+max_sample_size = 1000
+sample_size = 100000
+concept_net_processed_file_dir = 'data/conceptnet'
+stats = {}
+for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
+    relation_type = os.path.basename(i).replace('.jsonl', '')
+    with open(i) as f:
+        tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
+    stats[relation_type] = len(tmp)
+stats = {k: min(max_sample_size, int(v * sample_size / sum(stats.values()))) for k, v in stats.items()}
+top_types = [a for a, b in sorted(stats.items(), key=lambda kv: kv[1], reverse=True)[:top_n]]
+
 if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
         not os.path.exists('data/conceptnet_2d_embeddings.relation_type.txt'):
-    sample_size = 100000
+
     # load gensim model
     model = KeyedVectors.load_word2vec_format("data/relbert_embedding.bin", binary=True)
-    concept_net_processed_file_dir = 'data/conceptnet'
-
-
-    def get_term(arg):
-        return arg.split('/en/')[-1].split('/')[0]
-
-
-    stats = {}
-    for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
-        relation_type = os.path.basename(i).replace('.jsonl', '')
-        with open(i) as f:
-            tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
-        stats[relation_type] = len(tmp)
-    print('Raw')
-    print(stats)
-    stats = {k: int(v * sample_size/sum(stats.values())) for k, v in stats.items()}
-    print('Down sampled')
-    print(stats)
 
     embeddings = []
     relation_types = []
     for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
         relation_type = os.path.basename(i).replace('.jsonl', '')
+        if relation_type not in top_types:
+            continue
+
         print('relation type: {}'.format(relation_type))
         with open(i) as f:
             tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
@@ -57,7 +60,6 @@ if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
             embeddings.append(model[key])
             relation_types.append(relation_type)
 
-    relation_type_dict = {v: n for n, v in enumerate(sorted(list(set(relation_types))))}
     data = np.stack(embeddings)  # data x dimension
 
     # dimension reduction
@@ -70,19 +72,24 @@ else:
     embedding_2d = np.load('data/conceptnet_2d_embeddings.npy')
     with open('data/conceptnet_2d_embeddings.relation_type.txt') as f:
         relation_types = [i for i in f.read().split('\n') if len(i) > 0]
-    relation_type_dict = {v: n for n, v in enumerate(sorted(list(set(relation_types))))}
 assert len(embedding_2d) == len(relation_types)
-
+print(embedding_2d.shape)
+unique_relation_types = sorted(list(set(relation_types)))
+relation_type_dict = {v: n for n, v in enumerate(unique_relation_types)}
 
 plt.figure()
-plt.scatter(
+scatter = plt.scatter(
     embedding_2d[:, 0],
     embedding_2d[:, 1],
-    s=5,
-    c=[sns.color_palette('Spectral', len(relation_type_dict))[relation_type_dict[x]] for x in relation_types],
-    label=relation_types
+    s=2,
+    c=[relation_type_dict[i] for i in relation_types],
+    cmap=sns.color_palette('Spectral', len(relation_type_dict), as_cmap=True)
 )
 plt.gca().set_aspect('equal', 'datalim')
 plt.title('2-d Embedding Space', fontsize=12)
-plt.legend(fontsize=4)
+plt.legend(handles=scatter.legend_elements()[0],
+           labels=[i.replace('cache_', '') for i in unique_relation_types],
+           bbox_to_anchor=(1.04, 1),
+           borderaxespad=0)
+# plt.legend(fontsize=2)
 plt.savefig('data/conceptnet_2d_embeddings.png', bbox_inches='tight')
