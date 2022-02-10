@@ -50,15 +50,19 @@ for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
         embeddings.append(model[key])
         relation_types.append(relation_type)
 
-relation_type_dict = {n: v for n, v in enumerate(sorted(list(set(relation_types))))}
+relation_type_dict = {v: n for n, v in enumerate(sorted(list(set(relation_types))))}
 data = np.stack(embeddings)  # data x dimension
 
 # dimension reduction
+print('UMAP training'.format(data.shape))
 embedding_2d = UMAP().fit_transform(data)
-print(embedding_2d.shape)
-plt.scatter(
-    embedding_2d[:, 0],
-    embedding_2d[:, 1],
-    c=[sns.color_palette()[x] for x in keys)])
-plt.gca().set_aspect('equal', 'datalim')
-plt.title('UMAP projection of the Penguin dataset', fontsize=24)
+np.save('data/conceptnet_2d_embeddings.npy', embedding_2d)
+# print(embedding_2d.shape)
+# plt.scatter(
+#     embedding_2d[:, 0],
+#     embedding_2d[:, 1],
+#     c=[sns.color_palette()[relation_type_dict[x]] for x in relation_types)]
+#
+# )
+# plt.gca().set_aspect('equal', 'datalim')
+# plt.title('UMAP projection of the Penguin dataset', fontsize=24)
