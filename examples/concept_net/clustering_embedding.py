@@ -25,7 +25,8 @@ for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
     stats[relation_type] = len(tmp)
 print('Raw')
 print(stats)
-stats = {k: int(v * sample_size/sum(stats.values())) for k, v in stats.values()}
+factor = sample_size/sum(list(stats.values()))
+stats = {k: int(v * factor) for k, v in stats.items()}
 print('Down sampled')
 print(stats)
 

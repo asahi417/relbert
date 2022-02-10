@@ -1,22 +1,35 @@
 import os
 import json
 from glob import glob
+from random import shuffle, seed
 
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from umap import UMAP
 from gensim.models import KeyedVectors
 
+sample_size = 100000
 # load gensim model
 model = KeyedVectors.load_word2vec_format("data/relbert_embedding.bin", binary=True)
 concept_net_processed_file_dir = 'data/conceptnet'
 
-umap_training_n = 100000
 
 def get_term(arg):
     return arg.split('/en/')[-1].split('/')[0]
+
+
+stats = {}
+for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
+    relation_type = os.path.basename(i).replace('.jsonl', '')
+    with open(i) as f:
+        tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
+    stats[relation_type] = len(tmp)
+print('Raw')
+print(stats)
+stats = {k: int(v * sample_size/sum(stats.values())) for k, v in stats.values()}
+print('Down sampled')
+print(stats)
 
 
 for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
