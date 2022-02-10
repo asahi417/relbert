@@ -42,6 +42,8 @@ if not os.path.exists('data/conceptnet_clusters.json'):
         seed(0)
         shuffle(tmp)
         tmp = tmp[:stats[relation_type]]
+        if len(tmp) < 10:
+            continue
 
         # get embedding
         embeddings = []
@@ -55,6 +57,9 @@ if not os.path.exists('data/conceptnet_clusters.json'):
         # clustering
         clusterer = hdbscan.HDBSCAN()
         clusterer.fit(data)
+        if clusterer.labels_.max() == -1:
+            continue
+
         print('{} clusters'.format(clusterer.labels_.max()))
         cluster_info[relation_type] = {k: i for i, k in zip(clusterer.labels_, keys) if i != -1}
 
