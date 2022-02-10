@@ -26,7 +26,7 @@ if not os.path.exists('data/conceptnet_clusters.json'):
         with open(i) as f:
             tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
             tmp = [(get_term(i['arg1']), get_term(i['arg2'])) for i in tmp]
-            tmp = [i for i in tmp if '_' not in i[0] and '_' not in i[1]]
+            tmp = [i for i in tmp if '_' not in i[0] and '_' not in i[1] and i[0] != i[1]]
         data[relation_type] = tmp
     top_types = [a for a, b in sorted(data.items(), key=lambda kv: len(kv[1]), reverse=True)[:top_n]]
     size = {k: min(max_sample_size, len(v)) for k, v in data.items()}
