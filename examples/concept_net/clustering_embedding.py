@@ -61,10 +61,10 @@ if not os.path.exists('data/conceptnet_clusters.json'):
             continue
 
         print('{} clusters'.format(clusterer.labels_.max()))
-        cluster_info[relation_type] = {k: i for i, k in zip(clusterer.labels_, keys) if i != -1}
+        cluster_info[relation_type] = {k: int(i) for i, k in zip(clusterer.labels_, keys) if i != -1}
 
-    with open('data/conceptnet_clusters.json', 'w') as f:
-        json.dump(cluster_info, f)
+        with open('data/conceptnet_clusters.json', 'w') as f:
+            json.dump(cluster_info, f)
 else:
     with open('data/conceptnet_clusters.json') as f:
         cluster_info = json.load(f)

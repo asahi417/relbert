@@ -70,12 +70,19 @@ else:
     embedding_2d = np.load('data/conceptnet_2d_embeddings.npy')
     with open('data/conceptnet_2d_embeddings.relation_type.txt') as f:
         relation_types = [i for i in f.read().split('\n') if len(i) > 0]
-# print(embedding_2d.shape)
-# plt.scatter(
-#     embedding_2d[:, 0],
-#     embedding_2d[:, 1],
-#     c=[sns.color_palette()[relation_type_dict[x]] for x in relation_types)]
-#
-# )
-# plt.gca().set_aspect('equal', 'datalim')
-# plt.title('UMAP projection of the Penguin dataset', fontsize=24)
+    relation_type_dict = {v: n for n, v in enumerate(sorted(list(set(relation_types))))}
+assert len(embedding_2d) == len(relation_types)
+
+
+plt.figure()
+plt.scatter(
+    embedding_2d[:, 0],
+    embedding_2d[:, 1],
+    s=5,
+    c=[sns.color_palette('Spectral', len(relation_type_dict))[relation_type_dict[x]] for x in relation_types],
+    label=relation_types
+)
+plt.gca().set_aspect('equal', 'datalim')
+plt.title('2-d Embedding Space', fontsize=12)
+plt.legend(fontsize=4)
+plt.savefig('data/conceptnet_2d_embeddings.png', bbox_inches='tight')
