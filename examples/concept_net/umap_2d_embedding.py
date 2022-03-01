@@ -1,11 +1,7 @@
 """
 pip install umap-learn
-
-
 """
 import os
-import json
-from glob import glob
 from random import shuffle, seed
 
 import numpy as np
@@ -14,30 +10,13 @@ import seaborn as sns
 from umap import UMAP
 from gensim.models import KeyedVectors
 
-
-def get_term(arg):
-    return arg.split('/en/')[-1].split('/')[0]
+from clustering_embedding import load_embedding
 
 
 if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
         not os.path.exists('data/conceptnet_2d_embeddings.relation_type.txt'):
 
-    top_n = 10
-    max_sample_size = 1000
-    sample_size = 100000
-    concept_net_processed_file_dir = 'data/conceptnet'
-    data = {}
-    for i in glob('{}/*.jsonl'.format(concept_net_processed_file_dir)):
-        relation_type = os.path.basename(i).replace('.jsonl', '').replace('cache_', '')
-        if relation_type == 'None':
-            continue
-        with open(i) as f:
-            tmp = [json.loads(t) for t in f.read().split('\n') if len(t) > 0]
-            tmp = [(get_term(i['arg1']), get_term(i['arg2'])) for i in tmp]
-            tmp = [i for i in tmp if '_' not in i[0] and '_' not in i[1] and i[0] != i[1]]
-        data[relation_type] = tmp
-    top_types = [a for a, b in sorted(data.items(), key=lambda kv: len(kv[1]), reverse=True)[:top_n]]
-    size = {k: min(max_sample_size, len(v)) for k, v in data.items()}
+    top_types, size, data = load_embedding(10, 1000)
 
     # load gensim model
     print('Collect embeddings')

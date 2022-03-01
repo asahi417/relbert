@@ -1,8 +1,12 @@
+"""
+pip install munkres
+"""
 import os
 import json
 from itertools import product
 
 import numpy as np
+import pandas as pd
 from munkres import Munkres
 from relbert import AnalogyScore, RelBERT, cosine_similarity
 
@@ -71,9 +75,9 @@ def compute_score(source_list,
         # scores for all possible pairs apart from the reference
         score = model_input['{}-{}'.format(source_n, target_n)]
         # matrix of assignment cost: source x target
-        matrix = np.array([score[size * i:size * (1 + i)] for i in range(size)])
+        matrix = -1 * np.array([score[size * i:size * (1 + i)] for i in range(size)])
         # compute the cheapest assignments and get the overall cost by summing up each cost
-        best_assignment = m.compute(matrix)
+        best_assignment = m.compute(matrix.copy())
         scores['{}-{}'.format(source_n, target_n)] = np.sum([matrix[a][b] for a, b in best_assignment])
         # get the best assignment's pairs
         best_assignment = [[a if a < source_n else a + 1, b if b < target_n else b + 1] for a, b in best_assignment]
@@ -89,25 +93,35 @@ def compute_score(source_list,
 
 
 if __name__ == '__main__':
-
+    logger = open('./report.txt', 'w')
     # get data
     with open('data.jsonl') as f_reader:
         data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
 
     accuracy = {'analogy_score (roberta)': [], 'relbert': []}
     for data_id, i in enumerate(data):
+
+        tmp_result = [i['source'], i['target']]
         print('Processing [Analogy Score] {}/{}'.format(data_id + 1, len(data)))
         pred = compute_score(
             i['source'], i['target_random'], model_type='analogy_score', model='roberta-large',
             cache_file='cache/analogy_score.roberta_large.{}.json'.format(data_id))
-        accuracy['analogy_score (roberta)'].append(int(pred == i['target']))
-
+        accuracy['analogy_score (roberta)'] += [int(a == b) for a, b in zip(pred, i['target'])]
+        tmp_result.append(pred)
         print('Processing [RelBERT] {}/{}'.format(data_id + 1, len(data)))
         pred = compute_score(
             i['source'], i['target_random'], model_type='relbert',
             cache_file='cache/relbert.roberta_large.{}.json'.format(data_id))
-        accuracy['relbert'].append(int(pred == i['target']))
+        tmp_result.append(pred)
+        df = pd.DataFrame(tmp_result, index=['source', 'target', 'pred (Analogy)', 'pred (RelBERT)'])
+        logger.write(' * data: {}\n{} \n\n'.format(data_id + 1, df.to_string(header=False)))
+        accuracy['relbert'] += [int(a == b) for a, b in zip(pred, i['target'])]
 
     print('\nAccuracy')
+    logger.write('ACCURACY\n')
     for k, v in accuracy.items():
-        print('\t{}: {}'.format(k, sum(v)/len(v) * 100))
+        if len(v) > 0:
+            print('\t{}: {}'.format(k, sum(v)/len(v) * 100))
+            logger.write('\t{}: {}\n'.format(k, sum(v)/len(v) * 100))
+
+    logger.close()
