@@ -44,7 +44,7 @@ def compute_score(source_list, target_list, cache_file='tmp.json'):
                 if target_n == target_pair_n:
                     continue
                 options.append([source_list[source_pair_n], target_list[target_pair_n]])
-        model_input['{}-{}'.format(source_n, target_n)] = get_score(query, options)
+        model_input['{}-{}'.format(source_n, target_n)] = get_score(query, options, n)
     with open(cache_file, 'w') as f:
         json.dump(embedding_dict, f)
 
