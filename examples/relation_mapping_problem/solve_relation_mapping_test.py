@@ -85,8 +85,7 @@ if __name__ == '__main__':
         tmp_result = [i['source'], i['target']]
         print('Processing [RelBERT] {}/{}'.format(data_id + 1, len(data)))
         pred = compute_score(
-            i['source'], i['target_random'], model_type='relbert',
-            cache_file='cache/test/relbert.roberta_large.{}.json'.format(data_id))
+            i['source'], i['target_random'], cache_file='cache/test/relbert.roberta_large.{}.json'.format(data_id))
         tmp_result.append(pred)
         accuracy['relbert'] += [int(a == b) for a, b in zip(pred, i['target'])]
 
