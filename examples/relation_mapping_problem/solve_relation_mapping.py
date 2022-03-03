@@ -99,6 +99,7 @@ if __name__ == '__main__':
         data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
 
     accuracy = {'analogy_score (roberta)': [], 'relbert': []}
+    dfs = []
     for data_id, i in enumerate(data):
 
         tmp_result = [i['source'], i['target']]
@@ -113,9 +114,13 @@ if __name__ == '__main__':
             i['source'], i['target_random'], model_type='relbert',
             cache_file='cache/relbert.roberta_large.{}.json'.format(data_id))
         tmp_result.append(pred)
-        df = pd.DataFrame(tmp_result, index=['source', 'target', 'pred (Analogy)', 'pred (RelBERT)'])
+        df = pd.DataFrame(tmp_result, index=[
+            'source/{}'.format(data_id),
+            'target/{}'.format(data_id),
+            'pred_analogy_score/{}'.format(data_id), 'pred_relbert/{}'.format(data_id)])
         logger.write(' * data: {}\n{} \n\n'.format(data_id + 1, df.to_string(header=False)))
         accuracy['relbert'] += [int(a == b) for a, b in zip(pred, i['target'])]
+        dfs.append(df)
 
     print('\nAccuracy')
     logger.write('ACCURACY\n')
@@ -125,3 +130,5 @@ if __name__ == '__main__':
             logger.write('\t{}: {}\n'.format(k, sum(v)/len(v) * 100))
 
     logger.close()
+    dfs = pd.concat(dfs)
+    dfs.to_csv('result.csv')

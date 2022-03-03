@@ -12,7 +12,7 @@ from gensim.models import KeyedVectors
 
 from clustering_embedding import load_embedding
 
-
+relations_to_exclude = ["EtymologicallyRelatedTo", "DerivedFrom", "RelatedTo"]
 if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
         not os.path.exists('data/conceptnet_2d_embeddings.relation_type.txt'):
 

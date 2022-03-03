@@ -1,122 +1,122 @@
  * data: 1
-source          solar system      sun            planet      mass  attracts  revolves           gravity
-target                  atom  nucleus          electron    charge  attracts  revolves  electromagnetism
-pred (Analogy)          atom   charge           nucleus  electron  attracts  revolves  electromagnetism
-pred (RelBERT)        charge  nucleus  electromagnetism  electron  attracts  revolves              atom 
+source/0              solar system      sun            planet      mass  attracts  revolves           gravity
+target/0                      atom  nucleus          electron    charge  attracts  revolves  electromagnetism
+pred_analogy_score/0          atom   charge           nucleus  electron  attracts  revolves  electromagnetism
+pred_relbert/0              charge  nucleus  electromagnetism  electron  attracts  revolves              atom 
 
  * data: 2
-source            water           flows        pressure  water tower     bucket  filling  emptying   hydrodynamics
-target             heat       transfers     temperature       burner     kettle  heating   cooling  thermodynamics
-pred (Analogy)  heating  thermodynamics     temperature      cooling       heat   burner    kettle       transfers
-pred (RelBERT)   burner         heating  thermodynamics  temperature  transfers  cooling      heat          kettle 
+source/1                water           flows        pressure  water tower     bucket  filling  emptying   hydrodynamics
+target/1                 heat       transfers     temperature       burner     kettle  heating   cooling  thermodynamics
+pred_analogy_score/1  heating  thermodynamics     temperature      cooling       heat   burner    kettle       transfers
+pred_relbert/1         burner         heating  thermodynamics  temperature  transfers  cooling      heat          kettle 
 
  * data: 3
-source           waves       shore  reflects      water  breakwater      rough        calm   crashing
-target          sounds        wall    echoes        air  insulation       loud       quiet  vibrating
-pred (Analogy)  sounds  insulation    echoes        air        wall  vibrating       quiet       loud
-pred (RelBERT)   quiet         air    echoes  vibrating      sounds       wall  insulation       loud 
+source/2               waves       shore  reflects      water  breakwater      rough        calm   crashing
+target/2              sounds        wall    echoes        air  insulation       loud       quiet  vibrating
+pred_analogy_score/2  sounds  insulation    echoes        air        wall  vibrating       quiet       loud
+pred_relbert/2         quiet         air    echoes  vibrating      sounds       wall  insulation       loud 
 
  * data: 4
-source           combustion            fire    fuel    burning     hot      intense    oxygen  carbon dioxide
-target          respiration          animal    food  breathing  living     vigorous    oxygen  carbon dioxide
-pred (Analogy)  respiration          animal    food  breathing  living     vigorous    oxygen  carbon dioxide
-pred (RelBERT)       oxygen  carbon dioxide  living     animal    food  respiration  vigorous       breathing 
+source/3               combustion            fire    fuel    burning     hot      intense    oxygen  carbon dioxide
+target/3              respiration          animal    food  breathing  living     vigorous    oxygen  carbon dioxide
+pred_analogy_score/3  respiration          animal    food  breathing  living     vigorous    oxygen  carbon dioxide
+pred_relbert/3             oxygen  carbon dioxide  living     animal    food  respiration  vigorous       breathing 
 
  * data: 5
-source           sound    low      high    echoes      loud   quiet  horn
-target           light    red    violet  reflects    bright     dim  lens
-pred (Analogy)  bright    red  reflects     light    violet     dim  lens
-pred (RelBERT)  bright  light       red       dim  reflects  violet  lens 
+source/4               sound    low      high    echoes      loud   quiet  horn
+target/4               light    red    violet  reflects    bright     dim  lens
+pred_analogy_score/4  bright    red  reflects     light    violet     dim  lens
+pred_relbert/4        bright  light       red       dim  reflects  violet  lens 
 
  * data: 6
-source          projectile  trajectory    earth   parabolic         air  gravity  attracts
-target              planet       orbit      sun  elliptical       space  gravity  attracts
-pred (Analogy)  elliptical       orbit   planet       space         sun  gravity  attracts
-pred (RelBERT)       orbit         sun  gravity       space  elliptical   planet  attracts 
+source/5              projectile  trajectory    earth   parabolic         air  gravity  attracts
+target/5                  planet       orbit      sun  elliptical       space  gravity  attracts
+pred_analogy_score/5  elliptical       orbit   planet       space         sun  gravity  attracts
+pred_relbert/5             orbit         sun  gravity       space  elliptical   planet  attracts 
 
  * data: 7
-source           breeds    selection  conformance  artificial   popularity  breeding  domesticated
-target          species  competition   adaptation     natural      fitness    mating          wild
-pred (Analogy)     wild   adaptation      fitness     natural  competition    mating       species
-pred (RelBERT)  species         wild   adaptation     fitness  competition    mating       natural 
+source/6               breeds    selection  conformance  artificial   popularity  breeding  domesticated
+target/6              species  competition   adaptation     natural      fitness    mating          wild
+pred_analogy_score/6     wild   adaptation      fitness     natural  competition    mating       species
+pred_relbert/6        species         wild   adaptation     fitness  competition    mating       natural 
 
  * data: 8
-source                 ball  billiards        speed      table   bouncing     moving  slow  fast
-target            molecules        gas  temperature  container   pressing     moving  cold   hot
-pred (Analogy)          gas   pressing  temperature  container  molecules     moving  cold   hot
-pred (RelBERT)  temperature   pressing          hot  container     moving  molecules  cold   gas 
+source/7                     ball  billiards        speed      table   bouncing     moving  slow  fast
+target/7                molecules        gas  temperature  container   pressing     moving  cold   hot
+pred_analogy_score/7          gas   pressing  temperature  container  molecules     moving  cold   hot
+pred_relbert/7        temperature   pressing          hot  container     moving  molecules  cold   gas 
 
  * data: 9
-source          computer  processing     erasing     write      read  memory   outputs   inputs      bug
-target              mind    thinking  forgetting  memorize  remember  memory   muscles   senses  mistake
-pred (Analogy)      mind    thinking  forgetting  remember  memorize  memory   muscles   senses  mistake
-pred (RelBERT)      mind    remember  forgetting   muscles  thinking  memory  memorize  mistake   senses 
+source/8              computer  processing     erasing     write      read  memory   outputs   inputs      bug
+target/8                  mind    thinking  forgetting  memorize  remember  memory   muscles   senses  mistake
+pred_analogy_score/8      mind    thinking  forgetting  remember  memorize  memory   muscles   senses  mistake
+pred_relbert/8            mind    remember  forgetting   muscles  thinking  memory  memorize  mistake   senses 
 
  * data: 10
-source          slot machines        reels  spinning      winning    losing
-target               bacteria        genes  mutating  reproducing     dying
-pred (Analogy)          genes  reproducing  mutating        dying  bacteria
-pred (RelBERT)       mutating     bacteria     dying  reproducing     genes 
+source/9              slot machines        reels  spinning      winning    losing
+target/9                   bacteria        genes  mutating  reproducing     dying
+pred_analogy_score/9          genes  reproducing  mutating        dying  bacteria
+pred_relbert/9             mutating     bacteria     dying  reproducing     genes 
 
  * data: 11
-source               war  soldier  destroy  fighting      defeat     attacks      weapon
-target          argument  debater   refute   arguing  acceptance  criticizes       logic
-pred (Analogy)   debater   refute    logic   arguing  acceptance    argument  criticizes
-pred (RelBERT)  argument  debater   refute   arguing  acceptance  criticizes       logic 
+source/10                   war  soldier  destroy  fighting      defeat     attacks      weapon
+target/10              argument  debater   refute   arguing  acceptance  criticizes       logic
+pred_analogy_score/10   debater   refute    logic   arguing  acceptance    argument  criticizes
+pred_relbert/10        argument  debater   refute   arguing  acceptance  criticizes       logic 
 
  * data: 12
-source             buyer  merchandise     buying     selling  returning   valuable  worthless
-target          believer       belief  accepting  advocating  rejecting       true      false
-pred (Analogy)      true   advocating   believer       false     belief  accepting  rejecting
-pred (RelBERT)  believer        false       true  advocating  accepting     belief  rejecting 
+source/11                 buyer  merchandise     buying     selling  returning   valuable  worthless
+target/11              believer       belief  accepting  advocating  rejecting       true      false
+pred_analogy_score/11      true   advocating   believer       false     belief  accepting  rejecting
+pred_relbert/11        believer        false       true  advocating  accepting     belief  rejecting 
 
  * data: 13
-source          foundations  buildings  supporting     solid     weak     crack
-target              reasons   theories  confirming  rational  dubious      flaw
-pred (Analogy)     rational   theories  confirming   reasons  dubious      flaw
-pred (RelBERT)      dubious       flaw  confirming  theories  reasons  rational 
+source/12              foundations  buildings  supporting     solid     weak     crack
+target/12                  reasons   theories  confirming  rational  dubious      flaw
+pred_analogy_score/12     rational   theories  confirming   reasons  dubious      flaw
+pred_relbert/12            dubious       flaw  confirming  theories  reasons  rational 
 
  * data: 14
-source          obstructions  destination            route   traveller        traveling   companion    arriving
-target          difficulties         goal             plan      person  problem solving     partner  succeeding
-pred (Analogy)  difficulties      partner  problem solving      person             plan  succeeding        goal
-pred (RelBERT)  difficulties      partner  problem solving  succeeding             goal      person        plan 
+source/13              obstructions  destination            route   traveller        traveling   companion    arriving
+target/13              difficulties         goal             plan      person  problem solving     partner  succeeding
+pred_analogy_score/13  difficulties      partner  problem solving      person             plan  succeeding        goal
+pred_relbert/13        difficulties      partner  problem solving  succeeding             goal      person        plan 
 
  * data: 15
-source           money   allocate    budget  effective     cheap  expansive
-target            time     invest  schedule  efficient     quick       slow
-pred (Analogy)  invest       time     quick  efficient      slow   schedule
-pred (RelBERT)  invest  efficient     quick       slow  schedule       time 
+source/14               money   allocate    budget  effective     cheap  expansive
+target/14                time     invest  schedule  efficient     quick       slow
+pred_analogy_score/14  invest       time     quick  efficient      slow   schedule
+pred_relbert/14        invest  efficient     quick       slow  schedule       time 
 
  * data: 16
-source             seeds     planted    fruitful    fruit        grow  wither   blossom
-target             ideas    inspired  productive  product     develop    fail   succeed
-pred (Analogy)   product     succeed       ideas  develop  productive    fail  inspired
-pred (RelBERT)  inspired  productive     develop     fail     product   ideas   succeed 
+source/15                 seeds     planted    fruitful    fruit        grow  wither   blossom
+target/15                 ideas    inspired  productive  product     develop    fail   succeed
+pred_analogy_score/15   product     succeed       ideas  develop  productive    fail  inspired
+pred_relbert/15        inspired  productive     develop     fail     product   ideas   succeed 
 
  * data: 17
-source           machine   working  turned on    turned off    broken         power   repair
-target              mind  thinking      awake        asleep  confused  intelligence  therapy
-pred (Analogy)  confused  thinking      awake        asleep      mind  intelligence  therapy
-pred (RelBERT)  confused  thinking     asleep  intelligence      mind         awake  therapy 
+source/16               machine   working  turned on    turned off    broken         power   repair
+target/16                  mind  thinking      awake        asleep  confused  intelligence  therapy
+pred_analogy_score/16  confused  thinking      awake        asleep      mind  intelligence  therapy
+pred_relbert/16        confused  thinking     asleep  intelligence      mind         awake  therapy 
 
  * data: 18
-source           object        hold     weight       heavy       light
-target             idea  understand    analyze   important     trivial
-pred (Analogy)  trivial        idea  important     analyze  understand
-pred (RelBERT)     idea     trivial    analyze  understand   important 
+source/17               object        hold     weight       heavy       light
+target/17                 idea  understand    analyze   important     trivial
+pred_analogy_score/17  trivial        idea  important     analyze  understand
+pred_relbert/17           idea     trivial    analyze  understand   important 
 
  * data: 19
-source              follow     leader         path       follower           lost     wanders        twisted  straight
-target          understand    speaker     argument       listener  misunderstood   digresses    complicated    simple
-pred (Analogy)  understand  digresses     argument    complicated       listener     speaker  misunderstood    simple
-pred (RelBERT)     speaker   listener  complicated  misunderstood       argument  understand      digresses    simple 
+source/18                  follow     leader         path       follower           lost     wanders        twisted  straight
+target/18              understand    speaker     argument       listener  misunderstood   digresses    complicated    simple
+pred_analogy_score/18  understand  digresses     argument    complicated       listener     speaker  misunderstood    simple
+pred_relbert/18           speaker   listener  complicated  misunderstood       argument  understand      digresses    simple 
 
  * data: 20
-source                 seeing          light    illuminating   darkness            view      hidden
-target          understanding      knowledge      explaining  confusion  interpretation      secret
-pred (Analogy)      knowledge  understanding          secret  confusion  interpretation  explaining
-pred (RelBERT)  understanding      knowledge  interpretation  confusion      explaining      secret 
+source/19                     seeing          light    illuminating   darkness            view      hidden
+target/19              understanding      knowledge      explaining  confusion  interpretation      secret
+pred_analogy_score/19      knowledge  understanding          secret  confusion  interpretation  explaining
+pred_relbert/19        understanding      knowledge  interpretation  confusion      explaining      secret 
 
 ACCURACY
 	analogy_score (roberta): 41.42857142857143
