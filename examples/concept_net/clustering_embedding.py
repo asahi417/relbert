@@ -25,11 +25,11 @@ def load_embedding(top_n: int = 20, max_sample_size: int = 1000):
             tmp = [i for i in tmp if '_' not in i[0] and '_' not in i[1] and i[0] != i[1]]
         _data[_relation_type] = tmp
     _top_types = [_a for _a, _b in sorted(_data.items(), key=lambda kv: len(kv[1]), reverse=True)[:top_n]]
-    input(_top_types)
     _size = {k: min(max_sample_size, len(__v)) for k, __v in _data.items()}
     return _top_types, _size, _data
 
 
+relations_to_exclude = ["EtymologicallyRelatedTo", "DerivedFrom", "RelatedTo"]
 if not os.path.exists('data/conceptnet_clusters.json'):
 
     top_types, size, data = load_embedding(10, 1000)
@@ -40,6 +40,8 @@ if not os.path.exists('data/conceptnet_clusters.json'):
     cluster_info = {}
     for relation_type, v in data.items():
         if relation_type not in top_types:
+            continue
+        if relation_type in relations_to_exclude:
             continue
         # down sample
         seed(0)

@@ -27,6 +27,8 @@ if not os.path.exists('data/conceptnet_2d_embeddings.npy') or \
     for relation_type, v in data.items():
         if relation_type not in top_types:
             continue
+        if relation_type in relations_to_exclude:
+            continue
         # down sample
         seed(0)
         shuffle(v)
