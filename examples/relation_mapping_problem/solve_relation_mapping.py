@@ -61,8 +61,7 @@ def compute_score(source_list,
                     if target_n == target_pair_n:
                         continue
                     options.append([source_list[source_pair_n], target_list[target_pair_n]])
-            score = get_score(query, options)
-            model_input['{}-{}'.format(source_n, target_n)] = score
+            model_input['{}-{}'.format(source_n, target_n)] = get_score(query, options)
         with open(cache_file, 'w') as f:
             json.dump(model_input, f)
 
@@ -72,10 +71,22 @@ def compute_score(source_list,
     m = Munkres()
     size = size - 1
     for n, (source_n, target_n) in enumerate(product(range(size), range(size))):
+
         # scores for all possible pairs apart from the reference
         score = model_input['{}-{}'.format(source_n, target_n)]
+
         # matrix of assignment cost: source x target
-        matrix = -1 * np.array([score[size * i:size * (1 + i)] for i in range(size)])
+        matrix = - np.array([score[size * i:size * (1 + i)] for i in range(size)])
+
+        # convert value to discrete matrix
+        # matrix = matrix.argsort().argsort()
+        # normalize
+        # matrix =- matrix / matrix.sum(1)
+        # input(matrix)
+        # input(matrix)
+        # matrix.ar
+        # input(matrix.argsort())
+
         # compute the cheapest assignments and get the overall cost by summing up each cost
         best_assignment = m.compute(matrix.copy())
         scores['{}-{}'.format(source_n, target_n)] = np.sum([matrix[a][b] for a, b in best_assignment])
