@@ -213,12 +213,10 @@ def evaluate_analogy(
             acc_test = prediction(test)
             acc = (acc_val * len(val) + acc_test * len(test)) / (len(val) + len(test))
             result.append({
-                'accuracy/valid': acc_val,
-                'accuracy/test': acc_test,
-                'accuracy/full': acc,
-                'data': d,
-                'validation_loss': valid_loss, 'validation_data': validation_data,
-                'model': relbert_ckpt, 'mode': model.mode, 'template_type': template_type
+                'accuracy/valid': acc_val, 'accuracy/test': acc_test, 'accuracy/full': acc,
+                'data': d, 'validation_loss': valid_loss, 'validation_data': validation_data,
+                'model': relbert_ckpt, 'mode': model.mode, 'template_type': template_type,
+                'template': model.custom_template
             })
             logging.info(str(result[-1]))
     del model
