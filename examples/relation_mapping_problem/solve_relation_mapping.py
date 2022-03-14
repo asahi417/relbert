@@ -77,16 +77,6 @@ def compute_score(source_list,
 
         # matrix of assignment cost: source x target
         matrix = - np.array([score[size * i:size * (1 + i)] for i in range(size)])
-
-        # convert value to discrete matrix
-        # matrix = matrix.argsort().argsort()
-        # normalize
-        # matrix =- matrix / matrix.sum(1)
-        # input(matrix)
-        # input(matrix)
-        # matrix.ar
-        # input(matrix.argsort())
-
         # compute the cheapest assignments and get the overall cost by summing up each cost
         best_assignment = m.compute(matrix.copy())
         scores['{}-{}'.format(source_n, target_n)] = np.sum([matrix[a][b] for a, b in best_assignment])
@@ -97,10 +87,11 @@ def compute_score(source_list,
     # find the reference with the cheapest assignment
     best_assignment_key = sorted(scores.items(), key=lambda kv: kv[1])[0][0]
     best_assignment = assignments[best_assignment_key]
+    anchor = [int(i) for i in best_assignment_key.split('-')]
     # get the final order of the target term
     target_order = [i[1] for i in best_assignment]
     target_list_fixed = [target_list[i] for i in target_order]
-    return target_list_fixed
+    return target_list_fixed, anchor
 
 
 if __name__ == '__main__':
@@ -110,18 +101,22 @@ if __name__ == '__main__':
         data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
 
     accuracy = {'analogy_score (roberta)': [], 'relbert': []}
+    accuracy_anchor = {'analogy_score (roberta)': [], 'relbert': []}
     dfs = []
     for data_id, i in enumerate(data):
 
         tmp_result = [i['source'], i['target']]
         print('Processing [Analogy Score] {}/{}'.format(data_id + 1, len(data)))
-        pred = compute_score(
+        pred, (anchor_a, anchor_b) = compute_score(
             i['source'], i['target_random'], model_type='analogy_score', model='roberta-large',
             cache_file='cache/analogy_score.roberta_large.{}.json'.format(data_id))
         accuracy['analogy_score (roberta)'] += [int(a == b) for a, b in zip(pred, i['target'])]
+        print(i['target_random'][anchor_a], i['target'][anchor_b])
+        # input(_anchor)
+        accuracy_anchor['analogy_score (roberta)'] += [int(i['target_random'][anchor_a] == i['target'][anchor_b])]
         tmp_result.append(pred)
         print('Processing [RelBERT] {}/{}'.format(data_id + 1, len(data)))
-        pred = compute_score(
+        pred, (anchor_a, anchor_b) = compute_score(
             i['source'], i['target_random'], model_type='relbert',
             cache_file='cache/relbert.roberta_large.{}.json'.format(data_id))
         tmp_result.append(pred)
@@ -131,6 +126,7 @@ if __name__ == '__main__':
             'pred_analogy_score/{}'.format(data_id), 'pred_relbert/{}'.format(data_id)])
         logger.write(' * data: {}\n{} \n\n'.format(data_id + 1, df.to_string(header=False)))
         accuracy['relbert'] += [int(a == b) for a, b in zip(pred, i['target'])]
+        accuracy_anchor['relbert'] += [int(i['target_random'][anchor_a] == i['target'][anchor_b])]
         dfs.append(df)
 
     print('\nAccuracy')
@@ -138,7 +134,9 @@ if __name__ == '__main__':
     for k, v in accuracy.items():
         if len(v) > 0:
             print('\t{}: {}'.format(k, sum(v)/len(v) * 100))
+            print('\t{}: {} (anchor)'.format(k, sum(accuracy_anchor[k]) / len(v) * 100))
             logger.write('\t{}: {}\n'.format(k, sum(v)/len(v) * 100))
+            logger.write('\t{}: {}\n'.format(k, sum(accuracy_anchor[k]) / len(v) * 100))
 
     logger.close()
     dfs = pd.concat(dfs)

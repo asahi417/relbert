@@ -114,7 +114,8 @@ class RelBERT:
                  max_length: int = 64,
                  cache_dir: str = None,
                  mode: str = 'average_no_mask',
-                 template_type: str = 'a',
+                 template_type: str = None,
+                 custom_template: str = None,
                  truncate_exceed_tokens: bool = True):
         """ Get embedding from transformers language model.
 
@@ -155,11 +156,19 @@ class RelBERT:
             if 'template' in model_config.relbert_config:
                 self.template = model_config.relbert_config['template']
             else:
-                # self.custom_template_type = model_config.relbert_config['custom_template_type']
-                self.custom_template = model_config.relbert_config['custom_template']
+                if template_type is None and custom_template is None:
+                    self.custom_template = model_config.relbert_config['custom_template']
+                else:
+                    logging.warning('OVERWRITE TEMPLATE')
+                    if template_type is not None:
+                        self.custom_template = preset_templates[template_type]
+                    else:
+                        assert '<subj>' in custom_template and '<obj>' in custom_template, custom_template
+                        self.custom_template = custom_template
         else:
             self.mode = mode
             self.is_trained = False
+            assert template_type is not None
             if template_type in preset_templates:
                 # model_config.update({'relbert_config': {'mode': mode, 'custom_template_type': template_type}})
                 self.custom_template = preset_templates[template_type]

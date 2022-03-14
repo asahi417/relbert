@@ -5,6 +5,7 @@ from random import shuffle, seed
 
 import hdbscan
 import numpy as np
+import pandas as pd
 from gensim.models import KeyedVectors
 
 
@@ -92,3 +93,5 @@ for n, (k, v) in enumerate(cluster.items()):
         print('* cluster {}'.format(_k))
         for pair in _v[:min(10, len(_v))]:
             print('\t - {}'.format(pair.split('__')))
+
+pd.DataFrame(cluster).sort_index().to_csv('data/conceptnet_clusters.csv')
