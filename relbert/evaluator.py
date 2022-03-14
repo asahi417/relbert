@@ -139,8 +139,9 @@ def evaluate_analogy(
         template_type: str = None,
         mode: str = 'mask',
         cache_dir: str = None,
-        validation_data: str = 'semeval2012'):
-    model = RelBERT(relbert_ckpt, max_length=max_length, mode=mode, template_type=template_type)
+        validation_data: str = 'semeval2012',
+        custom_template: str = None):
+    model = RelBERT(relbert_ckpt, max_length=max_length, mode=mode, template_type=template_type, custom_template=custom_template)
     model.eval()
 
     result = []
