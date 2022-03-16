@@ -158,8 +158,6 @@ if __name__ == '__main__':
             template_candid = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
         # template_candid = [i['sentence'] for i in template_candid]
         for i in tqdm(template_candid):
-            input(all_word_pairs)
-            input(i)
             prompts = [custom_prompter(p, i['template']) for p in all_word_pairs]
             out = scorer.get_perplexity(prompts, batch_size=BATCH)
             i['scores'] = {'score': out, 'prompt': prompts}
