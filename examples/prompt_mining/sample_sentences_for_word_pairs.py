@@ -50,6 +50,7 @@ if __name__ == '__main__':
     # word pairs
     all_positive, all_negative, relation_structure = get_training_data()
     all_word_pairs = list(chain(*(all_positive.values())))
+    all_word_pairs_representative = [v[0] for k, v in all_positive.items()]
 
     if not os.path.exists(path_corpus):
         # wiki_dump
@@ -156,13 +157,15 @@ if __name__ == '__main__':
         scorer = PPL('roberta-large', max_length=64)
         with open(path_template_candidate) as f_reader:
             template_candid = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
-        # template_candid = [i['sentence'] for i in template_candid]
+
         for i in tqdm(template_candid):
-            prompts = [custom_prompter(p, i['template']) for p in all_word_pairs]
+            prompts = [custom_prompter(p, i['template']) for p in all_word_pairs_representative]
             out = scorer.get_perplexity(prompts, batch_size=BATCH)
             i['scores'] = {'score': out, 'prompt': prompts}
 
         with open(path_template_scores, 'w') as f_writer:
             f_writer.write('\n'.join([json.dumps(i) for i in template_candid]))
+
+
 
 
