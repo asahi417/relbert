@@ -156,8 +156,10 @@ if __name__ == '__main__':
         scorer = PPL('roberta-large', max_length=64)
         with open(path_template_candidate) as f_reader:
             template_candid = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
-        template_candid = [i['sentence'] for i in template_candid]
+        # template_candid = [i['sentence'] for i in template_candid]
         for i in tqdm(template_candid):
+            input(all_word_pairs)
+            input(i)
             prompts = [custom_prompter(p, i['template']) for p in all_word_pairs]
             out = scorer.get_perplexity(prompts, batch_size=BATCH)
             i['scores'] = {'score': out, 'prompt': prompts}
