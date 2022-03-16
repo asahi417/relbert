@@ -12,7 +12,7 @@ from .list_keeper import ListKeeper
 from .util import Dataset
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
-__all__ = 'RelBERT'
+__all__ = ('RelBERT', 'custom_prompter')
 preset_templates = {
         "a": "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>",
         "b": "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>",
