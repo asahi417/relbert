@@ -9,7 +9,8 @@ from itertools import chain
 from relbert.data import get_training_data, semeval_relations
 
 os.makedirs('output', exist_ok=True)
-path_to_corpus = 'cache/filtered_wiki.txt'
+# path_to_corpus = 'cache/filtered_wiki.txt'
+path_to_corpus = 'cache/filtered_wiki.template.jsonl'
 
 # get relation structure
 all_positive, all_negative, relation_structure = get_training_data()
@@ -26,16 +27,16 @@ for k, v in all_positive.items():
 # load main data
 with open(path_to_corpus) as f:
     original_data = [json.loads(i) for i in f.read().split('\n') if len(i) > 0]
-    data = {}
-    for n, t in tqdm(list(enumerate(original_data))):
-        t['relation_type'] = []
-        for word_a, word_b in t['word_pairs']:
-            key = '{}-{}'.format(word_a, word_b)
-            t['relation_type'] += structure[key]
-            if key not in data:
-                data[key] = [n]
-            else:
-                data[key] += [n]
+data = {}
+for n, t in tqdm(list(enumerate(original_data))):
+    t['relation_type'] = []
+    word_a, word_b = t['word_pair']
+    key = '{}-{}'.format(word_a, word_b)
+    t['relation_type'] += structure[key]
+    if key not in data:
+        data[key] = [n]
+    else:
+        data[key] += [n]
 
 # get frequency
 df_freq = pd.DataFrame([(k, len(v)) for k, v in sorted(data.items(), key=lambda x: len(x[1]), reverse=True)],

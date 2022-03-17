@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 import spacy
 import numpy as np
+import pandas as pd
 from datasets import load_dataset
 
 from relbert.data import get_training_data
@@ -143,6 +144,8 @@ if __name__ == '__main__':
         with open(path_template_candidate, 'w') as f_writer:
             f_writer.write('\n'.join([json.dumps(i) for i in template_candid]))
 
+        pd.DataFrame(template_candid).to_csv(path_template_candidate.replace('.jsonl', '.csv'), index=False)
+
         all_types = ['{}-{}'.format(*i['word_pair']) for i in template_candid]
         key, cnt = np.unique(all_types, return_counts=True)
         freq = sorted(list(zip(key.tolist(), cnt.tolist())), key=lambda x: x[1], reverse=True)
@@ -166,6 +169,15 @@ if __name__ == '__main__':
         with open(path_template_scores, 'w') as f_writer:
             f_writer.write('\n'.join([json.dumps(i) for i in template_candid]))
 
+    with open(path_template_scores) as f_reader:
+        template_candid = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
+    prompt_score = []
+    for i in template_candid:
+        prompt_score += list(zip(i['scores']['score'], i['scores']['prompt']))
+        i['ppl'] = sum(i['scores']['score'])/len(i['scores']['score'])
+    pd.DataFrame(template_candid).to_csv('{}/template.score.average.csv'.format(export_dir), index=False)
+    df = pd.DataFrame(prompt_score, columns=['ppl', 'prompt']).sort_values(by="ppl", ascending=False)
+    df.to_csv('{}/template.score.flatten.csv'.format(export_dir), index=False)
 
 
 
