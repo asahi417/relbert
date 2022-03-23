@@ -34,7 +34,8 @@ def config(parser):
     parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
     parser.add_argument('--n-sample', help='sample size', default=10, type=int)
     parser.add_argument('-t', '--template-type', help='template type or path to generated prompt file',
-                        default='a', type=str)
+                        default=None, type=str)
+    parser.add_argument('--custom-template', help='custom template', default=None, type=str)
     return parser
 
 
@@ -54,6 +55,7 @@ def main():
         data=opt.data,
         n_sample=opt.n_sample,
         template_type=opt.template_type,
+        custom_template=opt.custom_template,
         softmax_loss=opt.softmax_loss,
         in_batch_negative=opt.in_batch_negative,
         parent_contrast=opt.parent_contrast,

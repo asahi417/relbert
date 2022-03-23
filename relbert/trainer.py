@@ -14,32 +14,66 @@ from .config import Config
 from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed, Dataset
 
 
-class BaseTrainer:
+class Trainer:
 
-    def __init__(self, cache_dir: str = None):
-        self.cache_dir = cache_dir
-        self.model = None
-        self.model_parameters = None
-        self.config = None
-        self.linear = None
-        self.discriminative_loss = None
-        self.checkpoint_dir = None
-        self.all_positive = None
-        self.all_negative = None
-        self.relation_structure = None
-        self.n_trial = None
-        self.optimizer = None
-        self.scheduler = None
-        self.scaler = None
-        self.device = None
-        self.parallel = None
-        self.hidden_size = None
+    def __init__(self,
+                 export: str = None,
+                 model: str = 'roberta-large',
+                 max_length: int = 64,
+                 mode: str = 'average_no_mask',
+                 data: str = 'semeval2012',
+                 n_sample: int = 10,
+                 template_type: str = 'a',
+                 custom_template: str = None,
+                 softmax_loss: bool = True,
+                 in_batch_negative: bool = True,
+                 parent_contrast: bool = True,
+                 mse_margin: float = 1,
+                 epoch: int = 1,
+                 batch: int = 64,
+                 lr: float = 0.00002,
+                 lr_decay: bool = False,
+                 lr_warmup: int = 100,
+                 weight_decay: float = 0,
+                 optimizer: str = 'adam',
+                 momentum: float = 0.9,
+                 fp16: bool = False,
+                 random_seed: int = 0,
+                 exclude_relation=None):
+        self.model = RelBERT(
+            model=model,
+            max_length=max_length,
+            cache_dir=self.cache_dir,
+            mode=mode,
+            template_type=template_type,
+            custom_template=custom_template)
+        self.model_parameters = list(self.model.model.named_parameters())
+        assert not self.model.is_trained, '{} is already trained'.format(model)
+        self.model.train()
+        self.hidden_size = self.model.hidden_size
 
-    def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
-        raise NotImplementedError
+        # config
+        self.config = Config(
+            model=model, max_length=max_length, mode=mode, data=data, n_sample=n_sample,
+            custom_template=self.model.custom_template, template=self.model.template, export=export,
+            softmax_loss=softmax_loss, in_batch_negative=in_batch_negative, parent_contrast=parent_contrast,
+            mse_margin=mse_margin, epoch=epoch, lr_warmup=lr_warmup, batch=batch, lr=lr, lr_decay=lr_decay,
+            weight_decay=weight_decay, optimizer=optimizer, momentum=momentum, fp16=fp16, random_seed=random_seed,
+        )
+        self.device = self.model.device
+        self.parallel = self.model.parallel
+        self.setup(exclude_relation)
 
     def save(self, current_epoch):
-        raise NotImplementedError
+        cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, current_epoch + 1)
+        os.makedirs(cache_dir, exist_ok=True)
+        self.model.save(cache_dir)
+
+    def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
+        return self.model.preprocess(positive_samples, negative_samples, relation_structure)
+
+    def model_output(self, encode):
+        return self.model.to_embedding(encode)
 
     def setup(self, exclude_relation=None):
         fix_seed(self.config.random_seed)
@@ -128,12 +162,8 @@ class BaseTrainer:
         self.save(e)
         logging.info('complete training: model ckpt was saved at {}'.format(self.checkpoint_dir))
 
-    def model_output(self, encode):
-        raise NotImplementedError
-
     def train_single_epoch(self, data_loader, global_step: int):
         total_loss = 0
-        bce = nn.BCELoss()
         step_in_epoch = len(data_loader)
         for x in data_loader:
             global_step += 1
@@ -160,7 +190,6 @@ class BaseTrainer:
                                     margin=self.config.mse_margin, in_batch_negative=self.config.in_batch_negative,
                                     linear=self.linear, device=self.device)
 
-
             # backward: calculate gradient
             self.scaler.scale(loss).backward()
 
@@ -174,81 +203,3 @@ class BaseTrainer:
             self.scheduler.step()
 
         return total_loss / step_in_epoch, global_step
-
-
-class Trainer(BaseTrainer):
-    """ Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
-
-    def __init__(self,
-                 export: str = None,
-                 model: str = 'roberta-large',
-                 max_length: int = 64,
-                 mode: str = 'average_no_mask',
-                 data: str = 'semeval2012',
-                 n_sample: int = 10,
-                 template_type: str = 'a',
-                 softmax_loss: bool = True,
-                 in_batch_negative: bool = True,
-                 parent_contrast: bool = True,
-                 mse_margin: float = 1,
-                 epoch: int = 1,
-                 batch: int = 64,
-                 lr: float = 0.00002,
-                 lr_decay: bool = False,
-                 lr_warmup: int = 100,
-                 weight_decay: float = 0,
-                 optimizer: str = 'adam',
-                 momentum: float = 0.9,
-                 fp16: bool = False,
-                 random_seed: int = 0,
-                 cache_dir: str = None,
-                 exclude_relation=None):
-        super(Trainer, self).__init__(cache_dir=cache_dir)
-
-        # load language model
-        self.model = RelBERT(
-            model=model, max_length=max_length, cache_dir=self.cache_dir, mode=mode, template_type=template_type)
-        self.model_parameters = list(self.model.model.named_parameters())
-        assert not self.model.is_trained, '{} is already trained'.format(model)
-        self.model.train()
-        self.hidden_size = self.model.hidden_size
-
-        # config
-        self.config = Config(
-            model=model,
-            max_length=max_length,
-            mode=mode,
-            data=data,
-            n_sample=n_sample,
-            custom_template=self.model.custom_template,
-            template=self.model.template,
-            softmax_loss=softmax_loss,
-            in_batch_negative=in_batch_negative,
-            parent_contrast=parent_contrast,
-            mse_margin=mse_margin,
-            epoch=epoch,
-            lr_warmup=lr_warmup,
-            batch=batch,
-            lr=lr,
-            lr_decay=lr_decay,
-            weight_decay=weight_decay,
-            optimizer=optimizer,
-            momentum=momentum,
-            fp16=fp16,
-            random_seed=random_seed,
-            export=export,
-        )
-        self.device = self.model.device
-        self.parallel = self.model.parallel
-        self.setup(exclude_relation)
-
-    def save(self, current_epoch):
-        cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, current_epoch + 1)
-        os.makedirs(cache_dir, exist_ok=True)
-        self.model.save(cache_dir)
-
-    def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
-        return self.model.preprocess(positive_samples, negative_samples, relation_structure)
-
-    def model_output(self, encode):
-        return self.model.to_embedding(encode)

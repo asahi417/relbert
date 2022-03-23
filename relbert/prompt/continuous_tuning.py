@@ -1,13 +1,13 @@
 import os
 import logging
 import json
-from typing import List, Dict
+from typing import Dict
 
 import torch
 from .discrete_tuning import preprocess
 from ..config import Config
 from ..util import load_language_model
-from ..trainer import BaseTrainer
+from ..trainer import Trainer
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'ContinuousTriggerEmbedding'
@@ -51,7 +51,7 @@ class PromptEmbedding(torch.nn.Module):
         logging.debug('exported to {}'.format(export_file))
 
 
-class ContinuousTriggerEmbedding(BaseTrainer):
+class ContinuousTriggerEmbedding(Trainer):
 
     def __init__(self,
                  export: str,
@@ -78,7 +78,7 @@ class ContinuousTriggerEmbedding(BaseTrainer):
                  random_seed: int = 0,
                  cache_dir: str = None,
                  fp16: bool = False):
-        super(ContinuousTriggerEmbedding, self).__init__(cache_dir=cache_dir)
+        super(ContinuousTriggerEmbedding, self).__init__()
         self.config = Config(
             export=export,
             optimizer=optimizer,
