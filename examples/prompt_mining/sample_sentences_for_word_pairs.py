@@ -145,6 +145,7 @@ if __name__ == '__main__':
                     if template[n_b - 1] not in [' ', '.', ''] or template[n_b + len(b)] not in [' ', '.', '']:
                         continue
                 except IndexError:
+                    print(template, a, b)
                     continue
 
                 assert '<subj>' in template and '<obj>' in template, template
