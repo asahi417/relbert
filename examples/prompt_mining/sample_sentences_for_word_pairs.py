@@ -123,19 +123,13 @@ if __name__ == '__main__':
             full_json_list = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
 
         template_candid = []
-        template_list = []
+        plain_template = []
         noisy_pairs = [['female', 'male']]
         for i in full_json_list:
             for a, b in i['word_pairs']:
                 # if [a, b] in noisy_pairs:
                 #     continue
                 template = i['sentence']
-
-                # if all(t[0].isupper() for t in template.split(' ') if t not in ['<subj>', '<obj>']):
-                #     continue
-
-                # if template.endswith('"'):
-                #     continue
 
                 if a in b:
                     n_b = template.lower().find(b)
@@ -148,12 +142,16 @@ if __name__ == '__main__':
                     n_b = template.lower().find(b)
                     template = template[:n_b] + '<obj>' + template[n_b + len(b):]
                 assert '<subj>' in template and '<obj>' in template, template
+                _plain_template = template.replace('<subj>', '').replace('<obj>', '')
+                if _plain_template in plain_template:
+                    continue
+                plain_template.append(_plain_template)
+
                 # if '<subj> <obj>' in template or '<obj> <subj>' in template:
                 #     continue
                 # if template in template_list:
                 #     continue
                 template_candid.append({'template': template, 'word_pair': [a, b], 'sentence': i['sentence']})
-                template_list.append(template)
         with open(path_template_candidate, 'w') as f_writer:
             f_writer.write('\n'.join([json.dumps(i) for i in template_candid]))
 
