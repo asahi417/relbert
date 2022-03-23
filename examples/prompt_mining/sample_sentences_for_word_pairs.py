@@ -160,6 +160,7 @@ if __name__ == '__main__':
     path_template_scores = '{}/template.score.jsonl'.format(export_dir)
     if not os.path.exists(path_template_scores):
         BATCH = int(os.getenv('BATCH', 128))
+        print('batch:', BATCH)
         all_scores = {}
         scorer = PPL('roberta-large', max_length=64)
         with open(path_template_candidate) as f_reader:
