@@ -77,10 +77,6 @@ if __name__ == '__main__':
         full_json_list = [i for i in full_json_list if len(i['sentence']) < 64]
         full_json_list = [i for i in full_json_list if not i['sentence'].endswith('"')]
         full_json_list = [i for i in full_json_list if not all(t.isupper() for t in i['sentence'].split(' '))]
-        # remove noisy pairs
-        # noisy_pairs = [['in', 'out'], ['out', 'in'], ['north', 'south'], ['south', 'north']]
-        # full_json_list = [i for i in full_json_list if len([p for p in i['word_pairs'] if p not in noisy_pairs]) > 0]
-        # if the two word of the pair is upper case, remove since it could be a part of named entity.
         full_json_list_new = []
         for i in full_json_list:
 
@@ -130,11 +126,6 @@ if __name__ == '__main__':
                 template = i['sentence']
                 if a in b or b in a:
                     continue
-                    # n_b = template.lower().find(b)
-                    # template = template[:n_b] + '<obj>' + template[n_b + len(b):]
-                    # n_a = template.lower().find(a)
-                    # template = template[:n_a] + '<subj>' + template[n_a + len(a):]
-                # else:
                 n_a = template.lower().find(a)
                 template = template[:n_a] + '<subj>' + template[n_a + len(a):]
                 n_b = template.lower().find(b)
@@ -153,11 +144,6 @@ if __name__ == '__main__':
                 if _plain_template in plain_template:
                     continue
                 plain_template.append(_plain_template)
-
-                # if '<subj> <obj>' in template or '<obj> <subj>' in template:
-                #     continue
-                # if template in template_list:
-                #     continue
                 template_candid.append({'template': template, 'word_pair': [a, b], 'sentence': i['sentence']})
         with open(path_template_candidate, 'w') as f_writer:
             f_writer.write('\n'.join([json.dumps(i) for i in template_candid]))
@@ -168,7 +154,6 @@ if __name__ == '__main__':
         key, cnt = np.unique(all_types, return_counts=True)
         freq = sorted(list(zip(key.tolist(), cnt.tolist())), key=lambda x: x[1], reverse=True)
 
-    exit()
     #############################
     # create template candidate #
     #############################
