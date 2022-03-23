@@ -76,8 +76,8 @@ if __name__ == '__main__':
         # remove too long sentence
         full_json_list = [i for i in full_json_list if len(i['sentence']) < 64]
         # remove noisy pairs
-        noisy_pairs = [['in', 'out'], ['out', 'in'], ['north', 'south'], ['south', 'north']]
-        full_json_list = [i for i in full_json_list if len([p for p in i['word_pairs'] if p not in noisy_pairs]) > 0]
+        # noisy_pairs = [['in', 'out'], ['out', 'in'], ['north', 'south'], ['south', 'north']]
+        # full_json_list = [i for i in full_json_list if len([p for p in i['word_pairs'] if p not in noisy_pairs]) > 0]
         # if the two word of the pair is upper case, remove since it could be a part of named entity.
         full_json_list_new = []
         for i in full_json_list:
@@ -114,8 +114,8 @@ if __name__ == '__main__':
         noisy_pairs = [['female', 'male']]
         for i in full_json_list:
             for a, b in i['word_pairs']:
-                if [a, b] in noisy_pairs:
-                    continue
+                # if [a, b] in noisy_pairs:
+                #     continue
                 template = i['sentence']
 
                 if all(t[0].isupper() for t in template.split(' ') if t not in ['<subj>', '<obj>']):
