@@ -75,12 +75,15 @@ if __name__ == '__main__':
         full_json_list = [i for i in full_json_list if '\n' not in i['sentence']]
         # remove too long sentence
         full_json_list = [i for i in full_json_list if len(i['sentence']) < 64]
+        full_json_list = [i for i in full_json_list if not i['sentence'].endswith('"')]
+        full_json_list = [i for i in full_json_list if not all(t.isupper() for t in i['sentence'].split(' '))]
         # remove noisy pairs
         # noisy_pairs = [['in', 'out'], ['out', 'in'], ['north', 'south'], ['south', 'north']]
         # full_json_list = [i for i in full_json_list if len([p for p in i['word_pairs'] if p not in noisy_pairs]) > 0]
         # if the two word of the pair is upper case, remove since it could be a part of named entity.
         full_json_list_new = []
         for i in full_json_list:
+
             flag = True
             for a, b in i['word_pairs']:
                 n_a = i['sentence'].lower().find(a)
@@ -88,9 +91,19 @@ if __name__ == '__main__':
                 if n_a == -1 or n_b == -1:
                     flag = False
                     break
+
                 if i['sentence'][n_a:n_a + 1].isupper() and i['sentence'][n_b:n_b + 1].isupper():
                     flag = False
                     break
+                
+                if n_a < n_b and i['sentence'][n_a + len(a): n_b].replace(' ', '') == '':
+                    flag = False
+                    break
+
+                if n_a > n_b and i['sentence'][n_b + len(b): n_a].replace(' ', '') == '':
+                    flag = False
+                    break
+
             if flag:
                 i['sentence'] = re.sub(r'\A\s+', '', i['sentence'])
                 i['sentence'] = re.sub(r'\s+', ' ', i['sentence'])
@@ -118,11 +131,11 @@ if __name__ == '__main__':
                 #     continue
                 template = i['sentence']
 
-                if all(t[0].isupper() for t in template.split(' ') if t not in ['<subj>', '<obj>']):
-                    continue
+                # if all(t[0].isupper() for t in template.split(' ') if t not in ['<subj>', '<obj>']):
+                #     continue
 
-                if template.endswith('"'):
-                    continue
+                # if template.endswith('"'):
+                #     continue
 
                 if a in b:
                     n_b = template.lower().find(b)
@@ -149,6 +162,7 @@ if __name__ == '__main__':
         all_types = ['{}-{}'.format(*i['word_pair']) for i in template_candid]
         key, cnt = np.unique(all_types, return_counts=True)
         freq = sorted(list(zip(key.tolist(), cnt.tolist())), key=lambda x: x[1], reverse=True)
+
     exit()
     #############################
     # create template candidate #
