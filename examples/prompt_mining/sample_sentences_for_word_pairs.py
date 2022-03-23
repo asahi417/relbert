@@ -95,7 +95,7 @@ if __name__ == '__main__':
                 if i['sentence'][n_a:n_a + 1].isupper() and i['sentence'][n_b:n_b + 1].isupper():
                     flag = False
                     break
-                
+
                 if n_a < n_b and i['sentence'][n_a + len(a): n_b].replace(' ', '') == '':
                     flag = False
                     break
@@ -148,10 +148,10 @@ if __name__ == '__main__':
                     n_b = template.lower().find(b)
                     template = template[:n_b] + '<obj>' + template[n_b + len(b):]
                 assert '<subj>' in template and '<obj>' in template, template
-                if '<subj> <obj>' in template or '<obj> <subj>' in template:
-                    continue
-                if template in template_list:
-                    continue
+                # if '<subj> <obj>' in template or '<obj> <subj>' in template:
+                #     continue
+                # if template in template_list:
+                #     continue
                 template_candid.append({'template': template, 'word_pair': [a, b], 'sentence': i['sentence']})
                 template_list.append(template)
         with open(path_template_candidate, 'w') as f_writer:
