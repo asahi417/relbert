@@ -127,20 +127,24 @@ if __name__ == '__main__':
         noisy_pairs = [['female', 'male']]
         for i in full_json_list:
             for a, b in i['word_pairs']:
-                # if [a, b] in noisy_pairs:
-                #     continue
                 template = i['sentence']
+                if a in b or b in a:
+                    continue
+                    # n_b = template.lower().find(b)
+                    # template = template[:n_b] + '<obj>' + template[n_b + len(b):]
+                    # n_a = template.lower().find(a)
+                    # template = template[:n_a] + '<subj>' + template[n_a + len(a):]
+                # else:
+                n_a = template.lower().find(a)
+                template = template[:n_a] + '<subj>' + template[n_a + len(a):]
+                n_b = template.lower().find(b)
+                template = template[:n_b] + '<obj>' + template[n_b + len(b):]
+                if template[n_a - 1] not in [' ', '.', ''] or template[n_a + len(a)] not in [' ', '.', '']:
+                    continue
 
-                if a in b:
-                    n_b = template.lower().find(b)
-                    template = template[:n_b] + '<obj>' + template[n_b + len(b):]
-                    n_a = template.lower().find(a)
-                    template = template[:n_a] + '<subj>' + template[n_a + len(a):]
-                else:
-                    n_a = template.lower().find(a)
-                    template = template[:n_a] + '<subj>' + template[n_a + len(a):]
-                    n_b = template.lower().find(b)
-                    template = template[:n_b] + '<obj>' + template[n_b + len(b):]
+                if template[n_b - 1] not in [' ', '.', ''] or template[n_b + len(b)] not in [' ', '.', '']:
+                    continue
+
                 assert '<subj>' in template and '<obj>' in template, template
                 _plain_template = template.replace('<subj>', '').replace('<obj>', '')
                 if _plain_template in plain_template:
