@@ -139,10 +139,12 @@ if __name__ == '__main__':
                 template = template[:n_a] + '<subj>' + template[n_a + len(a):]
                 n_b = template.lower().find(b)
                 template = template[:n_b] + '<obj>' + template[n_b + len(b):]
-                if template[n_a - 1] not in [' ', '.', ''] or template[n_a + len(a)] not in [' ', '.', '']:
-                    continue
-
-                if template[n_b - 1] not in [' ', '.', ''] or template[n_b + len(b)] not in [' ', '.', '']:
+                try:
+                    if template[n_a - 1] not in [' ', '.', ''] or template[n_a + len(a)] not in [' ', '.', '']:
+                        continue
+                    if template[n_b - 1] not in [' ', '.', ''] or template[n_b + len(b)] not in [' ', '.', '']:
+                        continue
+                except IndexError:
                     continue
 
                 assert '<subj>' in template and '<obj>' in template, template
