@@ -11,4 +11,13 @@ relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_top_8 --c
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_top_9 --custom-template "There are <obj> things and there are <subj> things."
 
 
-
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_0 --custom-template "She came <obj> as bisexual <subj> 1984."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_1 --custom-template "He carried <obj> structural reforms <subj> Pancrase."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_2 --custom-template "He came <obj> as bisexual <subj> 2016."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_3 --custom-template "She dropped <obj> of movies <subj> 1937."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_4 --custom-template "Limited excavation carried <obj> on <subj> 1996."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_5 --custom-template "The concerts sold <obj> well <subj> advance."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_6 --custom-template "Warren also came <obj> as lesbian <subj> 1974."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_7 --custom-template "He came <obj> publicly <subj> 1993."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_8 --custom-template "<obj> of Doors <subj> Florida."
+relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_9 --custom-template "Mary came <obj> as bisexual <subj> 2008."
