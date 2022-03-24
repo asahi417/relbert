@@ -48,6 +48,7 @@ class EncodePlus:
                  mode: str = 'average',
                  trigger_mode: bool = False,
                  truncate_exceed_tokens: bool = True):
+        print(custom_template, template)
         assert custom_template is not None or template is not None
         self.custom_template = custom_template
         self.template = template
@@ -169,6 +170,7 @@ class RelBERT:
             self.mode = mode
             self.is_trained = False
             if custom_template is not None:
+                self.custom_template = custom_template
                 model_config.update({'relbert_config': {'mode': mode, 'custom_template': custom_template}})
             else:
                 assert template_type is not None
@@ -179,6 +181,7 @@ class RelBERT:
                     with open(template_type, 'r') as f:
                         self.template = json.load(f)
                     model_config.update({'relbert_config': {'mode': mode, 'template': self.template}})
+        assert self.template is not None or self.custom_template is not None
         try:
             self.model = transformers.AutoModel.from_pretrained(
                 self.model_name, config=model_config, cache_dir=self.cache_dir)
