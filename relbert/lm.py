@@ -43,12 +43,12 @@ class EncodePlus:
     def __init__(self,
                  tokenizer,
                  max_length: int,
-                 custom_template: str = 'a',
+                 custom_template: str = None,
                  template: Dict = None,
                  mode: str = 'average',
                  trigger_mode: bool = False,
                  truncate_exceed_tokens: bool = True):
-        assert custom_template or template
+        assert custom_template is not None or template is not None
         self.custom_template = custom_template
         self.template = template
         self.trigger_mode = trigger_mode
