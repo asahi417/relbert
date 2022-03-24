@@ -168,15 +168,17 @@ class RelBERT:
         else:
             self.mode = mode
             self.is_trained = False
-            assert template_type is not None
-            if template_type in preset_templates:
-                # model_config.update({'relbert_config': {'mode': mode, 'custom_template_type': template_type}})
-                self.custom_template = preset_templates[template_type]
-                model_config.update({'relbert_config': {'mode': mode, 'custom_template': self.custom_template}})
+            if custom_template is not None:
+                model_config.update({'relbert_config': {'mode': mode, 'custom_template': custom_template}})
             else:
-                with open(template_type, 'r') as f:
-                    self.template = json.load(f)
-                model_config.update({'relbert_config': {'mode': mode, 'template': self.template}})
+                assert template_type is not None
+                if template_type in preset_templates:
+                    self.custom_template = preset_templates[template_type]
+                    model_config.update({'relbert_config': {'mode': mode, 'custom_template': self.custom_template}})
+                else:
+                    with open(template_type, 'r') as f:
+                        self.template = json.load(f)
+                    model_config.update({'relbert_config': {'mode': mode, 'template': self.template}})
         try:
             self.model = transformers.AutoModel.from_pretrained(
                 self.model_name, config=model_config, cache_dir=self.cache_dir)
