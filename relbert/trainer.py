@@ -79,8 +79,7 @@ class Trainer:
         self.checkpoint_dir = self.config.cache_dir
         # get dataset
         self.all_positive, self.all_negative, self.relation_structure = get_training_data(
-            data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=self.cache_dir,
-            exclude_relation=exclude_relation
+            data_name=self.config.data, n_sample=self.config.n_sample, exclude_relation=exclude_relation
         )
 
         # calculate the number of trial to cover all combination in batch
