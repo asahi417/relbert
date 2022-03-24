@@ -174,15 +174,20 @@ if __name__ == '__main__':
         with open(path_template_scores, 'w') as f_writer:
             f_writer.write('\n'.join([json.dumps(i) for i in template_candid]))
 
+    ##############################
+    # sample-top/worst 10 prompt #
+    ##############################
     with open(path_template_scores) as f_reader:
         template_candid = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
     prompt_score = []
     for i in template_candid:
         prompt_score += list(zip(i['scores']['score'], i['scores']['prompt']))
-        i['ppl'] = sum(i['scores']['score'])/len(i['scores']['score'])
-    pd.DataFrame(template_candid).to_csv('{}/template.score.average.csv'.format(export_dir), index=False)
-    df = pd.DataFrame(prompt_score, columns=['ppl', 'prompt']).sort_values(by="ppl", ascending=False)
-    df.to_csv('{}/template.score.flatten.csv'.format(export_dir), index=False)
-
-
+        i['ppl'] = sum(i['scores']['score']) / len(i['scores']['score'])
+    df = pd.DataFrame(template_candid)[['template', 'word_pair', 'ppl']]
+    df = df.sort_values(by='ppl')
+    df.head(10).to_csv('{}/template.top10.csv'.format(export_dir), index=False)
+    df.tail(10).to_csv('{}/template.bottom10.csv'.format(export_dir), index=False)
+    df.to_csv('{}/template.score.average.csv'.format(export_dir), index=False)
+    df_flat = pd.DataFrame(prompt_score, columns=['ppl', 'prompt']).sort_values(by="ppl", ascending=False)
+    df_flat.to_csv('{}/template.score.flatten.csv'.format(export_dir), index=False)
 
