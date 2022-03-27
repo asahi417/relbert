@@ -48,7 +48,6 @@ class EncodePlus:
                  mode: str = 'average',
                  trigger_mode: bool = False,
                  truncate_exceed_tokens: bool = True):
-        print(custom_template, template)
         assert custom_template is not None or template is not None
         self.custom_template = custom_template
         self.template = template

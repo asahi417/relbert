@@ -10,7 +10,6 @@ relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_top_7 --c
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_top_8 --custom-template "And then, suddenly, it's <obj> with the old and <subj> with the new."
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_top_9 --custom-template "There are <obj> things and there are <subj> things."
 
-
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_0 --custom-template "She came <obj> as bisexual <subj> 1984."
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_1 --custom-template "He carried <obj> structural reforms <subj> Pancrase."
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_2 --custom-template "He came <obj> as bisexual <subj> 2016."
@@ -21,3 +20,5 @@ relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_6 
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_7 --custom-template "He came <obj> publicly <subj> 1993."
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_8 --custom-template "<obj> of Doors <subj> Florida."
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_9 --custom-template "Mary came <obj> as bisexual <subj> 2008."
+
+relbert-eval -c 'ckpt/*/*' --export-file ./output/accuracy.analogy.csv
