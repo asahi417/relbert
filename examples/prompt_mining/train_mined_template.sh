@@ -21,4 +21,5 @@ relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_7 
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_8 --custom-template "<obj> of Doors <subj> Florida."
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_bottom_9 --custom-template "Mary came <obj> as bisexual <subj> 2008."
 
+
 relbert-eval -c 'ckpt/*/*' --export-file ./output/accuracy.analogy.csv
