@@ -1,0 +1,101 @@
+,accuracy/valid,accuracy/test,accuracy/full,data,validation_loss,validation_data,model,mode,template_type,template
+0,0.7738693467336684,0.754863813229572,0.7567567567567568,bats,3.95805745185176,semeval2012,ckpt/roberta_mining_bottom_0/epoch_1,average_no_mask,,She came <obj> as bisexual <subj> 1984.
+1,0.4864864864864865,0.6142433234421365,0.6016042780748663,sat,3.95805745185176,semeval2012,ckpt/roberta_mining_bottom_0/epoch_1,average_no_mask,,She came <obj> as bisexual <subj> 1984.
+2,0.5,0.6228070175438597,0.6111111111111112,u2,3.95805745185176,semeval2012,ckpt/roberta_mining_bottom_0/epoch_1,average_no_mask,,She came <obj> as bisexual <subj> 1984.
+3,0.625,0.6458333333333334,0.64375,u4,3.95805745185176,semeval2012,ckpt/roberta_mining_bottom_0/epoch_1,average_no_mask,,She came <obj> as bisexual <subj> 1984.
+4,0.9,0.916,0.9145454545454546,google,3.95805745185176,semeval2012,ckpt/roberta_mining_bottom_0/epoch_1,average_no_mask,,She came <obj> as bisexual <subj> 1984.
+5,0.7236180904522613,0.7226236798221234,0.7227227227227228,bats,2.59975133968305,semeval2012,ckpt/roberta_mining_bottom_1/epoch_1,average_no_mask,,He carried <obj> structural reforms <subj> Pancrase.
+6,0.5135135135135135,0.5905044510385756,0.5828877005347594,sat,2.59975133968305,semeval2012,ckpt/roberta_mining_bottom_1/epoch_1,average_no_mask,,He carried <obj> structural reforms <subj> Pancrase.
+7,0.5416666666666666,0.5877192982456141,0.5833333333333334,u2,2.59975133968305,semeval2012,ckpt/roberta_mining_bottom_1/epoch_1,average_no_mask,,He carried <obj> structural reforms <subj> Pancrase.
+8,0.5625,0.5972222222222222,0.59375,u4,2.59975133968305,semeval2012,ckpt/roberta_mining_bottom_1/epoch_1,average_no_mask,,He carried <obj> structural reforms <subj> Pancrase.
+9,0.88,0.868,0.8690909090909091,google,2.59975133968305,semeval2012,ckpt/roberta_mining_bottom_1/epoch_1,average_no_mask,,He carried <obj> structural reforms <subj> Pancrase.
+10,0.7437185929648241,0.725958866036687,0.7277277277277278,bats,3.6151799069175237,semeval2012,ckpt/roberta_mining_bottom_2/epoch_1,average_no_mask,,He came <obj> as bisexual <subj> 2016.
+11,0.5675675675675675,0.5637982195845698,0.5641711229946524,sat,3.6151799069175237,semeval2012,ckpt/roberta_mining_bottom_2/epoch_1,average_no_mask,,He came <obj> as bisexual <subj> 2016.
+12,0.5,0.5789473684210527,0.5714285714285714,u2,3.6151799069175237,semeval2012,ckpt/roberta_mining_bottom_2/epoch_1,average_no_mask,,He came <obj> as bisexual <subj> 2016.
+13,0.6041666666666666,0.6111111111111112,0.6104166666666667,u4,3.6151799069175237,semeval2012,ckpt/roberta_mining_bottom_2/epoch_1,average_no_mask,,He came <obj> as bisexual <subj> 2016.
+14,0.78,0.85,0.8436363636363636,google,3.6151799069175237,semeval2012,ckpt/roberta_mining_bottom_2/epoch_1,average_no_mask,,He came <obj> as bisexual <subj> 2016.
+15,0.7437185929648241,0.7254030016675931,0.7272272272272272,bats,3.058091368856309,semeval2012,ckpt/roberta_mining_bottom_3/epoch_1,average_no_mask,,She dropped <obj> of movies <subj> 1937.
+16,0.5675675675675675,0.5667655786350149,0.5668449197860963,sat,3.058091368856309,semeval2012,ckpt/roberta_mining_bottom_3/epoch_1,average_no_mask,,She dropped <obj> of movies <subj> 1937.
+17,0.625,0.5964912280701754,0.5992063492063492,u2,3.058091368856309,semeval2012,ckpt/roberta_mining_bottom_3/epoch_1,average_no_mask,,She dropped <obj> of movies <subj> 1937.
+18,0.4375,0.5856481481481481,0.5708333333333333,u4,3.058091368856309,semeval2012,ckpt/roberta_mining_bottom_3/epoch_1,average_no_mask,,She dropped <obj> of movies <subj> 1937.
+19,0.9,0.868,0.8709090909090909,google,3.058091368856309,semeval2012,ckpt/roberta_mining_bottom_3/epoch_1,average_no_mask,,She dropped <obj> of movies <subj> 1937.
+20,0.7035175879396985,0.7254030016675931,0.7232232232232232,bats,2.4174707147139536,semeval2012,ckpt/roberta_mining_bottom_4/epoch_1,average_no_mask,,Limited excavation carried <obj> on <subj> 1996.
+21,0.5135135135135135,0.5816023738872403,0.5748663101604278,sat,2.4174707147139536,semeval2012,ckpt/roberta_mining_bottom_4/epoch_1,average_no_mask,,Limited excavation carried <obj> on <subj> 1996.
+22,0.5,0.6008771929824561,0.5912698412698413,u2,2.4174707147139536,semeval2012,ckpt/roberta_mining_bottom_4/epoch_1,average_no_mask,,Limited excavation carried <obj> on <subj> 1996.
+23,0.6041666666666666,0.6273148148148148,0.625,u4,2.4174707147139536,semeval2012,ckpt/roberta_mining_bottom_4/epoch_1,average_no_mask,,Limited excavation carried <obj> on <subj> 1996.
+24,0.84,0.868,0.8654545454545455,google,2.4174707147139536,semeval2012,ckpt/roberta_mining_bottom_4/epoch_1,average_no_mask,,Limited excavation carried <obj> on <subj> 1996.
+25,0.6381909547738693,0.6748193440800445,0.6711711711711712,bats,2.1190444366841374,semeval2012,ckpt/roberta_mining_bottom_5/epoch_1,average_no_mask,,The concerts sold <obj> well <subj> advance.
+26,0.32432432432432434,0.4658753709198813,0.45187165775401067,sat,2.1190444366841374,semeval2012,ckpt/roberta_mining_bottom_5/epoch_1,average_no_mask,,The concerts sold <obj> well <subj> advance.
+27,0.3333333333333333,0.4956140350877193,0.4801587301587302,u2,2.1190444366841374,semeval2012,ckpt/roberta_mining_bottom_5/epoch_1,average_no_mask,,The concerts sold <obj> well <subj> advance.
+28,0.5,0.5069444444444444,0.50625,u4,2.1190444366841374,semeval2012,ckpt/roberta_mining_bottom_5/epoch_1,average_no_mask,,The concerts sold <obj> well <subj> advance.
+29,0.8,0.78,0.7818181818181819,google,2.1190444366841374,semeval2012,ckpt/roberta_mining_bottom_5/epoch_1,average_no_mask,,The concerts sold <obj> well <subj> advance.
+30,0.7939698492462312,0.7665369649805448,0.7692692692692693,bats,2.6921160734152494,semeval2012,ckpt/roberta_mining_bottom_6/epoch_1,average_no_mask,,Warren also came <obj> as lesbian <subj> 1974.
+31,0.4594594594594595,0.6261127596439169,0.6096256684491979,sat,2.6921160734152494,semeval2012,ckpt/roberta_mining_bottom_6/epoch_1,average_no_mask,,Warren also came <obj> as lesbian <subj> 1974.
+32,0.5,0.5921052631578947,0.5833333333333334,u2,2.6921160734152494,semeval2012,ckpt/roberta_mining_bottom_6/epoch_1,average_no_mask,,Warren also came <obj> as lesbian <subj> 1974.
+33,0.625,0.6481481481481481,0.6458333333333334,u4,2.6921160734152494,semeval2012,ckpt/roberta_mining_bottom_6/epoch_1,average_no_mask,,Warren also came <obj> as lesbian <subj> 1974.
+34,0.92,0.914,0.9145454545454546,google,2.6921160734152494,semeval2012,ckpt/roberta_mining_bottom_6/epoch_1,average_no_mask,,Warren also came <obj> as lesbian <subj> 1974.
+35,0.7688442211055276,0.7604224569205114,0.7612612612612613,bats,2.924191921572142,semeval2012,ckpt/roberta_mining_bottom_7/epoch_1,average_no_mask,,He came <obj> publicly <subj> 1993.
+36,0.5135135135135135,0.6053412462908012,0.5962566844919787,sat,2.924191921572142,semeval2012,ckpt/roberta_mining_bottom_7/epoch_1,average_no_mask,,He came <obj> publicly <subj> 1993.
+37,0.4583333333333333,0.6491228070175439,0.6309523809523809,u2,2.924191921572142,semeval2012,ckpt/roberta_mining_bottom_7/epoch_1,average_no_mask,,He came <obj> publicly <subj> 1993.
+38,0.5833333333333334,0.6203703703703703,0.6166666666666667,u4,2.924191921572142,semeval2012,ckpt/roberta_mining_bottom_7/epoch_1,average_no_mask,,He came <obj> publicly <subj> 1993.
+39,0.86,0.886,0.8836363636363637,google,2.924191921572142,semeval2012,ckpt/roberta_mining_bottom_7/epoch_1,average_no_mask,,He came <obj> publicly <subj> 1993.
+40,0.7035175879396985,0.6586992773763202,0.6631631631631631,bats,3.437727336642108,semeval2012,ckpt/roberta_mining_bottom_8/epoch_1,average_no_mask,,<obj> of Doors <subj> Florida.
+41,0.3783783783783784,0.47477744807121663,0.46524064171123,sat,3.437727336642108,semeval2012,ckpt/roberta_mining_bottom_8/epoch_1,average_no_mask,,<obj> of Doors <subj> Florida.
+42,0.4166666666666667,0.543859649122807,0.5317460317460317,u2,3.437727336642108,semeval2012,ckpt/roberta_mining_bottom_8/epoch_1,average_no_mask,,<obj> of Doors <subj> Florida.
+43,0.4375,0.5393518518518519,0.5291666666666667,u4,3.437727336642108,semeval2012,ckpt/roberta_mining_bottom_8/epoch_1,average_no_mask,,<obj> of Doors <subj> Florida.
+44,0.68,0.702,0.7,google,3.437727336642108,semeval2012,ckpt/roberta_mining_bottom_8/epoch_1,average_no_mask,,<obj> of Doors <subj> Florida.
+45,0.7487437185929648,0.7153974430239022,0.7187187187187187,bats,2.3229090050805974,semeval2012,ckpt/roberta_mining_bottom_9/epoch_1,average_no_mask,,Mary came <obj> as bisexual <subj> 2008.
+46,0.5405405405405406,0.6053412462908012,0.5989304812834224,sat,2.3229090050805974,semeval2012,ckpt/roberta_mining_bottom_9/epoch_1,average_no_mask,,Mary came <obj> as bisexual <subj> 2008.
+47,0.5416666666666666,0.5964912280701754,0.5912698412698413,u2,2.3229090050805974,semeval2012,ckpt/roberta_mining_bottom_9/epoch_1,average_no_mask,,Mary came <obj> as bisexual <subj> 2008.
+48,0.5625,0.6134259259259259,0.6083333333333333,u4,2.3229090050805974,semeval2012,ckpt/roberta_mining_bottom_9/epoch_1,average_no_mask,,Mary came <obj> as bisexual <subj> 2008.
+49,0.84,0.888,0.8836363636363637,google,2.3229090050805974,semeval2012,ckpt/roberta_mining_bottom_9/epoch_1,average_no_mask,,Mary came <obj> as bisexual <subj> 2008.
+50,0.6834170854271356,0.669816564758199,0.6711711711711712,bats,3.6970937221865112,semeval2012,ckpt/roberta_mining_top_0/epoch_1,average_no_mask,,"<obj> oshibori are used in summer, and <subj> oshibori in winter."
+51,0.43243243243243246,0.4391691394658754,0.4385026737967914,sat,3.6970937221865112,semeval2012,ckpt/roberta_mining_top_0/epoch_1,average_no_mask,,"<obj> oshibori are used in summer, and <subj> oshibori in winter."
+52,0.4583333333333333,0.5570175438596491,0.5476190476190477,u2,3.6970937221865112,semeval2012,ckpt/roberta_mining_top_0/epoch_1,average_no_mask,,"<obj> oshibori are used in summer, and <subj> oshibori in winter."
+53,0.5416666666666666,0.5185185185185185,0.5208333333333334,u4,3.6970937221865112,semeval2012,ckpt/roberta_mining_top_0/epoch_1,average_no_mask,,"<obj> oshibori are used in summer, and <subj> oshibori in winter."
+54,0.78,0.8,0.7981818181818182,google,3.6970937221865112,semeval2012,ckpt/roberta_mining_top_0/epoch_1,average_no_mask,,"<obj> oshibori are used in summer, and <subj> oshibori in winter."
+55,0.6884422110552764,0.6831573096164536,0.6836836836836837,bats,1.8462300360957278,semeval2012,ckpt/roberta_mining_top_1/epoch_1,average_no_mask,,The opposite of <obj> chaining is <subj> chaining.
+56,0.32432432432432434,0.4629080118694362,0.44919786096256686,sat,1.8462300360957278,semeval2012,ckpt/roberta_mining_top_1/epoch_1,average_no_mask,,The opposite of <obj> chaining is <subj> chaining.
+57,0.4166666666666667,0.4605263157894737,0.45634920634920634,u2,1.8462300360957278,semeval2012,ckpt/roberta_mining_top_1/epoch_1,average_no_mask,,The opposite of <obj> chaining is <subj> chaining.
+58,0.5625,0.4837962962962963,0.49166666666666664,u4,1.8462300360957278,semeval2012,ckpt/roberta_mining_top_1/epoch_1,average_no_mask,,The opposite of <obj> chaining is <subj> chaining.
+59,0.82,0.784,0.7872727272727272,google,1.8462300360957278,semeval2012,ckpt/roberta_mining_top_1/epoch_1,average_no_mask,,The opposite of <obj> chaining is <subj> chaining.
+60,0.7386934673366834,0.7292940522512507,0.7302302302302303,bats,4.2779747685299645,semeval2012,ckpt/roberta_mining_top_2/epoch_1,average_no_mask,,"<subj> — Valery Vladimirovich, <obj> — Galina Ivanovna."
+61,0.3783783783783784,0.5341246290801187,0.5187165775401069,sat,4.2779747685299645,semeval2012,ckpt/roberta_mining_top_2/epoch_1,average_no_mask,,"<subj> — Valery Vladimirovich, <obj> — Galina Ivanovna."
+62,0.375,0.5,0.4880952380952381,u2,4.2779747685299645,semeval2012,ckpt/roberta_mining_top_2/epoch_1,average_no_mask,,"<subj> — Valery Vladimirovich, <obj> — Galina Ivanovna."
+63,0.625,0.5532407407407407,0.5604166666666667,u4,4.2779747685299645,semeval2012,ckpt/roberta_mining_top_2/epoch_1,average_no_mask,,"<subj> — Valery Vladimirovich, <obj> — Galina Ivanovna."
+64,0.92,0.848,0.8545454545454545,google,4.2779747685299645,semeval2012,ckpt/roberta_mining_top_2/epoch_1,average_no_mask,,"<subj> — Valery Vladimirovich, <obj> — Galina Ivanovna."
+65,0.6633165829145728,0.6581434130072262,0.6586586586586587,bats,2.0365566784822486,semeval2012,ckpt/roberta_mining_top_3/epoch_1,average_no_mask,,Trucks enter on the <obj> end and exit on the <subj> end.
+66,0.43243243243243246,0.5252225519287834,0.516042780748663,sat,2.0365566784822486,semeval2012,ckpt/roberta_mining_top_3/epoch_1,average_no_mask,,Trucks enter on the <obj> end and exit on the <subj> end.
+67,0.4166666666666667,0.5394736842105263,0.5277777777777778,u2,2.0365566784822486,semeval2012,ckpt/roberta_mining_top_3/epoch_1,average_no_mask,,Trucks enter on the <obj> end and exit on the <subj> end.
+68,0.4166666666666667,0.49537037037037035,0.4875,u4,2.0365566784822486,semeval2012,ckpt/roberta_mining_top_3/epoch_1,average_no_mask,,Trucks enter on the <obj> end and exit on the <subj> end.
+69,0.78,0.732,0.7363636363636363,google,2.0365566784822486,semeval2012,ckpt/roberta_mining_top_3/epoch_1,average_no_mask,,Trucks enter on the <obj> end and exit on the <subj> end.
+70,0.7236180904522613,0.7120622568093385,0.7132132132132132,bats,3.5917145934285997,semeval2012,ckpt/roberta_mining_top_4/epoch_1,average_no_mask,,Her <subj> is from Diyarbakır and her <obj> is from Kastamonu.
+71,0.43243243243243246,0.543026706231454,0.5320855614973262,sat,3.5917145934285997,semeval2012,ckpt/roberta_mining_top_4/epoch_1,average_no_mask,,Her <subj> is from Diyarbakır and her <obj> is from Kastamonu.
+72,0.4583333333333333,0.5482456140350878,0.5396825396825397,u2,3.5917145934285997,semeval2012,ckpt/roberta_mining_top_4/epoch_1,average_no_mask,,Her <subj> is from Diyarbakır and her <obj> is from Kastamonu.
+73,0.6041666666666666,0.5625,0.5666666666666667,u4,3.5917145934285997,semeval2012,ckpt/roberta_mining_top_4/epoch_1,average_no_mask,,Her <subj> is from Diyarbakır and her <obj> is from Kastamonu.
+74,0.84,0.794,0.7981818181818182,google,3.5917145934285997,semeval2012,ckpt/roberta_mining_top_4/epoch_1,average_no_mask,,Her <subj> is from Diyarbakır and her <obj> is from Kastamonu.
+75,0.6532663316582915,0.679266259032796,0.6766766766766766,bats,2.4642107999777494,semeval2012,ckpt/roberta_mining_top_5/epoch_1,average_no_mask,,"His <obj> is Serpil Özyavuz, and his <subj> is Mehmet Özyavuz."
+76,0.4864864864864865,0.5341246290801187,0.5294117647058824,sat,2.4642107999777494,semeval2012,ckpt/roberta_mining_top_5/epoch_1,average_no_mask,,"His <obj> is Serpil Özyavuz, and his <subj> is Mehmet Özyavuz."
+77,0.375,0.5526315789473685,0.5357142857142857,u2,2.4642107999777494,semeval2012,ckpt/roberta_mining_top_5/epoch_1,average_no_mask,,"His <obj> is Serpil Özyavuz, and his <subj> is Mehmet Özyavuz."
+78,0.5208333333333334,0.5486111111111112,0.5458333333333333,u4,2.4642107999777494,semeval2012,ckpt/roberta_mining_top_5/epoch_1,average_no_mask,,"His <obj> is Serpil Özyavuz, and his <subj> is Mehmet Özyavuz."
+79,0.76,0.806,0.8018181818181818,google,2.4642107999777494,semeval2012,ckpt/roberta_mining_top_5/epoch_1,average_no_mask,,"His <obj> is Serpil Özyavuz, and his <subj> is Mehmet Özyavuz."
+80,0.7336683417085427,0.6937187326292384,0.6976976976976977,bats,2.8451102534426918,semeval2012,ckpt/roberta_mining_top_6/epoch_1,average_no_mask,,"Her <subj> was Caddo, and her <obj> was Potawatomi."
+81,0.5135135135135135,0.5608308605341247,0.556149732620321,sat,2.8451102534426918,semeval2012,ckpt/roberta_mining_top_6/epoch_1,average_no_mask,,"Her <subj> was Caddo, and her <obj> was Potawatomi."
+82,0.4583333333333333,0.543859649122807,0.5357142857142857,u2,2.8451102534426918,semeval2012,ckpt/roberta_mining_top_6/epoch_1,average_no_mask,,"Her <subj> was Caddo, and her <obj> was Potawatomi."
+83,0.4375,0.5509259259259259,0.5395833333333333,u4,2.8451102534426918,semeval2012,ckpt/roberta_mining_top_6/epoch_1,average_no_mask,,"Her <subj> was Caddo, and her <obj> was Potawatomi."
+84,0.88,0.794,0.8018181818181818,google,2.8451102534426918,semeval2012,ckpt/roberta_mining_top_6/epoch_1,average_no_mask,,"Her <subj> was Caddo, and her <obj> was Potawatomi."
+85,0.6432160804020101,0.6642579210672596,0.6621621621621622,bats,2.7821049750605717,semeval2012,ckpt/roberta_mining_top_7/epoch_1,average_no_mask,,Her <subj> was from Kottayam and her <obj> was from Palakkad.
+86,0.5135135135135135,0.49258160237388726,0.4946524064171123,sat,2.7821049750605717,semeval2012,ckpt/roberta_mining_top_7/epoch_1,average_no_mask,,Her <subj> was from Kottayam and her <obj> was from Palakkad.
+87,0.4166666666666667,0.543859649122807,0.5317460317460317,u2,2.7821049750605717,semeval2012,ckpt/roberta_mining_top_7/epoch_1,average_no_mask,,Her <subj> was from Kottayam and her <obj> was from Palakkad.
+88,0.4791666666666667,0.5393518518518519,0.5333333333333333,u4,2.7821049750605717,semeval2012,ckpt/roberta_mining_top_7/epoch_1,average_no_mask,,Her <subj> was from Kottayam and her <obj> was from Palakkad.
+89,0.68,0.744,0.7381818181818182,google,2.7821049750605717,semeval2012,ckpt/roberta_mining_top_7/epoch_1,average_no_mask,,Her <subj> was from Kottayam and her <obj> was from Palakkad.
+90,0.6432160804020101,0.632017787659811,0.6331331331331331,bats,2.0737155962593947,semeval2012,ckpt/roberta_mining_top_8/epoch_1,average_no_mask,,"And then, suddenly, it's <obj> with the old and <subj> with the new."
+91,0.35135135135135137,0.49851632047477745,0.4839572192513369,sat,2.0737155962593947,semeval2012,ckpt/roberta_mining_top_8/epoch_1,average_no_mask,,"And then, suddenly, it's <obj> with the old and <subj> with the new."
+92,0.375,0.4517543859649123,0.4444444444444444,u2,2.0737155962593947,semeval2012,ckpt/roberta_mining_top_8/epoch_1,average_no_mask,,"And then, suddenly, it's <obj> with the old and <subj> with the new."
+93,0.4791666666666667,0.47685185185185186,0.47708333333333336,u4,2.0737155962593947,semeval2012,ckpt/roberta_mining_top_8/epoch_1,average_no_mask,,"And then, suddenly, it's <obj> with the old and <subj> with the new."
+94,0.72,0.816,0.8072727272727273,google,2.0737155962593947,semeval2012,ckpt/roberta_mining_top_8/epoch_1,average_no_mask,,"And then, suddenly, it's <obj> with the old and <subj> with the new."
+95,0.7236180904522613,0.707615341856587,0.7092092092092092,bats,2.1866429968725276,semeval2012,ckpt/roberta_mining_top_9/epoch_1,average_no_mask,,There are <obj> things and there are <subj> things.
+96,0.5135135135135135,0.5489614243323442,0.5454545454545454,sat,2.1866429968725276,semeval2012,ckpt/roberta_mining_top_9/epoch_1,average_no_mask,,There are <obj> things and there are <subj> things.
+97,0.4583333333333333,0.5307017543859649,0.5238095238095238,u2,2.1866429968725276,semeval2012,ckpt/roberta_mining_top_9/epoch_1,average_no_mask,,There are <obj> things and there are <subj> things.
+98,0.5416666666666666,0.5833333333333334,0.5791666666666667,u4,2.1866429968725276,semeval2012,ckpt/roberta_mining_top_9/epoch_1,average_no_mask,,There are <obj> things and there are <subj> things.
+99,0.84,0.82,0.8218181818181818,google,2.1866429968725276,semeval2012,ckpt/roberta_mining_top_9/epoch_1,average_no_mask,,There are <obj> things and there are <subj> things.
