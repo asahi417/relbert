@@ -32,4 +32,4 @@ for i in glob('output/template.*.*10.csv'):
         if len(p) == 0:
             continue
         output = os.path.basename(i).replace('.csv', '')
-        exe_shell(f'relbert-train -m roberta-large -n -p -s --export ./ckpt/{output} --custom-template {p}')
+        exe_shell(f'relbert-train -m roberta-large -n -p -s --export ./ckpt/{output} --custom-template "{p}"')
