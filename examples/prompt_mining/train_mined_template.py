@@ -25,7 +25,7 @@ def reader(_file):
 
 # get prompt
 prompts = {}
-for i in glob('cache/template.*.*10.csv'):
+for i in glob('output/template.*.*10.csv'):
     with open(i) as f:
         prompts = f.read().split('\n')
     for p in prompts:
