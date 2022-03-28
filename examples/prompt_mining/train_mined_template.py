@@ -10,7 +10,7 @@ def reader(_file):
 
 
 # get prompt
-with open('./run.sh', 'w') as f:
+with open('./run.sh', 'w') as f_writer:
     prompts = {}
     for i in glob('output/template.*.*10.csv'):
         with open(i) as f:
@@ -19,4 +19,4 @@ with open('./run.sh', 'w') as f:
             if len(p) == 0:
                 continue
             output = os.path.basename(i).replace('.csv', '')
-            f.write(f'relbert-train -m roberta-large -n -p -s --export ./ckpt/{output} --custom-template "{p}" \n')
+            f_writer.write(f'relbert-train -m roberta-large -n -p -s --export ./ckpt/{output} --custom-template "{p}" \n')
