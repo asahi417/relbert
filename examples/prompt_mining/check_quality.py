@@ -31,20 +31,20 @@ for i in range(10):
     print(f"\t low : {data_low[-1 -i]['template']}")
     print(f"\t high: {data_high[-1 -i]['template']}")
 
-with open('cache/template.mean.top10.csv', 'w') as f:
+with open('output/template.mean.top10.csv', 'w') as f:
     f.write('\n'.join([i['template'] for i in data_mean[:10]]))
-with open('cache/template.std.top10.csv', 'w') as f:
+with open('output/template.std.top10.csv', 'w') as f:
     f.write('\n'.join([i['template'] for i in data_std[:10]]))
-with open('cache/template.low.top10.csv', 'w') as f:
+with open('output/template.low.top10.csv', 'w') as f:
     f.write('\n'.join([i['template'] for i in data_low[:10]]))
-with open('cache/template.high.top10.csv', 'w') as f:
+with open('output/template.high.top10.csv', 'w') as f:
     f.write('\n'.join([i['template'] for i in data_high[:10]]))
 
-with open('cache/template.mean.bottom10.csv', 'w') as f:
+with open('output/template.mean.bottom10.csv', 'w') as f:
     f.write('\n'.join([i['template'] for i in data_mean[-10:]]))
-with open('cache/template.std.bottom10.csv', 'w') as f:
+with open('output/template.std.bottom10.csv', 'w') as f:
     f.write('\n'.join([i['template'] for i in data_std[-10:]]))
-with open('cache/template.low.bottom10.csv', 'w') as f:
+with open('output/template.low.bottom10.csv', 'w') as f:
     f.write('\n'.join([i['template'] for i in data_low[-10:]]))
-with open('cache/template.high.bottom10.csv', 'w') as f:
+with open('output/template.high.bottom10.csv', 'w') as f:
     f.write('\n'.join([i['template'] for i in data_high[-10:]]))
