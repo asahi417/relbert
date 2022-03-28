@@ -35,12 +35,12 @@ class Config:
             logging.info('hyperparameters')
             for k, v in self.config.items():
                 logging.info('\t * {}: {}'.format(k, str(v)[:min(100, len(str(v)))]))
-            configs = {i: self.safe_open(i) for i in glob('{}/*/{}.json'.format(os.path.dirname(export), config_name))}
-            configs = list(filter(lambda x: x[1] == self.config, configs.items()))
-            if len(configs) != 0:
-                input('\ncheckpoint with same config already exists: {}\n enter to overwrite >>>'.format(configs[0]))
-                for _p, _ in configs:
-                    shutil.rmtree(os.path.dirname(_p))
+            # configs = {i: self.safe_open(i) for i in glob('{}/*/{}.json'.format(os.path.dirname(export), config_name))}
+            # configs = list(filter(lambda x: x[1] == self.config, configs.items()))
+            # if len(configs) != 0:
+            #     input('\ncheckpoint with same config already exists: {}\n enter to overwrite >>>'.format(configs[0]))
+            #     for _p, _ in configs:
+            #         shutil.rmtree(os.path.dirname(_p))
             self.cache_dir = export
             self.__cache_init(config_name)
             self.last_iter = 0
