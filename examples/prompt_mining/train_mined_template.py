@@ -15,8 +15,8 @@ with open('./run.sh', 'w') as f_writer:
     for i in glob('output/template.*.*10.csv'):
         with open(i) as f:
             prompts = f.read().split('\n')
-        for p in prompts:
+        for n, p in enumerate(prompts):
             if len(p) == 0:
                 continue
             output = os.path.basename(i).replace('.csv', '')
-            f_writer.write(f'relbert-train -m roberta-large -n -p -s --export ./ckpt/{output} --custom-template "{p}" \n')
+            f_writer.write(f'relbert-train -m roberta-large -n -p -s --export ./ckpt/{output}.{n} --custom-template "{p}" \n')
