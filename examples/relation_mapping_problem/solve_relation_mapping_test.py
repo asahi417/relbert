@@ -1,3 +1,4 @@
+
 """
 pip install munkres
 """
@@ -6,13 +7,27 @@ import json
 from itertools import product
 
 import numpy as np
-import pandas as pd
+from numpy import dot
+from numpy.linalg import norm
+
 from munkres import Munkres
-from relbert import AnalogyScore, RelBERT, cosine_similarity, euclidean_distance
+from relbert import RelBERT
 
 
-def compute_score(source_list, target_list, cache_file='tmp.json', distance_function='cos',
-                  transformation: str = None):
+def cosine_similarity(a, b):
+    return dot(a, b) / (norm(a) * norm(b))
+
+
+def mean(_list):
+    return sum(_list)/len(_list)
+
+
+def compute_score(
+        source_list,
+        target_list,
+        target_list_true,
+        cache_file='tmp.json',
+        transformation: str = None):
     # compute each assignment score
     size = len(source_list)
     if os.path.exists(cache_file):
@@ -23,24 +38,26 @@ def compute_score(source_list, target_list, cache_file='tmp.json', distance_func
         embedding_dict = {}
         relbert_model = RelBERT('asahi417/relbert-roberta-large')
 
-    def get_score(_query, _options, __id):
-        __id = str(__id)
-        if __id in embedding_dict:
-            vector = embedding_dict[__id]
-        else:
-            assert relbert_model is not None, '{} not in {}'.format(__id, embedding_dict.keys())
-            vector = relbert_model.get_embedding([_query] + _options, batch_size=1024)
-            embedding_dict[__id] = vector
-        if distance_function == 'l2':
-            return [euclidean_distance(vector[0], _v) for _v in vector[1:]]
-        elif distance_function == 'cos':
-            return [1 - cosine_similarity(vector[0], _v) for _v in vector[1:]]
-        else:
-            raise ValueError('unknown ditance {}'.format(distance_function))
+    def get_score(_query, _options):
+        vectors = []
+        for pair in [_query] + _options:
+            _id = '__'.join(pair)
+            if _id in embedding_dict:
+                vector = embedding_dict[_id]
+            else:
+                assert relbert_model is not None, '{} not in {}'.format(_id, embedding_dict.keys())
+                vector = relbert_model.get_embedding(pair)
+                embedding_dict[_id] = vector
+                with open(cache_file, 'w') as f_writer:
+                    json.dump(embedding_dict, f_writer)
+            vectors.append(vector)
+        return [cosine_similarity(vectors[0], _v) for _v in vectors[1:]]
 
     model_input = {}
+    gold_pairs = list(zip(source_list, target_list_true))
+    print(gold_pairs)
     for n, (source_n, target_n) in enumerate(product(range(size), range(size))):
-        print('\t compute score: {}/{}'.format(n + 1, size*size))
+        # print('\t compute score: {}/{}'.format(n + 1, size*size))
         query = [source_list[source_n], target_list[target_n]]
         options = []
         for source_pair_n in range(size):
@@ -50,7 +67,22 @@ def compute_score(source_list, target_list, cache_file='tmp.json', distance_func
                 if target_n == target_pair_n:
                     continue
                 options.append([source_list[source_pair_n], target_list[target_pair_n]])
-        model_input['{}-{}'.format(source_n, target_n)] = get_score(query, options, n)
+        score = get_score(query, options)
+        model_input['{}-{}'.format(source_n, target_n)] = score
+        print('query:', query)
+        if tuple(query) in gold_pairs:
+            gold_scores = [score[n] for n, o in enumerate(options) if tuple(o) in gold_pairs]
+            non_gold_scores = [score[n] for n, o in enumerate(options) if tuple(o) not in gold_pairs]
+            print('gold :', mean(gold_scores))
+            print('false:', mean(non_gold_scores))
+            # input()
+            # print(query)
+            # input(options)
+            # print('{}-{}'.format(source_n, target_n))
+            # input(model_input['{}-{}'.format(source_n, target_n)])
+        print('all  :', mean(score))
+        print()
+    # exit()
     if relbert_model is not None:
         with open(cache_file, 'w') as f:
             json.dump(embedding_dict, f)
@@ -58,7 +90,6 @@ def compute_score(source_list, target_list, cache_file='tmp.json', distance_func
     # get overall score for each assignment pattern
     scores = {}
     assignments = {}
-    m = Munkres()
     size = size - 1
     for n, (source_n, target_n) in enumerate(product(range(size), range(size))):
         # scores for all possible pairs apart from the reference
@@ -75,7 +106,8 @@ def compute_score(source_list, target_list, cache_file='tmp.json', distance_func
             raise ValueError('unknown transformation: {}'.format(transformation))
 
         # compute the cheapest assignments and get the overall cost by summing up each cost
-        best_assignment = m.compute(matrix.copy())
+        best_assignment = Munkres().compute(matrix.copy())
+        # input(best_assignment)
         scores['{}-{}'.format(source_n, target_n)] = np.sum([matrix[a][b] for a, b in best_assignment])
         # get the best assignment's pairs
         best_assignment = [[a if a < source_n else a + 1, b if b < target_n else b + 1] for a, b in best_assignment]
@@ -100,24 +132,26 @@ if __name__ == '__main__':
         data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
 
     accuracy_all = {}
-    for d in ['cos', 'l2']:
-        for t in [None, 'rank', 'log']:
-            accuracy = []
-            accuracy_anchor = []
-            for data_id, i in enumerate(data):
-                tmp_result = [i['source'], i['target']]
+    for t in ['rank', None]:
+        accuracy = []
+        accuracy_anchor = []
+        for data_id, i in enumerate(data):
+            tmp_result = [i['source'], i['target']]
 
-                pred, (anchor_a, anchor_b) = compute_score(
-                    i['source'], i['target_random'], cache_file='embeddings/relbert.roberta_large.{}.json'.format(data_id),
-                    distance_function=d, transformation=t
-                )
-                tmp_result.append(pred)
-                accuracy += [int(a == b) for a, b in zip(pred, i['target'])]
-                accuracy_anchor.append(int(i['target_random'][anchor_a] == i['target'][anchor_b]))
-            accuracy_all['relbert/{}/{}'.format(d, t)] = {
-                'accuracy': sum(accuracy)/len(accuracy) * 100,
-                'accuracy_anchor': sum(accuracy_anchor) / len(accuracy_anchor) * 100
-            }
+            pred, (anchor_a, anchor_b) = compute_score(
+                i['source'],
+                i['target_random'],
+                i['target'],
+                cache_file='embeddings/relbert.roberta_large.vector.{}.json'.format(data_id),
+                transformation=t
+            )
+            tmp_result.append(pred)
+            accuracy += [int(a == b) for a, b in zip(pred, i['target'])]
+            accuracy_anchor.append(int(i['target_random'][anchor_a] == i['target'][anchor_b]))
+        accuracy_all['relbert/{}/{}'.format(d, t)] = {
+            'accuracy': sum(accuracy)/len(accuracy) * 100,
+            'accuracy_anchor': sum(accuracy_anchor) / len(accuracy_anchor) * 100
+        }
 
     print('\nAccuracy')
     logger.write('ACCURACY\n')
@@ -128,3 +162,5 @@ if __name__ == '__main__':
         print('\t\t * accuracy: {} (anchor)'.format(v['accuracy_anchor']))
 
     logger.close()
+
+
