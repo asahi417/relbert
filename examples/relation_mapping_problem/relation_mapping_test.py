@@ -20,7 +20,8 @@ if __name__ == '__main__':
         data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
 
     accuracy_full = {}
-    for m in ['relbert', 'fasttext_cc']:
+    for m in ['relbert']:
+    # for m in ['relbert', 'fasttext_cc']:
         accuracy = []
         for data_id, _data in enumerate(data):
             print(f'[{m}]: {data_id}/{len(data)}')
@@ -49,6 +50,7 @@ if __name__ == '__main__':
                     list_sim.append(sim[_id])
                 perms.append({'target': tmp_target, 'similarity_mean': mean(list_sim)})
             pred = sorted(perms, key=lambda _x: _x['similarity_mean'], reverse=True)
-            accuracy.append(target == pred[0]['target'])
+            print(pred, target)
+            accuracy.extend([t == p for t, p in zip(target, pred[0]['target'])])
         accuracy_full[m] = mean(accuracy)
     print(json.dumps(accuracy_full, indent=4))
