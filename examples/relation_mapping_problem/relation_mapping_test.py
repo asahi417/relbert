@@ -3,7 +3,7 @@ pip install munkres
 """
 import os
 import json
-from itertools import product
+from itertools import permutations
 
 import pandas as pd
 import numpy as np
@@ -12,14 +12,6 @@ from numpy.linalg import norm
 
 from munkres import Munkres
 from relbert import RelBERT
-
-from word_embedding import get_word_embedding_model
-
-os.makedirs('output', exist_ok=True)
-
-# get data
-with open('data.jsonl') as f_reader:
-    data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
 
 
 def cosine_similarity(a, b):
@@ -92,35 +84,29 @@ def compute_score(_data, cache_file, model_name, anchor_fixed=False):
 
 
 if __name__ == '__main__':
-    os.makedirs('embeddings', exist_ok=True)
-    accuracy_all = []
-    accuracy_breakdown = []
-    intermediate_output = []
-
-    # for model_type in ['relbert']:
-    for model_type in ['fasttext_cc', 'relbert']:
+    os.makedirs('output', exist_ok=True)
+    with open('data.jsonl') as f_reader:
+        data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
+    accuracy_full = {}
+    for m in ['relbert', 'fasttext_cc']:
         accuracy = []
-        accuracy_anchor = []
-        for data_id, i in enumerate(data):
-            source2target = {a: b for a, b in zip(i['source'], i['target'])}
-            compute_score(i, cache_file=f'embeddings/{model_type}.vector.{data_id}.json', model_name=model_type)
-            p, (a_s, a_t), inter = compute_score(i, cache_file=f'embeddings/{model_type}.vector.{data_id}.json', model_name=model_type)
-            inter['data'] = data_id
-            inter['model'] = model_type
-            intermediate_output.append(inter)
-            accuracy += [int(a == b) for a, b in zip(p, i['target'])]
-            accuracy_anchor.append(int(source2target[a_s] == a_t))
-            accuracy_breakdown.append({'model_type': model_type, 'data_id': data_id,
-                                       'accuracy': mean([int(a == b) for a, b in zip(p, i['target'])])})
-        accuracy_all.append(
-            {'model_type': model_type, 'accuracy': mean(accuracy) * 100, 'accuracy_anchor': mean(accuracy_anchor) * 100})
-    pd.concat(intermediate_output).to_csv('output/intermediate_output.csv')
-    pd.DataFrame(accuracy_all).to_csv('output/accuracy.csv')
-    pd.DataFrame(accuracy_breakdown).to_csv('output/accuracy.breakdown.csv')
-    print('\nAccuracy')
-    for v in accuracy_all:
-        print('\t Model: {}'.format(v['model_type']))
-        print('\t\t * accuracy: {}'.format(v['accuracy']))
-        print('\t\t * accuracy: {} (anchor)'.format(v['accuracy_anchor']))
-
-
+        for data_id, _data in enumerate(data):
+            print(f'[{m}]: {data_id}/{len(data)}')
+            with open(f'embeddings/{m}.vector.{data_id}.json') as f:
+                embedding_dict = json.load(f)
+            source = _data['source']
+            target = _data['target']
+            perms = []
+            for n, tmp_target in enumerate(permutations(target, len(target))):
+                sim = {}
+                for id_x, id_y in permutations(range(len(target)), 2):
+                    _sim = cosine_similarity(
+                        embedding_dict[f'{source[id_x]}__{source[id_y]}'],
+                        embedding_dict[f'{tmp_target[id_x]}__{tmp_target[id_y]}']
+                    )
+                    sim[f'{source[id_x]}__{source[id_y]} || {tmp_target[id_x]}__{tmp_target[id_y]}'] = _sim
+                perms.append({'target': tmp_target, 'similarity_mean': mean(sim.values()), 'similarity_all': sim})
+            pred = sorted(perms, key=lambda _x: _x['similarity_mean'], reverse=True)
+            accuracy.append(target == pred[0]['target'])
+        accuracy_full[m] = mean(accuracy)
+    print(json.dumps(accuracy_full, indent=4))

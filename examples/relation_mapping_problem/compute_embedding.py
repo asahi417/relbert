@@ -3,7 +3,7 @@ import json
 from itertools import permutations
 
 from relbert import RelBERT
-from word_embedding import get_word_embedding_model
+from util_word_embedding import get_word_embedding_model
 
 
 def embedding_model(model_name):
@@ -34,7 +34,6 @@ if __name__ == '__main__':
                 with open(cache_file) as f:
                     embedding_dict = json.load(f)
             for _type in ['source', 'target']:
-
                 for x, y in permutations(_data[_type], 2):
                     _id = f'{x}__{y}'
                     if _id not in embedding_dict:
