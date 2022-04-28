@@ -20,7 +20,7 @@ def embedding_model(model_name):
 
 if __name__ == '__main__':
 
-    os.makedirs('output', exist_ok=True)
+    os.makedirs('embeddings', exist_ok=True)
     # get data
     with open('data.jsonl') as f_reader:
         data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
@@ -36,8 +36,6 @@ if __name__ == '__main__':
             for _type in ['source', 'target']:
 
                 for x, y in permutations(_data[_type], 2):
-                    print(x, y)
-
                     _id = f'{x}__{y}'
                     if _id not in embedding_dict:
                         vector = embeder(x, y)
