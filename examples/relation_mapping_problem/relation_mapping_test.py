@@ -35,9 +35,9 @@ if __name__ == '__main__':
             source = _data['source']
             target = _data['target']
             perms = []
-            for n, tmp_target in enumerate(permutations(target, len(target))):
+            for n, tmp_target in tqdm(list(enumerate(permutations(target, len(target))))):
                 list_sim = []
-                for id_x, id_y in tqdm(list(permutations(range(len(target)), 2))):
+                for id_x, id_y in permutations(range(len(target)), 2):
                     _id = f'{source[id_x]}__{source[id_y]} || {tmp_target[id_x]}__{tmp_target[id_y]}'
                     if _id not in sim:
                         sim[_id] = cosine_similarity(
