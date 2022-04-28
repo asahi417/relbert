@@ -50,7 +50,6 @@ if __name__ == '__main__':
                     list_sim.append(sim[_id])
                 perms.append({'target': tmp_target, 'similarity_mean': mean(list_sim)})
             pred = sorted(perms, key=lambda _x: _x['similarity_mean'], reverse=True)
-            print(pred, target)
             accuracy.extend([t == p for t, p in zip(target, pred[0]['target'])])
         accuracy_full[m] = mean(accuracy)
     print(json.dumps(accuracy_full, indent=4))
