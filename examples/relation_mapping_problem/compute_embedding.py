@@ -9,7 +9,7 @@ from word_embedding import get_word_embedding_model
 def embedding_model(model_name):
     if model_name == 'relbert':
         model = RelBERT('asahi417/relbert-roberta-large')
-        def get_embedding(a, b): return model.get_embedding(a, b)
+        def get_embedding(a, b): return model.get_embedding([a, b])
     elif model_name in ['fasttext', 'fasttext_cc']:
         model = get_word_embedding_model(model_name)
         def get_embedding(a, b): return (model[a] - model[b]).tolist()
