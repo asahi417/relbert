@@ -1,4 +1,3 @@
-
 """
 pip install munkres
 """
@@ -6,6 +5,7 @@ import os
 import json
 from itertools import product
 
+import pandas as pd
 import numpy as np
 from numpy import dot
 from numpy.linalg import norm
@@ -13,154 +13,114 @@ from numpy.linalg import norm
 from munkres import Munkres
 from relbert import RelBERT
 
+from word_embedding import get_word_embedding_model
+
+os.makedirs('output', exist_ok=True)
+
+# get data
+with open('data.jsonl') as f_reader:
+    data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
+
 
 def cosine_similarity(a, b):
-    return dot(a, b) / (norm(a) * norm(b))
+    return dot(a, b) / (norm(a) * norm(b) + 1e-4)
 
 
 def mean(_list):
     return sum(_list)/len(_list)
 
 
-def compute_score(
-        source_list,
-        target_list,
-        target_list_true,
-        cache_file='tmp.json',
-        transformation: str = None):
+def compute_score(_data, cache_file, model_name, anchor_fixed=False):
     # compute each assignment score
-    size = len(source_list)
+    model = None
+    get_embedding = None
     if os.path.exists(cache_file):
         with open(cache_file) as f:
             embedding_dict = json.load(f)
-        relbert_model = None
     else:
         embedding_dict = {}
-        relbert_model = RelBERT('asahi417/relbert-roberta-large')
-
-    def get_score(_query, _options):
-        vectors = []
-        for pair in [_query] + _options:
-            _id = '__'.join(pair)
-            if _id in embedding_dict:
-                vector = embedding_dict[_id]
-            else:
-                assert relbert_model is not None, '{} not in {}'.format(_id, embedding_dict.keys())
-                vector = relbert_model.get_embedding(pair)
-                embedding_dict[_id] = vector
-                with open(cache_file, 'w') as f_writer:
-                    json.dump(embedding_dict, f_writer)
-            vectors.append(vector)
-        return [cosine_similarity(vectors[0], _v) for _v in vectors[1:]]
-
-    model_input = {}
-    gold_pairs = list(zip(source_list, target_list_true))
-    print(gold_pairs)
-    for n, (source_n, target_n) in enumerate(product(range(size), range(size))):
-        # print('\t compute score: {}/{}'.format(n + 1, size*size))
-        query = [source_list[source_n], target_list[target_n]]
-        options = []
-        for source_pair_n in range(size):
-            if source_n == source_pair_n:
-                continue
-            for target_pair_n in range(size):
-                if target_n == target_pair_n:
-                    continue
-                options.append([source_list[source_pair_n], target_list[target_pair_n]])
-        score = get_score(query, options)
-        model_input['{}-{}'.format(source_n, target_n)] = score
-        print('query:', query)
-        if tuple(query) in gold_pairs:
-            gold_scores = [score[n] for n, o in enumerate(options) if tuple(o) in gold_pairs]
-            non_gold_scores = [score[n] for n, o in enumerate(options) if tuple(o) not in gold_pairs]
-            print('gold :', mean(gold_scores))
-            print('false:', mean(non_gold_scores))
-            # input()
-            # print(query)
-            # input(options)
-            # print('{}-{}'.format(source_n, target_n))
-            # input(model_input['{}-{}'.format(source_n, target_n)])
-        print('all  :', mean(score))
-        print()
-    # exit()
-    if relbert_model is not None:
-        with open(cache_file, 'w') as f:
-            json.dump(embedding_dict, f)
-
-    # get overall score for each assignment pattern
-    scores = {}
-    assignments = {}
-    size = size - 1
-    for n, (source_n, target_n) in enumerate(product(range(size), range(size))):
-        # scores for all possible pairs apart from the reference
-        score = model_input['{}-{}'.format(source_n, target_n)]
-        matrix = np.array([score[size * i:size * (1 + i)] for i in range(size)])
-
-        if transformation == 'log':
-            matrix = np.log(matrix)
-        elif transformation == 'rank':
-            matrix = matrix.argsort().argsort()
-        elif transformation is None:
-            pass
+        if model_name == 'relbert':
+            model = RelBERT('asahi417/relbert-roberta-large')
+            def get_embedding(a, b): return model.get_embedding(a, b)
+        elif model_name in ['fasttext', 'fasttext_cc']:
+            model = get_word_embedding_model(model_name)
+            def get_embedding(a, b): return (model[a] - model[b]).tolist()
         else:
-            raise ValueError('unknown transformation: {}'.format(transformation))
+            raise ValueError(f'unknown model {model_name}')
 
-        # compute the cheapest assignments and get the overall cost by summing up each cost
-        best_assignment = Munkres().compute(matrix.copy())
-        # input(best_assignment)
-        scores['{}-{}'.format(source_n, target_n)] = np.sum([matrix[a][b] for a, b in best_assignment])
-        # get the best assignment's pairs
-        best_assignment = [[a if a < source_n else a + 1, b if b < target_n else b + 1] for a, b in best_assignment]
-        best_assignment = best_assignment + [[source_n, target_n]]
-        assignments['{}-{}'.format(source_n, target_n)] = sorted(best_assignment, key=lambda st: st[0])
-    # find the reference with the cheapest assignment
-    best_assignment_key = sorted(scores.items(), key=lambda kv: kv[1])[0][0]
-    best_assignment = assignments[best_assignment_key]
-    anchor = [int(i) for i in best_assignment_key.split('-')]
-    # get the final order of the target term
-    target_order = [i[1] for i in best_assignment]
-    target_list_fixed = [target_list[i] for i in target_order]
-    return target_list_fixed, anchor
+    def embedding(word_pairs):
+        _id = '__'.join(word_pairs)
+        if _id in embedding_dict:
+            return embedding_dict[_id]
+        else:
+            assert model is not None
+            vector = get_embedding(*word_pairs)
+            embedding_dict[_id] = vector
+            with open(cache_file, 'w') as f_writer:
+                json.dump(embedding_dict, f_writer)
+            return vector
+
+    def get_score(_query, _option):
+        return 1 - cosine_similarity(embedding(_query), embedding(_option))
+
+    true_pairs = {a: b for a, b in zip(_data['source'], _data['target'])}
+    assignments = {}
+    scores = {}
+    anchor = {}
+    # source, target = _data['source'][0], true_pairs[_data['source'][0]]
+    iters = zip(_data['source'][0:1], _data['target'][0:1]) if anchor_fixed else product(_data['source'], _data['target_random'])
+    for source, target in iters:
+    # for source, target in product(_data['source'], _data['target_random']):
+        candidate_s = [i for i in _data['source'] if i != source]
+        candidate_t = [i for i in _data['target_random'] if i != target]
+        matrix = np.array([[get_score([source, target], [_s, _t]) for _t in candidate_t] for _s in candidate_s])
+        assignment = Munkres().compute(matrix.copy())
+        assignments[f'{source}__{target}'] = {candidate_s[a]: candidate_t[b] for a, b in assignment}
+        assignments[f'{source}__{target}'].update({source: target})
+        anchor[f'{source}__{target}'] = [source, target]
+        scores[f'{source}__{target}'] = float(np.sum([matrix[a][b] for a, b in assignment]))
+    key = sorted(scores.items(), key=lambda x: x[1])[0][0]
+    prediction = [assignments[key][i] for i in _data['source']]
+    intermediate = []
+    for pair, score in sorted(scores.items(), key=lambda x: x[1], reverse=True):
+        s, t = anchor[pair]
+        intermediate.append([
+            f'{s}__{true_pairs[s]}' == f'{s}__{t}', f'{s}__{t}', score, f'{s}__{true_pairs[s]}', scores[f'{s}__{true_pairs[s]}']
+        ])
+    intermediate = pd.DataFrame(intermediate, columns=['Correct', 'pair', 'score', 'pair (true target)', 'score (true target)'])
+    return prediction, anchor[key], intermediate
 
 
 if __name__ == '__main__':
-    logger = open('./report_test.txt', 'w')
     os.makedirs('embeddings', exist_ok=True)
+    accuracy_all = []
+    accuracy_breakdown = []
+    intermediate_output = []
 
-    # get data
-    with open('data.jsonl') as f_reader:
-        data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
-
-    accuracy_all = {}
-    for t in ['rank', None]:
+    # for model_type in ['relbert']:
+    for model_type in ['fasttext_cc', 'relbert']:
         accuracy = []
         accuracy_anchor = []
         for data_id, i in enumerate(data):
-            tmp_result = [i['source'], i['target']]
-
-            pred, (anchor_a, anchor_b) = compute_score(
-                i['source'],
-                i['target_random'],
-                i['target'],
-                cache_file='embeddings/relbert.roberta_large.vector.{}.json'.format(data_id),
-                transformation=t
-            )
-            tmp_result.append(pred)
-            accuracy += [int(a == b) for a, b in zip(pred, i['target'])]
-            accuracy_anchor.append(int(i['target_random'][anchor_a] == i['target'][anchor_b]))
-        accuracy_all['relbert/{}/{}'.format(d, t)] = {
-            'accuracy': sum(accuracy)/len(accuracy) * 100,
-            'accuracy_anchor': sum(accuracy_anchor) / len(accuracy_anchor) * 100
-        }
-
+            source2target = {a: b for a, b in zip(i['source'], i['target'])}
+            compute_score(i, cache_file=f'embeddings/{model_type}.vector.{data_id}.json', model_name=model_type)
+            p, (a_s, a_t), inter = compute_score(i, cache_file=f'embeddings/{model_type}.vector.{data_id}.json', model_name=model_type)
+            inter['data'] = data_id
+            inter['model'] = model_type
+            intermediate_output.append(inter)
+            accuracy += [int(a == b) for a, b in zip(p, i['target'])]
+            accuracy_anchor.append(int(source2target[a_s] == a_t))
+            accuracy_breakdown.append({'model_type': model_type, 'data_id': data_id,
+                                       'accuracy': mean([int(a == b) for a, b in zip(p, i['target'])])})
+        accuracy_all.append(
+            {'model_type': model_type, 'accuracy': mean(accuracy) * 100, 'accuracy_anchor': mean(accuracy_anchor) * 100})
+    pd.concat(intermediate_output).to_csv('output/intermediate_output.csv')
+    pd.DataFrame(accuracy_all).to_csv('output/accuracy.csv')
+    pd.DataFrame(accuracy_breakdown).to_csv('output/accuracy.breakdown.csv')
     print('\nAccuracy')
-    logger.write('ACCURACY\n')
-    logger.write(json.dumps(accuracy_all))
-    for k, v in accuracy_all.items():
-        print('\t Model: {}'.format(k))
+    for v in accuracy_all:
+        print('\t Model: {}'.format(v['model_type']))
         print('\t\t * accuracy: {}'.format(v['accuracy']))
         print('\t\t * accuracy: {} (anchor)'.format(v['accuracy_anchor']))
-
-    logger.close()
 
 
