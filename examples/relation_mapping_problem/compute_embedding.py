@@ -35,7 +35,9 @@ if __name__ == '__main__':
                     embedding_dict = json.load(f)
             for _type in ['source', 'target']:
 
-                for x, y in list(permutations(_data[_type], 2)):
+                for x, y in permutations(_data[_type], 2):
+                    print(x, y)
+
                     _id = f'{x}__{y}'
                     if _id not in embedding_dict:
                         vector = embeder(x, y)
