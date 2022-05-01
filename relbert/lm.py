@@ -2,6 +2,8 @@
 import os
 import logging
 import json
+from itertools import combinations, product
+from random import randint
 from typing import Dict, List
 from multiprocessing import Pool
 
@@ -9,7 +11,6 @@ import transformers
 import torch
 
 from .list_keeper import ListKeeper
-from .util import Dataset
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = ('RelBERT', 'custom_prompter')
@@ -35,6 +36,88 @@ def custom_prompter(word_pair, template: str, mask_token: str = None):
     if mask_token is not None:
         prompt = prompt.replace(token_mask, mask_token)
     return prompt
+
+
+class Dataset(torch.utils.data.Dataset):
+    """ Dataset loader for triplet loss. """
+    float_tensors = ['attention_mask']
+
+    def __init__(self,
+                 positive_pairs: List,
+                 negative_pairs_dict: Dict=None,
+                 pairwise_input: bool = True,
+                 deterministic_index: int = None):
+        self.positive_samples = positive_samples
+        self.negative_samples = negative_samples
+        self.pairwise_input = pairwise_input
+        self.relation_structure = relation_structure
+        self.pattern_id = None
+        self.deterministic_index = deterministic_index
+        if self.pairwise_input:
+            self.keys = sorted(list(positive_samples.keys()))
+            self.pattern_id = {k: list(product(
+                list(combinations(range(len(self.positive_samples[k])), 2)), list(range(len(self.negative_samples[k])))
+            )) for k in self.keys}
+        else:
+            self.keys = sorted(list(self.positive_samples.keys()))
+            assert all(len(self.positive_samples[k]) == 1 for k in self.keys)
+            assert self.negative_samples is None
+
+    @staticmethod
+    def rand_sample(_list):
+        return _list[randint(0, len(_list) - 1)]
+
+    def __len__(self):
+        return len(self.keys)
+
+    def to_tensor(self, name, data):
+        if name in self.float_tensors:
+            return torch.tensor(data, dtype=torch.float32)
+        return torch.tensor(data, dtype=torch.long)
+
+    def __getitem__(self, idx):
+        # relation type for positive sample
+        relation_type = self.keys[idx]
+        if self.pairwise_input:
+            # sampling pair from the relation type for anchor positive sample
+            if self.deterministic_index:
+                (a, b), n = self.pattern_id[relation_type][self.deterministic_index]
+            else:
+                (a, b), n = self.rand_sample(self.pattern_id[relation_type])
+            positive_a = self.positive_samples[relation_type][a]
+            positive_b = self.positive_samples[relation_type][b]
+            negative = self.negative_samples[relation_type][n]
+            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
+            tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
+            tensor_negative = {k: self.to_tensor(k, v) for k, v in negative.items()}
+
+            if self.relation_structure is not None:
+                # sampling relation type that shares same parent class with the positive sample
+                parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
+                assert len(parent_relation) == 1
+                relation_positive = self.rand_sample(self.relation_structure[parent_relation[0]])
+                # sampling positive from the relation type
+                positive_parent = self.rand_sample(self.positive_samples[relation_positive])
+                tensor_positive_parent = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
+
+                # sampling relation type from different parent class (negative)
+                parent_relation_n = self.rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
+                relation_negative = self.rand_sample(self.relation_structure[parent_relation_n])
+                # sample individual entry from the relation
+                negative_parent = self.rand_sample(self.positive_samples[relation_negative])
+                tensor_negative_parent = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
+
+                return {'positive_a': tensor_positive_a,
+                        'positive_b': tensor_positive_b,
+                        'negative': tensor_negative,
+                        'positive_parent': tensor_positive_parent,
+                        'negative_parent': tensor_negative_parent}
+            else:
+                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
+        else:
+            # deterministic sampling for prediction
+            positive_a = self.positive_samples[relation_type][0]
+            return {k: self.to_tensor(k, v) for k, v in positive_a.items()}
 
 
 class EncodePlus:
@@ -133,7 +216,6 @@ class RelBERT:
         template_type : str
             Custom template type or path to prompt json file that contains 'top'/'mid'/'bottom'.
         """
-        # assert 'bert' in model, '{} is not BERT'.format(model)
         self.model_name = model
         self.cache_dir = cache_dir
         self.truncate_exceed_tokens = truncate_exceed_tokens
@@ -311,7 +393,7 @@ class RelBERT:
             input_ids[mask] = self.tokenizer.unk_token_id
             embedding = self.input_embeddings(input_ids)
             prompt_embedding = self.prompt_embedding(self.prompt_embedding_input)
-            for i in range(len(mask)):
+            for i in range(len(input_ids)):
                 embedding[i][mask[i], :] = prompt_embedding
             encode['inputs_embeds'] = embedding
             output = self.model(**encode, return_dict=True)

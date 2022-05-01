@@ -2,6 +2,7 @@
 import os
 import json
 from glob import glob
+from itertools import permutations, product
 
 from .util import wget, home_dir
 
@@ -35,6 +36,7 @@ def get_training_data(data_name: str = 'semeval2012',
         Sample size of positive/negative.
     validation_set : bool
         To return get the validation set
+    exclude_relation : str
 
     Returns
     -------
@@ -96,9 +98,29 @@ def get_training_data(data_name: str = 'semeval2012',
             all_relation_type[relation_id] = relation_type
         parent = list(set([i[:-1] for i in all_relation_type.keys()]))
         relation_structure = {p: [i for i in all_relation_type.keys() if p == i[:-1]] for p in parent}
-        return all_positive, all_negative, relation_structure
     else:
         raise ValueError('unknown data: {}'.format(data_name))
+    return all_positive, all_negative, relation_structure
+
+
+def get_contrastive_data(all_positive, relation_structure, return_parent_data: bool = False):
+    # low-level data
+    full_pairs = []
+    for k, v in all_positive.items():
+        for a, b in permutations(v, 2):
+            full_pairs.append([a, b, k])
+            full_pairs.append([a[::-1], b[::-1], k])
+    if not return_parent_data:
+        return full_pairs
+    # high-level data
+    full_pairs_parent = []
+    for k, v in relation_structure.items():
+        for x, y in permutations(v, 2):
+            for a, b in product(all_positive[x], all_positive[y]):
+                full_pairs_parent.append([a, b, k])
+                full_pairs_parent.append([a[::-1], b[::-1], k])
+    return full_pairs, full_pairs_parent
+    # negative = {k: list(chain(*[x[:2] for x in full_pairs_parent if x[2] != k])) for k in relation_structure.keys()}
 
 
 def get_analogy_data(cache_dir: str = None):

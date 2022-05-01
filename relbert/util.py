@@ -47,7 +47,16 @@ def load_language_model(model_name, cache_dir: str = None):
 
 def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
     """ wget and uncompress data_iterator """
-    path = _wget(url, cache_dir, gdrive_filename=gdrive_filename)
+    os.makedirs(cache_dir, exist_ok=True)
+    if url.startswith('https://drive.google.com'):
+        assert gdrive_filename is not None, 'please provide fileaname for gdrive download'
+        return gdown.download(url, '{}/{}'.format(cache_dir, gdrive_filename), quiet=False)
+    filename = os.path.basename(url)
+    with open('{}/{}'.format(cache_dir, filename), "wb") as f:
+        r = requests.get(url)
+        f.write(r.content)
+    path = '{}/{}'.format(cache_dir, filename)
+
     if path.endswith('.tar.gz') or path.endswith('.tgz') or path.endswith('.tar'):
         if path.endswith('.tar'):
             tar = tarfile.open(path)
@@ -65,19 +74,6 @@ def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
             with open(path.replace('.gz', ''), 'wb') as f_write:
                 f_write.write(f.read())
         os.remove(path)
-
-
-def _wget(url: str, cache_dir, gdrive_filename: str = None):
-    """ get data from web """
-    os.makedirs(cache_dir, exist_ok=True)
-    if url.startswith('https://drive.google.com'):
-        assert gdrive_filename is not None, 'please provide fileaname for gdrive download'
-        return gdown.download(url, '{}/{}'.format(cache_dir, gdrive_filename), quiet=False)
-    filename = os.path.basename(url)
-    with open('{}/{}'.format(cache_dir, filename), "wb") as f:
-        r = requests.get(url)
-        f.write(r.content)
-    return '{}/{}'.format(cache_dir, filename)
 
 
 def fix_seed(seed: int = 12):
@@ -193,13 +189,10 @@ class Dataset(torch.utils.data.Dataset):
         self.negative_samples = negative_samples
         self.pairwise_input = pairwise_input
         self.relation_structure = relation_structure
-        # self.positive_pattern_id = None
         self.pattern_id = None
         self.deterministic_index = deterministic_index
         if self.pairwise_input:
             self.keys = sorted(list(positive_samples.keys()))
-            # self.positive_pattern_id = {k: list(combinations(range(len(self.positive_samples[k])), 2))
-            #                             for k in self.keys}
             self.pattern_id = {k: list(product(
                 list(combinations(range(len(self.positive_samples[k])), 2)), list(range(len(self.negative_samples[k])))
             )) for k in self.keys}
@@ -210,8 +203,6 @@ class Dataset(torch.utils.data.Dataset):
 
     @staticmethod
     def rand_sample(_list):
-        # if self.deterministic_index:
-        #     return _list[self.deterministic_index % len(_list)]
         return _list[randint(0, len(_list) - 1)]
 
     def __len__(self):
@@ -231,17 +222,12 @@ class Dataset(torch.utils.data.Dataset):
                 (a, b), n = self.pattern_id[relation_type][self.deterministic_index]
             else:
                 (a, b), n = self.rand_sample(self.pattern_id[relation_type])
-            # a, b = self.rand_sample(self.positive_pattern_id[relation_type])
             positive_a = self.positive_samples[relation_type][a]
             positive_b = self.positive_samples[relation_type][b]
             negative = self.negative_samples[relation_type][n]
             tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
             tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
             tensor_negative = {k: self.to_tensor(k, v) for k, v in negative.items()}
-
-            # # sampling negative from the relation type
-            # negative_list = self.negative_samples[relation_type]
-            # tensor_negative = {k: self.to_tensor(k, v) for k, v in self.rand_sample(negative_list).items()}
 
             if self.relation_structure is not None:
                 # sampling relation type that shares same parent class with the positive sample
@@ -259,8 +245,11 @@ class Dataset(torch.utils.data.Dataset):
                 negative_parent = self.rand_sample(self.positive_samples[relation_negative])
                 tensor_negative_parent = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
 
-                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative,
-                        'positive_parent': tensor_positive_parent, 'negative_parent': tensor_negative_parent}
+                return {'positive_a': tensor_positive_a,
+                        'positive_b': tensor_positive_b,
+                        'negative': tensor_negative,
+                        'positive_parent': tensor_positive_parent,
+                        'negative_parent': tensor_negative_parent}
             else:
                 return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
         else:
