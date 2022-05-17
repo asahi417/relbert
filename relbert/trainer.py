@@ -146,7 +146,8 @@ class Trainer:
                         loss = []
                         if self.config['loss_function'] == 'nce_rank':
                             rank = x_p.pop('ranking').cpu().tolist()
-                            # input(rank)
+                            rank_map = {r: 1 + n for n, r in enumerate(sorted(rank))}
+                            rank = [rank_map[r] for r in rank]
                             for i in range(batch_size_positive):
                                 assert type(rank[i]) == int, rank[i]
                                 tau = self.get_rank_temperature(rank[i], batch_size_positive)
