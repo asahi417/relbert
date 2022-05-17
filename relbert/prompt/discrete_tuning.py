@@ -11,7 +11,6 @@ from tqdm import tqdm
 import torch
 
 from ..list_keeper import ListKeeper
-from ..config import Config
 from ..util import fix_seed, load_language_model, triplet_loss, Dataset
 from ..data import get_training_data
 from ..lm import EncodePlus
@@ -163,7 +162,7 @@ class GradientTriggerSearch:
                  cache_dir: str = None,
                  checkpoint_path: str = None):
         fix_seed(random_seed)
-        self.config = Config(
+        self.config = dict(
             config_name='prompter_config',
             export=export,
             checkpoint_path=checkpoint_path,

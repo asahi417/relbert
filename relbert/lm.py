@@ -1,26 +1,25 @@
 """ RelBERT: Get relational embedding from transformers language model. """
 import os
 import logging
-import json
-from itertools import combinations, product
-from random import randint
-from typing import Dict, List
+from typing import List
 from multiprocessing import Pool
 
 import transformers
 import torch
 
-from .list_keeper import ListKeeper
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
-__all__ = ('RelBERT', 'custom_prompter')
-preset_templates = {
-        "a": "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>",
-        "b": "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>",
-        "c": "Today, I finally discovered the relation between <subj> and <obj> : <mask>",
-        "d": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>",
-        "e": "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>"
-    }
+
+
+def load_class(model_function, model, config=None):
+    try:
+        if config is None:
+            return model_function.from_pretrained(model)
+        return model_function.from_pretrained(model, config=config)
+    except ValueError:
+        if config is None:
+            return model_function.from_pretrained(model, local_files_only=True)
+        return model_function.from_pretrained(model, config=config, local_files_only=True)
 
 
 def custom_prompter(word_pair, template: str, mask_token: str = None):
@@ -39,36 +38,16 @@ def custom_prompter(word_pair, template: str, mask_token: str = None):
 
 
 class Dataset(torch.utils.data.Dataset):
-    """ Dataset loader for triplet loss. """
+
     float_tensors = ['attention_mask']
 
-    def __init__(self,
-                 positive_pairs: List,
-                 negative_pairs_dict: Dict=None,
-                 pairwise_input: bool = True,
-                 deterministic_index: int = None):
-        self.positive_samples = positive_samples
-        self.negative_samples = negative_samples
-        self.pairwise_input = pairwise_input
-        self.relation_structure = relation_structure
-        self.pattern_id = None
-        self.deterministic_index = deterministic_index
-        if self.pairwise_input:
-            self.keys = sorted(list(positive_samples.keys()))
-            self.pattern_id = {k: list(product(
-                list(combinations(range(len(self.positive_samples[k])), 2)), list(range(len(self.negative_samples[k])))
-            )) for k in self.keys}
-        else:
-            self.keys = sorted(list(self.positive_samples.keys()))
-            assert all(len(self.positive_samples[k]) == 1 for k in self.keys)
-            assert self.negative_samples is None
-
-    @staticmethod
-    def rand_sample(_list):
-        return _list[randint(0, len(_list) - 1)]
+    def __init__(self, data: List, return_ranking: bool = False):
+        self.data = data
+        self.ranking = list(range(1, 1 + len(self.data)))
+        self.return_ranking = return_ranking
 
     def __len__(self):
-        return len(self.keys)
+        return len(self.data)
 
     def to_tensor(self, name, data):
         if name in self.float_tensors:
@@ -76,48 +55,10 @@ class Dataset(torch.utils.data.Dataset):
         return torch.tensor(data, dtype=torch.long)
 
     def __getitem__(self, idx):
-        # relation type for positive sample
-        relation_type = self.keys[idx]
-        if self.pairwise_input:
-            # sampling pair from the relation type for anchor positive sample
-            if self.deterministic_index:
-                (a, b), n = self.pattern_id[relation_type][self.deterministic_index]
-            else:
-                (a, b), n = self.rand_sample(self.pattern_id[relation_type])
-            positive_a = self.positive_samples[relation_type][a]
-            positive_b = self.positive_samples[relation_type][b]
-            negative = self.negative_samples[relation_type][n]
-            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
-            tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
-            tensor_negative = {k: self.to_tensor(k, v) for k, v in negative.items()}
-
-            if self.relation_structure is not None:
-                # sampling relation type that shares same parent class with the positive sample
-                parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
-                assert len(parent_relation) == 1
-                relation_positive = self.rand_sample(self.relation_structure[parent_relation[0]])
-                # sampling positive from the relation type
-                positive_parent = self.rand_sample(self.positive_samples[relation_positive])
-                tensor_positive_parent = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
-
-                # sampling relation type from different parent class (negative)
-                parent_relation_n = self.rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
-                relation_negative = self.rand_sample(self.relation_structure[parent_relation_n])
-                # sample individual entry from the relation
-                negative_parent = self.rand_sample(self.positive_samples[relation_negative])
-                tensor_negative_parent = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
-
-                return {'positive_a': tensor_positive_a,
-                        'positive_b': tensor_positive_b,
-                        'negative': tensor_negative,
-                        'positive_parent': tensor_positive_parent,
-                        'negative_parent': tensor_negative_parent}
-            else:
-                return {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
-        else:
-            # deterministic sampling for prediction
-            positive_a = self.positive_samples[relation_type][0]
-            return {k: self.to_tensor(k, v) for k, v in positive_a.items()}
+        tmp = {k: self.to_tensor(k, v) for k, v in self.data[idx].items()}
+        if self.return_ranking:
+            tmp['ranking'] = self.ranking[idx]
+        return tmp
 
 
 class EncodePlus:
@@ -126,55 +67,23 @@ class EncodePlus:
     def __init__(self,
                  tokenizer,
                  max_length: int,
-                 custom_template: str = None,
-                 template: Dict = None,
-                 mode: str = 'average',
-                 trigger_mode: bool = False,
+                 template: str = None,
+                 mode: str = 'average_no_mask',
                  truncate_exceed_tokens: bool = True):
-        assert custom_template is not None or template is not None
-        self.custom_template = custom_template
-        self.template = template
-        self.trigger_mode = trigger_mode
         self.tokenizer = tokenizer
-        self.max_length = self.tokenizer.model_max_length
+        self.template = template
         self.mode = mode
         self.truncate_exceed_tokens = truncate_exceed_tokens
-        if max_length is not None:
-            assert self.max_length >= max_length, '{} < {}'.format(self.max_length, max_length)
-            self.max_length = max_length
+        self.m_len = self.tokenizer.model_max_length if max_length is None else max_length
+        assert self.tokenizer.model_max_length >= self.m_len, f'{self.tokenizer.model_max_length} < {self.m_len}'
 
     def __call__(self, word_pair: List):
         """ Encoding a word pair or sentence. If the word pair is given use custom template."""
-        param = {'max_length': self.max_length, 'truncation': True, 'padding': 'max_length'}
-        if self.trigger_mode:
-            assert len(word_pair) == 2
-            token_id, trigger = word_pair
-            assert type(token_id) is list and type(trigger) is list
-            sentence = self.tokenizer.decode(token_id)
-        elif type(word_pair) is str:
-            sentence = word_pair
-        elif self.template:
-            top = self.template['top']
-            mid = self.template['mid']
-            bottom = self.template['bottom']
-            h, t = word_pair
-            mask = self.tokenizer.mask_token
-            assert h != mask and t != mask
-            token_ids = self.tokenizer.encode(
-                ' '.join([mask] * len(top) + [h] + [mask] * len(mid) + [t] + [mask] * len(bottom)))
-            token_ids = [-100 if i == self.tokenizer.mask_token_id else i for i in token_ids]
-            for i in top + mid + bottom:
-                token_ids[token_ids.index(-100)] = i
-            sentence = self.tokenizer.decode(token_ids)
-        else:
-            sentence = custom_prompter(word_pair, self.custom_template, self.tokenizer.mask_token)
-        encode = self.tokenizer.encode_plus(sentence, **param)
+        sentence = custom_prompter(word_pair, self.template, self.tokenizer.mask_token)
+        encode = self.tokenizer.encode_plus(sentence, max_length=self.m_len, truncation=True, padding='max_length')
         if not self.truncate_exceed_tokens:
-            assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, 'exceeded length {}'.format(encode['input_ids'])
+            assert encode['input_ids'][-1] == self.tokenizer.pad_token_id, f"exceeded length {encode['input_ids']}"
         encode['labels'] = self.input_ids_to_labels(encode['input_ids'])
-        if self.trigger_mode:
-            # binary mask for trigger tokens
-            encode['trigger'] = list(map(lambda x: trigger[x] if x < len(trigger) else 0, range(self.max_length)))
         return encode
 
     def input_ids_to_labels(self, input_ids: List):
@@ -185,8 +94,7 @@ class EncodePlus:
             return list(map(lambda x: 0 if x == self.tokenizer.pad_token_id else 1, input_ids))
         elif self.mode == 'average_no_mask':
             return list(map(lambda x: 0 if x in [self.tokenizer.pad_token_id, self.tokenizer.mask_token_id] else 1, input_ids))
-        else:
-            raise ValueError('unknown mode {}'.format(self.mode))
+        raise ValueError(f'unknown mode {self.mode}')
 
 
 class RelBERT:
@@ -195,10 +103,9 @@ class RelBERT:
     def __init__(self,
                  model: str,
                  max_length: int = 64,
-                 cache_dir: str = None,
                  mode: str = 'average_no_mask',
-                 template_type: str = None,
-                 custom_template: str = None,
+                 template_mode: str = 'manual',
+                 template: str = None,
                  truncate_exceed_tokens: bool = True):
         """ Get embedding from transformers language model.
 
@@ -206,74 +113,41 @@ class RelBERT:
         ----------
         model : str
             Transformers model alias.
-        max_length : int
-            Model length.
-        cache_dir : str
+        max_length :
+            int Model length.
         mode : str
             - `mask` to get the embedding for a word pair by [MASK] token, eg) (A, B) -> A [MASK] B
             - `average` to average embeddings over the context.
             - `cls` to get the embedding on the [CLS] token
-        template_type : str
-            Custom template type or path to prompt json file that contains 'top'/'mid'/'bottom'.
         """
-        self.model_name = model
-        self.cache_dir = cache_dir
         self.truncate_exceed_tokens = truncate_exceed_tokens
-        try:
-            self.tokenizer = transformers.AutoTokenizer.from_pretrained(model, cache_dir=cache_dir)
-        except ValueError:
-            self.tokenizer = transformers.AutoTokenizer.from_pretrained(model, cache_dir=cache_dir,
-                                                                        local_files_only=True)
-        try:
-            model_config = transformers.AutoConfig.from_pretrained(model, cache_dir=cache_dir)
-        except ValueError:
-            model_config = transformers.AutoConfig.from_pretrained(model, cache_dir=cache_dir, local_files_only=True)
-        # check if the language model is RelBERT trained or not.
-        self.template = None
-        self.custom_template = None
-        if 'relbert_config' in model_config.to_dict().keys():
-            logging.info('loading finetuned RelBERT model')
-            self.mode = model_config.relbert_config['mode']
-            self.is_trained = True
-            if 'template' in model_config.relbert_config:
-                self.template = model_config.relbert_config['template']
-            else:
-                if template_type is None and custom_template is None:
-                    self.custom_template = model_config.relbert_config['custom_template']
-                else:
-                    logging.warning('OVERWRITE TEMPLATE')
-                    if template_type is not None:
-                        self.custom_template = preset_templates[template_type]
-                    else:
-                        assert '<subj>' in custom_template and '<obj>' in custom_template, custom_template
-                        self.custom_template = custom_template
-        else:
-            self.mode = mode
-            self.is_trained = False
-            if custom_template is not None:
-                self.custom_template = custom_template
-                model_config.update({'relbert_config': {'mode': mode, 'custom_template': custom_template}})
-            else:
-                assert template_type is not None
-                if template_type in preset_templates:
-                    self.custom_template = preset_templates[template_type]
-                    model_config.update({'relbert_config': {'mode': mode, 'custom_template': self.custom_template}})
-                else:
-                    with open(template_type, 'r') as f:
-                        self.template = json.load(f)
-                    model_config.update({'relbert_config': {'mode': mode, 'template': self.template}})
-        assert self.template is not None or self.custom_template is not None
-        try:
-            self.model = transformers.AutoModel.from_pretrained(
-                self.model_name, config=model_config, cache_dir=self.cache_dir)
-        except ValueError:
-            self.model = transformers.AutoModel.from_pretrained(
-                self.model_name, config=model_config, cache_dir=self.cache_dir, local_files_only=True)
-
-        # property
-        self.hidden_size = self.model.config.hidden_size
-        self.num_hidden_layers = self.model.config.num_hidden_layers
         self.max_length = max_length
+        self.model_name = model
+        self.model_config = load_class(transformers.AutoConfig, model)
+
+        # check if the language model is RelBERT trained or not.
+        if 'relbert_config' in self.model_config.to_dict().keys():
+            logging.info('loading finetuned RelBERT model')
+            self.is_trained = True
+            self.mode = self.model_config.relbert_config['mode']
+            self.template_mode = self.model_config.relbert_config['template_mode']
+            if self.template_mode == 'manual':
+                self.template = self.model_config.relbert_config['template']
+            else:
+                raise ValueError('not implemented yet')
+        else:
+            self.is_trained = False
+            self.mode = mode
+            self.template_mode = template_mode
+            if self.template_mode == 'manual':
+                assert template is not None
+                self.template = template
+                self.model_config.update(
+                    {'relbert_config': {'mode': mode, 'template': self.template, 'template_mode': self.template_mode}})
+            else:
+                raise ValueError('not implemented yet')
+        self.tokenizer = load_class(transformers.AutoTokenizer, model)
+        self.model = load_class(transformers.AutoModel, model)
 
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
@@ -283,33 +157,9 @@ class RelBERT:
             self.model = torch.nn.DataParallel(self.model)
         self.model.to(self.device)
 
-        # prompting setup
-        self.input_embeddings = None
-        self.prompt_embedding = None
-        self.prompt_embedding_input = None
-        if self.template is not None and 'embedding' in self.template:
-            self.prompt_embedding = torch.nn.Embedding.from_pretrained(
-                torch.tensor(self.template['embedding'])).to(self.device)
-            self.prompt_embedding_input = torch.arange(len(self.template['embedding'])).to(self.device)
-            self.tokenizer.add_special_tokens({'additional_special_tokens': [self.template['pseudo_token']]})
-            pseudo_token_id = self.tokenizer.convert_tokens_to_ids(self.template['pseudo_token'])
-            self.template['top'] = [pseudo_token_id] * self.template['n_trigger_b']
-            self.template['mid'] = [pseudo_token_id] * self.template['n_trigger_i']
-            self.template['bottom'] = [pseudo_token_id] * self.template['n_trigger_e']
-            self.template['pseudo_token_id'] = pseudo_token_id
-            if self.parallel:
-                self.input_embeddings = self.model.module.get_input_embeddings()
-            else:
-                self.input_embeddings = self.model.get_input_embeddings()
-        logging.info('language model running on {} GPU'.format(torch.cuda.device_count()))
-        logging.debug('\t * template       : {}'.format(self.template))
-        logging.debug('\t * custom template: {}'.format(self.custom_template))
+    def train(self): self.model.train()
 
-    def train(self):
-        self.model.train()
-
-    def eval(self):
-        self.model.eval()
+    def eval(self): self.model.eval()
 
     def save(self, cache_dir):
         if self.parallel:
@@ -318,89 +168,39 @@ class RelBERT:
             self.model.save_pretrained(cache_dir)
         self.tokenizer.save_pretrained(cache_dir)
 
-    def preprocess(self,
-                   positive_samples,
-                   negative_samples: Dict = None,
-                   relation_structure: Dict = None,
-                   pairwise_input: bool = True):
-        """ Preprocess textual data.
-
-        Parameters
-        ----------
-        positive_samples : List or Dict
-            1D array with string (for prediction) or dictionary with 2D array (for training)
-        negative_samples : Dict
-        relation_structure : Dict
-        pairwise_input : bool
-
-        Returns
-        -------
-        torch.utils.data.Dataset
+    def encode_word_pairs(self, word_pairs, return_list: bool = False):
+        """ return a dictionary of word_pair: encode
+        if return_list is True, return encode of every word_pairs with same order.
+        otherwise, rerturn dictionary
         """
-        if type(positive_samples) is not dict:
-            assert relation_structure is None
-            assert negative_samples is None
-            assert len(positive_samples) > 0, len(positive_samples)
-            assert type(positive_samples) is list and all(type(i) is tuple for i in positive_samples)
-            positive_samples = {k: [v] for k, v in enumerate(positive_samples)}
-
-        key = list(positive_samples.keys())
-        positive_samples_list = ListKeeper([positive_samples[k] for k in key])
-
-        logging.debug('{} positive data to encode'.format(len(positive_samples)))
-        negative_sample_list = None
-        if negative_samples is not None:
-            logging.debug('preparing negative data')
-            assert len(negative_samples) > 0, len(negative_samples)
-            assert negative_samples.keys() == positive_samples.keys()
-            negative_sample_list = ListKeeper([negative_samples[k] for k in key])
-
-        shared = {'tokenizer': self.tokenizer, 'max_length': self.max_length, 'mode': self.mode,
-                  'template': self.template, 'custom_template': self.custom_template,
-                  'truncate_exceed_tokens': self.truncate_exceed_tokens}
 
         def pool_map(_list):
             pool = Pool()
-            out = pool.map(EncodePlus(**shared), _list)
+            out = pool.map(EncodePlus(tokenizer=self.tokenizer, max_length=self.max_length, template=self.template,
+                                      mode=self.mode, truncate_exceed_tokens=self.truncate_exceed_tokens), _list)
             pool.close()
             return out
 
-        positive_embedding = pool_map(positive_samples_list.flatten_list)
-        positive_embedding = positive_samples_list.restore_structure(positive_embedding)
-        positive_embedding = {key[n]: v for n, v in enumerate(positive_embedding)}
-        negative_embedding = None
-        if negative_sample_list is not None:
-            negative_embedding = pool_map(negative_sample_list.flatten_list)
-            negative_embedding = negative_sample_list.restore_structure(negative_embedding)
-            negative_embedding = {key[n]: v for n, v in enumerate(negative_embedding)}
-
-        return dict(positive_samples=positive_embedding,
-                    negative_samples=negative_embedding,
-                    relation_structure=relation_structure,
-                    pairwise_input=pairwise_input)
+        assert all(type(i) is tuple or list for i in word_pairs), word_pairs
+        logging.info('preprocess')
+        logging.info(f'\t original: {len(word_pairs)}')
+        if return_list:
+            return pool_map(word_pairs)
+        word_pairs_dict = {'__'.join(p): p for p in word_pairs}
+        word_pairs_dict_key = sorted(list(set(word_pairs_dict.keys())))
+        word_pairs = [word_pairs_dict[k] for k in word_pairs_dict_key]
+        logging.info(f'\t deduplicate: {len(word_pairs_dict_key)}')
+        encode = pool_map(word_pairs)
+        return {k: e for k, e in zip(word_pairs_dict_key, encode)}
 
     def to_embedding(self, encode):
         """ Compute embedding from batch of encode. """
         encode = {k: v.to(self.device) for k, v in encode.items()}
         labels = encode.pop('labels')
-        if self.prompt_embedding is None:
-            output = self.model(**encode, return_dict=True)
-            batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
-            return batch_embedding_tensor
-        else:
-            input_ids = encode.pop('input_ids')
-            mask = input_ids == self.template['pseudo_token_id']
-            input_ids[mask] = self.tokenizer.unk_token_id
-            embedding = self.input_embeddings(input_ids)
-            prompt_embedding = self.prompt_embedding(self.prompt_embedding_input)
-            for i in range(len(input_ids)):
-                embedding[i][mask[i], :] = prompt_embedding
-            encode['inputs_embeds'] = embedding
-            output = self.model(**encode, return_dict=True)
-            batch_embedding_tensor = (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
-            return batch_embedding_tensor
+        output = self.model(**encode, return_dict=True)
+        return (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
 
-    def get_embedding(self, x: List, batch_size: int = None, num_worker: int = 1):
+    def get_embedding(self, x: List, batch_size: int = None):
         """ Get embedding from RelBERT (no gradient).
 
         Parameters
@@ -409,12 +209,10 @@ class RelBERT:
             List of word pairs or sentence
         batch_size : int
             Batch size.
-        num_worker : int
-            Dataset worker number.
 
         Returns
         -------
-        Embedding (len(x), n_hidden).
+        Embedding (len(x), n_hidden)
         """
         is_single_list = False
         if len(x) == 2 and type(x[0]) is str and type(x[1]) is str:
@@ -424,17 +222,20 @@ class RelBERT:
         if not all(type(i) is tuple for i in x):
             x = [tuple(i) for i in x]
 
-        data = self.preprocess(x, pairwise_input=False)
-        data = Dataset(**data)
         batch_size = len(x) if batch_size is None else batch_size
+        encoded_pair_dict = self.encode_word_pairs(x)
+        pair_key = list(encoded_pair_dict.keys())
         data_loader = torch.utils.data.DataLoader(
-            data, num_workers=num_worker, batch_size=batch_size, shuffle=False, drop_last=False)
-
+            Dataset([encoded_pair_dict[k] for k in pair_key]),
+            num_workers=0, batch_size=batch_size, shuffle=False, drop_last=False)
         logging.debug('\t * run LM inference')
         h_list = []
         with torch.no_grad():
             for encode in data_loader:
                 h_list += self.to_embedding(encode).cpu().tolist()
+        h_dict = {p: h for h, p in zip(h_list, pair_key)}
+        h_return = [h_dict['__'.join(p)] for p in h_dict]
         if is_single_list:
-            return h_list[0]
-        return h_list
+            assert len(h_return) == 1
+            return h_return[0]
+        return h_return

@@ -1,20 +1,17 @@
-""" Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
+""" RelBERT fine-tuning with NCE loss """
 import os
 import logging
 import random
 import json
-import string
+from itertools import chain
 from typing import List
-from glob import glob
-from itertools import product, combinations
-from typing import Dict
 
 import torch
 from torch import nn
 
-from .lm import RelBERT
-from .data import get_training_data, get_contrastive_data
-from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed, Dataset
+from .lm import RelBERT, Dataset
+from .data import get_training_data
+from .util import get_linear_schedule_with_warmup, fix_seed
 
 
 class Trainer:
@@ -25,22 +22,22 @@ class Trainer:
                  max_length: int = 64,
                  mode: str = 'average_no_mask',
                  data: str = 'semeval2012',
-                 n_sample: int = 10,
-                 template_type: str = 'a',
-                 custom_template: str = None,
-                 nce_loss: bool = True,
-                 softmax_loss: bool = True,
-                 in_batch_negative: bool = True,
-                 mse_margin: float = 1,
+                 template_mode: str = 'manual',
+                 template: str = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>",
+                 loss_function: str = 'nce_rank',
+                 temperature_nce_type: str = 'linear',
+                 temperature_nce_constant: float = 1.0,
+                 temperature_nce_min: float = 0.1,
+                 temperature_nce_max: float = 10.0,
                  epoch: int = 1,
                  batch: int = 64,
+                 batch_positive_ratio: float = 0.3,
                  lr: float = 0.00002,
                  lr_decay: bool = False,
                  lr_warmup: int = 100,
                  weight_decay: float = 0,
-                 gradient_accumulation_steps: int = 1,
                  random_seed: int = 0,
-                 exclude_relation=None):
+                 exclude_relation: List or str = None):
         assert not os.path.exists(export), f'{export} is taken, use different name'
         # config
         self.config = dict(
@@ -48,21 +45,20 @@ class Trainer:
             max_length=max_length,
             mode=mode,
             data=data,
-            n_sample=n_sample,
-            custom_template=custom_template,
-            template=template_type,
-            softmax_loss=softmax_loss,
-            in_batch_negative=in_batch_negative,
-            nce_loss=nce_loss,
-            mse_margin=mse_margin,
+            template_mode=template_mode,
+            template=template,
+            loss_function=loss_function,
+            temperature_nce_constant=temperature_nce_constant,
+            temperature_nce_rank={'min': temperature_nce_min, 'max': temperature_nce_max, 'type': temperature_nce_type},
             epoch=epoch,
-            lr_warmup=lr_warmup,
             batch=batch,
+            batch_positive_ratio=batch_positive_ratio,
             lr=lr,
             lr_decay=lr_decay,
+            lr_warmup=lr_warmup,
             weight_decay=weight_decay,
             random_seed=random_seed,
-            gradient_accumulation_steps=gradient_accumulation_steps
+            exclude_relation=exclude_relation,
         )
         logging.info('hyperparameters')
         for k, v in self.config.items():
@@ -71,8 +67,8 @@ class Trainer:
             model=self.config['model'],
             max_length=self.config['max_length'],
             mode=self.config['mode'],
-            template_type=self.config['template_type'],
-            custom_template=self.config['custom_template'])
+            template_mode=self.config['template_mode'],
+            template=self.config['template'])
         self.model.train()
         assert not self.model.is_trained, '{} is already trained'.format(model)
         
@@ -85,26 +81,8 @@ class Trainer:
         self.parallel = self.model.parallel
         fix_seed(self.config['random_seed'])
         # get dataset
-        self.all_positive, self.all_negative, self.relation_structure = get_training_data(
-            data_name=self.config['data'], n_sample=self.config['n_sample'], exclude_relation=exclude_relation
-        )
-
-        # calculate the number of trial to cover all combination in batch
-        n_pos = min(len(i) for i in self.all_positive.values())
-        n_neg = min(len(i) for i in self.all_negative.values())
-        self.n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
-
+        self.data = get_training_data(data_name=self.config['data'], exclude_relation=self.config['exclude_relation'])
         self.model_parameters = list(self.model.model.named_parameters())
-
-        if self.config['softmax_loss']:
-            logging.info('add linear layer for softmax_loss')
-            self.linear = nn.Linear(self.model.hidden_size * 3, 1)  # three way feature
-            self.linear.weight.data.normal_(std=0.02)
-            self.discriminative_loss = nn.BCELoss()
-            self.linear.to(self.device)
-            self.model_parameters += list(self.linear.named_parameters())
-            if self.parallel:
-                self.linear = torch.nn.DataParallel(self.linear)
 
         # setup optimizer
         if self.config['weight_decay'] is not None or self.config['weight_decay'] != 0:
@@ -123,75 +101,102 @@ class Trainer:
             num_warmup_steps=self.config['lr_warmup'],
             num_training_steps=self.config['epoch'] if self.config['lr_decay'] else None)
 
+    def train(self, epoch_save: int = 1):
+        """ Train model.
+
+        Parameters
+        ----------
+        epoch_save : int
+            Epoch to run validation eg) Every 100000 epoch, it will save model weight as default.
+        """
+        encoded_pairs_dict = self.model.encode_word_pairs(list(chain(*[p + n for p, n in self.data.values()])))
+        loader_dict = {}
+        batch_size_positive = int(self.config['batch_size'] * self.config['batch_positive_ratio'])
+        batch_size_negative = self.config['batch_size'] - batch_size_positive
+        logging.info(f'batch size: positive ({batch_size_positive}), negative ({batch_size_negative})')
+
+        for k, (pairs_p, pairs_n) in self.data.items():
+            loader_dict[k] = {
+                'positive': torch.utils.data.DataLoader(
+                    Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_p], return_ranking=True), num_workers=0,
+                    batch_size=batch_size_positive, shuffle=True, drop_last=True),
+                'negative': torch.utils.data.DataLoader(
+                    Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_n], return_ranking=False), num_workers=0,
+                    batch_size=batch_size_negative, shuffle=True, drop_last=True)
+            }
+        logging.info('start model training')
+        relation_keys = self.data.keys()
+        cos_2d = nn.CosineSimilarity(dim=1)
+        cos_1d = nn.CosineSimilarity(dim=0)
+        for e in range(self.config['epoch']):  # loop over the epoch
+            total_loss = []
+            random.shuffle(relation_keys)
+            for n, relation_key in enumerate(relation_keys):
+                loader_p = iter(loader_dict[relation_key]['positive'])
+                loader_n = iter(loader_dict[relation_key]['negative'])
+                while True:
+                    try:
+                        self.optimizer.zero_grad()
+                        x_p = next(loader_p)
+                        x_n = next(loader_n)
+                        x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
+                        embedding = self.model.to_embedding(x)
+                        embedding_p = embedding[:batch_size_positive]
+                        embedding_n = embedding[batch_size_positive:]
+                        loss = []
+                        if self.config['loss_function'] == 'nce_rank':
+                            rank = x_p.pop('ranking').cpu().tolist()
+                            for i in range(batch_size_positive):
+                                assert type(rank[i]) == int, rank[i]
+                                tau = self.get_rank_temperature(rank[i], batch_size_positive)
+                                deno_n = torch.sum(torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / tau))
+                                dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
+                                nume_p = torch.sum(torch.concat([d for n, d in enumerate(dist) if rank[n] <= rank[i]]))
+                                deno_p = torch.sum(torch.concat([d for n, d in enumerate(dist) if rank[n] > rank[i]]))
+                                loss.append(- torch.log(nume_p / (deno_p + deno_n)))
+                        elif self.config['loss_function'] == 'nce_logout':
+                            for i in range(batch_size_positive):
+                                deno_n = torch.sum(torch.exp(
+                                    cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.config['temperature_nce_constant']))
+                                for p in range(batch_size_positive):
+                                    logit_p = torch.exp(
+                                        cos_1d(embedding_p[i], embedding_p[p]) / self.config['temperature_nce_constant'])
+                                    loss.append(- torch.log(logit_p/(logit_p + deno_n)))
+                        elif self.config['loss_function'] == 'nce_login':
+                            for i in range(batch_size_positive):
+                                deno_n = torch.sum(torch.exp(
+                                    cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.config['temperature_nce_constant']))
+                                logit_p = torch.sum(torch.exp(
+                                    cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.config['temperature_nce_constant']))
+                                loss.append(- torch.log(logit_p/(logit_p + deno_n)))
+                        else:
+                            raise ValueError(f"unknown loss function {self.config['loss_function']}")
+                        loss = torch.sum(torch.concat(loss))
+                        loss.backward()
+                        total_loss.append(loss.cpu().item())
+                        self.optimizer.step()
+                        self.scheduler.step()
+                    except StopIteration:
+                        break
+
+            mean_loss = round(sum(total_loss)/len(total_loss), 3)
+            lr = round(self.optimizer.param_groups[0]['lr'], 5)
+            logging.info(f"[epoch {e + 1}/{self.config['epoch']}] average loss: {mean_loss}, lr: {lr}")
+            if (e + 1) % epoch_save == 0 and (e + 1) != 0:
+                self.save(e)
+
+        self.save(self.config['epoch'] - 1)
+        logging.info('complete training: model ckpt was saved at {}'.format(self.export_dir))
+
     def save(self, current_epoch):
         cache_dir = '{}/epoch_{}'.format(self.export_dir, current_epoch + 1)
         os.makedirs(cache_dir, exist_ok=True)
         self.model.save(cache_dir)
 
-    def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
-        return self.model.preprocess(positive_samples, negative_samples, relation_structure)
-
-    def model_output(self, encode):
-        return self.model.to_embedding(encode)        
-
-    def train(self, num_workers: int = 1, epoch_save: int = 1):
-        """ Train model.
-
-        Parameters
-        ----------
-        num_workers : int
-            Workers for DataLoader.
-        epoch_save : int
-            Epoch to run validation eg) Every 100000 epoch, it will save model weight as default.
-        """
-        param = self.preprocess(self.all_positive, self.all_negative)
-        logging.info('start model training')
-        batch_index = list(range(self.n_trial))
-        global_step = 0
-
-        for e in range(self.config['epoch']):  # loop over the epoch
-            random.shuffle(batch_index)
-            for n, bi in enumerate(batch_index):
-                dataset = Dataset(deterministic_index=bi, **param)
-                loader = torch.utils.data.DataLoader(
-                    dataset, batch_size=self.config['batch'], shuffle=True, num_workers=num_workers, drop_last=True)
-                mean_loss, global_step = self.train_single_epoch(loader, global_step=global_step)
-                inst_lr = self.optimizer.param_groups[0]['lr']
-                logging.info('[epoch {}/{}, batch_id {}/{}] average loss: {}, lr: {}'.format(
-                    e, self.config['epoch'], n, self.n_trial, round(mean_loss, 3), inst_lr))
-            if (e + 1) % epoch_save == 0 and (e + 1) != 0:
-                self.save(e)
-
-        self.save(e)
-        logging.info('complete training: model ckpt was saved at {}'.format(self.export_dir))
-
-    def train_single_epoch(self, data_loader, global_step: int):
-        total_loss = 0
-        step_in_epoch = len(data_loader)
-        for x in data_loader:
-            global_step += 1
-
-            self.optimizer.zero_grad()
-
-            encode = {k: torch.cat([x['positive_a'][k], x['positive_b'][k], x['negative'][k]])
-                      for k in x['positive_a'].keys()}
-            embedding = self.model_output(encode)
-            v_anchor, v_positive, v_negative = embedding.chunk(3)
-
-            # contrastive loss
-            loss = triplet_loss(v_anchor, v_positive, v_negative,
-                                margin=self.config['mse_margin'],
-                                in_batch_negative=self.config['in_batch_negative'],
-                                linear=self.linear, device=self.device)
-
-            # backward: calculate gradient
-            loss.backward()
-            inst_loss = loss.cpu().item()
-
-            # aggregate average loss over epoch
-            total_loss += inst_loss
-
-            self.optimizer.step()
-            self.scheduler.step()
-
-        return total_loss / step_in_epoch, global_step
+    def get_rank_temperature(self, i, n):
+        assert i <= n, f"{i}, {n}"
+        if self.config['temperature_nce_rank']['type'] == 'linear':
+            _min = self.config['temperature_nce_rank']['min']
+            _max = self.config['temperature_nce_rank']['max']
+            return (_min - _max) / (1 - n) * (i - 1) + _min
+        raise ValueError(f"unknown type: {self.config['temperature_nce_rank']['type']}")

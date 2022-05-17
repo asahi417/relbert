@@ -68,6 +68,8 @@ if __name__ == '__main__':
         for data_id, _data in enumerate(data):
             print(f'[{k}]: {data_id}/{len(data)}')
             cache_file = f'embeddings/ap_score.{k}.{data_id}.json'
+            if os.path.exists(cache_file):
+                continue
             score_dict = {}
             source = _data['source']
             target = _data['target']

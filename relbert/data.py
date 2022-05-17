@@ -2,8 +2,8 @@
 import os
 import json
 from glob import glob
-from itertools import permutations, product
-
+from itertools import chain
+from typing import List
 from .util import wget, home_dir
 
 semeval_relations = {
@@ -21,10 +21,8 @@ semeval_relations = {
 
 
 def get_training_data(data_name: str = 'semeval2012',
-                      n_sample: int = 10,
                       cache_dir: str = None,
-                      validation_set: bool = False,
-                      exclude_relation: str = None):
+                      exclude_relation: List or str = None):
     """ Get RelBERT training data
     - SemEval 2012 task 2 dataset (case sensitive)
 
@@ -32,26 +30,20 @@ def get_training_data(data_name: str = 'semeval2012',
     ----------
     data_name : str
     cache_dir : str
-    n_sample : int
-        Sample size of positive/negative.
-    validation_set : bool
-        To return get the validation set
     exclude_relation : str
 
     Returns
     -------
-    all_positive, all_negative, all_relation_type : dict
-        Dictionary with relation type as key.
+    pairs: dictionary of list (positive pairs, negative pairs)
+    {'1b': [[0.6, ('office', 'desk'), ..], [[-0.1, ('aaa', 'bbb'), ...]]
     """
-    v_rate = 0.2
-    n_sample_max = 10
-    assert n_sample <= n_sample_max
     cache_dir = cache_dir if cache_dir is not None else home_dir
     cache_dir = '{}/data'.format(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
     remove_relation = None
-    if exclude_relation:
-        remove_relation = [k for k, v in semeval_relations.items() if exclude_relation == v]
+    if exclude_relation is not None:
+        exclude_relation = [exclude_relation] if type(exclude_relation) is str else exclude_relation
+        remove_relation = [k for k, v in semeval_relations.items() if v in exclude_relation]
 
     if data_name == 'semeval2012':
         path_answer = '{}/Phase2Answers'.format(cache_dir)
@@ -63,64 +55,53 @@ def get_training_data(data_name: str = 'semeval2012',
         files_answer = [os.path.basename(i) for i in glob('{}/*.txt'.format(path_answer))]
         files_scale = [os.path.basename(i) for i in glob('{}/*.txt'.format(path_scale))]
         assert files_answer == files_scale, 'files are not matched: {} vs {}'.format(files_scale, files_answer)
-        all_positive = {}
-        all_negative = {}
+        positives = {}
+        negatives = {}
         all_relation_type = {}
+        positives_score = {}
+        # score_range = [90.0, 88.7]  # the absolute value of max/min prototypicality rating
         for i in files_scale:
             relation_id = i.split('-')[-1].replace('.txt', '')
             if remove_relation and int(relation_id[:-1]) in remove_relation:
                 continue
             with open('{}/{}'.format(path_answer, i), 'r') as f:
-                lines_answer = [l.replace('"', '').split('\t') for l in f.read().split('\n')
-                                if not l.startswith('#') and len(l)]
+                lines_answer = [_l.replace('"', '').split('\t') for _l in f.read().split('\n')
+                                if not _l.startswith('#') and len(_l)]
                 relation_type = list(set(list(zip(*lines_answer))[-1]))
                 assert len(relation_type) == 1, relation_type
                 relation_type = relation_type[0]
             with open('{}/{}'.format(path_scale, i), 'r') as f:
-                lines_scale = [[float(l[:5]), l[6:].replace('"', '')] for l in f.read().split('\n')
-                               if not l.startswith('#') and len(l)]
-                lines_scale = sorted(lines_scale, key=lambda x: x[0])
-                _negative = [tuple(i.split(':')) for i in
-                             list(zip(*list(filter(lambda x: x[0] < 0, lines_scale[:n_sample_max]))))[1]]
-                _positive = [tuple(i.split(':')) for i in
-                             list(zip(*list(filter(lambda x: x[0] > 0, lines_scale[-n_sample_max:]))))[1]]
-                v_negative = _negative[::int(len(_negative) * (1 - v_rate))]
-                v_positive = _positive[::int(len(_positive) * (1 - v_rate))]
-                t_negative = [i for i in _negative if i not in v_negative]
-                t_positive = [i for i in _positive if i not in v_positive]
-                if validation_set:
-                    all_negative[relation_id] = v_negative
-                    all_positive[relation_id] = v_positive
-                else:
-                    all_negative[relation_id] = t_negative[:n_sample]
-                    all_positive[relation_id] = t_positive[-n_sample:]
-
+                # list of tuple [score, ("a", "b")]
+                scales = [[float(_l[:5]), _l[6:].replace('"', '')] for _l in f.read().split('\n')
+                          if not _l.startswith('#') and len(_l)]
+                scales = sorted(scales, key=lambda _x: _x[0])
+                # positive pairs are in the reverse order of prototypicality score
+                positive_pairs = [[s, tuple(p.split(':'))] for s, p in filter(lambda _x: _x[0] > 0, scales)]
+                positive_pairs = sorted(positive_pairs, key=lambda x:  x[0], reverse=True)
+                positives_score[relation_id] = positive_pairs
+                positives[relation_id] = list(list(zip(*positive_pairs))[1])
+                negatives[relation_id] = [tuple(p.split(':')) for s, p in filter(lambda _x: _x[0] < 0, scales)]
             all_relation_type[relation_id] = relation_type
+
+        # consider positive from other relation as negative
+        for k in positives.keys():
+            negatives[k] += list(chain(*[_v for _k, _v in positives.items() if _k != k]))
+        pairs = {k: [positives[k], negatives[k]] for k in positives.keys()}
         parent = list(set([i[:-1] for i in all_relation_type.keys()]))
         relation_structure = {p: [i for i in all_relation_type.keys() if p == i[:-1]] for p in parent}
+        for k, v in relation_structure.items():
+            positive = list(chain(*[positives_score[_v] for _v in v]))
+            positive = list(list(zip(*sorted(positive, key=lambda x: x[0], reverse=True)))[1])
+            # input(positive)
+            # positive = list(chain(*[positives[_v] for _v in v]))
+            negative = []
+            for _k, _v in relation_structure.items():
+                if _k != k:
+                    negative += list(chain(*[positives[__v] for __v in _v]))
+            pairs[k] = [positive, negative]
+        return pairs
     else:
         raise ValueError('unknown data: {}'.format(data_name))
-    return all_positive, all_negative, relation_structure
-
-
-def get_contrastive_data(all_positive, relation_structure, return_parent_data: bool = False):
-    # low-level data
-    full_pairs = []
-    for k, v in all_positive.items():
-        for a, b in permutations(v, 2):
-            full_pairs.append([a, b, k])
-            full_pairs.append([a[::-1], b[::-1], k])
-    if not return_parent_data:
-        return full_pairs
-    # high-level data
-    full_pairs_parent = []
-    for k, v in relation_structure.items():
-        for x, y in permutations(v, 2):
-            for a, b in product(all_positive[x], all_positive[y]):
-                full_pairs_parent.append([a, b, k])
-                full_pairs_parent.append([a[::-1], b[::-1], k])
-    return full_pairs, full_pairs_parent
-    # negative = {k: list(chain(*[x[:2] for x in full_pairs_parent if x[2] != k])) for k in relation_structure.keys()}
 
 
 def get_analogy_data(cache_dir: str = None):

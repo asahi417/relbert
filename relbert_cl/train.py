@@ -1,85 +1,69 @@
-""" Train RelBERT model. """
+""" RelBERT fine-tuning with NCE loss """
 import argparse
 import logging
+
 import relbert
 
 
-def config(parser):
-    # optimization
-    parser.add_argument('-s', '--softmax-loss', help='softmax loss', action='store_true')
-    parser.add_argument('-n', '--in-batch-negative', help='in batch negative', action='store_true')
-    parser.add_argument('-p', '--parent-contrast', help='hierarchical contrastive loss', action='store_true')
-    parser.add_argument('-e', '--epoch', help='training epochs', default=1, type=int)
-    parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
-    parser.add_argument('-b', '--batch', help='batch size', default=64, type=int)
-    parser.add_argument('--lr', help='learning rate', default=0.00002, type=float)
-    parser.add_argument('--random-seed', help='random seed', default=0, type=int)
-    parser.add_argument('--lr-decay', help='linear decay of learning rate after warmup', action='store_true')
-    parser.add_argument("--lr-warmup", help="linear warmup of lr", default=10, type=int)
-    parser.add_argument("--weight-decay", help="l2 penalty for weight decay", default=0, type=float)
-    parser.add_argument('--optimizer', help='optimizer `adam`/`adamax`/`adam`', default='adam', type=str)
-    parser.add_argument("--momentum", help="sgd momentum", default=0.9, type=float)
-    # training environment
-    parser.add_argument('--num-workers', help='workers for dataloder', default=5, type=int)
-    parser.add_argument('--fp16', help='fp16 for training', action='store_true')
-    parser.add_argument('--epoch-save', help='interval to save model weight', default=5, type=int)
-    parser.add_argument('--debug', help='log level', action='store_true')
-    parser.add_argument('--export', help='directory to export model weight file', required=True, type=str)
-    # language model
-    parser.add_argument('-m', '--model', help='language model', default='roberta-large', type=str)
-    parser.add_argument('-l', '--max-length', help='length', default=64, type=int)
-    parser.add_argument('--mode', help='lm mode', default='average_no_mask', type=str)
-    # data
-    parser.add_argument('--data', help='dataset', default='semeval2012', type=str)
-    parser.add_argument('--n-sample', help='sample size', default=10, type=int)
-    parser.add_argument('-t', '--template-type', help='template type or path to generated prompt file',
-                        default=None, type=str)
-    parser.add_argument('--custom-template', help='custom template', default=None, type=str)
-    return parser
+TEMP = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"
+logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
 
 def main():
-    argument_parser = argparse.ArgumentParser(description='Train RelBERT.')
-    argument_parser = config(argument_parser)
-    opt = argument_parser.parse_args()
-
-    # logging
-    level = logging.DEBUG if opt.debug else logging.INFO
-    logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=level, datefmt='%Y-%m-%d %H:%M:%S')
+    parser = argparse.ArgumentParser(description='Train RelBERT.')
+    parser.add_argument('-m', '--model', help='', default='roberta-base', type=str)
+    parser.add_argument('--max-length', help='', default=64, type=int)
+    parser.add_argument('--mode', help='', default='average_no_mask', type=str)
+    parser.add_argument('--data', help='', default='semeval2012', type=str)
+    parser.add_argument('--template-mode', help='', default='manual', type=str)
+    parser.add_argument('-t', '--template', help='', default=TEMP, type=str)
+    parser.add_argument('-l', '--loss-function', help='', default='nce_rank', type=str)
+    parser.add_argument('--temperature-nce-type', help='', default='linear', type=str)
+    parser.add_argument('--temperature-nce-constant', help='', default=1.0, type=float)
+    parser.add_argument('--temperature-nce-min', help='', default=0.1, type=float)
+    parser.add_argument('--temperature-nce-max', help='', default=10.0, type=float)
+    parser.add_argument('-e', '--epoch', help='', default=1, type=int)
+    parser.add_argument('-b', '--batch', help='', default=64, type=int)
+    parser.add_argument('--batch-positive-ratio', help='', default=0.3, type=float)
+    parser.add_argument('--lr', help='', default=0.00002, type=float)
+    parser.add_argument('--lr-decay', help='', action='store_true')
+    parser.add_argument("--lr-warmup", help="", default=100, type=int)
+    parser.add_argument('--random-seed', help='random seed', default=0, type=int)
+    parser.add_argument("--weight-decay", help="", default=0, type=float)
+    parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
+    parser.add_argument('--epoch-save', help='', default=1, type=int)
+    parser.add_argument('--export', help='', required=True, type=str)
+    opt = parser.parse_args()
 
     trainer = relbert.Trainer(
+        export=opt.export,
         model=opt.model,
         max_length=opt.max_length,
         mode=opt.mode,
         data=opt.data,
-        n_sample=opt.n_sample,
-        template_type=opt.template_type,
-        custom_template=opt.custom_template,
-        softmax_loss=opt.softmax_loss,
-        in_batch_negative=opt.in_batch_negative,
-        parent_contrast=opt.parent_contrast,
-        mse_margin=opt.mse_margin,
+        template_mode=opt.template_mode,
+        template=opt.template,
+        loss_function=opt.loss_function,
+        temperature_nce_type=opt.temperature_nce_type,
+        temperature_nce_constant=opt.temperature_nce_constant,
+        temperature_nce_min=opt.temperature_nce_min,
+        temperature_nce_max=opt.temperature_nce_max,
         epoch=opt.epoch,
-        export=opt.export,
         batch=opt.batch,
+        batch_positive_ratio=opt.batch_positive_ratio,
         lr=opt.lr,
         lr_decay=opt.lr_decay,
         lr_warmup=opt.lr_warmup,
         weight_decay=opt.weight_decay,
-        optimizer=opt.optimizer,
-        momentum=opt.momentum,
-        fp16=opt.fp16,
-        random_seed=opt.random_seed)
+        random_seed=opt.random_seed,
+        exclude_relation=opt.exclude_relation)
 
     # add file handler
     logger = logging.getLogger()
-    file_handler = logging.FileHandler('{}/training.log'.format(trainer.checkpoint_dir))
-    file_handler.setLevel(level)
+    file_handler = logging.FileHandler(f'{trainer.export_dir}/training.log')
+    file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
     logger.addHandler(file_handler)
 
-    trainer.train(num_workers=opt.num_workers, epoch_save=opt.epoch_save)
+    trainer.train(opt.epoch_save)
 
-
-if __name__ == '__main__':
-    main()
