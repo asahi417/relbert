@@ -146,16 +146,16 @@ class Trainer:
                         loss = []
                         if self.config['loss_function'] == 'nce_rank':
                             rank = x_p.pop('ranking').cpu().tolist()
-                            input(rank)
+                            # input(rank)
                             for i in range(batch_size_positive):
                                 assert type(rank[i]) == int, rank[i]
                                 tau = self.get_rank_temperature(rank[i], batch_size_positive)
                                 deno_n = torch.sum(torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / tau))
                                 dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
-                                input([d for n, d in enumerate(dist) if rank[n] <= rank[i]])
-                                input([d for n, d in enumerate(dist) if rank[n] > rank[i]])
-                                nume_p = torch.sum(torch.concat([d for n, d in enumerate(dist) if rank[n] <= rank[i]]))
-                                deno_p = torch.sum(torch.concat([d for n, d in enumerate(dist) if rank[n] > rank[i]]))
+                                # input([d for n, d in enumerate(dist) if rank[n] <= rank[i]])
+                                # input([d for n, d in enumerate(dist) if rank[n] > rank[i]])
+                                nume_p = torch.sum(torch.stack([d for n, d in enumerate(dist) if rank[n] <= rank[i]]))
+                                deno_p = torch.sum(torch.stack([d for n, d in enumerate(dist) if rank[n] > rank[i]]))
                                 loss.append(- torch.log(nume_p / (deno_p + deno_n)))
                         elif self.config['loss_function'] == 'nce_logout':
                             for i in range(batch_size_positive):
@@ -174,7 +174,7 @@ class Trainer:
                                 loss.append(- torch.log(logit_p/(logit_p + deno_n)))
                         else:
                             raise ValueError(f"unknown loss function {self.config['loss_function']}")
-                        loss = torch.sum(torch.concat(loss))
+                        loss = torch.sum(torch.stack(loss))
                         loss.backward()
                         total_loss.append(loss.cpu().item())
                         self.optimizer.step()
