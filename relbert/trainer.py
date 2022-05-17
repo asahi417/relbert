@@ -111,8 +111,8 @@ class Trainer:
         """
         encoded_pairs_dict = self.model.encode_word_pairs(list(chain(*[p + n for p, n in self.data.values()])))
         loader_dict = {}
-        batch_size_positive = int(self.config['batch_size'] * self.config['batch_positive_ratio'])
-        batch_size_negative = self.config['batch_size'] - batch_size_positive
+        batch_size_positive = int(self.config['batch'] * self.config['batch_positive_ratio'])
+        batch_size_negative = self.config['batch'] - batch_size_positive
         logging.info(f'batch size: positive ({batch_size_positive}), negative ({batch_size_negative})')
 
         for k, (pairs_p, pairs_n) in self.data.items():

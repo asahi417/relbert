@@ -9,7 +9,7 @@ relbert_training() {
     for MODE in "mask" "average" "average_no_mask"
       do
         relbert-train -m "${MODEL}" --mode ${MODE} -l "${LOSS}" -e "${EPOCH}" -b "${BATCH}" \
-          --batch-positive-ratio "${RATIO}"
+          --batch-positive-ratio "${RATIO}" --export "relbert_output/models/${LOSS}.${MODE}.${MODEL}.${RATIO}"
       done
   done
 }
