@@ -155,8 +155,9 @@ class Trainer:
                                 dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
                                 # input([d for n, d in enumerate(dist) if rank[n] <= rank[i]])
                                 # input([d for n, d in enumerate(dist) if rank[n] > rank[i]])
-                                nume_p = torch.sum(torch.stack([d for n, d in enumerate(dist) if rank[n] <= rank[i]]))
-                                deno_p = torch.sum(torch.stack([d for n, d in enumerate(dist) if rank[n] > rank[i]]))
+                                nume_p = torch.sum(torch.stack([d for n, d in enumerate(dist) if rank[n] >= rank[i]]))
+                                # input([d for n, d in enumerate(dist) if rank[n] > rank[i]])
+                                deno_p = torch.sum(torch.stack([d for n, d in enumerate(dist) if rank[n] < rank[i]]))
                                 loss.append(- torch.log(nume_p / (deno_p + deno_n)))
                         elif self.config['loss_function'] == 'nce_logout':
                             for i in range(batch_size_positive):
