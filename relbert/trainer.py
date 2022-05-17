@@ -125,7 +125,7 @@ class Trainer:
                     batch_size=batch_size_negative, shuffle=True, drop_last=True)
             }
         logging.info('start model training')
-        relation_keys = self.data.keys()
+        relation_keys = list(self.data.keys())
         cos_2d = nn.CosineSimilarity(dim=1)
         cos_1d = nn.CosineSimilarity(dim=0)
         for e in range(self.config['epoch']):  # loop over the epoch
