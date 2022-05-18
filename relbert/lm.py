@@ -147,7 +147,7 @@ class RelBERT:
             else:
                 raise ValueError('not implemented yet')
         self.tokenizer = load_class(transformers.AutoTokenizer, model)
-        self.model = load_class(transformers.AutoModel, model)
+        self.model = load_class(transformers.AutoModel, model, self.model_config)
 
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
