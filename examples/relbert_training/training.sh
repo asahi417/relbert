@@ -1,3 +1,4 @@
+# Training
 relbert_training() {
   MODEL=${1}
   RATIO=${2}
@@ -15,3 +16,5 @@ relbert_training() {
 
 relbert_training 'roberta-base' 0.3
 
+# Evaluation
+relbert-eval -c 'relbert_output/models/nce_*' --export-file "relbert_output/eval/accuracy.analogy.csv" --type "analogy"

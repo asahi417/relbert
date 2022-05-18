@@ -16,7 +16,7 @@ def load_class(model_function, model, config=None):
         if config is None:
             return model_function.from_pretrained(model)
         return model_function.from_pretrained(model, config=config)
-    except ValueError:
+    except Exception:
         if config is None:
             return model_function.from_pretrained(model, local_files_only=True)
         return model_function.from_pretrained(model, config=config, local_files_only=True)
