@@ -168,7 +168,7 @@ class RelBERT:
             self.model.save_pretrained(cache_dir)
         self.tokenizer.save_pretrained(cache_dir)
 
-    def encode_word_pairs(self, word_pairs, return_list: bool = False):
+    def encode_word_pairs(self, word_pairs):
         """ return a dictionary of word_pair: encode
         if return_list is True, return encode of every word_pairs with same order.
         otherwise, rerturn dictionary
@@ -184,8 +184,6 @@ class RelBERT:
         assert all(type(i) is tuple or list for i in word_pairs), word_pairs
         logging.info('preprocess')
         logging.info(f'\t original: {len(word_pairs)}')
-        if return_list:
-            return pool_map(word_pairs)
         word_pairs_dict = {'__'.join(p): p for p in word_pairs}
         word_pairs_dict_key = sorted(list(set(word_pairs_dict.keys())))
         word_pairs = [word_pairs_dict[k] for k in word_pairs_dict_key]
@@ -234,7 +232,7 @@ class RelBERT:
             for encode in data_loader:
                 h_list += self.to_embedding(encode).cpu().tolist()
         h_dict = {p: h for h, p in zip(h_list, pair_key)}
-        h_return = [h_dict[p] for p in h_dict]
+        h_return = [h_dict['__'.join(p)] for p in x]
         if is_single_list:
             assert len(h_return) == 1
             return h_return[0]
