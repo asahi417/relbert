@@ -234,7 +234,7 @@ class RelBERT:
             for encode in data_loader:
                 h_list += self.to_embedding(encode).cpu().tolist()
         h_dict = {p: h for h, p in zip(h_list, pair_key)}
-        h_return = [h_dict['__'.join(p)] for p in h_dict]
+        h_return = [h_dict[p] for p in h_dict]
         if is_single_list:
             assert len(h_return) == 1
             return h_return[0]

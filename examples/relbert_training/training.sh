@@ -2,8 +2,8 @@
 relbert_training() {
   MODEL=${1}
   RATIO=${2}
-  EPOCH=5
-  BATCH=64
+  EPOCH=${3}
+  BATCH=${4}
   for LOSS in "nce_rank" "nce_logout" "nce_login"
   do
     for MODE in "mask" "average" "average_no_mask"
@@ -14,7 +14,7 @@ relbert_training() {
   done
 }
 
-relbert_training 'roberta-base' 0.3
+relbert_training 'roberta-base' 0.3 5 64
 
 # Evaluation
-relbert-eval -c 'relbert_output/models/nce_*' --export-file "relbert_output/eval/accuracy.analogy.csv" --type "analogy"
+relbert-eval -c 'relbert_output/models/nce_*/epoch*' --export-file "relbert_output/eval/accuracy.analogy.csv" --type "analogy"

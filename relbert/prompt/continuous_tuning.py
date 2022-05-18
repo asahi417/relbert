@@ -5,9 +5,7 @@ from typing import Dict
 
 import torch
 from .discrete_tuning import preprocess
-from ..config import Config
-from ..util import load_language_model
-from ..trainer import Trainer
+from .util import load_language_model
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 __all__ = 'ContinuousTriggerEmbedding'
@@ -51,16 +49,14 @@ class PromptEmbedding(torch.nn.Module):
         logging.debug('exported to {}'.format(export_file))
 
 
-class ContinuousTriggerEmbedding(Trainer):
+class ContinuousTriggerEmbedding:
 
     def __init__(self,
                  export: str,
                  epoch: int = 5,
-                 momentum: float = 0.9,
                  lr: float = 0.001,
                  lr_warmup: int = 100,
                  lr_decay: bool = False,
-                 optimizer: str = 'adam',
                  weight_decay: float = 0.0,
                  pseudo_token: str = '<prompt>',
                  n_trigger_i: int = 1,
@@ -69,24 +65,14 @@ class ContinuousTriggerEmbedding(Trainer):
                  model: str = 'roberta-large',
                  max_length: int = 64,
                  data: str = 'semeval2012',
-                 n_sample: int = 5,
-                 softmax_loss: bool = True,
-                 in_batch_negative: bool = True,
-                 parent_contrast: bool = True,
-                 mse_margin: float = 1,
                  batch: int = 16,
-                 random_seed: int = 0,
-                 cache_dir: str = None,
-                 fp16: bool = False):
-        super(ContinuousTriggerEmbedding, self).__init__()
-        self.config = Config(
-            export=export,
-            optimizer=optimizer,
+                 random_seed: int = 0):
+        self.export_dir = export
+        self.config = dict(
             weight_decay=weight_decay,
             lr=lr,
             lr_warmup=lr_warmup,
             lr_decay=lr_decay,
-            momentum=momentum,
             epoch=epoch,
             batch=batch,
             pseudo_token=pseudo_token,
@@ -96,17 +82,11 @@ class ContinuousTriggerEmbedding(Trainer):
             model=model,
             max_length=max_length,
             data=data,
-            n_sample=n_sample,
-            softmax_loss=softmax_loss,
-            in_batch_negative=in_batch_negative,
-            parent_contrast=parent_contrast,
-            mse_margin=mse_margin,
-            random_seed=random_seed,
-            fp16=fp16)
+            random_seed=random_seed)
         # model setup
-        self.tokenizer, self.model, _ = load_language_model(self.config.model, cache_dir)
-        self.tokenizer.add_special_tokens({'additional_special_tokens': [self.config.pseudo_token]})
-        self.pseudo_token_id = self.tokenizer.convert_tokens_to_ids(self.config.pseudo_token)
+        self.tokenizer, self.model, _ = load_language_model(self.config['model'])
+        self.tokenizer.add_special_tokens({'additional_special_tokens': [self.config['pseudo_token']]})
+        self.pseudo_token_id = self.tokenizer.convert_tokens_to_ids(self.config['pseudo_token'])
         self.model.eval()
         self.hidden_size = self.model.config.hidden_size
         try:
@@ -123,11 +103,11 @@ class ContinuousTriggerEmbedding(Trainer):
             self.model = torch.nn.DataParallel(self.model)
         self.model.to(self.device)
         self.prompter = PromptEmbedding(
-            pseudo_token=self.config.pseudo_token,
+            pseudo_token=self.config['pseudo_token'],
             hidden_size=embedding_size,
-            n_trigger_b=self.config.n_trigger_b,
-            n_trigger_i=self.config.n_trigger_i,
-            n_trigger_e=self.config.n_trigger_e,
+            n_trigger_b=self.config['n_trigger_b'],
+            n_trigger_i=self.config['n_trigger_i'],
+            n_trigger_e=self.config['n_trigger_e'],
             device=self.device)
         self.model_parameters = list(self.prompter.named_parameters())
 
@@ -157,9 +137,9 @@ class ContinuousTriggerEmbedding(Trainer):
 
     def convert_pairs_to_prompt(self, pairs):
         def convert_pair_to_prompt(h, t):
-            prompt = [self.config.pseudo_token] * self.config.n_trigger_b + [h]
-            prompt += [self.config.pseudo_token] * self.config.n_trigger_i + [t]
-            prompt += [self.config.pseudo_token] * self.config.n_trigger_e
+            prompt = [self.config['pseudo_token']] * self.config['n_trigger_b'] + [h]
+            prompt += [self.config['pseudo_token']] * self.config['n_trigger_i'] + [t]
+            prompt += [self.config['pseudo_token']] * self.config['n_trigger_e']
             return ' '.join(prompt)
         return [convert_pair_to_prompt(_h, _t) for _h, _t in pairs]
 
@@ -169,5 +149,10 @@ class ContinuousTriggerEmbedding(Trainer):
 
     def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
         """ Encoding data and returns torch.utils.data.Dataset. """
-        return preprocess(self.tokenizer, self.config.max_length, self.convert_pairs_to_prompt, False,
-                          positive_samples, negative_samples, relation_structure)
+        return preprocess(self.tokenizer,
+                          self.config['max_length'],
+                          self.convert_pairs_to_prompt,
+                          False,
+                          positive_samples,
+                          negative_samples,
+                          relation_structure)
