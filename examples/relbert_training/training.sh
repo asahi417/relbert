@@ -1,4 +1,3 @@
-# try different
 relbert_training() {
   MODEL=${1}
   RATIO=${2}

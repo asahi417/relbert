@@ -1,6 +1,5 @@
-# from . import prompt, evaluator
-from .data import get_training_data
+from . import evaluator, data
 from .lm import Dataset, EncodePlus, RelBERT
 from .trainer import Trainer
-from .util import cosine_similarity, euclidean_distance
-from relbert.misc.pseudo_perp import PPL
+from .misc.pseudo_perp import PPL
+from .misc.ap_score import AnalogyScore

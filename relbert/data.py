@@ -1,10 +1,17 @@
 """ get SemEval2012 task 2 dataset """
-import os
 import json
+import os
+import tarfile
+import zipfile
+import gzip
+import requests
+
 from glob import glob
 from itertools import chain
 from typing import List
-from .util import wget, home_dir
+
+import gdown
+
 
 semeval_relations = {
     1: "Class Inclusion",  # Hypernym
@@ -19,10 +26,41 @@ semeval_relations = {
     10: "Representation"
 }
 
+home_dir = '{}/.cache/relbert'.format(os.path.expanduser('~'))
 
-def get_training_data(data_name: str = 'semeval2012',
-                      cache_dir: str = None,
-                      exclude_relation: List or str = None):
+
+def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
+    """ wget and uncompress data_iterator """
+    os.makedirs(cache_dir, exist_ok=True)
+    if url.startswith('https://drive.google.com'):
+        assert gdrive_filename is not None, 'please provide fileaname for gdrive download'
+        return gdown.download(url, '{}/{}'.format(cache_dir, gdrive_filename), quiet=False)
+    filename = os.path.basename(url)
+    with open('{}/{}'.format(cache_dir, filename), "wb") as f:
+        r = requests.get(url)
+        f.write(r.content)
+    path = '{}/{}'.format(cache_dir, filename)
+
+    if path.endswith('.tar.gz') or path.endswith('.tgz') or path.endswith('.tar'):
+        if path.endswith('.tar'):
+            tar = tarfile.open(path)
+        else:
+            tar = tarfile.open(path, "r:gz")
+        tar.extractall(cache_dir)
+        tar.close()
+        os.remove(path)
+    elif path.endswith('.zip'):
+        with zipfile.ZipFile(path, 'r') as zip_ref:
+            zip_ref.extractall(cache_dir)
+        os.remove(path)
+    elif path.endswith('.gz'):
+        with gzip.open(path, 'rb') as f:
+            with open(path.replace('.gz', ''), 'wb') as f_write:
+                f_write.write(f.read())
+        os.remove(path)
+
+
+def get_training_data(data_name: str = 'semeval2012', exclude_relation: List or str = None):
     """ Get RelBERT training data
     - SemEval 2012 task 2 dataset (case sensitive)
 
@@ -37,8 +75,7 @@ def get_training_data(data_name: str = 'semeval2012',
     pairs: dictionary of list (positive pairs, negative pairs)
     {'1b': [[0.6, ('office', 'desk'), ..], [[-0.1, ('aaa', 'bbb'), ...]]
     """
-    cache_dir = cache_dir if cache_dir is not None else home_dir
-    cache_dir = '{}/data'.format(cache_dir)
+    cache_dir = f'{home_dir}/data'
     os.makedirs(cache_dir, exist_ok=True)
     remove_relation = None
     if exclude_relation is not None:
@@ -92,8 +129,6 @@ def get_training_data(data_name: str = 'semeval2012',
         for k, v in relation_structure.items():
             positive = list(chain(*[positives_score[_v] for _v in v]))
             positive = list(list(zip(*sorted(positive, key=lambda x: x[0], reverse=True)))[1])
-            # input(positive)
-            # positive = list(chain(*[positives[_v] for _v in v]))
             negative = []
             for _k, _v in relation_structure.items():
                 if _k != k:
