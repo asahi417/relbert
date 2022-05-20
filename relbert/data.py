@@ -115,6 +115,7 @@ def get_training_data(data_name: str = 'semeval2012', exclude_relation: List or 
                 # positive pairs are in the reverse order of prototypicality score
                 positive_pairs = [[s, tuple(p.split(':'))] for s, p in filter(lambda _x: _x[0] > 0, scales)]
                 positive_pairs = sorted(positive_pairs, key=lambda x:  x[0], reverse=True)
+                positive_pairs = positive_pairs[:min(10, len(positive_pairs))]
                 positives_score[relation_id] = positive_pairs
                 positives[relation_id] = list(list(zip(*positive_pairs))[1])
                 negatives[relation_id] = [tuple(p.split(':')) for s, p in filter(lambda _x: _x[0] < 0, scales)]
