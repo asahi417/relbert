@@ -66,6 +66,7 @@ class Trainer:
                  temperature_nce_constant: float = 1.0,
                  temperature_nce_min: float = 0.1,
                  temperature_nce_max: float = 10.0,
+                 gradient_accumulation_steps: int = 4,
                  epoch: int = 1,
                  batch: int = 64,
                  batch_positive_ratio: float = 0.3,
@@ -96,6 +97,7 @@ class Trainer:
             weight_decay=weight_decay,
             random_seed=random_seed,
             exclude_relation=exclude_relation,
+            gradient_accumulation_steps=gradient_accumulation_steps
         )
         logging.info('hyperparameters')
         for k, v in self.config.items():
@@ -190,8 +192,6 @@ class Trainer:
                                 tau = self.get_rank_temperature(rank[i], batch_size_positive)
                                 deno_n = torch.sum(torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / tau))
                                 dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
-                                # input([d for n, d in enumerate(dist) if rank[n] <= rank[i]])
-                                # input([d for n, d in enumerate(dist) if rank[n] > rank[i]])
                                 nume_p = stack_sum([d for n, d in enumerate(dist) if rank[n] >= rank[i]])
                                 deno_p = stack_sum([d for n, d in enumerate(dist) if rank[n] < rank[i]])
                                 loss.append(- torch.log(nume_p / (deno_p + deno_n)))
@@ -215,6 +215,9 @@ class Trainer:
                         loss = stack_sum(loss)
                         loss.backward()
                         total_loss.append(loss.cpu().item())
+                        if (n + 1) % self.config['gradient_accumulation_steps'] != 0:
+                            continue
+
                         self.optimizer.step()
                         self.scheduler.step()
                     except StopIteration:

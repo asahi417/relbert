@@ -29,6 +29,7 @@ def main():
     parser.add_argument('--lr-decay', help='', action='store_true')
     parser.add_argument("--lr-warmup", help="", default=100, type=int)
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
+    parser.add_argument('-g', '--gradient-accumulation-steps', help='', default=1, type=int)
     parser.add_argument("--weight-decay", help="", default=0, type=float)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
     parser.add_argument('--epoch-save', help='', default=1, type=int)
@@ -56,6 +57,7 @@ def main():
         lr_warmup=opt.lr_warmup,
         weight_decay=opt.weight_decay,
         random_seed=opt.random_seed,
+        gradient_accumulation_steps=opt.gradient_accumulation_steps,
         exclude_relation=opt.exclude_relation)
 
     # add file handler
