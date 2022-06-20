@@ -188,6 +188,7 @@ class Trainer:
                         x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
                         embedding = self.model.to_embedding(
                             x, gradient_accumulation=self.config['gradient_accumulation_steps'])
+                        input(embedding.shape)
                         embedding_p = embedding[:batch_size_positive]
                         embedding_n = embedding[batch_size_positive:]
                         loss = []
