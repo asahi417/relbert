@@ -1,0 +1,4 @@
+2022-06-20 19:37:58,816 INFO     preprocess
+2022-06-20 19:37:58,816 INFO     	 original: 71787
+2022-06-20 19:37:58,828 INFO     	 deduplicate: 2192
+2022-06-20 19:38:03,965 INFO     start model training: 89 relations

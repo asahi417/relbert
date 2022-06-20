@@ -90,14 +90,12 @@ class Trainer:
             temperature_nce_rank={'min': temperature_nce_min, 'max': temperature_nce_max, 'type': temperature_nce_type},
             epoch=epoch,
             batch=batch,
-            batch_positive_ratio=batch_positive_ratio,
             lr=lr,
             lr_decay=lr_decay,
             lr_warmup=lr_warmup,
             weight_decay=weight_decay,
             random_seed=random_seed,
             exclude_relation=exclude_relation,
-            gradient_accumulation_steps=gradient_accumulation_steps
         )
         logging.info('hyperparameters')
         for k, v in self.config.items():
@@ -150,89 +148,79 @@ class Trainer:
         """
         encoded_pairs_dict = self.model.encode_word_pairs(list(chain(*[p + n for p, n in self.data.values()])))
         loader_dict = {}
-        batch_size_positive = int(self.config['batch'] * self.config['batch_positive_ratio'])
-        batch_size_negative = self.config['batch'] - batch_size_positive
-        if self.config['gradient_accumulation_steps'] is not None:
-            batch_size_positive = int(self.config['gradient_accumulation_steps'] * batch_size_positive)
-            batch_size_negative = int(self.config['gradient_accumulation_steps'] * batch_size_negative)
-        # else:
-        #     batch_size_positive_eff = batch_size_positive
-        #     batch_size_negative_eff = batch_size_negative
-        logging.info(f'batch size: positive ({batch_size_positive}), negative ({batch_size_negative})')
+        # batch_size_positive = int(self.config['batch'] * self.config['batch_positive_ratio'])
+        # batch_size_negative = self.config['batch'] - batch_size_positive
+        # if self.config['gradient_accumulation_steps'] is not None:
+        #     batch_size_positive = int(self.config['gradient_accumulation_steps'] * batch_size_positive)
+        #     batch_size_negative = int(self.config['gradient_accumulation_steps'] * batch_size_negative)
+        # logging.info(f'batch size: positive ({batch_size_positive}), negative ({batch_size_negative})')
         # logging.info(f'effective batch size: positive ({batch_size_positive_eff}), negative ({batch_size_negative_eff})')
 
         for k, (pairs_p, pairs_n) in self.data.items():
+            dataset_p = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_p], return_ranking=True)
+            dataset_n = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_n], return_ranking=False)
             loader_dict[k] = {
-                'positive': torch.utils.data.DataLoader(
-                    Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_p], return_ranking=True), num_workers=0,
-                    batch_size=batch_size_positive, shuffle=True, drop_last=True),
-                'negative': torch.utils.data.DataLoader(
-                    Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_n], return_ranking=False), num_workers=0,
-                    batch_size=batch_size_negative, shuffle=True, drop_last=True)
+                'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
+                'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
             }
-        logging.info('start model training')
+        # for k, v in loader_dict.items():
+        #     print(k)
+        #     print(len(v['positive']))
+        #     print(len(v['negative']))
+        #     print()
+        # input(len(loader_dict))
+
         relation_keys = list(self.data.keys())
+        logging.info(f'start model training: {len(relation_keys)} relations')
         cos_2d = nn.CosineSimilarity(dim=1)
         cos_1d = nn.CosineSimilarity(dim=0)
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_keys)
             for n, relation_key in enumerate(relation_keys):
-                print(len(loader_dict[relation_key]['positive']), len(loader_dict[relation_key]['negative']))
-                input()
-                loader_p = iter(loader_dict[relation_key]['positive'])
-                loader_n = iter(loader_dict[relation_key]['negative'])
-                while True:
-                    try:
-                        self.optimizer.zero_grad()
-                        x_p = next(loader_p)
-                        x_n = next(loader_n)
-                        x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
-                        embedding = self.model.to_embedding(
-                            x, gradient_accumulation=self.config['gradient_accumulation_steps'])
-                        input(embedding.shape)
-                        embedding_p = embedding[:batch_size_positive]
-                        embedding_n = embedding[batch_size_positive:]
-                        loss = []
-                        if self.config['loss_function'] == 'nce_rank':
-                            rank = x_p.pop('ranking').cpu().tolist()
-                            rank_map = {r: 1 + n for n, r in enumerate(sorted(rank))}
-                            rank = [rank_map[r] for r in rank]
-                            for i in range(batch_size_positive):
-                                assert type(rank[i]) == int, rank[i]
-                                tau = self.get_rank_temperature(rank[i], batch_size_positive)
-                                deno_n = torch.sum(torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / tau))
-                                dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
-                                nume_p = stack_sum([d for n, d in enumerate(dist) if rank[n] >= rank[i]])
-                                deno_p = stack_sum([d for n, d in enumerate(dist) if rank[n] < rank[i]])
-                                loss.append(- torch.log(nume_p / (deno_p + deno_n)))
-                        elif self.config['loss_function'] == 'nce_logout':
-                            for i in range(batch_size_positive):
-                                deno_n = torch.sum(torch.exp(
-                                    cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.config['temperature_nce_constant']))
-                                for p in range(batch_size_positive):
-                                    logit_p = torch.exp(
-                                        cos_1d(embedding_p[i], embedding_p[p]) / self.config['temperature_nce_constant'])
-                                    loss.append(- torch.log(logit_p/(logit_p + deno_n)))
-                        elif self.config['loss_function'] == 'nce_login':
-                            for i in range(batch_size_positive):
-                                deno_n = torch.sum(torch.exp(
-                                    cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.config['temperature_nce_constant']))
-                                logit_p = torch.sum(torch.exp(
-                                    cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.config['temperature_nce_constant']))
-                                loss.append(- torch.log(logit_p/(logit_p + deno_n)))
-                        else:
-                            raise ValueError(f"unknown loss function {self.config['loss_function']}")
-                        loss = stack_sum(loss)
-                        loss.backward()
-                        total_loss.append(loss.cpu().item())
-                        # if (n + 1) % self.config['gradient_accumulation_steps'] != 0:
-                        #     continue
-
-                        self.optimizer.step()
-                        self.scheduler.step()
-                    except StopIteration:
-                        break
+                self.optimizer.zero_grad()
+                x_p = next(iter(loader_dict[relation_key]['positive']))
+                x_n = next(iter(loader_dict[relation_key]['negative']))
+                x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
+                embedding = self.model.to_embedding(x, batch_size=self.config['batch'])
+                batch_size_positive = len(x_p['input_ids'])
+                embedding_p = embedding[:batch_size_positive]
+                embedding_n = embedding[batch_size_positive:]
+                loss = []
+                if self.config['loss_function'] == 'nce_rank':
+                    rank = x_p.pop('ranking').cpu().tolist()
+                    rank_map = {r: 1 + n for n, r in enumerate(sorted(rank))}
+                    rank = [rank_map[r] for r in rank]
+                    for i in range(batch_size_positive):
+                        assert type(rank[i]) == int, rank[i]
+                        tau = self.get_rank_temperature(rank[i], batch_size_positive)
+                        deno_n = torch.sum(torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / tau))
+                        dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
+                        nume_p = stack_sum([d for n, d in enumerate(dist) if rank[n] >= rank[i]])
+                        deno_p = stack_sum([d for n, d in enumerate(dist) if rank[n] < rank[i]])
+                        loss.append(- torch.log(nume_p / (deno_p + deno_n)))
+                elif self.config['loss_function'] == 'nce_logout':
+                    for i in range(batch_size_positive):
+                        deno_n = torch.sum(torch.exp(
+                            cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.config['temperature_nce_constant']))
+                        for p in range(batch_size_positive):
+                            logit_p = torch.exp(
+                                cos_1d(embedding_p[i], embedding_p[p]) / self.config['temperature_nce_constant'])
+                            loss.append(- torch.log(logit_p/(logit_p + deno_n)))
+                elif self.config['loss_function'] == 'nce_login':
+                    for i in range(batch_size_positive):
+                        deno_n = torch.sum(torch.exp(
+                            cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.config['temperature_nce_constant']))
+                        logit_p = torch.sum(torch.exp(
+                            cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.config['temperature_nce_constant']))
+                        loss.append(- torch.log(logit_p/(logit_p + deno_n)))
+                else:
+                    raise ValueError(f"unknown loss function {self.config['loss_function']}")
+                loss = stack_sum(loss)
+                loss.backward()
+                total_loss.append(loss.cpu().item())
+                self.optimizer.step()
+                self.scheduler.step()
 
             mean_loss = round(sum(total_loss)/len(total_loss), 3)
             lr = round(self.optimizer.param_groups[0]['lr'], 5)
