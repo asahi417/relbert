@@ -152,7 +152,14 @@ class Trainer:
         loader_dict = {}
         batch_size_positive = int(self.config['batch'] * self.config['batch_positive_ratio'])
         batch_size_negative = self.config['batch'] - batch_size_positive
+        if self.config['gradient_accumulation_steps'] is not None:
+            batch_size_positive = int(self.config['gradient_accumulation_steps'] * batch_size_positive)
+            batch_size_negative = int(self.config['gradient_accumulation_steps'] * batch_size_negative)
+        # else:
+        #     batch_size_positive_eff = batch_size_positive
+        #     batch_size_negative_eff = batch_size_negative
         logging.info(f'batch size: positive ({batch_size_positive}), negative ({batch_size_negative})')
+        # logging.info(f'effective batch size: positive ({batch_size_positive_eff}), negative ({batch_size_negative_eff})')
 
         for k, (pairs_p, pairs_n) in self.data.items():
             loader_dict[k] = {
@@ -179,7 +186,8 @@ class Trainer:
                         x_p = next(loader_p)
                         x_n = next(loader_n)
                         x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
-                        embedding = self.model.to_embedding(x)
+                        embedding = self.model.to_embedding(
+                            x, gradient_accumulation=self.config['gradient_accumulation_steps'])
                         embedding_p = embedding[:batch_size_positive]
                         embedding_n = embedding[batch_size_positive:]
                         loss = []
@@ -215,8 +223,8 @@ class Trainer:
                         loss = stack_sum(loss)
                         loss.backward()
                         total_loss.append(loss.cpu().item())
-                        if (n + 1) % self.config['gradient_accumulation_steps'] != 0:
-                            continue
+                        # if (n + 1) % self.config['gradient_accumulation_steps'] != 0:
+                        #     continue
 
                         self.optimizer.step()
                         self.scheduler.step()

@@ -191,12 +191,24 @@ class RelBERT:
         encode = pool_map(word_pairs)
         return {k: e for k, e in zip(word_pairs_dict_key, encode)}
 
-    def to_embedding(self, encode):
+    def to_embedding(self, encode, gradient_accumulation: int = None):
         """ Compute embedding from batch of encode. """
-        encode = {k: v.to(self.device) for k, v in encode.items()}
         labels = encode.pop('labels')
-        output = self.model(**encode, return_dict=True)
-        return (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
+
+        if gradient_accumulation is None:
+            output = self.model(**{k: v.to(self.device) for k, v in encode.items()}, return_dict=True)
+            return (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
+        else:
+            batch_size = len(labels)
+            chunks = list(range(0, batch_size, gradient_accumulation)) + [batch_size]
+            segment = [(a, b) for a, b in zip(chunks[:-1], chunks[1:])]
+            last_hidden_state = []
+            for s, e in segment:
+                encode = {k: v.to(self.device)[s:e] for k, v in encode.items()}
+                output = self.model(**encode, return_dict=True)
+                last_hidden_state.append(output['last_hidden_state'])
+            last_hidden_state = torch.concat(last_hidden_state, dim=0)
+            return (last_hidden_state * labels.reshape(len(labels), -1, 1)).sum(1)
 
     def get_embedding(self, x: List, batch_size: int = None):
         """ Get embedding from RelBERT (no gradient).
