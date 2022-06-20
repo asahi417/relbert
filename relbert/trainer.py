@@ -178,6 +178,8 @@ class Trainer:
             total_loss = []
             random.shuffle(relation_keys)
             for n, relation_key in enumerate(relation_keys):
+                print(len(loader_dict[relation_key]['positive']), len(loader_dict[relation_key]['negative']))
+                input()
                 loader_p = iter(loader_dict[relation_key]['positive'])
                 loader_n = iter(loader_dict[relation_key]['negative'])
                 while True:
