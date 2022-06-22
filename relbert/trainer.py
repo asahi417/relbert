@@ -182,6 +182,9 @@ class Trainer:
                 x_p = next(iter(loader_dict[relation_key]['positive']))
                 x_n = next(iter(loader_dict[relation_key]['negative']))
                 x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
+                print(x['input_ids'].shape)
+                print(x['labels'].shape)
+                input()
                 embedding = self.model.to_embedding(x, batch_size=self.config['batch'])
                 batch_size_positive = len(x_p['input_ids'])
                 embedding_p = embedding[:batch_size_positive]
