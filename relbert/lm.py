@@ -209,8 +209,9 @@ class RelBERT:
                 output = self.model(**{k: v[s:e].to(self.device) for k, v in encode.items()}, return_dict=True)
                 print(output['last_hidden_state'].shape)
                 last_hidden_state.append(output['last_hidden_state'])
-            last_hidden_state = torch.stack(last_hidden_state, dim=0)
-            print(last_hidden_state.shape, labels.shape)
+            last_hidden_state = torch.concat(last_hidden_state)
+            input(last_hidden_state.shape, labels.shape)
+            labels = labels[:len(last_hidden_state)]
             return (last_hidden_state * labels.reshape(len(labels), -1, 1)).sum(1)
 
     def get_embedding(self, x: List, batch_size: int = None):
