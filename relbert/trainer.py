@@ -163,13 +163,6 @@ class Trainer:
                 'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
                 'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
             }
-        # for k, v in loader_dict.items():
-        #     print(k)
-        #     print(len(v['positive']))
-        #     print(len(v['negative']))
-        #     print()
-        # input(len(loader_dict))
-
         relation_keys = list(self.data.keys())
         logging.info(f'start model training: {len(relation_keys)} relations')
         cos_2d = nn.CosineSimilarity(dim=1)
@@ -182,9 +175,6 @@ class Trainer:
                 x_p = next(iter(loader_dict[relation_key]['positive']))
                 x_n = next(iter(loader_dict[relation_key]['negative']))
                 x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
-                print(x['input_ids'].shape)
-                print(x['labels'].shape)
-                input()
                 embedding = self.model.to_embedding(x, batch_size=self.config['batch'])
                 batch_size_positive = len(x_p['input_ids'])
                 embedding_p = embedding[:batch_size_positive]

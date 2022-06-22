@@ -201,9 +201,12 @@ class RelBERT:
             size = len(labels)
             chunks = list(range(0, size, batch_size)) + [size]
             segment = [(a, b) for a, b in zip(chunks[:-1], chunks[1:])]
+            input(segment)
             last_hidden_state = []
             for s, e in segment:
+
                 encode = {k: v.to(self.device)[s:e] for k, v in encode.items()}
+                print(encode)
                 output = self.model(**encode, return_dict=True)
                 print(output['last_hidden_state'].shape)
                 last_hidden_state.append(output['last_hidden_state'])
