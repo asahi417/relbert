@@ -66,10 +66,9 @@ class Trainer:
                  temperature_nce_constant: float = 1.0,
                  temperature_nce_min: float = 0.1,
                  temperature_nce_max: float = 10.0,
-                 gradient_accumulation_steps: int = 4,
                  epoch: int = 1,
                  batch: int = 64,
-                 batch_positive_ratio: float = 0.3,
+                 n_sample: int = 640,
                  lr: float = 0.00002,
                  lr_decay: bool = False,
                  lr_warmup: int = 100,
@@ -96,6 +95,7 @@ class Trainer:
             weight_decay=weight_decay,
             random_seed=random_seed,
             exclude_relation=exclude_relation,
+            n_sample=n_sample
         )
         logging.info('hyperparameters')
         for k, v in self.config.items():
@@ -138,6 +138,8 @@ class Trainer:
             num_warmup_steps=self.config['lr_warmup'],
             num_training_steps=self.config['epoch'] if self.config['lr_decay'] else None)
 
+    def cap_tensor(self, _tensor): return _tensor[:min(len(_tensor), self.config['n_sample'])]
+
     def train(self, epoch_save: int = 1):
         """ Train model.
 
@@ -148,14 +150,6 @@ class Trainer:
         """
         encoded_pairs_dict = self.model.encode_word_pairs(list(chain(*[p + n for p, n in self.data.values()])))
         loader_dict = {}
-        # batch_size_positive = int(self.config['batch'] * self.config['batch_positive_ratio'])
-        # batch_size_negative = self.config['batch'] - batch_size_positive
-        # if self.config['gradient_accumulation_steps'] is not None:
-        #     batch_size_positive = int(self.config['gradient_accumulation_steps'] * batch_size_positive)
-        #     batch_size_negative = int(self.config['gradient_accumulation_steps'] * batch_size_negative)
-        # logging.info(f'batch size: positive ({batch_size_positive}), negative ({batch_size_negative})')
-        # logging.info(f'effective batch size: positive ({batch_size_positive_eff}), negative ({batch_size_negative_eff})')
-
         for k, (pairs_p, pairs_n) in self.data.items():
             dataset_p = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_p], return_ranking=True)
             dataset_n = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_n], return_ranking=False)
@@ -174,7 +168,7 @@ class Trainer:
                 self.optimizer.zero_grad()
                 x_p = next(iter(loader_dict[relation_key]['positive']))
                 x_n = next(iter(loader_dict[relation_key]['negative']))
-                x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
+                x = {k: self.cap_tensor(torch.concat([x_p[k], x_n[k]])) for k in x_n.keys()}
                 embedding = self.model.to_embedding(x, batch_size=self.config['batch'])
                 batch_size_positive = len(x_p['input_ids'])
                 embedding_p = embedding[:batch_size_positive]

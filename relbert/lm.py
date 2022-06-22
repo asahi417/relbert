@@ -207,10 +207,10 @@ class RelBERT:
             for s, e in segment:
                 print(s, e)
                 output = self.model(**{k: v[s:e].to(self.device) for k, v in encode.items()}, return_dict=True)
-                print(output['last_hidden_state'].shape)
+                # print(output['last_hidden_state'].shape)
                 last_hidden_state.append(output['last_hidden_state'])
             last_hidden_state = torch.concat(last_hidden_state)
-            print(last_hidden_state.shape, labels.shape)
+            # print(last_hidden_state.shape, labels.shape)
             # input()
             labels = labels[:len(last_hidden_state)]
             return (last_hidden_state * labels.reshape(len(labels), -1, 1)).sum(1)
