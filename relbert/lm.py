@@ -202,6 +202,8 @@ class RelBERT:
             chunks = list(range(0, size, batch_size)) + [size]
             segment = [(a, b) for a, b in zip(chunks[:-1], chunks[1:])]
             last_hidden_state = []
+            print(segment)
+            segment = segment[:-2]
             for s, e in segment:
                 print(s, e)
                 output = self.model(**{k: v[s:e].to(self.device) for k, v in encode.items()}, return_dict=True)
