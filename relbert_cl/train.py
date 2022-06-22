@@ -24,12 +24,11 @@ def main():
     parser.add_argument('--temperature-nce-max', help='', default=10.0, type=float)
     parser.add_argument('-e', '--epoch', help='', default=1, type=int)
     parser.add_argument('-b', '--batch', help='', default=64, type=int)
-    parser.add_argument('--batch-positive-ratio', help='', default=0.3, type=float)
+    parser.add_argument('--n-sample', help='', default=640, type=int)
     parser.add_argument('--lr', help='', default=0.00002, type=float)
     parser.add_argument('--lr-decay', help='', action='store_true')
     parser.add_argument("--lr-warmup", help="", default=100, type=int)
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
-    parser.add_argument('-g', '--gradient-accumulation-steps', help='', default=1, type=int)
     parser.add_argument("--weight-decay", help="", default=0, type=float)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
     parser.add_argument('--epoch-save', help='', default=1, type=int)
@@ -51,13 +50,12 @@ def main():
         temperature_nce_max=opt.temperature_nce_max,
         epoch=opt.epoch,
         batch=opt.batch,
-        batch_positive_ratio=opt.batch_positive_ratio,
+        n_sample=opt.n_sample,
         lr=opt.lr,
         lr_decay=opt.lr_decay,
         lr_warmup=opt.lr_warmup,
         weight_decay=opt.weight_decay,
         random_seed=opt.random_seed,
-        gradient_accumulation_steps=opt.gradient_accumulation_steps,
         exclude_relation=opt.exclude_relation)
 
     # add file handler
