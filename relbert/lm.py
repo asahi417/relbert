@@ -203,14 +203,12 @@ class RelBERT:
             segment = [(a, b) for a, b in zip(chunks[:-1], chunks[1:])]
             last_hidden_state = []
             for s, e in segment:
-                output = self.model(**{k: v.to(self.device)[s:e] for k, v in encode.items()}, return_dict=True)
+                print(s, e)
+                output = self.model(**{k: v[s:e].to(self.device) for k, v in encode.items()}, return_dict=True)
                 print(output['last_hidden_state'].shape)
                 last_hidden_state.append(output['last_hidden_state'])
-            print(torch.stack(last_hidden_state, dim=0).shape)
-            print(torch.concat(last_hidden_state, dim=0).shape)
             last_hidden_state = torch.stack(last_hidden_state, dim=0)
             print(last_hidden_state.shape, labels.shape)
-            input()
             return (last_hidden_state * labels.reshape(len(labels), -1, 1)).sum(1)
 
     def get_embedding(self, x: List, batch_size: int = None):
