@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--n-sample', help='', default=640, type=int)
     parser.add_argument('--lr', help='', default=0.00002, type=float)
     parser.add_argument('--lr-decay', help='', action='store_true')
-    parser.add_argument("--lr-warmup", help="", default=None, type=int)
+    parser.add_argument("--lr-warmup", help="", default=1, type=int)
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
     parser.add_argument("--weight-decay", help="", default=0, type=float)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
