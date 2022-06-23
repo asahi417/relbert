@@ -196,7 +196,7 @@ class RelBERT:
         labels = encode.pop('labels')
         if batch_size is None:
             output = self.model(**{k: v.to(self.device) for k, v in encode.items()}, return_dict=True)
-            return (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
+            return (output['last_hidden_state'] * labels.to(self.device).reshape(len(labels), -1, 1)).sum(1)
         else:
             size = len(labels)
             chunks = list(range(0, size, batch_size)) + [size]
