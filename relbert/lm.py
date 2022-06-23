@@ -193,7 +193,7 @@ class RelBERT:
 
     def to_embedding(self, encode, batch_size: int = None):
         """ Compute embedding from batch of encode. """
-        labels = encode.pop('labels').to(self.device)
+        labels = encode.pop('labels')
         if batch_size is None:
             output = self.model(**{k: v.to(self.device) for k, v in encode.items()}, return_dict=True)
             return (output['last_hidden_state'] * labels.reshape(len(labels), -1, 1)).sum(1)
@@ -202,17 +202,11 @@ class RelBERT:
             chunks = list(range(0, size, batch_size)) + [size]
             segment = [(a, b) for a, b in zip(chunks[:-1], chunks[1:])]
             last_hidden_state = []
-            # print(segment)
-            segment = segment[:-2]
             for s, e in segment:
-                # print(s, e)
                 output = self.model(**{k: v[s:e].to(self.device) for k, v in encode.items()}, return_dict=True)
-                # print(output['last_hidden_state'].shape)
                 last_hidden_state.append(output['last_hidden_state'])
             last_hidden_state = torch.concat(last_hidden_state)
-            # print(last_hidden_state.shape, labels.shape)
-            # input()
-            labels = labels[:len(last_hidden_state)]
+            labels = labels[:len(last_hidden_state)].to(self.device)
             return (last_hidden_state * labels.reshape(len(labels), -1, 1)).sum(1)
 
     def get_embedding(self, x: List, batch_size: int = None):

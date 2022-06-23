@@ -5,7 +5,7 @@ import random
 import json
 from itertools import chain
 from typing import List
-
+from tqdm import tqdm
 import torch
 from torch import nn
 from torch.optim.lr_scheduler import LambdaLR
@@ -164,10 +164,12 @@ class Trainer:
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_keys)
-            for n, relation_key in enumerate(relation_keys):
+            for n, relation_key in tqdm(list(enumerate(relation_keys))):
                 self.optimizer.zero_grad()
+                # data loader will return full instances
                 x_p = next(iter(loader_dict[relation_key]['positive']))
                 x_n = next(iter(loader_dict[relation_key]['negative']))
+                # data loader will return full instances
                 x = {k: self.cap_tensor(torch.concat([x_p[k], x_n[k]])) for k in x_n.keys()}
                 embedding = self.model.to_embedding(x, batch_size=self.config['batch'])
                 batch_size_positive = len(x_p['input_ids'])
