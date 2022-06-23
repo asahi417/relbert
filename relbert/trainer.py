@@ -18,7 +18,7 @@ from .util import fix_seed
 def stack_sum(_list):
     if len(_list) == 0:
         return 0
-    return torch.sum(torch.stack(_list))
+    return torch.mean(torch.stack(_list))
 
 
 def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_steps=None, last_epoch=-1):
