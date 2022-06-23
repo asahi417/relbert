@@ -207,12 +207,17 @@ class Trainer:
                     raise ValueError(f"unknown loss function {self.config['loss_function']}")
                 loss = stack_sum(loss)
                 loss.backward()
+
                 total_loss.append(loss.cpu().item())
                 self.optimizer.step()
                 self.scheduler.step()
-                mean_loss = round(sum(total_loss)/len(total_loss), 3)
+                mean_loss = round(sum(total_loss) / len(total_loss), 3)
                 lr = round(self.optimizer.param_groups[0]['lr'], 5)
-                logging.info(f"[epoch {e + 1}/{self.config['epoch']}] average loss: {mean_loss}, lr: {lr}")
+                logging.info(f"\t[step {n}/{len(relation_keys)}] average loss: {mean_loss}, lr: {lr}")
+
+            mean_loss = round(sum(total_loss)/len(total_loss), 3)
+            lr = round(self.optimizer.param_groups[0]['lr'], 5)
+            logging.info(f"[epoch {e + 1}/{self.config['epoch']} complete] average loss: {mean_loss}, lr: {lr}")
 
             if (e + 1) % epoch_save == 0 and (e + 1) != 0:
                 self.save(e)
