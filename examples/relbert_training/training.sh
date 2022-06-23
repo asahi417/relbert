@@ -19,7 +19,6 @@ relbert_training 'roberta-large' 'mask' "nce_logout" 30
 #relbert_training 'roberta-large' 'average_no_mask'
 
 
-relbert-train -m 'roberta-large' --mode 'mask' -l 'nce_logout' -e 30 -b 128 --n-sample 640 \
-      --export "relbert_output/models/d.nce_logout.mask.roberta-large" \
-      -t "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" \
-      --lr 0.00001
+relbert-train -m 'roberta-large' --mode 'mask' -l 'nce_logout' -e 30 -b 128 --n-sample 640 --lr 0.000001 \
+  --export "relbert_output/models/test" \
+  -t "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" \
