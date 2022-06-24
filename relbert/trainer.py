@@ -68,6 +68,7 @@ class Trainer:
                  temperature_nce_max: float = 10.0,
                  epoch: int = 1,
                  batch: int = 64,
+                 gradient_accumulation: int = 4,
                  n_sample: int = 640,
                  lr: float = 0.00002,
                  lr_decay: bool = False,
@@ -95,7 +96,8 @@ class Trainer:
             weight_decay=weight_decay,
             random_seed=random_seed,
             exclude_relation=exclude_relation,
-            n_sample=n_sample
+            n_sample=n_sample,
+            gradient_accumulation=gradient_accumulation
         )
         logging.info('hyperparameters')
         for k, v in self.config.items():
@@ -207,8 +209,9 @@ class Trainer:
                     raise ValueError(f"unknown loss function {self.config['loss_function']}")
                 loss = stack_sum(loss)
                 loss.backward()
-
                 total_loss.append(loss.cpu().item())
+                if (n + 1) % self.config['gradient_accumulation'] != 0:
+                    continue
                 self.optimizer.step()
                 self.scheduler.step()
                 mean_loss = round(sum(total_loss) / len(total_loss), 3)

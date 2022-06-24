@@ -32,6 +32,7 @@ def main():
     parser.add_argument("--weight-decay", help="", default=0, type=float)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
     parser.add_argument('--epoch-save', help='', default=1, type=int)
+    parser.add_argument('-g', '--grad', help='', default=4, type=int)
     parser.add_argument('--export', help='', required=True, type=str)
     opt = parser.parse_args()
 
@@ -56,6 +57,7 @@ def main():
         lr_warmup=opt.lr_warmup,
         weight_decay=opt.weight_decay,
         random_seed=opt.random_seed,
+        gradient_accumulation=opt.grad,
         exclude_relation=opt.exclude_relation)
 
     # add file handler
