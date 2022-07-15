@@ -11,8 +11,6 @@ class Test(unittest.TestCase):
 
     def test(self):
         get_analogy_data()
-        # get_training_data('semeval2012')
-
 
 
 if __name__ == "__main__":
