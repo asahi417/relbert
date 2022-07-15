@@ -226,12 +226,14 @@ class Trainer:
                 self.save(e)
 
         self.save(self.config['epoch'] - 1)
-        logging.info('complete training: model ckpt was saved at {}'.format(self.export_dir))
+        logging.info(f'complete training: model ckpt was saved at {self.export_dir}')
 
     def save(self, current_epoch):
-        cache_dir = '{}/epoch_{}'.format(self.export_dir, current_epoch + 1)
+        cache_dir = f'{self.export_dir}/epoch_{current_epoch + 1}'
         os.makedirs(cache_dir, exist_ok=True)
         self.model.save(cache_dir)
+        with open(f'{cache_dir}/trainer_config.json', 'w') as f:
+            json.dump(self.config, f)
 
     def get_rank_temperature(self, i, n):
         assert i <= n, f"{i}, {n}"

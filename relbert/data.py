@@ -60,14 +60,14 @@ def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
         os.remove(path)
 
 
-def get_training_data(data_name: str = 'semeval2012', exclude_relation: List or str = None):
+def get_training_data(data_name: str = 'semeval2012', exclude_relation: List or str = None,
+                      return_validation_set: bool = False, top_n: int = 10):
     """ Get RelBERT training data
     - SemEval 2012 task 2 dataset (case sensitive)
 
     Parameters
     ----------
     data_name : str
-    cache_dir : str
     exclude_relation : str
 
     Returns
@@ -115,7 +115,12 @@ def get_training_data(data_name: str = 'semeval2012', exclude_relation: List or 
                 # positive pairs are in the reverse order of prototypicality score
                 positive_pairs = [[s, tuple(p.split(':'))] for s, p in filter(lambda _x: _x[0] > 0, scales)]
                 positive_pairs = sorted(positive_pairs, key=lambda x:  x[0], reverse=True)
-                positive_pairs = positive_pairs[:min(10, len(positive_pairs))]
+                if return_validation_set:
+                    positive_pairs = positive_pairs[min(top_n, len(positive_pairs)):]
+                    if len(positive_pairs) == 0:
+                        continue
+                else:
+                    positive_pairs = positive_pairs[:min(top_n, len(positive_pairs))]
                 positives_score[relation_id] = positive_pairs
                 positives[relation_id] = list(list(zip(*positive_pairs))[1])
                 negatives[relation_id] = [tuple(p.split(':')) for s, p in filter(lambda _x: _x[0] < 0, scales)]
@@ -183,3 +188,11 @@ def get_lexical_relation_data(cache_dir: str = None):
             full_data[os.path.basename(i)][os.path.basename(t).replace('.tsv', '')] = {'x': x, 'y': y}
         full_data[os.path.basename(i)]['label'] = label
     return full_data
+
+
+if __name__ == '__main__':
+    for _n in [10, 15, 20]:
+        _data = get_training_data(return_validation_set=False, top_n=_n)
+        print(sum([len(_data[k][0]) for k in _data.keys()]))
+        _data = get_training_data(return_validation_set=True, top_n=_n)
+        print(sum([len(_data[k][0]) for k in _data.keys()]))
