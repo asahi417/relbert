@@ -26,7 +26,7 @@ semeval_relations = {
     10: "Representation"
 }
 
-home_dir = '{}/.cache/relbert'.format(os.path.expanduser('~'))
+home_dir = f"{os.path.expanduser('~')}/.cache/relbert"
 
 
 def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
@@ -36,10 +36,10 @@ def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
         assert gdrive_filename is not None, 'please provide fileaname for gdrive download'
         return gdown.download(url, '{}/{}'.format(cache_dir, gdrive_filename), quiet=False)
     filename = os.path.basename(url)
-    with open('{}/{}'.format(cache_dir, filename), "wb") as f:
+    with open(f'{cache_dir}/{filename}', "wb") as f:
         r = requests.get(url)
         f.write(r.content)
-    path = '{}/{}'.format(cache_dir, filename)
+    path = f'{cache_dir}/{filename}'
 
     if path.endswith('.tar.gz') or path.endswith('.tgz') or path.endswith('.tar'):
         if path.endswith('.tar'):
@@ -83,15 +83,15 @@ def get_training_data(data_name: str = 'semeval2012', exclude_relation: List or 
         remove_relation = [k for k, v in semeval_relations.items() if v in exclude_relation]
 
     if data_name == 'semeval2012':
-        path_answer = '{}/Phase2Answers'.format(cache_dir)
-        path_scale = '{}/Phase2AnswersScaled'.format(cache_dir)
+        path_answer = f'{cache_dir}/Phase2Answers'
+        path_scale = f'{cache_dir}/Phase2AnswersScaled'
         url = 'https://drive.google.com/u/0/uc?id=0BzcZKTSeYL8VYWtHVmxUR3FyUmc&export=download'
         filename = 'SemEval-2012-Platinum-Ratings.tar.gz'
         if not (os.path.exists(path_scale) and os.path.exists(path_answer)):
             wget(url, gdrive_filename=filename, cache_dir=cache_dir)
-        files_answer = [os.path.basename(i) for i in glob('{}/*.txt'.format(path_answer))]
-        files_scale = [os.path.basename(i) for i in glob('{}/*.txt'.format(path_scale))]
-        assert files_answer == files_scale, 'files are not matched: {} vs {}'.format(files_scale, files_answer)
+        files_answer = [os.path.basename(i) for i in glob(f'{path_answer}/*.txt')]
+        files_scale = [os.path.basename(i) for i in glob(f'{path_scale}/*.txt')]
+        assert files_answer == files_scale, f'files are not matched: {files_scale} vs {files_answer}'
         positives = {}
         negatives = {}
         all_relation_type = {}
@@ -148,16 +148,16 @@ def get_training_data(data_name: str = 'semeval2012', exclude_relation: List or 
 def get_analogy_data(cache_dir: str = None):
     """ Get SAT-type dataset: a list of (answer: int, prompts: list, stem: list, choice: list)"""
     cache_dir = cache_dir if cache_dir is not None else home_dir
-    cache_dir = '{}/data'.format(cache_dir)
+    cache_dir = f'{cache_dir}/data'
     os.makedirs(cache_dir, exist_ok=True)
     root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/analogy_test_dataset_with_prediction.zip'
-    if not os.path.exists('{}/analogy_test_dataset_with_prediction'.format(cache_dir)):
+    if not os.path.exists(f'{cache_dir}/analogy_test_dataset_with_prediction'):
         wget(root_url_analogy, cache_dir)
     data = {}
     for d in ['bats', 'sat', 'u2', 'u4', 'google']:
-        with open('{}/analogy_test_dataset_with_prediction/{}/test.jsonl'.format(cache_dir, d), 'r') as f:
+        with open(f'{cache_dir}/analogy_test_dataset_with_prediction/{d}/test.jsonl', 'r') as f:
             test_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
-        with open('{}/analogy_test_dataset_with_prediction/{}/valid.jsonl'.format(cache_dir, d), 'r') as f:
+        with open(f'{cache_dir}/analogy_test_dataset_with_prediction/{d}/valid.jsonl', 'r') as f:
             val_set = list(filter(None, map(lambda x: json.loads(x) if len(x) > 0 else None, f.read().split('\n'))))
         data[d] = (val_set, test_set)
     return data
@@ -165,18 +165,18 @@ def get_analogy_data(cache_dir: str = None):
 
 def get_lexical_relation_data(cache_dir: str = None):
     cache_dir = cache_dir if cache_dir is not None else home_dir
-    cache_dir = '{}/data'.format(cache_dir)
+    cache_dir = f'{cache_dir}/data'
     os.makedirs(cache_dir, exist_ok=True)
     root_url_analogy = 'https://github.com/asahi417/AnalogyTools/releases/download/0.0.0/lexical_relation_dataset.zip'
-    if not os.path.exists('{}/lexical_relation_dataset'.format(cache_dir)):
+    if not os.path.exists(f'{cache_dir}/lexical_relation_dataset'):
         wget(root_url_analogy, cache_dir)
     full_data = {}
-    for i in glob('{}/lexical_relation_dataset/*'.format(cache_dir)):
+    for i in glob(f'{cache_dir}/lexical_relation_dataset/*'):
         if not os.path.isdir(i):
             continue
         full_data[os.path.basename(i)] = {}
         label = {}
-        for t in glob('{}/*tsv'.format(i)):
+        for t in glob(f'{i}/*tsv'):
             with open(t) as f:
                 data = [line.split('\t') for line in f.read().split('\n') if len(line) > 0]
             x = [d[:2] for d in data]

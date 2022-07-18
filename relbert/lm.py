@@ -118,7 +118,7 @@ class RelBERT:
         mode : str
             - `mask` to get the embedding for a word pair by [MASK] token, eg) (A, B) -> A [MASK] B
             - `average` to average embeddings over the context.
-            - `cls` to get the embedding on the [CLS] token
+            - `average_no_mask` to average embeddings over the context except for the mask token.
         """
         self.truncate_exceed_tokens = truncate_exceed_tokens
         self.max_length = max_length

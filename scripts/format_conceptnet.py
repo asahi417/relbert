@@ -54,11 +54,22 @@ from tqdm import tqdm
 from glob import glob
 from datasets import load_dataset
 
-export_dir = './data/conceptnet'
+export_dir = './conceptnet_dataset'
 os.makedirs(export_dir, exist_ok=True)
 dataset = load_dataset("conceptnet5", "conceptnet5", split="train")
 dataset = dataset.filter(lambda example: example['lang'] == 'en')
+dataset = dataset.filter(lambda example: example['rel'] != 'None')
 dataset = dataset.sort('rel')
+relations = list(set(dataset["rel"]))
+
+stats = {}
+for r in tqdm(relations):
+    _dataset = dataset.filter(lambda example: example['rel'] == r)
+    stats[r] = len(_dataset)
+    with open(f"{export_dir}/cache_{os.path.basename(r)}.jsonl", 'w') as f:
+        f.write('\n'.join([
+            json.dumps({'rel': i['rel'], 'arg1': i['arg1'], 'arg2': i['arg2'], 'sentence': i['sentence']})
+            for i in _dataset]))
 
 cur_relation_type = None
 f = None
@@ -67,14 +78,15 @@ for i in tqdm(dataset):
         cur_relation_type = i['rel']
         if f is not None:
             f.close()
-        f = open('{}/cache_{}.jsonl'.format(export_dir, os.path.basename(cur_relation_type)), 'w')
+        f = open(f"{export_dir}/cache_{os.path.basename(cur_relation_type)}.jsonl", 'w')
     f.write(json.dumps({
         'rel': i['rel'],
         'arg1': i['arg1'],
         'arg2': i['arg2'],
         'sentence': i['sentence']
     }) + '\n')
-f.close()
+if f is not None:
+    f.close()
 
 # get statistics
 table = {}

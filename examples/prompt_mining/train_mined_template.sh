@@ -1,3 +1,4 @@
+relbert-train -m roberta-large -n -p -s -t d --export ./relbert_output/old_model/d --mode mask
 
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_top_0 --custom-template "<obj> oshibori are used in summer, and <subj> oshibori in winter."
 relbert-train -m roberta-large -n -p -s --export ./ckpt/roberta_mining_top_1 --custom-template "The opposite of <obj> chaining is <subj> chaining."
