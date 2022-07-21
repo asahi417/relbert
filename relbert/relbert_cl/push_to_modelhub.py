@@ -5,7 +5,7 @@ import shutil
 from os.path import join as pj
 from distutils.dir_util import copy_tree
 
-import transformers
+from relbert import RelBERT
 
 
 def main():
@@ -17,10 +17,8 @@ def main():
 
     assert os.path.exists(pj(opt.model_checkpoint, "pytorch_model.bin"))
     print(f"Upload {opt.model_checkpoint} to {opt.model_alias}")
-
-    tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model_checkpoint, local_files_only=True)
-    config = transformers.AutoConfig.from_pretrained(opt.model_checkpoint, local_files_only=True)
-    model = transformers.AutoModel(opt.model_checkpoint, config=config, local_files_only=True)
+    model = RelBERT(opt.model_checkpoint)
+    assert model.is_trained
     if model.parallel:
         model_ = model.model.module
     else:
@@ -29,11 +27,11 @@ def main():
     if opt.organization is None:
         model_.push_to_hub(opt.model_alias)
         model_.config.push_to_hub(opt.model_alias)
-        model.tokenizer.tokenizer.push_to_hub(opt.model_alias)
+        model.tokenizer.push_to_hub(opt.model_alias)
     else:
         model_.push_to_hub(opt.model_alias, organization=opt.organization)
         model_.config.push_to_hub(opt.model_alias, organization=opt.organization)
-        model.tokenizer.tokenizer.push_to_hub(opt.model_alias, organization=opt.organization)
+        model.tokenizer.push_to_hub(opt.model_alias, organization=opt.organization)
 
     # upload remaining files
     copy_tree(f"{opt.model_checkpoint}", f"{opt.model_alias}")

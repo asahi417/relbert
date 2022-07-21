@@ -91,13 +91,7 @@ def evaluate_classification(relbert_ckpt: str = None,
     model = RelBERT(relbert_ckpt, max_length=max_length)
     assert model.is_trained, 'model is not trained'
     data_names = ['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']
-    result = {
-        'model': relbert_ckpt,
-        'template': model.template,
-        'template_mode': model.template_mode,
-        'mode': model.mode,
-        'max_length': model.max_length
-    }
+    result = {}
     for data_name in data_names:
         data = load_dataset('relbert/lexical_relation_classification', data_name)
         logging.info(f'train model with {relbert_ckpt} on {data_name}')
@@ -119,7 +113,8 @@ def evaluate_classification(relbert_ckpt: str = None,
             metric = evaluator(0)
         elif config is not None and data_name in config:
             logging.info('run with given config')
-            evaluator = RelationClassification(dataset, label_dict, target_relation=target_relation, config=config[data_name])
+            evaluator = RelationClassification(
+                dataset, label_dict, target_relation=target_relation, config=config[data_name])
             metric = evaluator(0)
 
         else:

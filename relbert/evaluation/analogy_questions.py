@@ -26,8 +26,7 @@ def evaluate_analogy(relbert_ckpt: str = None,
     model = RelBERT(relbert_ckpt, max_length=max_length)
     assert model.is_trained, 'model is not trained'
     model.eval()
-    result = {'model': relbert_ckpt, 'template': model.template, 'template_mode': model.template_mode,
-              'mode': model.mode, 'max_length': model.max_length, "distance_function": distance_function}
+    result = {"distance_function": distance_function}
     with torch.no_grad():
 
         # Analogy test

@@ -216,7 +216,9 @@ class Trainer:
         os.makedirs(cache_dir, exist_ok=True)
         self.model.save(cache_dir)
         with open(pj(cache_dir, 'trainer_config.json'), 'w') as f:
-            json.dump(self.config, f)
+            config = self.config.copy()
+            config['epoch'] = current_epoch + 1
+            json.dump(config, f)
         v_loss = evaluate_validation_loss(
             relbert_ckpt=cache_dir,
             batch_size=self.config['batch'],

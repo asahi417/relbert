@@ -8,5 +8,4 @@ examples/relation_mapping_problem/embeddings
 examples/relation_mapping_problem/output
 _bu
 relbert_output
-scripts/data
-examples
+

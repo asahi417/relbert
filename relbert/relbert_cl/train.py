@@ -15,7 +15,7 @@ def main():
     parser.add_argument('-m', '--model', help='', default='roberta-base', type=str)
     parser.add_argument('--max-length', help='', default=64, type=int)
     parser.add_argument('--mode', help='', default='average_no_mask', type=str)
-    parser.add_argument('--data', help='', default='semeval2012', type=str)
+    parser.add_argument('--data', help='', default='relbert/semeval2012_relational_similarity', type=str)
     parser.add_argument('--template-mode', help='', default='manual', type=str)
     parser.add_argument('-t', '--template', help='', default=TEMP, type=str)
     parser.add_argument('-l', '--loss-function', help='', default='nce_rank', type=str)

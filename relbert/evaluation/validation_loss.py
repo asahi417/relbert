@@ -74,11 +74,6 @@ def evaluate_validation_loss(relbert_ckpt: str = None,
             model, validation_data, exclude_relation, loss_function, batch_size,
             temperature_nce_rank, temperature_nce_constant)
     result = {
-        'model': relbert_ckpt,
-        'template': model.template,
-        'template_mode': model.template_mode,
-        'mode': model.mode,
-        'max_length': model.max_length,
         'validation_loss': validation_loss,
         'validation_data': validation_data,
         'validation_data/exclude_relation': exclude_relation
