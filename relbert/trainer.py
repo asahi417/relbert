@@ -6,19 +6,15 @@ import json
 from itertools import chain
 from typing import List
 from tqdm import tqdm
+from glob import glob
+from distutils.dir_util import copy_tree
+
 import torch
-from torch import nn
 from torch.optim.lr_scheduler import LambdaLR
-
+from datasets import load_dataset
 from .lm import RelBERT, Dataset
-from .data import get_training_data
-from .util import fix_seed
-
-
-def stack_sum(_list):
-    if len(_list) == 0:
-        return 0
-    return torch.mean(torch.stack(_list))
+from .util import fix_seed, NCELoss
+from .evaluation.validation_loss import evaluate_validation_loss
 
 
 def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_steps=None, last_epoch=-1):
@@ -120,7 +116,10 @@ class Trainer:
         self.parallel = self.model.parallel
         fix_seed(self.config['random_seed'])
         # get dataset
-        self.data = get_training_data(data_name=self.config['data'], exclude_relation=self.config['exclude_relation'])
+        self.data = load_dataset(self.config['data'], split='train')
+        if self.config['exclude_relation'] is not None:
+            self.data = self.data.filter(lambda x: x['relation_type'] not in self.config['exclude_relation'])
+
         self.model_parameters = list(self.model.model.named_parameters())
 
         # setup optimizer
@@ -150,19 +149,23 @@ class Trainer:
         epoch_save : int
             Epoch to run validation eg) Every 100000 epoch, it will save model weight as default.
         """
-        encoded_pairs_dict = self.model.encode_word_pairs(list(chain(*[p + n for p, n in self.data.values()])))
+        encoded_pairs_dict = self.model.encode_word_pairs(list(chain(*(self.data['positives'] + self.data['negatives']))))
         loader_dict = {}
-        for k, (pairs_p, pairs_n) in self.data.items():
+        for example in self.data:
+            pairs_p = example['positives']
+            pairs_n = example['negatives']
+            k = example['relation_type']
             dataset_p = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_p], return_ranking=True)
             dataset_n = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_n], return_ranking=False)
             loader_dict[k] = {
                 'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
                 'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
             }
-        relation_keys = list(self.data.keys())
+        relation_keys = self.data['relation_type']
         logging.info(f'start model training: {len(relation_keys)} relations')
-        cos_2d = nn.CosineSimilarity(dim=1)
-        cos_1d = nn.CosineSimilarity(dim=0)
+        nce_loss = NCELoss(self.config['loss_function'],
+                           self.config['temperature_nce_constant'],
+                           self.config['temperature_nce_rank'])
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_keys)
@@ -177,37 +180,8 @@ class Trainer:
                 batch_size_positive = len(x_p['input_ids'])
                 embedding_p = embedding[:batch_size_positive]
                 embedding_n = embedding[batch_size_positive:]
-                loss = []
-                if self.config['loss_function'] == 'nce_rank':
-                    rank = x_p.pop('ranking').cpu().tolist()
-                    rank_map = {r: 1 + n for n, r in enumerate(sorted(rank))}
-                    rank = [rank_map[r] for r in rank]
-                    for i in range(batch_size_positive):
-                        assert type(rank[i]) == int, rank[i]
-                        tau = self.get_rank_temperature(rank[i], batch_size_positive)
-                        deno_n = torch.sum(torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / tau))
-                        dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
-                        nume_p = stack_sum([d for n, d in enumerate(dist) if rank[n] >= rank[i]])
-                        deno_p = stack_sum([d for n, d in enumerate(dist) if rank[n] < rank[i]])
-                        loss.append(- torch.log(nume_p / (deno_p + deno_n)))
-                elif self.config['loss_function'] == 'nce_logout':
-                    for i in range(batch_size_positive):
-                        deno_n = torch.sum(torch.exp(
-                            cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.config['temperature_nce_constant']))
-                        for p in range(batch_size_positive):
-                            logit_p = torch.exp(
-                                cos_1d(embedding_p[i], embedding_p[p]) / self.config['temperature_nce_constant'])
-                            loss.append(- torch.log(logit_p/(logit_p + deno_n)))
-                elif self.config['loss_function'] == 'nce_login':
-                    for i in range(batch_size_positive):
-                        deno_n = torch.sum(torch.exp(
-                            cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.config['temperature_nce_constant']))
-                        logit_p = torch.sum(torch.exp(
-                            cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.config['temperature_nce_constant']))
-                        loss.append(- torch.log(logit_p/(logit_p + deno_n)))
-                else:
-                    raise ValueError(f"unknown loss function {self.config['loss_function']}")
-                loss = stack_sum(loss)
+                rank = x_p.pop('ranking').cpu().tolist()
+                loss = nce_loss(embedding_p, embedding_n, rank)
                 loss.backward()
                 total_loss.append(loss.cpu().item())
                 if (n + 1) % self.config['gradient_accumulation'] != 0:
@@ -227,6 +201,14 @@ class Trainer:
 
         self.save(self.config['epoch'] - 1)
         logging.info(f'complete training: model ckpt was saved at {self.export_dir}')
+        # choose the best model
+        ckpt_loss = []
+        for i in glob(f'{self.export_dir}/epoch_*'):
+            with open(f'{i}/validation_loss.json') as f:
+                loss = json.load(f)['validation_loss']
+            ckpt_loss.append([i, loss])
+        best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
+        copy_tree(best_ckpt, f'{self.export_dir}/best_model')
 
     def save(self, current_epoch):
         cache_dir = f'{self.export_dir}/epoch_{current_epoch + 1}'
@@ -234,11 +216,9 @@ class Trainer:
         self.model.save(cache_dir)
         with open(f'{cache_dir}/trainer_config.json', 'w') as f:
             json.dump(self.config, f)
-
-    def get_rank_temperature(self, i, n):
-        assert i <= n, f"{i}, {n}"
-        if self.config['temperature_nce_rank']['type'] == 'linear':
-            _min = self.config['temperature_nce_rank']['min']
-            _max = self.config['temperature_nce_rank']['max']
-            return (_min - _max) / (1 - n) * (i - 1) + _min
-        raise ValueError(f"unknown type: {self.config['temperature_nce_rank']['type']}")
+        v_loss = evaluate_validation_loss(
+            relbert_ckpt=cache_dir,
+            batch_size=self.config['batch'],
+            max_length=self.config['max_length'])
+        with open(f'{cache_dir}/validation_loss.json', 'w') as f:
+            json.dump(v_loss, f)
