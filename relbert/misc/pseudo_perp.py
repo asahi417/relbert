@@ -2,8 +2,7 @@
 >>> scorer = PPL('bert-base-cased')
 >>> sentence = ['Red is the color of courage, of a warrior and a martyr.',
                 'His father was a tailor and his mother was a midwife.',]
->>> s = scorer.get_perplexity(sentence)
->>> print(_s)
+>>> print(scorer.get_perplexity(sentence))
 [3.896801383195375, 6.4809147517537955]
 """
 import os

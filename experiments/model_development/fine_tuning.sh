@@ -1,9 +1,3 @@
-# Search better configuration with RoBERTa-base
-# - Limit the negative.
-# - Small Temperature.
-
-
-
 relbert_training() {
   # fixed config
   MODEL='roberta-large'
@@ -22,7 +16,7 @@ relbert_training() {
   relbert-train -m "${MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample ${NSAMPLE} --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
     --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" \
     -t "${TEMPLATE}"
-  relbert-eval -c "${CKPT}/epoch*" --export-file ${EXPORT_FILE} --type "analogy" --return-validation-loss
+  relbert-eval -c "${CKPT}/best_model" --export-file ${EXPORT_FILE} --type "analogy" --return-validation-loss
 }
 
 relbert_training 'average_no_mask' "nce_logout" "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"

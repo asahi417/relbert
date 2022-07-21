@@ -4,7 +4,9 @@ import statistics
 import logging
 from itertools import chain
 from tqdm import tqdm
+from os.path import join as pj
 from typing import Dict
+
 import torch
 from datasets import load_dataset
 
@@ -62,8 +64,8 @@ def evaluate_validation_loss(relbert_ckpt: str = None,
     assert model.is_trained, 'model is not trained'
     model.eval()
     with torch.no_grad():
-        assert os.path.exists(f"{relbert_ckpt}/trainer_config.json")
-        with open(f"{relbert_ckpt}/trainer_config.json") as f:
+        assert os.path.exists(pj(relbert_ckpt, "trainer_config.json"))
+        with open(pj(relbert_ckpt, "trainer_config.json")) as f:
             trainer_config = json.load(f)
         loss_function = trainer_config['loss_function']
         temperature_nce_rank = trainer_config['temperature_nce_rank']

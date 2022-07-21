@@ -1,6 +1,7 @@
 """ RelBERT fine-tuning with NCE loss """
 import argparse
 import logging
+from os.path import join as pj
 
 import relbert
 
@@ -62,7 +63,7 @@ def main():
 
     # add file handler
     logger = logging.getLogger()
-    file_handler = logging.FileHandler(f'{trainer.export_dir}/training.log')
+    file_handler = logging.FileHandler(pj(trainer.export_dir, 'training.log'))
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
     logger.addHandler(file_handler)

@@ -7,6 +7,7 @@ from itertools import chain
 from typing import List
 from tqdm import tqdm
 from glob import glob
+from os.path import join as pj
 from distutils.dir_util import copy_tree
 
 import torch
@@ -108,9 +109,9 @@ class Trainer:
         assert not self.model.is_trained, '{} is already trained'.format(model)
         
         self.export_dir = export
-        if not os.path.exists(f'{self.export_dir}/trainer_config.json'):
+        if not os.path.exists(pj(self.export_dir, 'trainer_config.json')):
             os.makedirs(self.export_dir, exist_ok=True)
-            with open(f'{self.export_dir}/trainer_config.json', 'w') as f:
+            with open(pj(self.export_dir, 'trainer_config.json'), 'w') as f:
                 json.dump(self.config, f)
         self.device = self.model.device
         self.parallel = self.model.parallel
@@ -203,22 +204,22 @@ class Trainer:
         logging.info(f'complete training: model ckpt was saved at {self.export_dir}')
         # choose the best model
         ckpt_loss = []
-        for i in glob(f'{self.export_dir}/epoch_*'):
-            with open(f'{i}/validation_loss.json') as f:
+        for i in glob(pj(self.export_dir, 'epoch_*')):
+            with open(pj(i, 'validation_loss.json')) as f:
                 loss = json.load(f)['validation_loss']
             ckpt_loss.append([i, loss])
         best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
-        copy_tree(best_ckpt, f'{self.export_dir}/best_model')
+        copy_tree(best_ckpt, pj(self.export_dir, 'best_model'))
 
     def save(self, current_epoch):
-        cache_dir = f'{self.export_dir}/epoch_{current_epoch + 1}'
+        cache_dir = pj(self.export_dir, f'epoch_{current_epoch + 1}')
         os.makedirs(cache_dir, exist_ok=True)
         self.model.save(cache_dir)
-        with open(f'{cache_dir}/trainer_config.json', 'w') as f:
+        with open(pj(cache_dir, 'trainer_config.json'), 'w') as f:
             json.dump(self.config, f)
         v_loss = evaluate_validation_loss(
             relbert_ckpt=cache_dir,
             batch_size=self.config['batch'],
             max_length=self.config['max_length'])
-        with open(f'{cache_dir}/validation_loss.json', 'w') as f:
+        with open(pj(cache_dir, 'validation_loss.json'), 'w') as f:
             json.dump(v_loss, f)

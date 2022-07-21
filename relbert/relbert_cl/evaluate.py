@@ -1,6 +1,7 @@
 import json
 import logging
 import argparse
+from os.path import join as pj
 
 from relbert.evaluation import evaluate_classification, evaluate_analogy, evaluate_validation_loss
 
@@ -26,5 +27,5 @@ def main():
         result = evaluate_validation_loss(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, max_length=opt.max_length)
     else:
         raise ValueError(f'unknown test type: {opt.type}')
-    with open(f'{export_dir}/{opt.type}.json', 'w') as f:
+    with open(pj(export_dir, f'{opt.type}.json'), 'w') as f:
         json.dump(result, f)

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open('README.md', 'r') as f:
     readme = f.read()
 
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 setup(
     name='relbert',
     packages=find_packages(exclude=['tests']),
@@ -30,24 +30,19 @@ setup(
     install_requires=[
         "torch",
         "tqdm",
-        "requests",
-        "tfrecord",
-        "tensorboard",
-        "gdown",
         "pandas",
         "numpy",
         "transformers",
         "sentencepiece",
-        "tensorboard",
-        "truecase",
         "sklearn",
-        "gensim==3.8.1"
+        'datasets'
     ],
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
             'relbert-train = relbert.relbert_cl.train:main',
-            'relbert-eval = relbert.relbert_cl.evaluate:main'
+            'relbert-eval = relbert.relbert_cl.evaluate:main',
+            'relbert-push-to-hub = relbert.relbert_cl.push_to_modelhub:main'
         ]
     }
 )
