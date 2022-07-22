@@ -220,6 +220,7 @@ class Trainer:
             config['epoch'] = current_epoch + 1
             json.dump(config, f)
         v_loss = evaluate_validation_loss(
+            validation_data=self.config['data'],
             relbert_ckpt=cache_dir,
             batch_size=self.config['batch'],
             max_length=self.config['max_length'])
