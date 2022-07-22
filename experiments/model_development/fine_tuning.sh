@@ -11,7 +11,7 @@ relbert_training() {
   TEMPLATE_ID=${3}
   TEMPLATE=${4}
   DATA=${5}
-  DATA_ALIAS=${5}
+  DATA_ALIAS=${6}
   LOSS="nce_logout"
   LOSS_ALIAS="nce"
   CKPT="relbert_output/models/${TEMPLATE_ID}.${LOSS}.${MODE}.${MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}"

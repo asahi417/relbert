@@ -24,9 +24,13 @@ def main():
     else:
         model_ = model.model
 
-    model_.push_to_hub(repo_id=f"{opt.organization}/{opt.model_alias}")
-    model_.config.push_to_hub(repo_id=f"{opt.organization}/{opt.model_alias}")
-    model.tokenizer.push_to_hub(repo_id=f"{opt.organization}/{opt.model_alias}")
+    model_.push_to_hub(opt.model_alias, organization=opt.organization)
+    model_.config.push_to_hub(opt.model_alias, organization=opt.organization)
+    model.tokenizer.push_to_hub(opt.model_alias, organization=opt.organization)
+
+    # model_.push_to_hub(repo_id=f"{opt.organization}/{opt.model_alias}")
+    # model_.config.push_to_hub(repo_id=f"{opt.organization}/{opt.model_alias}")
+    # model.tokenizer.push_to_hub(repo_id=f"{opt.organization}/{opt.model_alias}")
 
     # upload remaining files
     copy_tree(f"{opt.model_checkpoint}", f"{opt.model_alias}")
