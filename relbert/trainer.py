@@ -224,7 +224,7 @@ class Trainer:
             relbert_ckpt=cache_dir,
             batch_size=self.config['batch'],
             max_length=self.config['max_length'],
-            exclude_relation=self.config['self.config']
+            exclude_relation=self.config['exclude_relation']
         )
         with open(pj(cache_dir, 'validation_loss.json'), 'w') as f:
             json.dump(v_loss, f)
