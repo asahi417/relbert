@@ -25,7 +25,9 @@ def compute_loss(model,
     data = load_dataset(validation_data, split='validation')
     if exclude_relation is not None:
         data = data.filter(lambda _x: _x['relation_type'] not in exclude_relation)
-    encoded_pairs_dict = model.encode_word_pairs(list(chain(*[p + n for p, n in data.values()])))
+    encoded_pairs_dict = model.encode_word_pairs(
+        list(chain(data["positives"] + data["negatives"]))
+    )
     loader_dict = {}
     for example in data:
         pairs_p = example['positives']
@@ -55,10 +57,10 @@ def compute_loss(model,
     return total_loss
 
 
-def evaluate_validation_loss(relbert_ckpt: str = None,
+def evaluate_validation_loss(validation_data: str,
+                             relbert_ckpt: str = None,
                              max_length: int = 64,
                              batch_size: int = 64,
-                             validation_data: str = 'semeval2012',
                              exclude_relation=None):
     model = RelBERT(relbert_ckpt, max_length=max_length)
     assert model.is_trained, 'model is not trained'
