@@ -51,7 +51,8 @@ def compute_loss(model,
         embedding_p = embedding[:batch_size_positive]
         embedding_n = embedding[batch_size_positive:]
         rank = x_p.pop('ranking').cpu().tolist()
-        loss = nce_loss(embedding_p, embedding_n, rank).cpu()
+        loss = nce_loss(embedding_p, embedding_n, rank).cpu().tolist()
+        print(loss)
         total_loss.append(loss)
     total_loss = statistics.mean(total_loss)
     return total_loss
