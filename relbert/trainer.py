@@ -167,6 +167,9 @@ class Trainer:
         nce_loss = NCELoss(self.config['loss_function'],
                            self.config['temperature_nce_constant'],
                            self.config['temperature_nce_rank'])
+
+        self.save(0)
+
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_keys)

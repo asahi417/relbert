@@ -26,7 +26,7 @@ def compute_loss(model,
     if exclude_relation is not None:
         data = data.filter(lambda _x: _x['relation_type'] not in exclude_relation)
     encoded_pairs_dict = model.encode_word_pairs(
-        list(chain(data["positives"] + data["negatives"]))
+        list(chain(*(data["positives"] + data["negatives"])))
     )
     loader_dict = {}
     for example in data:
