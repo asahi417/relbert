@@ -2,7 +2,6 @@ import json
 import pandas as pd
 import os
 from distutils.dir_util import copy_tree
-from relbert import RelBERT
 
 df = pd.read_csv('relbert_output/eval/accuracy.csv', index_col=0)
 df['epoch'] = [int(i.rsplit('/', 1)[-1].replace('epoch_', '')) for i in df['model']]
@@ -16,6 +15,9 @@ for mode in ['average_no_mask', 'average', 'mask']:
     df_ = df[df['mode'] == mode]
     for temp in ['a', 'b', 'c', 'd', 'e']:
         df__ = df_[df_['template'] == temp]
+        if len(df__) == 0:
+            print(f'skip: {mode}, {temp}')
+            continue
         best_model = df__.sort_values(by=['validation_loss']).head(1)
         best_valid_loss = best_model['validation_loss'].values[0]
         best_model_ckpt = best_model['model'].values[0]
@@ -23,7 +25,6 @@ for mode in ['average_no_mask', 'average', 'mask']:
             trainer_config = json.load(f)
         trainer_config['epoch'] = int(best_model['epoch'].values[0])
         trainer_config['data'] = 'relbert/semeval2012_relational_similarity'
-        model_relbert = RelBERT(best_model_ckpt)
         new_ckpt = f'{os.path.dirname(best_model_ckpt)}/best_model'
         copy_tree(best_model_ckpt, new_ckpt)
         with open(f'{new_ckpt}/trainer_config.json', 'w') as f:
