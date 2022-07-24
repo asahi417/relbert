@@ -107,7 +107,7 @@ def evaluate_classification(relbert_ckpt: str = None,
             x = [np.concatenate([a, b]) for a, b in zip(x, x_back)]
             dataset[_k] = [x, label]
 
-        # grid serach
+        # grid search
         if 'val' not in dataset:
             logging.info('run default config')
             evaluator = RelationClassification(dataset, label_dict, target_relation=target_relation, default_config=True)
