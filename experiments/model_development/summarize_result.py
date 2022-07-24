@@ -1,47 +1,59 @@
 import json
-import pandas as pd
 import os
-from distutils.dir_util import copy_tree
+import requests
+from os.path import join as pj
 
-df = pd.read_csv('relbert_output/eval/accuracy.csv', index_col=0)
-df['epoch'] = [int(i.rsplit('/', 1)[-1].replace('epoch_', '')) for i in df['model']]
-df['loss_function'] = [i.split('.')[1] for i in df['model']]
-df['template'] = [os.path.basename(i.split('.')[0]) for i in df['model']]
-df = df[df['epoch'] <= 30]
-df = df[df['loss_function'] == 'nce_logout']
+import pandas as pd
 
-for mode in ['average_no_mask', 'average', 'mask']:
-    mode_alias = mode.replace('_', '-')
-    df_ = df[df['mode'] == mode]
-    for temp in ['a', 'b', 'c', 'd', 'e']:
-        df__ = df_[df_['template'] == temp]
-        if len(df__) == 0:
-            print(f'skip: {mode}, {temp}')
-            continue
-        best_model = df__.sort_values(by=['validation_loss']).head(1)
-        best_valid_loss = best_model['validation_loss'].values[0]
-        best_model_ckpt = best_model['model'].values[0]
-        with open(f'{best_model_ckpt}/trainer_config.json') as f:
-            trainer_config = json.load(f)
-        trainer_config['epoch'] = int(best_model['epoch'].values[0])
-        trainer_config['data'] = 'relbert/semeval2012_relational_similarity'
-        new_ckpt = f'{os.path.dirname(best_model_ckpt)}/best_model'
-        copy_tree(best_model_ckpt, new_ckpt)
-        with open(f'{new_ckpt}/trainer_config.json', 'w') as f:
-            json.dump(trainer_config, f)
-        with open(f'{new_ckpt}/validation_loss.json', 'w') as f:
-            json.dump({
-                'validation_loss': best_valid_loss,
-                'validation_data': 'relbert/semeval2012_relational_similarity',
-                'validation_data/exclude_relation': None
-              }, f)
-        df_analogy = df__[df__['validation_loss'] == best_valid_loss]
-        assert len(df_analogy) == 5, df_analogy.shape
-        result = {"distance_function": 'cosine_similarity'}
-        for d in ['sat', 'u2', 'u4', 'google', 'bats']:
-            result[f'{d}/test'] = df_analogy[df_analogy['data'] == d]['accuracy/valid'].values[0]
-            result[f'{d}/valid'] = df_analogy[df_analogy['data'] == d]['accuracy/test'].values[0]
-        result['sat_full'] = df_analogy[df_analogy['data'] == 'sat']['accuracy/full'].values[0]
-        with open(f'{new_ckpt}/analogy.json', 'w') as f:
-            json.dump(result, f)
 
+MODEL = "roberta-large"
+# METHODS = ["average", "mask", "average-no-mask"]
+METHODS = ["average", "average-no-mask"]
+LOSS = ["nce", "triplet"]
+DATA = ["semeval2012"]
+PROMPT = ["a", "b", "c", "d"]
+# PROMPT = ["a", "b", "c", "d", "e"]
+
+TMP_DIR = 'metric_files'
+EXPORT_DIR = 'output'
+
+
+def download(filename, url):
+    print(f'download {url}')
+    try:
+        with open(f'{TMP_DIR}/{filename}') as f_reader:
+            json.load(f_reader)
+    except Exception:
+        os.makedirs(TMP_DIR, exist_ok=True)
+        with open(f'{TMP_DIR}/{filename}', "wb") as f_reader:
+            r = requests.get(url)
+            f_reader.write(r.content)
+    with open(f'{TMP_DIR}/{filename}') as f_reader:
+        tmp = json.load(f_reader)
+    return tmp
+
+
+def get_result():
+    output = []
+    for l in LOSS:
+        for d in DATA:
+            for p in PROMPT:
+                for m in METHODS:
+                    v_loss = f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/validation_loss.json"
+                    result = download(
+                        f"analogy-{MODEL}-{d}-{m}-{p}-{l}.json",
+                        f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/analogy.json"
+                    )
+                    result.update({
+                        "loss": l,
+                        "data": d,
+                        "prompt": p,
+                        "method": m,
+                        "loss_value": download(
+                            f"loss-{MODEL}-{d}-{m}-{p}-{l}.json",
+                            v_loss)['validation_loss']})
+                    output.append(result)
+    return pd.DataFrame(output)
+
+
+full_output = get_result()

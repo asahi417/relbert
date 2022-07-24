@@ -1,0 +1,1 @@
+{"distance_function": "cosine_similarity", "sat/test": 0.6913946587537092, "sat/valid": 0.7027027027027027, "u2/test": 0.6885964912280702, "u2/valid": 0.6666666666666666, "u4/test": 0.6898148148148148, "u4/valid": 0.5625, "google/test": 0.968, "google/valid": 0.98, "bats/test": 0.8037798777098388, "bats/valid": 0.8341708542713567, "sat_full": 0.6925133689839572}
