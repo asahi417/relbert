@@ -1,14 +1,13 @@
 import json
 import os
 import requests
-from os.path import join as pj
 
 import pandas as pd
 
 
 MODEL = "roberta-large"
-# METHODS = ["average", "mask", "average-no-mask"]
-METHODS = ["average", "average-no-mask"]
+METHODS = ["average", "mask", "average-no-mask"]
+# METHODS = ["average", "average-no-mask"]
 LOSS = ["nce", "triplet"]
 DATA = ["semeval2012"]
 PROMPT = ["a", "b", "c", "d"]
