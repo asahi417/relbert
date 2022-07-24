@@ -100,7 +100,7 @@ def evaluate_classification(relbert_ckpt: str = None,
         dataset = {}
         for _k in data.keys():
             _v = data[_k]
-            label = [label_dict[i] for i in _v['y']]
+            label = [label_dict[i] for i in _v['relation']]
             x_tuple = [tuple(_x) for _x in zip(_v['head'], _v['tail'])]
             x = model.get_embedding(x_tuple, batch_size=batch_size)
             x_back = model.get_embedding([(b, a) for a, b in x_tuple], batch_size=batch_size)
