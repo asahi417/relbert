@@ -56,3 +56,4 @@ def get_result():
 
 
 full_output = get_result()
+full_output.to_csv('./summary.csv')

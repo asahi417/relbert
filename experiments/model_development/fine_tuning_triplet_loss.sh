@@ -1,3 +1,4 @@
+# Fine-tuning RelBERT on triplet loss with the old version of RelBERT library
 git clone https://github.com/asahi417/relbert
 cd relbert
 git checkout emnlp_2021

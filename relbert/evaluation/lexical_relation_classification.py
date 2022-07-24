@@ -1,5 +1,5 @@
 import logging
-from itertools import product
+from itertools import product, chain
 from multiprocessing import Pool
 import numpy as np
 from sklearn.metrics import precision_recall_fscore_support
@@ -95,7 +95,8 @@ def evaluate_classification(relbert_ckpt: str = None,
     for data_name in data_names:
         data = load_dataset('relbert/lexical_relation_classification', data_name)
         logging.info(f'train model with {relbert_ckpt} on {data_name}')
-        label_dict = {r: n for n, r in enumerate(sorted(list(set(data['relation']))))}
+        relations = sorted(list(set(list(chain(*[data[_k]['relation'] for _k in data.keys()])))))
+        label_dict = {r: n for n, r in enumerate(relations)}
         dataset = {}
         for _k in data.keys():
             _v = data[_k]
