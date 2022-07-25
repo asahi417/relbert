@@ -10,8 +10,8 @@ METHODS = ["average", "mask", "average-no-mask"]
 # METHODS = ["average", "average-no-mask"]
 LOSS = ["nce", "triplet"]
 DATA = ["semeval2012"]
-PROMPT = ["a", "b", "c", "d"]
-# PROMPT = ["a", "b", "c", "d", "e"]
+# PROMPT = ["a", "b", "c", "d"]
+PROMPT = ["a", "b", "c", "d", "e"]
 
 TMP_DIR = 'metric_files'
 EXPORT_DIR = 'output'

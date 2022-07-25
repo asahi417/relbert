@@ -25,41 +25,41 @@ relbert_training() {
 experiment () {
   DATA=${1}
   DATA_ALIAS=${2}
-#  relbert_training 'mask' 'mask' "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'mask' 'mask' "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'mask' 'mask' "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'mask' 'mask' "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'mask' 'mask' "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'mask' 'mask' "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'mask' 'mask' "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'mask' 'mask' "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'mask' 'mask' "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'mask' 'mask' "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}"
 
-#  relbert_training 'average' 'average' "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'average' 'average' "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'average' 'average' "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'average' 'average' "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average' 'average' "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average' 'average' "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average' 'average' "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average' 'average' "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
   relbert_training 'average' 'average' "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}"
 
-#  relbert_training 'average_no_mask' 'average-no-mask' "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'average_no_mask' 'average-no-mask' "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'average_no_mask' 'average-no-mask' "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'average_no_mask' 'average-no-mask' "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
-#  relbert_training 'average_no_mask' 'average-no-mask' "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average_no_mask' 'average-no-mask' "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average_no_mask' 'average-no-mask' "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average_no_mask' 'average-no-mask' "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average_no_mask' 'average-no-mask' "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}"
+  relbert_training 'average_no_mask' 'average-no-mask' "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}"
 }
 
 experiment "relbert/semeval2012_relational_similarity" "semeval2012"
-experiment "relbert/conceptnet_high_confidence" "conceptnet-hc"
-experiment "relbert/conceptnet" "conceptnet"
 
 relbert_lexical_classification () {
   DATA_ALIAS=${1}
-  for METHOD in "mask" "average" "average-no-mask"
+  for LOSS in "triplet" "nce"
   do
     for PROMPT in "a" "b" "c" "d" "e"
     do
-      for LOSS in "triplet" "nce"
+      for METHOD in "mask" "average" "average-no-mask"
       do
         CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
         git clone "https://huggingface.co/relbert/${CKPT}"
         relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
+        cd "${CKPT}"
         ga . && gcmsg 'model update' && gp
+        cd ../
         rm -rf "${CKPT}"
       done
     done

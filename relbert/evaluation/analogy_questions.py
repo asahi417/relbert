@@ -42,6 +42,8 @@ def evaluate_analogy(relbert_ckpt: str = None,
             logging.info(f'\t * data: {d}')
             # preprocess data
             all_pairs = [tuple(i) for i in all_pairs]
+            print(all_pairs)
+            input()
             embeddings = model.get_embedding(all_pairs, batch_size=batch_size)
             assert len(embeddings) == len(all_pairs), f"{len(embeddings)} != {len(all_pairs)}"
             embeddings_dict = {str(tuple(k_)): v for k_, v in zip(all_pairs, embeddings)}
