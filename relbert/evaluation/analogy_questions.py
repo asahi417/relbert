@@ -33,7 +33,7 @@ def evaluate_analogy(relbert_ckpt: str = None,
         analogy_data = ['sat_full', 'sat', 'u2', 'u4', 'google', 'bats']
         for d in analogy_data:
             test = load_dataset('relbert/analogy_questions', d, split='test')
-            all_pairs = list(chain(*[[test['stem']] + test['choice']]))
+            all_pairs = list(chain(*list(chain(*[[test['stem']] + test['choice']]))))
             if d != 'sat_full':
                 val = load_dataset('relbert/analogy_questions', d, split='validation')
                 all_pairs += list(chain(*[[val['stem']] + val['choice']]))
