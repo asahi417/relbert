@@ -67,6 +67,7 @@ def evaluate_analogy(relbert_ckpt: str = None,
             result[f'{d}/test'] = prediction(test)
             if val is not None:
                 result[f'{d}/valid'] = prediction(val)
+    result['sat_full'] = result.pop('sat_full/test')
     logging.info(str(result))
     del model
     return result

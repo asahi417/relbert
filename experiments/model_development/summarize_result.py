@@ -7,10 +7,8 @@ import pandas as pd
 
 MODEL = "roberta-large"
 METHODS = ["average", "mask", "average-no-mask"]
-# METHODS = ["average", "average-no-mask"]
 LOSS = ["nce", "triplet"]
 DATA = ["semeval2012"]
-# PROMPT = ["a", "b", "c", "d"]
 PROMPT = ["a", "b", "c", "d", "e"]
 
 TMP_DIR = 'metric_files'
@@ -51,9 +49,13 @@ def get_result():
                         "loss_value": download(
                             f"loss-{MODEL}-{d}-{m}-{p}-{l}.json",
                             v_loss)['validation_loss']})
+                    download(
+                        f"classification-{MODEL}-{d}-{m}-{p}-{l}.json",
+                        f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/classification.json"
+                    )
                     output.append(result)
     return pd.DataFrame(output)
 
 
 full_output = get_result()
-full_output.to_csv('./summary.csv')
+full_output.to_csv('summary.csv')

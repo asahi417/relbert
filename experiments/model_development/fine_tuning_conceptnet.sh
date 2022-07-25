@@ -14,7 +14,7 @@ relbert_training() {
   DATA_ALIAS=${6}
   LOSS="nce_logout"
   LOSS_ALIAS="nce"
-  CKPT="relbert_output/models/${TEMPLATE_ID}.${LOSS}.${MODE}.${MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}"
+  CKPT="relbert_output/models/${DATA_ALIAS}.${TEMPLATE_ID}.${LOSS}.${MODE}.${MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}"
   relbert-train -m "${MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample ${NSAMPLE} --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
     --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" \
     -t "${TEMPLATE}" --data "${DATA}"
@@ -46,4 +46,5 @@ relbert_lexical_classification () {
   done
 }
 
-relbert_lexical_classification "semeval2012"
+relbert_lexical_classification "conceptnet"
+relbert_lexical_classification "conceptnet-hc"
