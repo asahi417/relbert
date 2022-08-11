@@ -38,18 +38,15 @@ relbert_lexical_classification () {
   LOSS="nce"
   for PROMPT in "a" "b" "c" "d" "e"
   do
-    for METHOD in "mask" "average" # "average-no-mask"
-    do
-      CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
-      git clone "https://huggingface.co/relbert/${CKPT}"
-      relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
-      cd "${CKPT}"
-      ga . && gcmsg 'model update' && gp
-      cd ../
-      rm -rf "${CKPT}"
-    done
+    METHOD="average-no-mask"
+    CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
+    git clone "https://huggingface.co/relbert/${CKPT}"
+    relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
+    cd "${CKPT}"
+    ga . && gcmsg 'model update' && gp
+    cd ../
+    rm -rf "${CKPT}"
   done
-
 }
 
 relbert_lexical_classification "conceptnet-hc"

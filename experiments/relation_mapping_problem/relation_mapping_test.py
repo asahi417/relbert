@@ -1,5 +1,6 @@
 import os
 import json
+import argparse
 from itertools import permutations
 
 import pandas as pd
@@ -17,6 +18,12 @@ def mean(_list):
 
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='RelBERT evaluation on analogy/relation classification')
+    parser.add_argument('-m', '--model', help='model name', default="relbert/relbert-roberta-large", type=str)
+    parser.add_argument('-b', '--batch-size', help='batch', default=512, type=str)
+    opt = parser.parse_args()
+
     os.makedirs('output', exist_ok=True)
     with open('data.jsonl') as f_reader:
         data = [json.loads(i) for i in f_reader.read().split('\n') if len(i) > 0]
