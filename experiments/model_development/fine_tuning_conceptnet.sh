@@ -1,6 +1,6 @@
 relbert_training() {
   MODEL='roberta-large'
-  EPOCH=100
+  EPOCH=200
   GRAD=8
   LR=0.000005
   TEMP=0.05
@@ -23,28 +23,34 @@ relbert_training() {
 }
 
 relbert_training 'average' 'average' "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "relbert/conceptnet_high_confidence" "conceptnet-hc"
+
+relbert_training 'average' 'average' "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "relbert/conceptnet_high_confidence" "conceptnet-hc"
+relbert_training 'average' 'average' "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "relbert/conceptnet_high_confidence" "conceptnet-hc"
+relbert_training 'average' 'average' "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "relbert/conceptnet_high_confidence" "conceptnet-hc"
+relbert_training 'average' 'average' "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "relbert/conceptnet_high_confidence" "conceptnet-hc"
+
+
 relbert_training 'average' 'average' "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "relbert/conceptnet" "conceptnet"
 
 
 relbert_lexical_classification () {
   DATA_ALIAS=${1}
-  for LOSS in "triplet" "nce"
+  LOSS="nce"
+  for PROMPT in "a" "b" "c" "d" "e"
   do
-    for PROMPT in "a" "b" "c" "d" "e"
+    for METHOD in "mask" "average" # "average-no-mask"
     do
-      for METHOD in "mask" "average" "average-no-mask"
-      do
-        CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
-        git clone "https://huggingface.co/relbert/${CKPT}"
-        relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
-        cd "${CKPT}"
-        ga . && gcmsg 'model update' && gp
-        cd ../
-        rm -rf "${CKPT}"
-      done
+      CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
+      git clone "https://huggingface.co/relbert/${CKPT}"
+      relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
+      cd "${CKPT}"
+      ga . && gcmsg 'model update' && gp
+      cd ../
+      rm -rf "${CKPT}"
     done
   done
+
 }
 
-relbert_lexical_classification "conceptnet"
 relbert_lexical_classification "conceptnet-hc"
+relbert_lexical_classification "conceptnet"

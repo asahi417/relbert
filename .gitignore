@@ -4,8 +4,9 @@ cache
 common_word_pairs.pkl
 gensim-vector.tmp
 model_hub
-examples/relation_mapping_problem/embeddings
-examples/relation_mapping_problem/output
+experiments/relation_mapping_problem/embeddings
+experiments/relation_mapping_problem/output
+experiments/relation_mapping_problem/cache
 _bu
 relbert_output
 metric_files

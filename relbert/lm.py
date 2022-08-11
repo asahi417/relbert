@@ -101,7 +101,7 @@ class RelBERT:
     """ RelBERT: Get relational embedding from transformers language model. """
 
     def __init__(self,
-                 model: str,
+                 model: str = 'relbert/relbert-roberta-large-semeval2012-average-prompt-d-nce',
                  max_length: int = 64,
                  mode: str = 'average_no_mask',
                  template_mode: str = 'manual',

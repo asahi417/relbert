@@ -6,9 +6,10 @@ import pandas as pd
 
 
 MODEL = "roberta-large"
-METHODS = ["average", "mask", "average-no-mask"]
+# METHODS = ["average", "mask", "average-no-mask"]
+METHODS = ["average", "mask"]
 LOSS = ["nce", "triplet"]
-DATA = ["semeval2012"]
+DATA = ["semeval2012", "conceptnet-hc"]
 PROMPT = ["a", "b", "c", "d", "e"]
 
 TMP_DIR = 'metric_files'
@@ -34,13 +35,15 @@ def get_result():
     output = []
     for l in LOSS:
         for d in DATA:
+            if l != 'nce' and d != 'semeval2012':
+                continue
             for p in PROMPT:
                 for m in METHODS:
                     v_loss = f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/validation_loss.json"
-                    result = download(
+                    result = {k: v for k, v in download(
                         f"analogy-{MODEL}-{d}-{m}-{p}-{l}.json",
                         f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/analogy.json"
-                    )
+                    ).items() if 'valid' not in k}
                     result.update({
                         "loss": l,
                         "data": d,
@@ -49,10 +52,10 @@ def get_result():
                         "loss_value": download(
                             f"loss-{MODEL}-{d}-{m}-{p}-{l}.json",
                             v_loss)['validation_loss']})
-                    download(
-                        f"classification-{MODEL}-{d}-{m}-{p}-{l}.json",
-                        f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/classification.json"
-                    )
+                    # result.update({k: v['test/f1_micro'] for k, v in download(
+                    #     f"classification-{MODEL}-{d}-{m}-{p}-{l}.json",
+                    #     f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/classification.json"
+                    # ).items()})
                     output.append(result)
     return pd.DataFrame(output)
 
