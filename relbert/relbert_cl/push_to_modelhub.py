@@ -3,10 +3,13 @@ import os
 import argparse
 import shutil
 import logging
+import json
 from os.path import join as pj
 from distutils.dir_util import copy_tree
 
+from huggingface_hub import create_repo
 from relbert import RelBERT
+from relbert.relbert_cl.readme_template import get_readme
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -16,10 +19,14 @@ def main():
     parser.add_argument('-m', '--model-checkpoint', required=True, type=str)
     parser.add_argument('-a', '--model-alias', required=True, type=str)
     parser.add_argument('-o', '--organization', default='relbert', type=str)
+    parser.add_argument('--use-auth-token', help='Huggingface transformers argument of `use_auth_token`',
+                        action='store_true')
     opt = parser.parse_args()
 
     assert os.path.exists(pj(opt.model_checkpoint, "pytorch_model.bin"))
     logging.info(f"Upload {opt.model_checkpoint} to {opt.model_alias}")
+    url = create_repo(f"{opt.organization}/{opt.model_alias}", exist_ok=True)
+    args = {"use_auth_token": opt.use_auth_token, "repo_url": url, "organization": opt.organization}
     model = RelBERT(opt.model_checkpoint)
     assert model.is_trained
     if model.parallel:
@@ -27,9 +34,30 @@ def main():
     else:
         model_ = model.model
 
-    model_.push_to_hub(opt.model_alias, organization=opt.organization)
-    model_.config.push_to_hub(opt.model_alias, organization=opt.organization)
-    model.tokenizer.push_to_hub(opt.model_alias, organization=opt.organization)
+    model_.push_to_hub(opt.model_alias, **args)
+    model_.config.push_to_hub(opt.model_alias, **args)
+    model.tokenizer.push_to_hub(opt.model_alias, **args)
+
+    # config
+    with open(pj(opt.model_checkpoint, "trainer_config.json")) as f:
+        trainer_config = json.load(f)
+
+    # metric
+    with open(pj(opt.model_checkpoint, "analogy.json")) as f:
+        analogy = json.load(f)
+    with open(pj(opt.model_checkpoint, "classification.json")) as f:
+        classification = json.load(f)
+    with open(pj(opt.model_checkpoint, "relation_mapping.json")) as f:
+        relation_mapping = json.load(f)
+
+    readme = get_readme(
+        model_name=f"{opt.organization}/{opt.model_alias}",
+        metric=metric,
+        metric_span=metric_span,
+        config=trainer_config,
+    )
+    with open(pj(opt.model_checkpoint, "README.md"), 'w') as f:
+        f.write(readme)
 
     # upload remaining files
     copy_tree(opt.model_checkpoint, opt.model_alias)

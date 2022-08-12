@@ -43,7 +43,7 @@ from itertools import permutations
 from os.path import join as pj
 from tqdm import tqdm
 
-import pandas as pd
+# import pandas as pd
 from numpy import dot
 from numpy.linalg import norm
 from relbert import RelBERT
@@ -139,8 +139,8 @@ def evaluate_relation_mapping(relbert_ckpt: str = None,
         })
     mean_accuracy = mean(accuracy) * 100
     logging.info(f'Accuracy: {mean_accuracy}')
-    sims_full = pd.DataFrame(sims_full)
-    perms_full = pd.DataFrame(perms_full)
+    # sims_full = pd.DataFrame(sims_full)
+    # perms_full = pd.DataFrame(perms_full)
     del model
     return mean_accuracy, sims_full, perms_full
 

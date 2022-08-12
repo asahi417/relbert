@@ -16,12 +16,11 @@ bib = """
 
 
 def get_readme(model_name: str,
-               metric: Dict,
-               metric_span: Dict,
+               metric_analogy: Dict,
+               metric_classification: Dict,
+               metric_relation_mapping: Dict,
                config: Dict):
     config_text = "\n".join([f" - {k}: {v}" for k, v in config.items()])
-    ci_micro = '\n'.join([f'    - {k}%: {v}' for k, v in metric["micro/f1_ci"].items()])
-    ci_macro = '\n'.join([f'    - {k}%: {v}' for k, v in metric["micro/f1_ci"].items()])
     dataset_link = f"[{config['data']}](https://huggingface.co/datasets/{config['data']})"
     return f"""---
 datasets:
@@ -62,7 +61,7 @@ It achieves the following results on the relation understanding tasks:
     - EVALution:
     - K&H+N:
     - ROOT09:
-- Relation Mapping ([full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)):
+- Relation Mapping ([full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)): 
 
 
 ### Usage
