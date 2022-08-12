@@ -24,6 +24,7 @@ def main():
     parser.add_argument('--cache-embedding-dir', help='aggregation function for relation mapping',
                         default="embeddings", type=str)
     parser.add_argument('--overwrite', help='', action='store_true')
+    parser.add_argument('--reverse-pair', help='', action='store_true')
     opt = parser.parse_args()
 
     export_dir = opt.ckpt_dir if opt.export_dir is None else opt.export_dir
@@ -37,7 +38,8 @@ def main():
     if opt.type == 'classification':
         result = evaluate_classification(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch)
     elif opt.type == 'analogy':
-        result = evaluate_analogy(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, max_length=opt.max_length)
+        result = evaluate_analogy(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, max_length=opt.max_length,
+                                  reverse_pair=opt.reverse_pair)
     elif opt.type == 'relation_mapping':
         mean_accuracy, _, perms_full = evaluate_relation_mapping(
             relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, aggregation=opt.aggregation,

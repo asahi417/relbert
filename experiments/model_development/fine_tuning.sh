@@ -57,7 +57,7 @@ relbert_relation_mapping () {
     do
       CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
       git clone "https://huggingface.co/relbert/${CKPT}"
-      relbert-eval --type relation_mapping -c "${CKPT}" --export-dir "${CKPT}" -b 2048 --aggregation 'max'
+      relbert-eval --overwrite --type relation_mapping -c "${CKPT}" --export-dir "${CKPT}" -b 2048 --aggregation 'max'
       relbert-push-to-hub -o 'relbert' -a "${CKPT}" -m "${CKPT}"
       rm -rf "${CKPT}"
     done
