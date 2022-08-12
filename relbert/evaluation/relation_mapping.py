@@ -137,10 +137,8 @@ def evaluate_relation_mapping(relbert_ckpt: str = None,
             'similarity': pred[0][f'similarity_{aggregation}'],
             'similarity_true': tmp[0][f'similarity_{aggregation}']
         })
-    mean_accuracy = mean(accuracy) * 100
+    mean_accuracy = mean(accuracy)
     logging.info(f'Accuracy: {mean_accuracy}')
-    # sims_full = pd.DataFrame(sims_full)
-    # perms_full = pd.DataFrame(perms_full)
     del model
     return mean_accuracy, sims_full, perms_full
 
