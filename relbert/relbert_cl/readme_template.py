@@ -1,4 +1,3 @@
-import os
 from typing import Dict
 
 bib = """
@@ -29,19 +28,141 @@ model-index:
 - name: {model_name}
   results:
   - task:
-      name: Analogy Questions
-      type: token-classification
+      name: Relation Mapping
+      type: sorting-task
     dataset:
-      name: {dataset_alias}
-      type: {dataset_alias}
-      args: {dataset_alias}
+      name: Relation Mapping
+      args: relbert/relation_mapping
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_relation_mapping['accuracy']}
+  - task:
+      name: Analogy Questions (SAT full)
+      type: multiple-choice-qa
+    dataset:
+      name: SAT full
+      args: relbert/analogy_questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['sat_full']}
+  - task:
+      name: Analogy Questions (SAT)
+      type: multiple-choice-qa
+    dataset:
+      name: SAT
+      args: relbert/analogy_questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['sat/test']}
+  - task:
+      name: Analogy Questions (BATS)
+      type: multiple-choice-qa
+    dataset:
+      name: BATS
+      args: relbert/analogy_questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['abts/test']}
+  - task:
+      name: Analogy Questions (Google)
+      type: multiple-choice-qa
+    dataset:
+      name: Google
+      args: relbert/analogy_questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['google/test']}
+  - task:
+      name: Analogy Questions (U2)
+      type: multiple-choice-qa
+    dataset:
+      name: U2
+      args: relbert/analogy_questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['u2/test']}
+  - task:
+      name: Analogy Questions (U4)
+      type: multiple-choice-qa
+    dataset:
+      name: U4
+      args: relbert/analogy_questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['u4/test']}
+  - task:
+      name: Lexical Relation Classification (BLESS)
+      type: classification
+    dataset:
+      name: BLESS
+      args: relbert/lexical_relation_classification
     metrics:
     - name: F1
       type: f1
-      value: {metric['micro/f1']}
-    - name: Precision
-      type: precision
-      value: {metric['micro/precision']}
+      value: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"]}
+    - name: F1 (macro)
+      type: f1_macro
+      value: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_macro"]}
+  - task:
+      name: Lexical Relation Classification (CogALexV)
+      type: classification
+    dataset:
+      name: CogALexV
+      args: relbert/lexical_relation_classification
+    metrics:
+    - name: F1
+      type: f1
+      value: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"]}
+    - name: F1 (macro)
+      type: f1_macro
+      value: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_macro"]}
+  - task:
+      name: Lexical Relation Classification (EVALution)
+      type: classification
+    dataset:
+      name: BLESS
+      args: relbert/lexical_relation_classification
+    metrics:
+    - name: F1
+      type: f1
+      value: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"]}
+    - name: F1 (macro)
+      type: f1_macro
+      value: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_macro"]}
+  - task:
+      name: Lexical Relation Classification (K&H+N)
+      type: classification
+    dataset:
+      name: K&H+N
+      args: relbert/lexical_relation_classification
+    metrics:
+    - name: F1
+      type: f1
+      value: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_micro"]}
+    - name: F1 (macro)
+      type: f1_macro
+      value: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_macro"]}
+  - task:
+      name: Lexical Relation Classification (ROOT09)
+      type: classification
+    dataset:
+      name: ROOT09
+      args: relbert/lexical_relation_classification
+    metrics:
+    - name: F1
+      type: f1
+      value: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_micro"]}
+    - name: F1 (macro)
+      type: f1_macro
+      value: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_macro"]}
+
 ---
 # {model_name}
 
@@ -50,18 +171,20 @@ RelBERT fine-tuned from [{config["model"]}](https://huggingface.co/{config["mode
 Fine-tuning is done via [RelBERT](https://github.com/asahi417/relbert) library (see the repository for more detail).
 It achieves the following results on the relation understanding tasks:
 - Analogy Question ([full result](https://huggingface.co/{model_name}/raw/main/analogy.json)):
-    - SAT: 
-    - BATS:
-    - U2:
-    - U4:
-    - Google: 
+    - Accuracy on SAT (full): {metric_analogy['sat_full']} 
+    - Accuracy on SAT: {metric_analogy['sat/test']}
+    - Accuracy on BATS: {metric_analogy['bats/test']}
+    - Accuracy on U2: {metric_analogy['u2/test']}
+    - Accuracy on U4: {metric_analogy['u4/test']}
+    - Accuracy on Google: {metric_analogy['google/test']}
 - Lexical Relation Classification ([full result](https://huggingface.co/{model_name}/raw/main/classification.json))):
-    - BLESS:
-    - CogALexV:
-    - EVALution:
-    - K&H+N:
-    - ROOT09:
-- Relation Mapping ([full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)): 
+    - Micro F1 score on BLESS: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"]}
+    - Micro F1 score on CogALexV: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"]}
+    - Micro F1 score on EVALution: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"]}
+    - Micro F1 score on K&H+N: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_micro"]}
+    - Micro F1 score on ROOT09: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_micro"]}
+- Relation Mapping ([full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)):
+    - Accuracy on Relation Mapping: {metric_relation_mapping['accuracy']} 
 
 
 ### Usage

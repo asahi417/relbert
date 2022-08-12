@@ -52,8 +52,9 @@ def main():
 
     readme = get_readme(
         model_name=f"{opt.organization}/{opt.model_alias}",
-        metric=metric,
-        metric_span=metric_span,
+        metric_classification=classification,
+        metric_analogy=analogy,
+        metric_relation_mapping=relation_mapping,
         config=trainer_config,
     )
     with open(pj(opt.model_checkpoint, "README.md"), 'w') as f:
