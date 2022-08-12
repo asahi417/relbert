@@ -190,7 +190,7 @@ It achieves the following results on the relation understanding tasks:
     - Accuracy on U2: {metric_analogy['u2/test'] if metric_analogy is not None else None}
     - Accuracy on U4: {metric_analogy['u4/test'] if metric_analogy is not None else None}
     - Accuracy on Google: {metric_analogy['google/test'] if metric_analogy is not None else None}
-- Lexical Relation Classification ([dataset](https://huggingface.co/datasets/relbert/lexical_relation_classification), [full result](https://huggingface.co/{model_name}/raw/main/classification.json))):
+- Lexical Relation Classification ([dataset](https://huggingface.co/datasets/relbert/lexical_relation_classification), [full result](https://huggingface.co/{model_name}/raw/main/classification.json)):
     - Micro F1 score on BLESS: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on CogALexV: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on EVALution: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"] if metric_classification is not None else None}
