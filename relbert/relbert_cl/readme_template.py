@@ -67,7 +67,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_analogy['abts/test'] if metric_analogy is not None else None}
+      value: {metric_analogy['bats/test'] if metric_analogy is not None else None}
   - task:
       name: Analogy Questions (Google)
       type: multiple-choice-qa
