@@ -34,6 +34,7 @@ model-index:
     dataset:
       name: Relation Mapping
       args: relbert/relation_mapping
+      type: relation-mapping
     metrics:
     - name: Accuracy
       type: accuracy
@@ -44,6 +45,7 @@ model-index:
     dataset:
       name: SAT full
       args: relbert/analogy_questions
+      type: analogy-questions
     metrics:
     - name: Accuracy
       type: accuracy
@@ -54,6 +56,7 @@ model-index:
     dataset:
       name: SAT
       args: relbert/analogy_questions
+      type: analogy-questions
     metrics:
     - name: Accuracy
       type: accuracy
@@ -64,6 +67,7 @@ model-index:
     dataset:
       name: BATS
       args: relbert/analogy_questions
+      type: analogy-questions
     metrics:
     - name: Accuracy
       type: accuracy
@@ -74,6 +78,7 @@ model-index:
     dataset:
       name: Google
       args: relbert/analogy_questions
+      type: analogy-questions
     metrics:
     - name: Accuracy
       type: accuracy
@@ -84,6 +89,7 @@ model-index:
     dataset:
       name: U2
       args: relbert/analogy_questions
+      type: analogy-questions
     metrics:
     - name: Accuracy
       type: accuracy
@@ -94,6 +100,7 @@ model-index:
     dataset:
       name: U4
       args: relbert/analogy_questions
+      type: analogy-questions
     metrics:
     - name: Accuracy
       type: accuracy
@@ -104,6 +111,7 @@ model-index:
     dataset:
       name: BLESS
       args: relbert/lexical_relation_classification
+      type: relation-classification
     metrics:
     - name: F1
       type: f1
@@ -117,6 +125,7 @@ model-index:
     dataset:
       name: CogALexV
       args: relbert/lexical_relation_classification
+      type: relation-classification
     metrics:
     - name: F1
       type: f1
@@ -130,6 +139,7 @@ model-index:
     dataset:
       name: BLESS
       args: relbert/lexical_relation_classification
+      type: relation-classification
     metrics:
     - name: F1
       type: f1
@@ -143,6 +153,7 @@ model-index:
     dataset:
       name: K&H+N
       args: relbert/lexical_relation_classification
+      type: relation-classification
     metrics:
     - name: F1
       type: f1
@@ -156,6 +167,7 @@ model-index:
     dataset:
       name: ROOT09
       args: relbert/lexical_relation_classification
+      type: relation-classification
     metrics:
     - name: F1
       type: f1
