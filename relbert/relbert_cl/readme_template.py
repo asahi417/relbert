@@ -183,20 +183,20 @@ RelBERT fine-tuned from [{config["model"]}](https://huggingface.co/{config["mode
 {dataset_link}.
 Fine-tuning is done via [RelBERT](https://github.com/asahi417/relbert) library (see the repository for more detail).
 It achieves the following results on the relation understanding tasks:
-- Analogy Question ([full result](https://huggingface.co/{model_name}/raw/main/analogy.json)):
+- Analogy Question ([dataset](https://huggingface.co/datasets/relbert/analogy_questions), [full result](https://huggingface.co/{model_name}/raw/main/analogy.json)):
     - Accuracy on SAT (full): {metric_analogy['sat_full'] if metric_analogy is not None else None} 
     - Accuracy on SAT: {metric_analogy['sat/test'] if metric_analogy is not None else None}
     - Accuracy on BATS: {metric_analogy['bats/test'] if metric_analogy is not None else None}
     - Accuracy on U2: {metric_analogy['u2/test'] if metric_analogy is not None else None}
     - Accuracy on U4: {metric_analogy['u4/test'] if metric_analogy is not None else None}
     - Accuracy on Google: {metric_analogy['google/test'] if metric_analogy is not None else None}
-- Lexical Relation Classification ([full result](https://huggingface.co/{model_name}/raw/main/classification.json))):
+- Lexical Relation Classification ([dataset](https://huggingface.co/datasets/relbert/lexical_relation_classification), [full result](https://huggingface.co/{model_name}/raw/main/classification.json))):
     - Micro F1 score on BLESS: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on CogALexV: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on EVALution: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on K&H+N: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on ROOT09: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_micro"] if metric_classification is not None else None}
-- Relation Mapping ([full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)):
+- Relation Mapping ([dataset](https://huggingface.co/datasets/relbert/relation_mapping), [full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)):
     - Accuracy on Relation Mapping: {metric_relation_mapping['accuracy'] if metric_relation_mapping is not None else None} 
 
 
@@ -220,7 +220,7 @@ The following hyperparameters were used during training:
 The full configuration can be found at [fine-tuning parameter file](https://huggingface.co/{model_name}/raw/main/trainer_config.json).
 
 ### Reference
-If you use any resource from T-NER, please consider to cite our [paper](https://aclanthology.org/2021.eacl-demos.7/).
+If you use any resource from RelBERT, please consider to cite our [paper](https://aclanthology.org/2021.eacl-demos.7/).
 
 ```
 {bib}
