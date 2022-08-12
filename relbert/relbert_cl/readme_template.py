@@ -15,10 +15,11 @@ bib = """
 
 
 def get_readme(model_name: str,
-               metric_analogy: Dict,
-               metric_classification: Dict,
-               metric_relation_mapping: Dict,
-               config: Dict):
+               config: Dict,
+               metric_analogy: Dict = None,
+               metric_classification: Dict = None,
+               metric_relation_mapping: Dict = None,
+               ):
     config_text = "\n".join([f" - {k}: {v}" for k, v in config.items()])
     dataset_link = f"[{config['data']}](https://huggingface.co/datasets/{config['data']})"
     return f"""---
@@ -36,7 +37,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_relation_mapping['accuracy']}
+      value: {metric_relation_mapping['accuracy'] if metric_relation_mapping is not None else None}
   - task:
       name: Analogy Questions (SAT full)
       type: multiple-choice-qa
@@ -46,7 +47,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_analogy['sat_full']}
+      value: {metric_analogy['sat_full'] if metric_analogy is not None else None}
   - task:
       name: Analogy Questions (SAT)
       type: multiple-choice-qa
@@ -56,7 +57,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_analogy['sat/test']}
+      value: {metric_analogy['sat/test'] if metric_analogy is not None else None}
   - task:
       name: Analogy Questions (BATS)
       type: multiple-choice-qa
@@ -66,7 +67,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_analogy['abts/test']}
+      value: {metric_analogy['abts/test'] if metric_analogy is not None else None}
   - task:
       name: Analogy Questions (Google)
       type: multiple-choice-qa
@@ -76,7 +77,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_analogy['google/test']}
+      value: {metric_analogy['google/test'] if metric_analogy is not None else None}
   - task:
       name: Analogy Questions (U2)
       type: multiple-choice-qa
@@ -86,7 +87,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_analogy['u2/test']}
+      value: {metric_analogy['u2/test'] if metric_analogy is not None else None}
   - task:
       name: Analogy Questions (U4)
       type: multiple-choice-qa
@@ -96,7 +97,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_analogy['u4/test']}
+      value: {metric_analogy['u4/test'] if metric_analogy is not None else None}
   - task:
       name: Lexical Relation Classification (BLESS)
       type: classification
@@ -106,10 +107,10 @@ model-index:
     metrics:
     - name: F1
       type: f1
-      value: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"]}
+      value: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"] if metric_classification is not None else None}
     - name: F1 (macro)
       type: f1_macro
-      value: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_macro"]}
+      value: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_macro"] if metric_classification is not None else None}
   - task:
       name: Lexical Relation Classification (CogALexV)
       type: classification
@@ -119,10 +120,10 @@ model-index:
     metrics:
     - name: F1
       type: f1
-      value: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"]}
+      value: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"] if metric_classification is not None else None}
     - name: F1 (macro)
       type: f1_macro
-      value: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_macro"]}
+      value: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_macro"] if metric_classification is not None else None}
   - task:
       name: Lexical Relation Classification (EVALution)
       type: classification
@@ -132,10 +133,10 @@ model-index:
     metrics:
     - name: F1
       type: f1
-      value: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"]}
+      value: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"] if metric_classification is not None else None}
     - name: F1 (macro)
       type: f1_macro
-      value: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_macro"]}
+      value: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_macro"] if metric_classification is not None else None}
   - task:
       name: Lexical Relation Classification (K&H+N)
       type: classification
@@ -145,10 +146,10 @@ model-index:
     metrics:
     - name: F1
       type: f1
-      value: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_micro"]}
+      value: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_micro"] if metric_classification is not None else None}
     - name: F1 (macro)
       type: f1_macro
-      value: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_macro"]}
+      value: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_macro"] if metric_classification is not None else None}
   - task:
       name: Lexical Relation Classification (ROOT09)
       type: classification
@@ -158,10 +159,10 @@ model-index:
     metrics:
     - name: F1
       type: f1
-      value: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_micro"]}
+      value: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_micro"] if metric_classification is not None else None}
     - name: F1 (macro)
       type: f1_macro
-      value: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_macro"]}
+      value: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_macro"] if metric_classification is not None else None}
 
 ---
 # {model_name}
@@ -171,20 +172,20 @@ RelBERT fine-tuned from [{config["model"]}](https://huggingface.co/{config["mode
 Fine-tuning is done via [RelBERT](https://github.com/asahi417/relbert) library (see the repository for more detail).
 It achieves the following results on the relation understanding tasks:
 - Analogy Question ([full result](https://huggingface.co/{model_name}/raw/main/analogy.json)):
-    - Accuracy on SAT (full): {metric_analogy['sat_full']} 
-    - Accuracy on SAT: {metric_analogy['sat/test']}
-    - Accuracy on BATS: {metric_analogy['bats/test']}
-    - Accuracy on U2: {metric_analogy['u2/test']}
-    - Accuracy on U4: {metric_analogy['u4/test']}
-    - Accuracy on Google: {metric_analogy['google/test']}
+    - Accuracy on SAT (full): {metric_analogy['sat_full'] if metric_analogy is not None else None} 
+    - Accuracy on SAT: {metric_analogy['sat/test'] if metric_analogy is not None else None}
+    - Accuracy on BATS: {metric_analogy['bats/test'] if metric_analogy is not None else None}
+    - Accuracy on U2: {metric_analogy['u2/test'] if metric_analogy is not None else None}
+    - Accuracy on U4: {metric_analogy['u4/test'] if metric_analogy is not None else None}
+    - Accuracy on Google: {metric_analogy['google/test'] if metric_analogy is not None else None}
 - Lexical Relation Classification ([full result](https://huggingface.co/{model_name}/raw/main/classification.json))):
-    - Micro F1 score on BLESS: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"]}
-    - Micro F1 score on CogALexV: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"]}
-    - Micro F1 score on EVALution: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"]}
-    - Micro F1 score on K&H+N: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_micro"]}
-    - Micro F1 score on ROOT09: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_micro"]}
+    - Micro F1 score on BLESS: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"] if metric_classification is not None else None}
+    - Micro F1 score on CogALexV: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"] if metric_classification is not None else None}
+    - Micro F1 score on EVALution: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"] if metric_classification is not None else None}
+    - Micro F1 score on K&H+N: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_micro"] if metric_classification is not None else None}
+    - Micro F1 score on ROOT09: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_micro"] if metric_classification is not None else None}
 - Relation Mapping ([full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)):
-    - Accuracy on Relation Mapping: {metric_relation_mapping['accuracy']} 
+    - Accuracy on Relation Mapping: {metric_relation_mapping['accuracy'] if metric_relation_mapping is not None else None} 
 
 
 ### Usage

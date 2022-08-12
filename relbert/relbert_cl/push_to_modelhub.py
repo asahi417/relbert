@@ -14,6 +14,13 @@ from relbert.relbert_cl.readme_template import get_readme
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
 
+def safe_json_load(_file):
+    if os.path.exists(_file):
+        with open(_file) as f:
+            return json.load(f)
+    return None
+
+
 def main():
     parser = argparse.ArgumentParser(description='Push to Model hub')
     parser.add_argument('-m', '--model-checkpoint', required=True, type=str)
@@ -43,12 +50,9 @@ def main():
         trainer_config = json.load(f)
 
     # metric
-    with open(pj(opt.model_checkpoint, "analogy.json")) as f:
-        analogy = json.load(f)
-    with open(pj(opt.model_checkpoint, "classification.json")) as f:
-        classification = json.load(f)
-    with open(pj(opt.model_checkpoint, "relation_mapping.json")) as f:
-        relation_mapping = json.load(f)
+    analogy = safe_json_load(pj(opt.model_checkpoint, "analogy.json"))
+    classification = safe_json_load(pj(opt.model_checkpoint, "classification.json"))
+    relation_mapping = safe_json_load(pj(opt.model_checkpoint, "relation_mapping.json"))
 
     readme = get_readme(
         model_name=f"{opt.organization}/{opt.model_alias}",

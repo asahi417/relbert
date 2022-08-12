@@ -46,46 +46,47 @@ experiment () {
 
 experiment "relbert/semeval2012_relational_similarity" "semeval2012"
 experiment "relbert/conceptnet_high_confidence" "conceptnet-hc"
-
-relbert_lexical_classification () {
-  DATA_ALIAS=${1}
-  LOSS=${2}
-  for PROMPT in "a" "b" "c" "d" "e"
-  do
-    for METHOD in "mask" "average" "average-no-mask"
-    do
-      CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
-      git clone "https://huggingface.co/relbert/${CKPT}"
-      relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
-      cd "${CKPT}"
-      ga . && gcmsg 'model update' && gp
-      cd ../
-      rm -rf "${CKPT}"
-    done
-  done
-}
-
-relbert_lexical_classification "semeval2012" "nce"
-relbert_lexical_classification "conceptnet-hc" "nce"
-
-
-relbert_relation_mapping () {
-  DATA_ALIAS=${1}
-  LOSS=${2}
-  for PROMPT in "a" "b" "c" "d" "e"
-  do
-    for METHOD in "mask" "average" "average-no-mask"
-    do
-      CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
-      git clone "https://huggingface.co/relbert/${CKPT}"
-      relbert-eval --type relation_mapping -c "${CKPT}" --export-dir "${CKPT}" -b 2048 --aggregation 'max'
-      cd "${CKPT}"
-      ga . && gcmsg 'model update' && gp
-      cd ../
-      rm -rf "${CKPT}"
-    done
-  done
-}
-
-relbert_lexical_classification "semeval2012" "nce"
-relbert_lexical_classification "conceptnet-hc" "nce"
+#
+#relbert_lexical_classification () {
+#  DATA_ALIAS=${1}
+#  LOSS=${2}
+#  for PROMPT in "a" "b" "c" "d" "e"
+#  do
+#    for METHOD in "mask" "average" "average-no-mask"
+#    do
+#      CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
+#      git clone "https://huggingface.co/relbert/${CKPT}"
+#      relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
+#      cd "${CKPT}"
+#      ga . && gcmsg 'model update' && gp
+#      cd ../
+#      rm -rf "${CKPT}"
+#    done
+#  done
+#}
+#
+#relbert_lexical_classification "semeval2012" "nce"
+#relbert_lexical_classification "conceptnet-hc" "nce"
+#
+#
+#relbert_relation_mapping () {
+#  DATA_ALIAS=${1}
+#  LOSS=${2}
+#  for PROMPT in "a" "b" "c" "d" "e"
+#  do
+#    for METHOD in "mask" "average" "average-no-mask"
+#    do
+#      CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
+#      git clone "https://huggingface.co/relbert/${CKPT}"
+#      relbert-eval --type relation_mapping -c "${CKPT}" --export-dir "${CKPT}" -b 2048 --aggregation 'max'
+#      cd "${CKPT}"
+#      ga . && gcmsg 'model update' && gp
+#      cd ../
+#      rm -rf "${CKPT}"
+#    done
+#  done
+#}
+#
+#relbert_relation_mapping "semeval2012" "nce"
+#relbert_relation_mapping "semeval2012" "triplet"
+#relbert_relation_mapping "conceptnet-hc" "nce"
