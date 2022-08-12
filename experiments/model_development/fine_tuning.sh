@@ -86,3 +86,6 @@ relbert_relation_mapping () {
     done
   done
 }
+
+relbert_lexical_classification "semeval2012" "nce"
+relbert_lexical_classification "conceptnet-hc" "nce"
