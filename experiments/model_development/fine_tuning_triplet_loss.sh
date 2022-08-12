@@ -52,5 +52,23 @@ relbert-push-to-hub -o relbert -m "roberta_custom_c/epoch_1" -a "relbert-roberta
 relbert-push-to-hub -o relbert -m "roberta_custom_d/epoch_1" -a "relbert-roberta-large-semeval2012-average-no-mask-prompt-d-triplet"
 relbert-push-to-hub -o relbert -m "roberta_custom_e/epoch_1" -a "relbert-roberta-large-semeval2012-average-no-mask-prompt-e-triplet"
 
+relbert_lexical_classification () {
+  DATA_ALIAS=${1}
+  LOSS=${2}
+  for PROMPT in "a" "b" "c" "d" "e"
+  do
+    for METHOD in "mask" "average" "average-no-mask"
+    do
+      CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
+      git clone "https://huggingface.co/relbert/${CKPT}"
+      relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
+      cd "${CKPT}"
+      ga . && gcmsg 'model update' && gp
+      cd ../
+      rm -rf "${CKPT}"
+    done
+  done
+}
 
+relbert_lexical_classification "semeval2012" "triplet"
 
