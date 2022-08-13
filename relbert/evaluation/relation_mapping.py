@@ -126,14 +126,16 @@ def evaluate_relation_mapping(relbert_ckpt: str = None,
             perms.append({'target': tmp_target, 'similarity_mean': mean(list_sim), 'similarity_max': max(list_sim)})
         sims_full.extend([{'pair': k, 'sim': v, 'data_id': data_id} for k, v in sim.items()])
         pred = sorted(perms, key=lambda _x: _x[f'similarity_{aggregation}'], reverse=True)
-        accuracy.extend([t == p for t, p in zip(target, pred[0]['target'])])
+        # accuracy.extend([t == p for t, p in zip(target, pred[0]['target'])])
+        accuracy.append(mean([int(t == p) for t, p in zip(target, pred[0]['target'])]))
         tmp = [i for i in perms if list(i['target']) == target]
         assert len(tmp) == 1, perms
         perms_full.append({
             'source': source,
             'true': target,
             'pred': pred[0]['target'],
-            'accuracy': list(pred[0]['target']) == target,
+            'alignment_match': list(pred[0]['target']) == target,
+            'accuracy': mean([int(t == p) for t, p in zip(target, pred[0]['target'])]),
             'similarity': pred[0][f'similarity_{aggregation}'],
             'similarity_true': tmp[0][f'similarity_{aggregation}']
         })

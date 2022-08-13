@@ -18,7 +18,6 @@ relbert_training() {
   relbert-train -m "${MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample ${NSAMPLE} --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
     --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" \
     -t "${TEMPLATE}" --data "${DATA}"
-  relbert-eval -c "${CKPT}/best_model" --type "analogy"
   relbert-push-to-hub -o relbert -m "${CKPT}/best_model" -a "relbert-${MODEL}-${DATA_ALIAS}-${MODE_ALIAS}-prompt-${TEMPLATE_ID}-${LOSS_ALIAS}"
 }
 
@@ -67,3 +66,5 @@ relbert_relation_mapping () {
 relbert_relation_mapping "semeval2012" "nce"
 relbert_relation_mapping "semeval2012" "triplet"
 relbert_relation_mapping "conceptnet-hc" "nce"
+
+relbert-eval -c "relbert-roberta-large" --type "analogy" --reverse-pair
