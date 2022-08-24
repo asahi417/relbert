@@ -14,6 +14,7 @@ def main():
     parser.add_argument('-c', '--ckpt-dir', help='epoch of checkpoint', required=True, type=str)
     parser.add_argument('--export-dir', help='export file', default=None, type=str)
     parser.add_argument('--max-length', help='for vanilla LM', default=64, type=int)
+    parser.add_argument('-d', '--data', help='data', default=None, type=str)
     parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
     parser.add_argument('--type', help='test type (analogy/classification/validation_loss/relation_mapping)',
                         default='analogy', type=str)
@@ -50,7 +51,13 @@ def main():
             "prediction": perms_full
         }
     elif opt.type == 'validation_loss':
-        result = evaluate_validation_loss(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, max_length=opt.max_length)
+        assert opt.data is not None
+        output_file = output_file.replace('.json', f'.{os.path.basename(opt.datas)}.json')
+        result = evaluate_validation_loss(
+            validation_data=opt.data,
+            relbert_ckpt=opt.ckpt_dir,
+            batch_size=opt.batch,
+            max_length=opt.max_length)
     else:
         raise ValueError(f'unknown test type: {opt.type}')
     with open(output_file, 'w') as f:

@@ -6,10 +6,10 @@ import pandas as pd
 
 
 MODEL = "roberta-large"
-# METHODS = ["average", "mask", "average-no-mask"]
-METHODS = ["average", "mask"]
+METHODS = ["average", "mask", "average-no-mask"]
+# METHODS = ["average", "mask"]
 LOSS = ["nce", "triplet"]
-DATA = ["semeval2012", "conceptnet-hc"]
+DATA = ["semeval2012-v2", "semeval2012", "conceptnet-hc"]
 PROMPT = ["a", "b", "c", "d", "e"]
 
 TMP_DIR = 'metric_files'
@@ -52,10 +52,16 @@ def get_result():
                         "loss_value": download(
                             f"loss-{MODEL}-{d}-{m}-{p}-{l}.json",
                             v_loss)['validation_loss']})
-                    # result.update({k: v['test/f1_micro'] for k, v in download(
-                    #     f"classification-{MODEL}-{d}-{m}-{p}-{l}.json",
-                    #     f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/classification.json"
-                    # ).items()})
+                    result.update({k: v['test/f1_micro'] for k, v in download(
+                        f"classification-{MODEL}-{d}-{m}-{p}-{l}.json",
+                        f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/classification.json"
+                    ).items()})
+                    metric = download(
+                        f"relation_mapping-{MODEL}-{d}-{m}-{p}-{l}.json",
+                        f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/relation_mapping.json"
+                    )
+                    result.update({'relation_mapping_accuracy': metric['accuracy']})
+
                     output.append(result)
     return pd.DataFrame(output)
 

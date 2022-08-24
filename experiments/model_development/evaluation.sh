@@ -8,9 +8,10 @@ relbert_evaluation () {
     do
       CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
       git clone "https://huggingface.co/relbert/${CKPT}"
-      relbert-eval --type analogy -c "${CKPT}" --export-dir "${CKPT}" -b 64
-      relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
-      relbert-eval --type relation_mapping -c "${CKPT}" --export-dir "${CKPT}" -b 2048 --aggregation 'max'
+      relbert-eval --type validation_loss -d "relbert/conceptnet-hc" -c "${CKPT}" --export-dir "${CKPT}" -b 64
+#      relbert-eval --type analogy -c "${CKPT}" --export-dir "${CKPT}" -b 64
+#      relbert-eval --type classification -c "${CKPT}" --export-dir "${CKPT}" -b 64
+#      relbert-eval --type relation_mapping -c "${CKPT}" --export-dir "${CKPT}" -b 2048 --aggregation 'max'
       relbert-push-to-hub -o 'relbert' -a "${CKPT}" -m "${CKPT}"
       rm -rf "${CKPT}"
     done
@@ -18,6 +19,7 @@ relbert_evaluation () {
 }
 
 
-relbert_evaluation "semeval2012" "nce"
-relbert_evaluation "semeval2012" "triplet"
 relbert_evaluation "conceptnet-hc" "nce"
+relbert_evaluation "semeval2012" "triplet"
+relbert_evaluation "semeval2012" "nce"
+relbert_evaluation "semeval2012-v2" "nce"

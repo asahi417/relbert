@@ -23,7 +23,8 @@ def evaluate_analogy(relbert_ckpt: str = None,
                      max_length: int = 64,
                      batch_size: int = 64,
                      distance_function: str = 'cosine_similarity',
-                     reverse_pair: bool = False):
+                     reverse_pair_only: bool = False,
+                     add_reverse_pair: bool = False):
     model = RelBERT(relbert_ckpt, max_length=max_length)
     assert model.is_trained, 'model is not trained'
     model.eval()
@@ -40,7 +41,7 @@ def evaluate_analogy(relbert_ckpt: str = None,
                 all_pairs += list(chain(*list(chain(*[[val['stem']] + val['choice']]))))
             else:
                 val = None
-            if reverse_pair:
+            if add_reverse_pair:
                 all_pairs += [[b, a] for a, b in all_pairs]
             logging.info(f'\t * data: {d}')
             # preprocess data
@@ -60,7 +61,7 @@ def evaluate_analogy(relbert_ckpt: str = None,
                         sims = [euclidean_distance(v_stem, v) for v in v_choice]
                     else:
                         raise ValueError(f'unknown distance function {distance_function}')
-                    if reverse_pair:
+                    if add_reverse_pair:
                         v_stem_r = embeddings_dict[str(tuple(single_data['stem'][::-1]))]
                         v_choice_r = [embeddings_dict[str(tuple(c[::-1]))] for c in single_data['choice']]
                         if distance_function == "cosine_similarity":

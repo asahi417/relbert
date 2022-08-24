@@ -43,28 +43,6 @@ experiment () {
   relbert_training 'average_no_mask' 'average-no-mask' "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}"
 }
 
-experiment "relbert/semeval2012_relational_similarity" "semeval2012"
 experiment "relbert/conceptnet_high_confidence" "conceptnet-hc"
-
-
-relbert_relation_mapping () {
-  DATA_ALIAS=${1}
-  LOSS=${2}
-  for PROMPT in "a" "b" "c" "d" "e"
-  do
-    for METHOD in "mask" "average" "average-no-mask"
-    do
-      CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
-      git clone "https://huggingface.co/relbert/${CKPT}"
-      relbert-eval --overwrite --type relation_mapping -c "${CKPT}" --export-dir "${CKPT}" -b 2048 --aggregation 'max'
-      relbert-push-to-hub -o 'relbert' -a "${CKPT}" -m "${CKPT}"
-      rm -rf "${CKPT}"
-    done
-  done
-}
-
-relbert_relation_mapping "semeval2012" "nce"
-relbert_relation_mapping "semeval2012" "triplet"
-relbert_relation_mapping "conceptnet-hc" "nce"
-
-relbert-eval -c "relbert-roberta-large" --type "analogy" --reverse-pair
+experiment "relbert/semeval2012_relational_similarity" "semeval2012"
+experiment "relbert/semeval2012_relational_similarity_v2" "semeval2012-v2"
