@@ -30,6 +30,10 @@ def main():
 
     export_dir = opt.ckpt_dir if opt.export_dir is None else opt.export_dir
     output_file = pj(export_dir, f'{opt.type}.json')
+    if opt.type == 'validation_loss':
+        assert opt.data is not None
+        output_file = output_file.replace('.json', f'.{os.path.basename(opt.datas)}.json')
+
     if os.path.exists(output_file):
         if opt.overwrite:
             logging.warning(f'overwrite the result {output_file}')
@@ -51,8 +55,6 @@ def main():
             "prediction": perms_full
         }
     elif opt.type == 'validation_loss':
-        assert opt.data is not None
-        output_file = output_file.replace('.json', f'.{os.path.basename(opt.datas)}.json')
         result = evaluate_validation_loss(
             validation_data=opt.data,
             relbert_ckpt=opt.ckpt_dir,

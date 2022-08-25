@@ -19,7 +19,7 @@ relbert_evaluation () {
 }
 
 
-relbert_evaluation "conceptnet-hc" "nce"
+relbert_evaluation "semeval2012-v2" "nce"
 relbert_evaluation "semeval2012" "triplet"
 relbert_evaluation "semeval2012" "nce"
-relbert_evaluation "semeval2012-v2" "nce"
+relbert_evaluation "conceptnet-hc" "nce"
