@@ -32,7 +32,7 @@ def main():
     output_file = pj(export_dir, f'{opt.type}.json')
     if opt.type == 'validation_loss':
         assert opt.data is not None
-        output_file = output_file.replace('.json', f'.{os.path.basename(opt.datas)}.json')
+        output_file = output_file.replace('.json', f'.{os.path.basename(opt.data)}.json')
 
     if os.path.exists(output_file):
         if opt.overwrite:
@@ -43,8 +43,7 @@ def main():
     if opt.type == 'classification':
         result = evaluate_classification(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch)
     elif opt.type == 'analogy':
-        result = evaluate_analogy(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, max_length=opt.max_length,
-                                  reverse_pair=opt.reverse_pair)
+        result = evaluate_analogy(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, max_length=opt.max_length)
     elif opt.type == 'relation_mapping':
         mean_accuracy, _, perms_full = evaluate_relation_mapping(
             relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, aggregation=opt.aggregation,
