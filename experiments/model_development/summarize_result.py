@@ -7,7 +7,6 @@ import pandas as pd
 
 MODEL = "roberta-large"
 METHODS = ["average", "mask", "average-no-mask"]
-# METHODS = ["average", "mask"]
 LOSS = ["nce", "triplet"]
 DATA = ["semeval2012-v2", "semeval2012", "conceptnet-hc"]
 PROMPT = ["a", "b", "c", "d", "e"]
@@ -40,6 +39,7 @@ def get_result():
             for p in PROMPT:
                 for m in METHODS:
                     v_loss = f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/validation_loss.json"
+                    v_loss_cn = f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/validation_loss.conceptnet_high_confidence.json"
                     result = {k: v for k, v in download(
                         f"analogy-{MODEL}-{d}-{m}-{p}-{l}.json",
                         f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/analogy.json"
@@ -51,7 +51,8 @@ def get_result():
                         "method": m,
                         "loss_value": download(
                             f"loss-{MODEL}-{d}-{m}-{p}-{l}.json",
-                            v_loss)['validation_loss']})
+                            v_loss)['validation_loss']
+                    })
                     result.update({k: v['test/f1_micro'] for k, v in download(
                         f"classification-{MODEL}-{d}-{m}-{p}-{l}.json",
                         f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/classification.json"
@@ -61,7 +62,12 @@ def get_result():
                         f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/relation_mapping.json"
                     )
                     result.update({'relation_mapping_accuracy': metric['accuracy']})
-
+                    if d != 'conceptnet-hc' and l == 'nce':
+                        result.update(
+                            {"loss_value_conceptnet": download(
+                                f"loss-{MODEL}-{d}-{m}-{p}-{l}.cn.json",
+                                v_loss_cn)['validation_loss']}
+                        )
                     output.append(result)
     return pd.DataFrame(output)
 

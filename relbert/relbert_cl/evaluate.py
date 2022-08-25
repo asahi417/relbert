@@ -22,6 +22,7 @@ def main():
                         default="cosine_similarity", type=str)
     parser.add_argument('--aggregation', help='aggregation function for relation mapping',
                         default="max", type=str)
+    parser.add_argument('--split', help='', default="validation", type=str, nargs="+")
     parser.add_argument('--cache-embedding-dir', help='aggregation function for relation mapping',
                         default="embeddings", type=str)
     parser.add_argument('--overwrite', help='', action='store_true')
@@ -33,7 +34,6 @@ def main():
     if opt.type == 'validation_loss':
         assert opt.data is not None
         output_file = output_file.replace('.json', f'.{os.path.basename(opt.data)}.json')
-
     if os.path.exists(output_file):
         if opt.overwrite:
             logging.warning(f'overwrite the result {output_file}')
@@ -54,11 +54,19 @@ def main():
             "prediction": perms_full
         }
     elif opt.type == 'validation_loss':
-        result = evaluate_validation_loss(
+        result_ = evaluate_validation_loss(
             validation_data=opt.data,
             relbert_ckpt=opt.ckpt_dir,
             batch_size=opt.batch,
-            max_length=opt.max_length)
+            max_length=opt.max_length,
+            split=opt.split
+        )
+        if os.path.exists(output_file):
+            with open(output_file) as f:
+                result = json.load(f)
+            result.update(result_)
+        else:
+            result = result_
     else:
         raise ValueError(f'unknown test type: {opt.type}')
     with open(output_file, 'w') as f:
