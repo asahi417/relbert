@@ -64,9 +64,19 @@ def get_result():
                     result.update({'relation_mapping_accuracy': metric['accuracy']})
                     if d != 'conceptnet-hc' and l == 'nce':
                         result.update(
-                            {"loss_value_conceptnet": download(
+                            {"loss_value_conceptnet (validation)": download(
                                 f"loss-{MODEL}-{d}-{m}-{p}-{l}.cn.json",
                                 v_loss_cn)['validation_loss']}
+                        )
+                        result.update(
+                            {"loss_value_conceptnet (train)": download(
+                                f"loss-{MODEL}-{d}-{m}-{p}-{l}.cn.json",
+                                v_loss_cn)['train_loss']}
+                        )
+                        result.update(
+                            {"loss_value_conceptnet (all)": download(
+                                f"loss-{MODEL}-{d}-{m}-{p}-{l}.cn.json",
+                                v_loss_cn)['train_validation_loss']}
                         )
                     output.append(result)
     return pd.DataFrame(output)

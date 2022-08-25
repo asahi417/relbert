@@ -22,6 +22,9 @@ relbert_evaluation "semeval2012" "triplet"
 relbert_evaluation "semeval2012" "nce"
 relbert_evaluation "semeval2012-v2" "nce"
 relbert_evaluation "conceptnet-hc" "nce"
+#relbert_evaluation "semeval2012" "loob"
+#relbert_evaluation "semeval2012-v2" "loob"
+#relbert_evaluation "conceptnet-hc" "loob"
 
 
 compute_loss_conceptnet () {
@@ -33,9 +36,9 @@ compute_loss_conceptnet () {
     do
       CKPT="relbert-roberta-large-${DATA_ALIAS}-${METHOD}-prompt-${PROMPT}-${LOSS}"
       git clone "https://huggingface.co/relbert/${CKPT}"
-      relbert-eval --overwrite --type validation_loss -d "relbert/conceptnet_high_confidence" -s 'validation' -c "${CKPT}" --export-dir "${CKPT}" -b 64
-      relbert-eval --overwrite --type validation_loss -d "relbert/conceptnet_high_confidence" -s 'train' -c "${CKPT}" --export-dir "${CKPT}" -b 64
-      relbert-eval --overwrite --type validation_loss -d "relbert/conceptnet_high_confidence" -s 'train' 'validation' -c "${CKPT}" --export-dir "${CKPT}" -b 64
+      relbert-eval --overwrite --type validation_loss -d "relbert/conceptnet_high_confidence" --split 'validation' -c "${CKPT}" --export-dir "${CKPT}" -b 64
+      relbert-eval --overwrite --type validation_loss -d "relbert/conceptnet_high_confidence" --split 'train' -c "${CKPT}" --export-dir "${CKPT}" -b 64
+      relbert-eval --overwrite --type validation_loss -d "relbert/conceptnet_high_confidence" --split 'train' 'validation' -c "${CKPT}" --export-dir "${CKPT}" -b 64
       relbert-push-to-hub -o 'relbert' -a "${CKPT}" -m "${CKPT}"
       rm -rf "${CKPT}"
     done

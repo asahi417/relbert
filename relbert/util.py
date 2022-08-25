@@ -56,14 +56,17 @@ class NCELoss:
                 nume_p = stack_sum([d for n, d in enumerate(dist) if rank[n] >= rank[i]])
                 deno_p = stack_sum([d for n, d in enumerate(dist) if rank[n] < rank[i]])
                 loss.append(- torch.log(nume_p / (deno_p + deno_n)))
-        elif self.loss_function == 'nce_logout':
+        elif self.loss_function in ['nce_logout', 'info_loob']:
             for i in range(batch_size_positive):
                 deno_n = torch.sum(torch.exp(
                     cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.temperature_nce_constant))
                 for p in range(batch_size_positive):
                     logit_p = torch.exp(
                         cos_1d(embedding_p[i], embedding_p[p]) / self.temperature_nce_constant)
-                    loss.append(- torch.log(logit_p / (logit_p + deno_n)))
+                    if self.loss_function == 'info_loob':
+                        loss.append(- torch.log(logit_p / deno_n))
+                    else:
+                        loss.append(- torch.log(logit_p / (logit_p + deno_n)))
         elif self.loss_function == 'nce_login':
             for i in range(batch_size_positive):
                 deno_n = torch.sum(torch.exp(
