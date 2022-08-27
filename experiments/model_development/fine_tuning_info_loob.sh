@@ -45,4 +45,3 @@ experiment () {
 
 
 experiment "relbert/semeval2012_relational_similarity" "semeval2012"
-experiment "relbert/semeval2012_relational_similarity_v2" "semeval2012-v2"
