@@ -2,6 +2,12 @@
 pip install umap-learn
 pip install hdbscan
 pip install seaborn
+
+export MODEL_ALIAS=relbert/relbert-roberta-large-semeval2012-average-prompt-d-nce
+python main.py
+
+export MODEL_ALIAS=relbert/relbert-roberta-large-semeval2012-average-no-mask-prompt-d-triplet
+python main.py
 """
 
 import os
@@ -15,10 +21,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from datasets import load_dataset
 from relbert import RelBERT
 from gensim.models import KeyedVectors
 from umap import UMAP
-
 
 MODEL_ALIAS = os.getenv("MODEL_ALIAS", "relbert/relbert-roberta-large-semeval2012-average-prompt-d-nce")
 # MODEL_ALIAS = os.getenv("MODEL_ALIAS", "relbert/relbert-roberta-large-semeval2012-average-no-mask-prompt-d-triplet")
@@ -27,11 +33,48 @@ concept_net_processed_file_dir = './data/conceptnet'
 gensim_file = f"data/{os.path.basename(MODEL_ALIAS)}"
 cluster_file = f"data/{os.path.basename(MODEL_ALIAS)}.cluster"
 embedding_file = f"data/{os.path.basename(MODEL_ALIAS)}.embedding"
-figure_file = f"data/{os.path.basename(MODEL_ALIAS)}.figure"
+figure_file = f"data/{os.path.basename(MODEL_ALIAS)}.figure.png"
 
 
 def get_term(arg):
     return arg.split('/en/')[-1].split('/')[0]
+
+
+######################
+# PROCESS CONCEPTNET #
+######################
+if len(glob(f'{concept_net_processed_file_dir}/*.jsonl')) == 0:
+    os.makedirs(concept_net_processed_file_dir, exist_ok=True)
+    dataset = load_dataset("conceptnet5", "conceptnet5", split="train")
+    dataset = dataset.filter(lambda example: example['lang'] == 'en')
+    dataset = dataset.sort('rel')
+
+    cur_relation_type = None
+    f = None
+    for i in tqdm(dataset):
+        if cur_relation_type is None or cur_relation_type != i['rel']:
+            cur_relation_type = i['rel']
+            if f is not None:
+                f.close()
+            _file = f'{concept_net_processed_file_dir}/cache_{os.path.basename(cur_relation_type)}.jsonl'
+            f = open(_file, 'w')
+        f.write(json.dumps({
+            'rel': i['rel'],
+            'arg1': i['arg1'],
+            'arg2': i['arg2'],
+            'sentence': i['sentence']
+        }) + '\n')
+    f.close()
+    # get statistics
+    table = {}
+    for i in glob(f'{concept_net_processed_file_dir}/*.jsonl'):
+        r_type = os.path.basename(i).replace('.jsonl', '')
+        with open(i) as f:
+            data = [json.loads(i) for i in f.read().split('\n') if len(i) > 0]
+        table[r_type] = len(data)
+    print(json.dumps(table, indent=4))
+    with open(f'data/conceptnet_stats.csv', 'w') as f:
+        json.dump(table, f)
 
 
 #################
@@ -228,4 +271,4 @@ plt.legend(handles=scatter.legend_elements(num=len(relation_type_dict))[0],
            labels=unique_relation_types,
            bbox_to_anchor=(1.04, 1),
            borderaxespad=0)
-plt.savefig(f'{figure_file}.png', bbox_inches='tight')
+plt.savefig(figure_file, bbox_inches='tight')
