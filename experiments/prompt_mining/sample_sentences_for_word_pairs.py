@@ -16,6 +16,7 @@ from relbert.lm import custom_prompter
 splitter = spacy.load('en_core_web_sm')
 export_dir = 'cache'
 os.makedirs(export_dir, exist_ok=True)
+max_size = 60000  # 6458670
 
 
 def split_sentence(document: str):
@@ -53,9 +54,10 @@ if __name__ == '__main__':
 
     if not os.path.exists(path_corpus):
         # wiki_dump
-        dataset = load_dataset("wikipedia", '20220301.en')
-        title = dataset['train']['title']
-        text = dataset['train']['text']
+        dataset = load_dataset("wikipedia", '20220301.en', split='train')
+        dataset.shuffle(seed=42)
+        title = dataset['train']['title'][:max_size]
+        text = dataset['train']['text'][:max_size]
         # filter the corpus
         text = filter_text(text, all_word_pairs, path_corpus)
 
