@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     if not os.path.exists(path_corpus):
         # wiki_dump
-        dataset = load_dataset("wikipedia", '20200501.en')
+        dataset = load_dataset("wikipedia", '20220301.en')
         title, text = dataset.data['train']
 
         # filter the corpus
