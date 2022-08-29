@@ -54,8 +54,8 @@ if __name__ == '__main__':
     if not os.path.exists(path_corpus):
         # wiki_dump
         dataset = load_dataset("wikipedia", '20220301.en')
-        title, text = dataset.data['train']
-
+        title = dataset['train']['title']
+        text = dataset['train']['text']
         # filter the corpus
         text = filter_text(text, all_word_pairs, path_corpus)
 
