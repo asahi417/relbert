@@ -153,7 +153,7 @@ if __name__ == '__main__':
         all_types = [f"{i['word_pair'][0]}-{i['word_pair'][1]}" for i in template_candid]
         key, cnt = np.unique(all_types, return_counts=True)
         freq = sorted(list(zip(key.tolist(), cnt.tolist())), key=lambda x: x[1], reverse=True)
-
+    input('CHECKPOINT')
     #############################
     # create template candidate #
     #############################
