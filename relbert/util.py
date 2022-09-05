@@ -1,4 +1,8 @@
 import random
+import logging
+from itertools import permutations, product
+from tqdm import tqdm
+
 import numpy as np
 import torch
 
@@ -18,6 +22,7 @@ def stack_sum(_list):
 
 cos_2d = torch.nn.CosineSimilarity(dim=1)
 cos_1d = torch.nn.CosineSimilarity(dim=0)
+bce = torch.nn.BCELoss()
 
 
 class NCELoss:
@@ -25,10 +30,28 @@ class NCELoss:
     def __init__(self,
                  loss_function,
                  temperature_nce_constant,
-                 temperature_nce_rank=None):
+                 temperature_nce_rank=None,
+                 classification_loss: bool = False,
+                 hidden_size: int = None,
+                 device=None,
+                 parallel=False):
         self.loss_function = loss_function
         self.temperature_nce_constant = temperature_nce_constant
         self.temperature_nce_rank = temperature_nce_rank
+        self.classification_loss = classification_loss
+        self.hidden_size = hidden_size
+        self.device = device
+        if classification_loss:
+            logging.info('activate classification loss')
+            assert self.hidden_size, '`hidden_size` should be specified'
+            assert self.device, '`device` should be specified'
+            self.linear = torch.nn.Linear(self.hidden_size * 3, 1)  # three way feature
+            self.linear.weight.data.normal_(std=0.02)
+            self.linear.to(self.device)
+            if parallel:
+                self.linear = torch.nn.DataParallel(self.linear)
+        else:
+            self.linear = self.discriminative_loss = None
 
     def get_rank_temperature(self, i, n):
         assert i <= n, f"{i}, {n}"
@@ -74,7 +97,27 @@ class NCELoss:
                 logit_p = torch.sum(torch.exp(
                     cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.temperature_nce_constant))
                 loss.append(- torch.log(logit_p / (logit_p + deno_n)))
+        elif self.loss_function == 'triplet':
+            pass
         else:
             raise ValueError(f"unknown loss function {self.loss_function}")
         loss = stack_sum(loss)
+        if self.linear is not None:
+            logging.info('computing classification loss')
+            features = []
+            labels = []
+            for i, j in permutations(range(batch_size_positive), 2):
+                features.append(torch.cat(
+                    [embedding_p[i], embedding_p[j], torch.abs(embedding_p[i] - embedding_p[j])],
+                    dim=1))
+                labels.append(1)
+            for i, j in product(range(batch_size_positive), range(len(embedding_n))):
+                features.append(torch.cat(
+                    [embedding_p[i], embedding_n[j], torch.abs(embedding_p[i] - embedding_n[j])],
+                    dim=1))
+                labels.append(0)
+            for feature, label in tqdm(list(zip(features, labels))):
+                pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
+                label = torch.tensor([label], dtype=torch.float32, device=self.device)
+                loss += bce(pred, label.unsqueeze(-1))
         return loss

@@ -1,4 +1,7 @@
-""" RelBERT fine-tuning with NCE loss """
+""" RelBERT fine-tuning with NCE loss
+TODO: add classification loss as another argument?
+TODO: argument to switch validation loss
+"""
 import os
 import logging
 import random
@@ -55,10 +58,14 @@ class Trainer:
                  model: str = 'roberta-large',
                  max_length: int = 64,
                  mode: str = 'average_no_mask',
-                 data: str = 'semeval2012',
+                 data: str = 'relbert/semeval2012_relational_similarity',
+                 split: str = 'train',
+                 data_eval: str = 'relbert/semeval2012_relational_similarity',
+                 split_eval: str = 'validation',
                  template_mode: str = 'manual',
                  template: str = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>",
                  loss_function: str = 'nce_rank',
+                 classification_loss: bool = False,
                  temperature_nce_type: str = 'linear',
                  temperature_nce_constant: float = 1.0,
                  temperature_nce_min: float = 0.1,
@@ -72,7 +79,8 @@ class Trainer:
                  lr_warmup: int = 100,
                  weight_decay: float = 0,
                  random_seed: int = 0,
-                 exclude_relation: List or str = None):
+                 exclude_relation: List or str = None,
+                 exclude_relation_eval: List or str = None,):
         assert not os.path.exists(export), f'{export} is taken, use different name'
         # config
         self.config = dict(
@@ -80,9 +88,13 @@ class Trainer:
             max_length=max_length,
             mode=mode,
             data=data,
+            split=split,
+            data_eval=data_eval,
+            split_eval=split_eval,
             template_mode=template_mode,
             template=template,
             loss_function=loss_function,
+            classification_loss=classification_loss,
             temperature_nce_constant=temperature_nce_constant,
             temperature_nce_rank={'min': temperature_nce_min, 'max': temperature_nce_max, 'type': temperature_nce_type},
             epoch=epoch,
@@ -93,6 +105,7 @@ class Trainer:
             weight_decay=weight_decay,
             random_seed=random_seed,
             exclude_relation=exclude_relation,
+            exclude_relation_eval=exclude_relation_eval,
             n_sample=n_sample,
             gradient_accumulation=gradient_accumulation
         )
@@ -117,9 +130,12 @@ class Trainer:
         self.parallel = self.model.parallel
         fix_seed(self.config['random_seed'])
         # get dataset
-        self.data = load_dataset(self.config['data'], split='train')
+        self.data = load_dataset(self.config['data'], split=self.config['split'])
         if self.config['exclude_relation'] is not None:
             self.data = self.data.filter(lambda x: x['relation_type'] not in self.config['exclude_relation'])
+        self.data_eval = load_dataset(self.config['data_eval'], split=self.config['split_eval'])
+        if self.config['exclude_relation_eval'] is not None:
+            self.data_eval = self.data_eval.filter(lambda x: x['relation_type'] not in self.config['exclude_relation_eval'])
 
         self.model_parameters = list(self.model.model.named_parameters())
 
@@ -162,11 +178,17 @@ class Trainer:
                 'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
                 'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
             }
-        relation_keys = self.data['relation_type']
+        relation_keys = list(self.data['relation_type'])
         logging.info(f'start model training: {len(relation_keys)} relations')
-        nce_loss = NCELoss(self.config['loss_function'],
-                           self.config['temperature_nce_constant'],
-                           self.config['temperature_nce_rank'])
+        nce_loss = NCELoss(
+            loss_function=self.config['loss_function'],
+            temperature_nce_constant=self.config['temperature_nce_constant'],
+            temperature_nce_rank=self.config['temperature_nce_rank'],
+            classification_loss=self.config['classification_loss'],
+            hidden_size=self.model.hidden_size,
+            device=self.device,
+            parallel=self.parallel
+        )
 
         self.save(0)
 
@@ -223,11 +245,11 @@ class Trainer:
             config['epoch'] = current_epoch + 1
             json.dump(config, f)
         v_loss = evaluate_validation_loss(
-            validation_data=self.config['data'],
+            validation_data=self.config['data_eval'],
+            split=self.config['split_eval'],
             relbert_ckpt=cache_dir,
             batch_size=self.config['batch'],
-            max_length=self.config['max_length'],
-            exclude_relation=self.config['exclude_relation']
+            max_length=self.config['max_length']
         )
         with open(pj(cache_dir, 'validation_loss.json'), 'w') as f:
             json.dump(v_loss, f)

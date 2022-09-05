@@ -27,6 +27,7 @@ def main():
                         default="embeddings", type=str)
     parser.add_argument('--overwrite', help='', action='store_true')
     parser.add_argument('--reverse-pair', help='', action='store_true')
+    parser.add_argument('--exclude-relation', help='', default=None, type=str, nargs="+")
     opt = parser.parse_args()
 
     export_dir = opt.ckpt_dir if opt.export_dir is None else opt.export_dir
@@ -41,7 +42,7 @@ def main():
             logging.info(f'result already exists at {output_file}. add `--overwrite` to overwrite the result.')
             return
     if opt.type == 'classification':
-        result = evaluate_classification(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch)
+        result = evaluate_classification(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch,)
     elif opt.type == 'analogy':
         result = evaluate_analogy(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, max_length=opt.max_length)
     elif opt.type == 'relation_mapping':
@@ -59,7 +60,8 @@ def main():
             relbert_ckpt=opt.ckpt_dir,
             batch_size=opt.batch,
             max_length=opt.max_length,
-            split=opt.split
+            split=opt.split,
+            exclude_relation=opt.exclude_relation
         )
         if os.path.exists(output_file):
             with open(output_file) as f:

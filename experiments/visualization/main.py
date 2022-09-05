@@ -100,7 +100,7 @@ if not os.path.exists(f'{gensim_file}.bin'):
     pbar = tqdm(total=len(word_pairs))
     print(f'generate gensim file `{gensim_file}.txt`')
     with open(f'{gensim_file}.txt', 'w', encoding='utf-8') as f:
-        f.write(str(len(word_pairs)) + " " + str(model.model.config.hidden_size) + "\n")
+        f.write(str(len(word_pairs)) + " " + str(model.hidden_size) + "\n")
         while True:
             if chunk_start == chunk_end:
                 break

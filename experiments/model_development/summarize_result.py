@@ -7,7 +7,7 @@ import pandas as pd
 
 MODEL = "roberta-large"
 METHODS = ["average", "mask", "average-no-mask"]
-LOSS = ["nce", "triplet"]
+LOSS = ["nce", "triplet", 'loob']
 DATA = ["semeval2012-v2", "semeval2012", "conceptnet-hc"]
 PROMPT = ["a", "b", "c", "d", "e"]
 
@@ -62,7 +62,7 @@ def get_result():
                         f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/relation_mapping.json"
                     )
                     result.update({'relation_mapping_accuracy': metric['accuracy']})
-                    if d != 'conceptnet-hc' and l == 'nce':
+                    if d != 'conceptnet-hc' and l != 'triplet':
                         result.update(
                             {"loss_value_conceptnet (validation)": download(
                                 f"loss-{MODEL}-{d}-{m}-{p}-{l}.cn.json",

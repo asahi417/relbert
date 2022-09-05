@@ -16,9 +16,14 @@ def main():
     parser.add_argument('--max-length', help='', default=64, type=int)
     parser.add_argument('--mode', help='', default='average_no_mask', type=str)
     parser.add_argument('--data', help='', default='relbert/semeval2012_relational_similarity', type=str)
+    parser.add_argument('--split', help='', default='train', type=str)
+    parser.add_argument('--data-eval', help='', default='relbert/semeval2012_relational_similarity', type=str)
+    parser.add_argument('--split-eval', help='', default='validation', type=str)
+
     parser.add_argument('--template-mode', help='', default='manual', type=str)
     parser.add_argument('-t', '--template', help='', default=TEMP, type=str)
     parser.add_argument('-l', '--loss-function', help='', default='nce_logout', type=str)
+    parser.add_argument('-c', '--classification-loss', help='', action='store_true')
     parser.add_argument('--temperature-nce-type', help='', default='linear', type=str)
     parser.add_argument('--temperature-nce-constant', help='', default=1.0, type=float)
     parser.add_argument('--temperature-nce-min', help='', default=0.1, type=float)
@@ -32,6 +37,7 @@ def main():
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
     parser.add_argument("--weight-decay", help="", default=0, type=float)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
+    parser.add_argument('--exclude-relation-eval', help="", nargs='+', default=None, type=str)
     parser.add_argument('--epoch-save', help='', default=1, type=int)
     parser.add_argument('-g', '--grad', help='', default=4, type=int)
     parser.add_argument('--export', help='', required=True, type=str)
@@ -43,9 +49,13 @@ def main():
         max_length=opt.max_length,
         mode=opt.mode,
         data=opt.data,
+        split=opt.split,
+        data_eval=opt.data_eval,
+        split_eval=opt.split_eval,
         template_mode=opt.template_mode,
         template=opt.template,
         loss_function=opt.loss_function,
+        classification_loss=opt.classification_loss,
         temperature_nce_type=opt.temperature_nce_type,
         temperature_nce_constant=opt.temperature_nce_constant,
         temperature_nce_min=opt.temperature_nce_min,
@@ -59,7 +69,9 @@ def main():
         weight_decay=opt.weight_decay,
         random_seed=opt.random_seed,
         gradient_accumulation=opt.grad,
-        exclude_relation=opt.exclude_relation)
+        exclude_relation=opt.exclude_relation,
+        exclude_relation_eval=opt.exclude_relation_eval
+    )
 
     # add file handler
     logger = logging.getLogger()
