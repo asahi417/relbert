@@ -148,7 +148,8 @@ class RelBERT:
                 raise ValueError('not implemented yet')
         self.tokenizer = load_class(transformers.AutoTokenizer, model)
         self.model = load_class(transformers.AutoModel, model, self.model_config)
-
+        self.hidden_size = self.model.config.hidden_size
+        
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
         self.parallel = False
@@ -156,7 +157,7 @@ class RelBERT:
             self.parallel = True
             self.model = torch.nn.DataParallel(self.model)
         self.model.to(self.device)
-        self.hidden_size = self.model.config.hidden_size
+
 
     def train(self): self.model.train()
 
