@@ -103,17 +103,27 @@ class NCELoss:
             raise ValueError(f"unknown loss function {self.loss_function}")
         loss = stack_sum(loss)
         if self.linear is not None:
-            logging.info('computing classification loss')
-            for i, j in permutations(range(batch_size_positive), 2):
-                feature = torch.cat(
-                    [embedding_p[i], embedding_p[j], torch.abs(embedding_p[i] - embedding_p[j])],
-                    dim=0)
-                pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
-                loss += bce(pred, torch.tensor([1], dtype=torch.float32, device=self.device).unsqueeze(-1))
-            for i, j in product(range(batch_size_positive), range(len(embedding_n))):
-                feature = torch.cat(
-                    [embedding_p[i], embedding_n[j], torch.abs(embedding_p[i] - embedding_n[j])],
-                    dim=0)
-                pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
-                loss += bce(pred, torch.tensor([0], dtype=torch.float32, device=self.device).unsqueeze(-1))
+            # logging.info('computing classification loss')
+            for i in range(batch_size_positive):
+                features = []
+                labels = []
+                for j in range(batch_size_positive):
+                    feature = torch.cat(
+                        [embedding_p[i], embedding_p[j], torch.abs(embedding_p[i] - embedding_p[j])],
+                        dim=0)
+                    features.append(feature)
+                    labels.append([1])
+                    # pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
+                    # loss += bce(pred, torch.tensor([1], dtype=torch.float32, device=self.device).unsqueeze(-1))
+                for j in range(len(embedding_n)):
+                    feature = torch.cat(
+                        [embedding_p[i], embedding_n[j], torch.abs(embedding_p[i] - embedding_n[j])],
+                        dim=0)
+                    features.append(feature)
+                    labels.append([0])
+                    # pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
+                    # loss += bce(pred, torch.tensor([0], dtype=torch.float32, device=self.device).unsqueeze(-1))
+                pred = torch.sigmoid(self.linear(torch.stack(features)))
+                labels = torch.tensor(labels, dtype=torch.float32, device=self.device)
+                loss += bce(pred, labels)
         return loss
