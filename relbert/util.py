@@ -33,12 +33,16 @@ class NCELoss:
                  temperature_nce_rank=None,
                  classification_loss: bool = False,
                  hidden_size: int = None,
+                 margin: int = 1,
+                 boundary: int = 0,
                  device=None,
                  parallel=False):
         self.loss_function = loss_function
         self.temperature_nce_constant = temperature_nce_constant
         self.temperature_nce_rank = temperature_nce_rank
         self.classification_loss = classification_loss
+        self.margin = margin
+        self.boundary = boundary
         self.hidden_size = hidden_size
         self.device = device
         if classification_loss:
@@ -98,12 +102,19 @@ class NCELoss:
                     cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.temperature_nce_constant))
                 loss.append(- torch.log(logit_p / (logit_p + deno_n)))
         elif self.loss_function == 'triplet':
-            pass
+            for i in range(batch_size_positive):
+                distance_positive = []
+                distance_negative = []
+                for p in range(batch_size_positive):
+                    distance_positive.append(torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5)
+                for n in range(len(embedding_n)):
+                    distance_negative.append(torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5)
+                for d_p, d_n in product(distance_positive, distance_negative):
+                    loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
         else:
             raise ValueError(f"unknown loss function {self.loss_function}")
         loss = stack_sum(loss)
         if self.linear is not None:
-            # logging.info('computing classification loss')
             for i in range(batch_size_positive):
                 features = []
                 labels = []
@@ -113,16 +124,12 @@ class NCELoss:
                         dim=0)
                     features.append(feature)
                     labels.append([1])
-                    # pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
-                    # loss += bce(pred, torch.tensor([1], dtype=torch.float32, device=self.device).unsqueeze(-1))
                 for j in range(len(embedding_n)):
                     feature = torch.cat(
                         [embedding_p[i], embedding_n[j], torch.abs(embedding_p[i] - embedding_n[j])],
                         dim=0)
                     features.append(feature)
                     labels.append([0])
-                    # pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
-                    # loss += bce(pred, torch.tensor([0], dtype=torch.float32, device=self.device).unsqueeze(-1))
                 pred = torch.sigmoid(self.linear(torch.stack(features)))
                 labels = torch.tensor(labels, dtype=torch.float32, device=self.device)
                 loss += bce(pred, labels)
