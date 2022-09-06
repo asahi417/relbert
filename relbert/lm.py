@@ -172,7 +172,7 @@ class RelBERT:
     def encode_word_pairs(self, word_pairs):
         """ return a dictionary of word_pair: encode
         if return_list is True, return encode of every word_pairs with same order.
-        otherwise, rerturn dictionary
+        otherwise, return dictionary
         """
 
         def pool_map(_list):

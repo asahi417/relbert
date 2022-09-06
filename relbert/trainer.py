@@ -6,8 +6,9 @@ import os
 import logging
 import random
 import json
+import statistics
 from itertools import chain
-from typing import List
+from typing import List, Dict
 from tqdm import tqdm
 from glob import glob
 from os.path import join as pj
@@ -80,7 +81,7 @@ class Trainer:
                  weight_decay: float = 0,
                  random_seed: int = 0,
                  exclude_relation: List or str = None,
-                 exclude_relation_eval: List or str = None,):
+                 exclude_relation_eval: List or str = None):
         assert not os.path.exists(export), f'{export} is taken, use different name'
         # config
         self.config = dict(
@@ -156,6 +157,45 @@ class Trainer:
             num_warmup_steps=self.config['lr_warmup'],
             num_training_steps=self.config['epoch'] if self.config['lr_decay'] else None)
 
+    def compute_loss(self, encoded_pairs_dict_eval, batch_size: int):
+        with torch.no_grad():
+            nce_loss = NCELoss(
+                loss_function=self.config['loss_function'],
+                temperature_nce_constant=self.config['temperature_nce_constant'],
+                temperature_nce_rank=self.config['temperature_nce_rank'],
+                classification_loss=False,
+                hidden_size=self.model.hidden_size,
+                device=self.device,
+                parallel=self.parallel
+            )
+            total_loss = []
+            loader_dict = {}
+            for example in self.data_eval:
+                pairs_p = example['positives']
+                pairs_n = example['negatives']
+                k = example['relation_type']
+                dataset_p = Dataset([encoded_pairs_dict_eval['__'.join(k)] for k in pairs_p], return_ranking=True)
+                dataset_n = Dataset([encoded_pairs_dict_eval['__'.join(k)] for k in pairs_n], return_ranking=False)
+                loader_dict[k] = {
+                    'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
+                    'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
+                }
+
+            for n, relation_key in tqdm(list(enumerate(self.data_eval['relation_type']))):
+                # data loader will return full instances
+                x_p = next(iter(loader_dict[relation_key]['positive']))
+                x_n = next(iter(loader_dict[relation_key]['negative']))
+                # data loader will return full instances
+                x = {k: torch.concat([x_p[k], x_n[k]]) for k in x_n.keys()}
+                embedding = self.model.to_embedding(x, batch_size=batch_size)
+                batch_size_positive = len(x_p['input_ids'])
+                embedding_p = embedding[:batch_size_positive]
+                embedding_n = embedding[batch_size_positive:]
+                rank = x_p.pop('ranking').cpu().tolist()
+                loss = nce_loss(embedding_p, embedding_n, rank).cpu().tolist()
+                total_loss.append(loss)
+        return statistics.mean(total_loss)
+
     def cap_tensor(self, _tensor): return _tensor[:min(len(_tensor), self.config['n_sample'])]
 
     def train(self, epoch_save: int = 1):
@@ -166,7 +206,10 @@ class Trainer:
         epoch_save : int
             Epoch to run validation eg) Every 100000 epoch, it will save model weight as default.
         """
-        encoded_pairs_dict = self.model.encode_word_pairs(list(chain(*(self.data['positives'] + self.data['negatives']))))
+        encoded_pairs_dict = self.model.encode_word_pairs(
+            list(chain(*(self.data['positives'] + self.data['negatives']))))
+        encoded_pairs_dict_eval = self.model.encode_word_pairs(
+            list(chain(*(self.data_eval['positives'] + self.data_eval['negatives']))))
         loader_dict = {}
         for example in self.data:
             pairs_p = example['positives']
@@ -190,7 +233,7 @@ class Trainer:
             parallel=self.parallel
         )
 
-        self.save(0)
+        # self.save(0)
 
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
@@ -223,9 +266,11 @@ class Trainer:
             logging.info(f"[epoch {e + 1}/{self.config['epoch']} complete] average loss: {mean_loss}, lr: {lr}")
 
             if (e + 1) % epoch_save == 0 and (e + 1) != 0:
-                self.save(e)
+                v_loss = self.compute_loss(encoded_pairs_dict_eval, batch_size=self.config['batch'])
+                self.save(e, v_loss)
 
-        self.save(self.config['epoch'] - 1)
+        v_loss = self.compute_loss(encoded_pairs_dict_eval, batch_size=self.config['batch'])
+        self.save(self.config['epoch'] - 1, v_loss)
         logging.info(f'complete training: model ckpt was saved at {self.export_dir}')
         # choose the best model
         ckpt_loss = []
@@ -236,7 +281,7 @@ class Trainer:
         best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
         copy_tree(best_ckpt, pj(self.export_dir, 'best_model'))
 
-    def save(self, current_epoch):
+    def save(self, current_epoch, v_loss):
         cache_dir = pj(self.export_dir, f'epoch_{current_epoch + 1}')
         os.makedirs(cache_dir, exist_ok=True)
         self.model.save(cache_dir)
@@ -244,12 +289,10 @@ class Trainer:
             config = self.config.copy()
             config['epoch'] = current_epoch + 1
             json.dump(config, f)
-        v_loss = evaluate_validation_loss(
-            validation_data=self.config['data_eval'],
-            split=self.config['split_eval'],
-            relbert_ckpt=cache_dir,
-            batch_size=self.config['batch'],
-            max_length=self.config['max_length']
-        )
         with open(pj(cache_dir, 'validation_loss.json'), 'w') as f:
-            json.dump(v_loss, f)
+            result = {
+                f'{self.config["split_eval"]}_loss': v_loss,
+                f'{self.config["split_eval"]}_data': self.config["data_eval"],
+                f'{self.config["split_eval"]}_data/exclude_relation': self.config["exclude_relation_eval"]
+            }
+            json.dump(result, f)
