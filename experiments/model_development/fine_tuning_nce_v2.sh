@@ -26,6 +26,7 @@ relbert_evaluation () {
   DATA_ALIAS=${1}
   LOSS_ALIAS=${2}
   MODE=${3}
+#  for PROMPT in "c" "d" "e"
   for PROMPT in "a" "b" "c" "d" "e"
   do
     CKPT="${MODEL}-${DATA_ALIAS}-${MODE//_/-}-prompt-${PROMPT}-${LOSS_ALIAS}-classification"
@@ -46,8 +47,8 @@ experiment () {
   LOSS_ALIAS=${3}
   for MODE in "mask" "average" "average_no_mask"
   do
-    relbert_training ${MODE} "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}"
-    relbert_training ${MODE} "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}"
+#    relbert_training ${MODE} "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}"
+#    relbert_training ${MODE} "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}"
     relbert_training ${MODE} "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}"
     relbert_training ${MODE} "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}"
     relbert_training ${MODE} "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}"

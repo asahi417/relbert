@@ -19,7 +19,6 @@ from torch.optim.lr_scheduler import LambdaLR
 from datasets import load_dataset
 from .lm import RelBERT, Dataset
 from .util import fix_seed, NCELoss
-from .evaluation.validation_loss import evaluate_validation_loss
 
 
 def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_steps=None, last_epoch=-1):
@@ -232,8 +231,6 @@ class Trainer:
             device=self.device,
             parallel=self.parallel
         )
-
-        # self.save(0)
 
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
