@@ -104,20 +104,16 @@ class NCELoss:
         loss = stack_sum(loss)
         if self.linear is not None:
             logging.info('computing classification loss')
-            features = []
-            labels = []
             for i, j in permutations(range(batch_size_positive), 2):
-                features.append(torch.cat(
+                feature = torch.cat(
                     [embedding_p[i], embedding_p[j], torch.abs(embedding_p[i] - embedding_p[j])],
-                    dim=0))
-                labels.append(1)
-            for i, j in product(range(batch_size_positive), range(len(embedding_n))):
-                features.append(torch.cat(
-                    [embedding_p[i], embedding_n[j], torch.abs(embedding_p[i] - embedding_n[j])],
-                    dim=0))
-                labels.append(0)
-            for feature, label in tqdm(list(zip(features, labels))):
+                    dim=0)
                 pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
-                label = torch.tensor([label], dtype=torch.float32, device=self.device)
-                loss += bce(pred, label.unsqueeze(-1))
+                loss += bce(pred, torch.tensor([1], dtype=torch.float32, device=self.device).unsqueeze(-1))
+            for i, j in product(range(batch_size_positive), range(len(embedding_n))):
+                feature = torch.cat(
+                    [embedding_p[i], embedding_n[j], torch.abs(embedding_p[i] - embedding_n[j])],
+                    dim=0)
+                pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
+                loss += bce(pred, torch.tensor([0], dtype=torch.float32, device=self.device).unsqueeze(-1))
         return loss
