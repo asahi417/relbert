@@ -103,7 +103,7 @@ class RelBERT:
     def __init__(self,
                  model: str = 'relbert/relbert-roberta-large',
                  max_length: int = 64,
-                 mode: str = 'average_no_mask',
+                 mode: str = 'mask',
                  template_mode: str = 'manual',
                  template: str = None,
                  truncate_exceed_tokens: bool = True):
@@ -149,7 +149,7 @@ class RelBERT:
         self.tokenizer = load_class(transformers.AutoTokenizer, model)
         self.model = load_class(transformers.AutoModel, model, self.model_config)
         self.hidden_size = self.model.config.hidden_size
-        
+
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
         self.parallel = False
@@ -157,7 +157,6 @@ class RelBERT:
             self.parallel = True
             self.model = torch.nn.DataParallel(self.model)
         self.model.to(self.device)
-
 
     def train(self): self.model.train()
 
@@ -244,7 +243,6 @@ class RelBERT:
         with torch.no_grad():
             for encode in data_loader:
                 h_list += self.to_embedding(encode).cpu().tolist()
-        # h_list = self.to_embedding(encode, batch_size=batch_size).cpu().tolist()
         h_dict = {p: h for h, p in zip(h_list, pair_key)}
         h_return = [h_dict['__'.join(p)] for p in x]
         if is_single_list:

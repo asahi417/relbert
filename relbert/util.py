@@ -109,12 +109,12 @@ class NCELoss:
             for i, j in permutations(range(batch_size_positive), 2):
                 features.append(torch.cat(
                     [embedding_p[i], embedding_p[j], torch.abs(embedding_p[i] - embedding_p[j])],
-                    dim=1))
+                    dim=0))
                 labels.append(1)
             for i, j in product(range(batch_size_positive), range(len(embedding_n))):
                 features.append(torch.cat(
                     [embedding_p[i], embedding_n[j], torch.abs(embedding_p[i] - embedding_n[j])],
-                    dim=1))
+                    dim=0))
                 labels.append(0)
             for feature, label in tqdm(list(zip(features, labels))):
                 pred = torch.sigmoid(self.linear(feature.unsqueeze(0)))
