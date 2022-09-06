@@ -111,7 +111,7 @@ class Trainer:
         )
         logging.info('hyperparameters')
         for k, v in self.config.items():
-            logging.info('\t * {}: {}'.format(k, str(v)[:min(100, len(str(v)))]))
+            logging.info(f'\t * {k}: {str(v)[:min(100, len(str(v)))]}')
         self.model = RelBERT(
             model=self.config['model'],
             max_length=self.config['max_length'],
@@ -119,7 +119,7 @@ class Trainer:
             template_mode=self.config['template_mode'],
             template=self.config['template'])
         self.model.train()
-        assert not self.model.is_trained, '{} is already trained'.format(model)
+        assert not self.model.is_trained, f'{model} is already trained'
         
         self.export_dir = export
         if not os.path.exists(pj(self.export_dir, 'trainer_config.json')):
@@ -230,8 +230,8 @@ class Trainer:
         # choose the best model
         ckpt_loss = []
         for i in glob(pj(self.export_dir, 'epoch_*')):
-            with open(pj(i, 'validation_loss.json')) as f:
-                loss = json.load(f)['validation_loss']
+            with open(pj(i, f'{self.config["split_eval"]}_loss.json')) as f:
+                loss = json.load(f)[f'{self.config["split_eval"]}_loss']
             ckpt_loss.append([i, loss])
         best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
         copy_tree(best_ckpt, pj(self.export_dir, 'best_model'))
