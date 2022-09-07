@@ -15,9 +15,9 @@ relbert_training() {
   LOSS=${6}
   LOSS_ALIAS=${7}
   CKPT="relbert_output/models/${TEMPLATE_ID}.${LOSS}.${MODE}.${MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}.classification"
-  relbert-train -m "${MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample ${NSAMPLE} --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
-    --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" -c \
-    -t "${TEMPLATE}" --data "${DATA}" --split "train" --data-eval "relbert/conceptnet_high_confidence" --split-eval "full"
+#  relbert-train -m "${MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample ${NSAMPLE} --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
+#    --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" -c \
+#    -t "${TEMPLATE}" --data "${DATA}" --split "train" --data-eval "relbert/conceptnet_high_confidence" --split-eval "full"
   relbert-push-to-hub -o relbert -m "${CKPT}/best_model" -a "${MODEL}-${DATA_ALIAS}-${MODE//_/-}-prompt-${TEMPLATE_ID}-${LOSS_ALIAS}-classification"
 }
 
@@ -26,7 +26,6 @@ relbert_evaluation () {
   DATA_ALIAS=${1}
   LOSS_ALIAS=${2}
   MODE=${3}
-#  for PROMPT in "c" "d" "e"
   for PROMPT in "a" "b" "c" "d" "e"
   do
     CKPT="${MODEL}-${DATA_ALIAS}-${MODE//_/-}-prompt-${PROMPT}-${LOSS_ALIAS}-classification"

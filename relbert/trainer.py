@@ -272,7 +272,7 @@ class Trainer:
         # choose the best model
         ckpt_loss = []
         for i in glob(pj(self.export_dir, 'epoch_*')):
-            with open(pj(i, f'{self.config["split_eval"]}_loss.json')) as f:
+            with open(pj(i, 'validation_loss.json')) as f:
                 loss = json.load(f)[f'{self.config["split_eval"]}_loss']
             ckpt_loss.append([i, loss])
         best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
