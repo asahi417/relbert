@@ -1,7 +1,6 @@
 import random
 import logging
-from itertools import permutations, product
-from tqdm import tqdm
+from itertools import product
 
 import numpy as np
 import torch
@@ -89,7 +88,8 @@ class NCELoss:
                     cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.temperature_nce_constant))
                 for p in range(batch_size_positive):
                     logit_p = torch.exp(
-                        cos_1d(embedding_p[i], embedding_p[p]) / self.temperature_nce_constant)
+                        cos_1d(embedding_p[i], embedding_p[p]) / self.temperature_nce_constant
+                    )
                     if self.loss_function == 'info_loob':
                         loss.append(- torch.log(logit_p / deno_n))
                     else:

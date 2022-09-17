@@ -43,7 +43,6 @@ from itertools import permutations
 from os.path import join as pj
 from tqdm import tqdm
 
-# import pandas as pd
 from numpy import dot
 from numpy.linalg import norm
 from relbert import RelBERT
@@ -125,8 +124,11 @@ def evaluate_relation_mapping(relbert_ckpt: str = None,
                 list_sim.append(sim[_id])
             perms.append({'target': tmp_target, 'similarity_mean': mean(list_sim), 'similarity_max': max(list_sim)})
         sims_full.extend([{'pair': k, 'sim': v, 'data_id': data_id} for k, v in sim.items()])
-        pred = sorted(perms, key=lambda _x: _x[f'similarity_{aggregation}'], reverse=True)
-        # accuracy.extend([t == p for t, p in zip(target, pred[0]['target'])])
+        max_sim_score = max(_x[f'similarity_{aggregation}'] for _x in perms)
+        pred = [_x for _x in perms if _x[f'similarity_{aggregation}'] == max_sim_score]
+        assert len(pred) != 0, f'{pred}, {max_sim_score}'
+        if len(pred) != 1:
+            pred = sorted(pred, key=lambda _x: _x['similarity_mean'], reverse=True)
         accuracy.append(mean([int(t == p) for t, p in zip(target, pred[0]['target'])]))
         tmp = [i for i in perms if list(i['target']) == target]
         assert len(tmp) == 1, perms
