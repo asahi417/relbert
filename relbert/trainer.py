@@ -273,7 +273,8 @@ class Trainer:
         ckpt_loss = []
         for i in glob(pj(self.export_dir, 'epoch_*')):
             with open(pj(i, 'validation_loss.json')) as f:
-                loss = json.load(f)[f'{self.config["split_eval"]}_loss']
+                loss = json.load(f)["loss"]
+                # loss = json.load(f)[f'{self.config["split_eval"]}_loss']
             ckpt_loss.append([i, loss])
         best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
         copy_tree(best_ckpt, pj(self.export_dir, 'best_model'))
@@ -288,8 +289,12 @@ class Trainer:
             json.dump(config, f)
         with open(pj(cache_dir, 'validation_loss.json'), 'w') as f:
             result = {
-                f'{self.config["split_eval"]}_loss': v_loss,
-                f'{self.config["split_eval"]}_data': self.config["data_eval"],
-                f'{self.config["split_eval"]}_data/exclude_relation': self.config["exclude_relation_eval"]
+                "split": self.config["split_eval"],
+                "loss": v_loss,
+                "data": self.config["data_eval"],
+                "exclude_relation": self.config["exclude_relation_eval"],
+                # f'{self.config["split_eval"]}_loss': v_loss,
+                # f'{self.config["split_eval"]}_data': self.config["data_eval"],
+                # f'{self.config["split_eval"]}_data/exclude_relation': self.config["exclude_relation_eval"]
             }
             json.dump(result, f)

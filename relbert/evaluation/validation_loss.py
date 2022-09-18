@@ -90,10 +90,16 @@ def evaluate_validation_loss(validation_data: str,
             temperature_nce_constant=temperature_nce_constant,
             split=split)
     split_alias = split if type(split) is str else '_'.join(sorted(split))
+    # result = {
+    #     f'{split_alias}_loss': validation_loss,
+    #     f'{split_alias}_data': validation_data,
+    #     f'{split_alias}_data/exclude_relation': exclude_relation
+    # }
     result = {
-        f'{split_alias}_loss': validation_loss,
-        f'{split_alias}_data': validation_data,
-        f'{split_alias}_data/exclude_relation': exclude_relation
+        'loss': validation_loss,
+        'data': validation_data,
+        'split': split_alias,
+        'exclude_relation': exclude_relation
     }
     logging.info(str(result))
     del model
