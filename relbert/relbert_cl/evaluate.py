@@ -20,8 +20,6 @@ def main():
                         default='analogy', type=str)
     parser.add_argument('--distance-function', help='distance function for analogy',
                         default="cosine_similarity", type=str)
-    parser.add_argument('--aggregation', help='aggregation function for relation mapping',
-                        default="max", type=str)
     parser.add_argument('--split', help='', default="validation", type=str, nargs="+")
     parser.add_argument('--cache-embedding-dir', help='aggregation function for relation mapping',
                         default="embeddings", type=str)
@@ -46,8 +44,7 @@ def main():
         result = evaluate_analogy(relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, max_length=opt.max_length)
     elif opt.type == 'relation_mapping':
         mean_accuracy, _, perms_full = evaluate_relation_mapping(
-            relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, aggregation=opt.aggregation,
-            cache_embedding_dir=opt.cache_embedding_dir
+            relbert_ckpt=opt.ckpt_dir, batch_size=opt.batch, cache_embedding_dir=opt.cache_embedding_dir
         )
         result = {
             "accuracy": mean_accuracy,

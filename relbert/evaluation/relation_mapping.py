@@ -55,7 +55,6 @@ def cosine_similarity(a, b):
 
 def evaluate_relation_mapping(relbert_ckpt: str = None,
                               batch_size: int = 512,
-                              aggregation: str = 'max',
                               cache_embedding_dir: str = 'embeddings'):
     # data
     data = [i for i in load_dataset("relbert/relation_mapping")["test"]]    
@@ -112,23 +111,26 @@ def evaluate_relation_mapping(relbert_ckpt: str = None,
         perms = []
         for n, tmp_target in tqdm(list(enumerate(permutations(target, len(target))))):
             list_sim = []
-            for id_x, id_y in permutations(range(len(target)), 2):
-                _id = f'{source[id_x]}__{source[id_y]} || {tmp_target[id_x]}__{tmp_target[id_y]}'
-                if _id not in sim:
-                    sim[_id] = cosine_similarity(
-                        embedding_dict[f'{source[id_x]}__{source[id_y]}'],
-                        embedding_dict[f'{tmp_target[id_x]}__{tmp_target[id_y]}']
-                    )
-                    with open(cache_sim, 'w') as f_writer:
-                        json.dump(sim, f_writer)
-                list_sim.append(sim[_id])
-            perms.append({'target': tmp_target, 'similarity_mean': mean(list_sim), 'similarity_max': max(list_sim)})
+            for id_x in range(len(target)):
+                _list_sim = []
+                for id_y in range(len(target)):
+                    if id_x == id_y:
+                        continue
+            # for id_x, id_y in permutations(range(len(target)), 2):
+                    _id = f'{source[id_x]}__{source[id_y]} || {tmp_target[id_x]}__{tmp_target[id_y]}'
+                    if _id not in sim:
+                        sim[_id] = cosine_similarity(
+                            embedding_dict[f'{source[id_x]}__{source[id_y]}'],
+                            embedding_dict[f'{tmp_target[id_x]}__{tmp_target[id_y]}']
+                        )
+                        with open(cache_sim, 'w') as f_writer:
+                            json.dump(sim, f_writer)
+                    _list_sim.append(sim[_id])
+                list_sim.append(max(_list_sim))
+            perms.append({'target': tmp_target, 'similarity_mean': mean(list_sim)})
         sims_full.extend([{'pair': k, 'sim': v, 'data_id': data_id} for k, v in sim.items()])
-        max_sim_score = max(_x[f'similarity_{aggregation}'] for _x in perms)
-        pred = [_x for _x in perms if _x[f'similarity_{aggregation}'] == max_sim_score]
-        assert len(pred) != 0, f'{pred}, {max_sim_score}'
-        if len(pred) != 1:
-            pred = sorted(pred, key=lambda _x: _x['similarity_mean'], reverse=True)
+        pred = sorted(perms, key=lambda _x: _x['similarity_mean'], reverse=True)
+        # assert len(pred) == 1, pred
         accuracy.append(mean([int(t == p) for t, p in zip(target, pred[0]['target'])]))
         tmp = [i for i in perms if list(i['target']) == target]
         assert len(tmp) == 1, perms
@@ -138,8 +140,8 @@ def evaluate_relation_mapping(relbert_ckpt: str = None,
             'pred': pred[0]['target'],
             'alignment_match': list(pred[0]['target']) == target,
             'accuracy': mean([int(t == p) for t, p in zip(target, pred[0]['target'])]),
-            'similarity': pred[0][f'similarity_{aggregation}'],
-            'similarity_true': tmp[0][f'similarity_{aggregation}']
+            'similarity': pred[0]['similarity_mean'],
+            'similarity_true': tmp[0]['similarity_mean']
         })
     mean_accuracy = mean(accuracy)
     logging.info(f'Accuracy: {mean_accuracy}')
