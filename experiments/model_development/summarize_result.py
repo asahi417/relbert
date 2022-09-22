@@ -7,9 +7,13 @@ import pandas as pd
 
 MODEL = "roberta-large"
 METHODS = ["average", "mask", "average-no-mask"]
-LOSS = ["nce", "triplet", 'loob']
-DATA = ["semeval2012-v2", "semeval2012", "conceptnet-hc"]
+# LOSS = ["nce", "triplet", 'loob']
+# DATA = ["semeval2012-v2", "semeval2012", "conceptnet-hc"]
+LOSS = ["nce"]
+DATA = ["semeval2012"]
 PROMPT = ["a", "b", "c", "d", "e"]
+# CLASSIFICATION = [True, False]
+CLASSIFICATION = [True]
 
 TMP_DIR = 'metric_files'
 EXPORT_DIR = 'output'
@@ -38,47 +42,36 @@ def get_result():
                 continue
             for p in PROMPT:
                 for m in METHODS:
-                    v_loss = f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/validation_loss.json"
-                    v_loss_cn = f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/validation_loss.conceptnet_high_confidence.json"
-                    result = {k: v for k, v in download(
-                        f"analogy-{MODEL}-{d}-{m}-{p}-{l}.json",
-                        f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/analogy.json"
-                    ).items() if 'valid' not in k}
-                    result.update({
-                        "loss": l,
-                        "data": d,
-                        "prompt": p,
-                        "method": m,
-                        "loss_value": download(
-                            f"loss-{MODEL}-{d}-{m}-{p}-{l}.json",
-                            v_loss)['validation_loss']
-                    })
-                    result.update({k: v['test/f1_micro'] for k, v in download(
-                        f"classification-{MODEL}-{d}-{m}-{p}-{l}.json",
-                        f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/classification.json"
-                    ).items()})
-                    metric = download(
-                        f"relation_mapping-{MODEL}-{d}-{m}-{p}-{l}.json",
-                        f"https://huggingface.co/relbert/relbert-{MODEL}-{d}-{m}-prompt-{p}-{l}/raw/main/relation_mapping.json"
-                    )
-                    result.update({'relation_mapping_accuracy': metric['accuracy']})
-                    if d != 'conceptnet-hc' and l != 'triplet':
-                        result.update(
-                            {"loss_value_conceptnet (validation)": download(
-                                f"loss-{MODEL}-{d}-{m}-{p}-{l}.cn.json",
-                                v_loss_cn)['validation_loss']}
+                    for c in CLASSIFICATION:
+                        suffix = "-classification" if c else ""
+                        v_loss = f"https://huggingface.co/relbert/{MODEL}-{d}-{m}-prompt-{p}-{l}{suffix}/raw/main/validation_loss.json"
+                        loss = download(
+                            f"loss-{MODEL}-{d}-{m}-{p}-{l}{suffix}.json",
+                            v_loss)
+                        result = {k: v for k, v in download(
+                            f"analogy-{MODEL}-{d}-{m}-{p}-{l}{suffix}.json",
+                            f"https://huggingface.co/relbert/{MODEL}-{d}-{m}-prompt-{p}-{l}{suffix}/raw/main/analogy.json"
+                        ).items() if 'valid' not in k}
+                        result.update({
+                            "loss": l,
+                            "data": d,
+                            "prompt": p,
+                            "method": m,
+                            "classification_loss": c,
+                            "loss_value": loss['loss'],
+                            "loss_name": loss['data'],
+                            "loss_split": loss['split']
+                        })
+                        result.update({k: v['test/f1_micro'] for k, v in download(
+                            f"classification-{MODEL}-{d}-{m}-{p}-{l}{suffix}.json",
+                            f"https://huggingface.co/relbert/{MODEL}-{d}-{m}-prompt-{p}-{l}{suffix}/raw/main/classification.json"
+                        ).items()})
+                        metric = download(
+                            f"relation_mapping-{MODEL}-{d}-{m}-{p}-{l}{suffix}.json",
+                            f"https://huggingface.co/relbert/{MODEL}-{d}-{m}-prompt-{p}-{l}{suffix}/raw/main/relation_mapping.json"
                         )
-                        result.update(
-                            {"loss_value_conceptnet (train)": download(
-                                f"loss-{MODEL}-{d}-{m}-{p}-{l}.cn.json",
-                                v_loss_cn)['train_loss']}
-                        )
-                        result.update(
-                            {"loss_value_conceptnet (all)": download(
-                                f"loss-{MODEL}-{d}-{m}-{p}-{l}.cn.json",
-                                v_loss_cn)['train_validation_loss']}
-                        )
-                    output.append(result)
+                        result.update({'relation_mapping_accuracy': metric['accuracy']})
+                        output.append(result)
     return pd.DataFrame(output)
 
 

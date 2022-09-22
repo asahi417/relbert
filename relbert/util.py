@@ -106,7 +106,8 @@ class NCELoss:
                 distance_positive = []
                 distance_negative = []
                 for p in range(batch_size_positive):
-                    distance_positive.append(torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5)
+                    if i != p:
+                        distance_positive.append(torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5)
                 for n in range(len(embedding_n)):
                     distance_negative.append(torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5)
                 for d_p, d_n in product(distance_positive, distance_negative):
