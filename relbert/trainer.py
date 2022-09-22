@@ -156,7 +156,7 @@ class Trainer:
             num_warmup_steps=self.config['lr_warmup'],
             num_training_steps=self.config['epoch'] if self.config['lr_decay'] else None)
 
-    def compute_loss(self, encoded_pairs_dict_eval, batch_size: int):
+    def compute_loss(self, encoded_pairs_dict_eval, batch_size: int=None):
         with torch.no_grad():
             nce_loss = NCELoss(
                 loss_function=self.config['loss_function'],
@@ -263,10 +263,10 @@ class Trainer:
             logging.info(f"[epoch {e + 1}/{self.config['epoch']} complete] average loss: {mean_loss}, lr: {lr}")
 
             if (e + 1) % epoch_save == 0 and (e + 1) != 0:
-                v_loss = self.compute_loss(encoded_pairs_dict_eval, batch_size=self.config['batch'])
+                v_loss = self.compute_loss(encoded_pairs_dict_eval)
                 self.save(e, v_loss)
 
-        v_loss = self.compute_loss(encoded_pairs_dict_eval, batch_size=self.config['batch'])
+        v_loss = self.compute_loss(encoded_pairs_dict_eval)
         self.save(self.config['epoch'] - 1, v_loss)
         logging.info(f'complete training: model ckpt was saved at {self.export_dir}')
         # choose the best model
