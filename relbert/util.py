@@ -107,7 +107,7 @@ class NCELoss:
         elif self.loss_function == 'triplet':
             d_positive = torch.sum((embedding_p.unsqueeze(0) - embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
             d_positive = d_positive.fill_diagonal_(0)
-            d_negative = torch.sum((embedding_n.unsqueeze(0) - embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
+            d_negative = torch.sum((- embedding_n.unsqueeze(0) + embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
             matrix = torch.sum(torch.clip(d_positive.unsqueeze(-1) - d_negative.unsqueeze(-2) - self.margin, min=self.boundary), -1)
             loss = torch.sum(matrix.fill_diagonal_(0))
 
