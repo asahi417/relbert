@@ -82,6 +82,7 @@ class NCELoss:
                 nume_p = stack_sum([d for n, d in enumerate(dist) if rank[n] >= rank[i]])
                 deno_p = stack_sum([d for n, d in enumerate(dist) if rank[n] < rank[i]])
                 loss.append(- torch.log(nume_p / (deno_p + deno_n)))
+            loss = stack_sum(loss)
         elif self.loss_function in ['nce_logout', 'info_loob']:
             for i in range(batch_size_positive):
                 deno_n = torch.sum(torch.exp(
@@ -94,6 +95,7 @@ class NCELoss:
                         loss.append(- torch.log(logit_p / deno_n))
                     else:
                         loss.append(- torch.log(logit_p / (logit_p + deno_n)))
+            loss = stack_sum(loss)
         elif self.loss_function == 'nce_login':
             for i in range(batch_size_positive):
                 deno_n = torch.sum(torch.exp(
@@ -101,6 +103,7 @@ class NCELoss:
                 logit_p = torch.sum(torch.exp(
                     cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.temperature_nce_constant))
                 loss.append(- torch.log(logit_p / (logit_p + deno_n)))
+            loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
             d_positive = torch.sum((embedding_p.unsqueeze(0) - embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
             d_negative = torch.sum((embedding_n.unsqueeze(0) - embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
@@ -117,7 +120,6 @@ class NCELoss:
             #         loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
         else:
             raise ValueError(f"unknown loss function {self.loss_function}")
-        loss = stack_sum(loss)
         if self.linear is not None:
             for i in range(batch_size_positive):
                 features = []
