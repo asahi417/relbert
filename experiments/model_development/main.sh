@@ -157,3 +157,4 @@ experiment () {
 experiment "relbert/semeval2012_relational_similarity" "semeval2012" "triplet" "tri" 10 0.00005 8 320 # 0.00001 1 320
 #experiment "relbert/conceptnet_high_confidence" "conceptnet" "nce_logout" "nce" 30 0.000005 8 640
 
+experiment "relbert/semeval2012_relational_similarity" "semeval2012" "triplet" "tri" 10 0.00005 1 320 # 0.00001 1 320

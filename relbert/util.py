@@ -109,7 +109,9 @@ class NCELoss:
             d_positive = d_positive.fill_diagonal_(0)
             d_negative = torch.sum((- embedding_n.unsqueeze(0) + embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
             matrix = torch.sum(torch.clip(d_positive.unsqueeze(-1) - d_negative.unsqueeze(-2) - self.margin, min=self.boundary), -1)
+            print(matrix)
             loss = torch.sum(matrix.fill_diagonal_(0))
+            print(loss)
 
             # for i in range(batch_size_positive):
             #     distance_positive = []
