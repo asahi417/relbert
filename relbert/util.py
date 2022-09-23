@@ -132,8 +132,6 @@ class NCELoss:
                                 distance_p[i, p] ** 0.5 - distance_n[i, n] ** 0.5 - self.margin,
                                 min=self.boundary)))
             loss = stack_sum(loss)
-            print(loss)
-            input()
         else:
             raise ValueError(f"unknown loss function {self.loss_function}")
         if self.linear is not None:
