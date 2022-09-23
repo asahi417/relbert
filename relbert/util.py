@@ -106,6 +106,7 @@ class NCELoss:
                 loss.append(- torch.log(logit_p / (logit_p + deno_n)))
             loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
+            print(embedding_p.shape, embedding_n.shape)
             d_positive = torch.sum((embedding_p.unsqueeze(0) - embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
             d_negative = torch.sum((embedding_n.unsqueeze(0) - embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
             for i in range(batch_size_positive):
