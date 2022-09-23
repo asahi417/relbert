@@ -112,6 +112,8 @@ class NCELoss:
             for i in range(batch_size_positive):
                 for p in range(batch_size_positive):
                     if i != p:
+                        print(torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5, d_positive[i, p])
+                        assert torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5 == d_positive[i, p]
                         loss.append(
                             torch.sum(torch.clip(d_positive[i, p].unsqueeze(0) - d_negative[i] - self.margin,
                                                  min=self.boundary))
