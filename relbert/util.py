@@ -107,8 +107,8 @@ class NCELoss:
             loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
             # distance_p = (embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)).fill_diagonal_(0)
-            distance_p = embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)
-            distance_n = embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)
+            distance_p = (embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0))**2
+            distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0))**2
             # d_positive = torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)) ** 2, -1) ** 0.5
             # d_positive = d_positive.fill_diagonal_(0)
             # d_negative = torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)) ** 2, -1) ** 0.5
@@ -127,14 +127,12 @@ class NCELoss:
                 for p in range(batch_size_positive):
                     if i != p:
                         d_p_ = torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5
-                        d_p = torch.sum(distance_p[i, p] ** 2, -1) ** 0.5
+                        d_p = torch.sum(distance_p[i, p], -1) ** 0.5
                         print(d_p, d_p_)
-                        # assert d_p == d_p_
                         for n in range(len(embedding_n)):
-                            # d_n = torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5
-                            d_n = torch.sum(distance_n[i, n] ** 2, -1) ** 0.5
+                            d_n_ = torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5
+                            d_n = torch.sum(distance_n[i, n], -1) ** 0.5
                             # print(d_n, d_n_)
-                            # assert d_n == d_n_
                             loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
             loss = stack_sum(loss)
             print(loss)
