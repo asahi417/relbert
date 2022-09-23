@@ -123,7 +123,6 @@ class NCELoss:
             # print(matrix)
             # loss = torch.sum(matrix.fill_diagonal_(0))
 
-
             for i in range(batch_size_positive):
                 distance_positive = []
                 distance_negative = []
