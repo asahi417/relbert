@@ -123,12 +123,12 @@ class NCELoss:
                 for p in range(batch_size_positive):
                     if i != p:
                         d_p = torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5
-                        d_p_ = d_positive[p, i]
+                        d_p_ = d_positive[i, p]
                         print(d_p, d_p_)
                         assert d_p == d_p_
                         for n in range(len(embedding_n)):
                             d_n = torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5
-                            d_n_ = d_negative[p, n]
+                            d_n_ = d_negative[i, n]
                             print(d_n, d_n_)
                             assert d_n == d_n_
                             loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
