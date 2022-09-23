@@ -118,7 +118,8 @@ class NCELoss:
             #                 torch.sum(torch.clip(d_positive[i, p].unsqueeze(0) - d_negative[i] - self.margin,
             #                                      min=self.boundary))
             #                 )
-
+            # loss = torch.sum(torch.clip(d_positive.unsqueeze(-2) - d_negative.unsqueeze(-1), min=0))
+            loss = torch.sum(torch.clip(d_positive.unsqueeze(-2) - d_negative.unsqueeze(-1) - self.margin, min=self.boundary))
             for i in range(batch_size_positive):
                 for p in range(batch_size_positive):
                     if i != p:
@@ -133,7 +134,7 @@ class NCELoss:
                             # assert d_n == d_n_
                             loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
 
-            loss = stack_sum(loss)
+            # loss = stack_sum(loss)
             print(loss)
             input()
         else:
