@@ -107,8 +107,8 @@ class NCELoss:
             loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
 
-            # d_positive = torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)) ** 2, -1) ** 0.5
-            # d_negative = torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)) ** 2, -1) ** 0.5
+            d_positive = torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)) ** 2, -1) ** 0.5
+            d_negative = torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)) ** 2, -1) ** 0.5
             # for i in range(batch_size_positive):
             #     for p in range(batch_size_positive):
             #         if i != p:
@@ -120,19 +120,14 @@ class NCELoss:
             #                 )
 
             for i in range(batch_size_positive):
-                distance_positive = []
-                distance_negative = []
                 for p in range(batch_size_positive):
                     if i != p:
-                        # distance_positive.append(torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5)
-                        d_p = torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5
+                        # d_p = torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5
+                        d_p = d_positive[p, i]
                         for n in range(len(embedding_n)):
-                            # distance_negative.append(torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5)
-                            d_n = torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5
+                            # d_n = torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5
+                            d_n = d_negative[p, n]
                             loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
-
-                # for d_p, d_n in product(distance_positive, distance_negative):
-                #     loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
 
             loss = stack_sum(loss)
             print(loss)
