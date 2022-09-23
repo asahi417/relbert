@@ -70,6 +70,7 @@ class NCELoss:
                  rank=None):
         loss = []
         batch_size_positive = len(embedding_p)
+        batch_size_negative = len(embedding_n)
         if self.loss_function == 'nce_rank':
             assert rank is not None
             rank_map = {r: 1 + n for n, r in enumerate(sorted(rank))}
@@ -106,13 +107,20 @@ class NCELoss:
             loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
             d_positive = torch.sum((embedding_p.unsqueeze(0) - embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
-            # d_positive = d_positive.fill_diagonal_(0)
+            d_negative = torch.sum((embedding_n.unsqueeze(0) - embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
+            for i in range(batch_size_positive):
+                for p in range(batch_size_positive):
+                    if i != p:
+                        loss.append(
+                            torch.sum(torch.clip(d_positive[i, p].unsqueeze(0) - d_negative[i] - self.margin,
+                                                 min=self.boundary))
+                            )
+            loss = stack_sum(loss)
             print(d_positive)
-            d_negative = torch.sum((- embedding_n.unsqueeze(0) + embedding_p.unsqueeze(1)) ** 2, -1) ** 0.5
             print(d_negative)
-            matrix = torch.sum(torch.clip(d_positive.unsqueeze(-1) - d_negative.unsqueeze(-2) - self.margin, min=self.boundary), -1)
-            print(matrix)
-            loss = torch.sum(matrix.fill_diagonal_(0))
+            # matrix = torch.sum(torch.clip(d_positive.unsqueeze(-1) - d_negative.unsqueeze(-2) - self.margin, min=self.boundary), -1)
+            # print(matrix)
+            # loss = torch.sum(matrix.fill_diagonal_(0))
             print(loss)
             input()
 
