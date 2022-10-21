@@ -115,6 +115,13 @@ Once models are trained, you can evaluate them.
 sh ./examples/experiments/main/evaluate.sh
 ```
 
+## Dataset Note
+- [relbert/semeval2012_relational_similarity](https://huggingface.co/datasets/relbert/semeval2012_relational_similarity): Top-10 word pairs are used for training, and others for validation.
+- [relbert/semeval2012_relational_similarity_v2](https://huggingface.co/datasets/relbert/semeval2012_relational_similarity_v2): Random split (20% for validation) within the word pairs of top-10 in each relation.
+- [relbert/semeval2012_relational_similarity_v3](https://huggingface.co/datasets/relbert/semeval2012_relational_similarity_v3): `relbert/semeval2012_relational_similarity` with three layers relation hierarchy.
+- [relbert/semeval2012_relational_similarity_v4](https://huggingface.co/datasets/relbert/semeval2012_relational_similarity_v4): `relbert/semeval2012_relational_similarity_v2` with three layers relation hierarchy.
+- [relbert/semeval2012_relational_similarity_v5](https://huggingface.co/datasets/relbert/semeval2012_relational_similarity_v5): `relbert/semeval2012_relational_similarity` with three layers relation hierarchy but the validation set is the conceptnet.
+
 ## Citation
 If you use any of these resources, please cite the following paper:
 ```

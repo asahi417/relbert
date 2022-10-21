@@ -1,7 +1,5 @@
 import random
 import logging
-from itertools import product
-
 import numpy as np
 import torch
 
@@ -70,7 +68,6 @@ class NCELoss:
                  rank=None):
         loss = []
         batch_size_positive = len(embedding_p)
-        batch_size_negative = len(embedding_n)
         if self.loss_function == 'nce_rank':
             assert rank is not None
             rank_map = {r: 1 + n for n, r in enumerate(sorted(rank))}
@@ -106,24 +103,11 @@ class NCELoss:
                 loss.append(- torch.log(logit_p / (logit_p + deno_n)))
             loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
+            # WARNING: triplet loss is not working properly
             # distance_p = (embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0))**2
             # distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0))**2
             distance_p = torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)) ** 2, -1)
             distance_n = torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)) ** 2, -1)
-            # d_positive = torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)) ** 2, -1) ** 0.5
-            # d_positive = d_positive.fill_diagonal_(0)
-            # d_negative = torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)) ** 2, -1) ** 0.5
-            # for i in range(batch_size_positive):
-            #     for p in range(batch_size_positive):
-            #         if i != p:
-            #             print(torch.sum((embedding_p[i] - embedding_p[p]) ** 2, -1) ** 0.5, d_positive[i, p])
-            #             # print(d_negative[i], [torch.sum((embedding_p[i] - embedding_n[n]) ** 2, -1) ** 0.5 for n in range(batch_size_negative)])
-            #             loss.append(
-            #                 torch.sum(torch.clip(d_positive[i, p].unsqueeze(0) - d_negative[i] - self.margin,
-            #                                      min=self.boundary))
-            #                 )
-            # loss = torch.sum(torch.clip(d_positive.unsqueeze(-2) - d_negative.unsqueeze(-1), min=0))
-            # loss = torch.sum(torch.clip(d_positive.unsqueeze(-2) - d_negative.unsqueeze(-1) - self.margin, min=self.boundary))
             for i in range(batch_size_positive):
                 for p in range(batch_size_positive):
                     if i != p:

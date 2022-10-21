@@ -2,8 +2,8 @@
 # FINETUNING FUNCTION
 TEMP=0.05
 TEMP_MIN=0.01
-LANGUAGE_MODEL="roberta-large"
-LANGUAGE_MODEL_ALIAS="roberta-large"
+LANGUAGE_MODEL="roberta-base"
+LANGUAGE_MODEL_ALIAS="roberta-base"
 
 
 finetuning() {
@@ -18,7 +18,7 @@ finetuning() {
   LR=${9}
   GRAD=${10}
   NSAMPLE=${11}
-  CKPT="relbert_output/models/${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}"
+  CKPT="relbert_output/models/${DATA_ALIAS}.${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}"
   MODEL_HF="${LANGUAGE_MODEL_ALIAS}-${DATA_ALIAS}-${MODE//_/-}-prompt-${TEMPLATE_ID}-${LOSS_ALIAS}"
   relbert-train -m "${LANGUAGE_MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample "${NSAMPLE}" --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
     --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" \
@@ -45,7 +45,7 @@ finetuning_classification() {
   LR=${9}
   GRAD=${10}
   NSAMPLE=${11}
-  CKPT="relbert_output/models/${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}.classification"
+  CKPT="relbert_output/models/${DATA_ALIAS}.${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}.classification"
   MODEL_HF="${LANGUAGE_MODEL_ALIAS}-${DATA_ALIAS}-${MODE//_/-}-prompt-${TEMPLATE_ID}-${LOSS_ALIAS}-classification"
   relbert-train -m "${LANGUAGE_MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample "${NSAMPLE}" --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
     --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" -c \
@@ -72,8 +72,16 @@ finetuning_conceptnet_validated() {
   LR=${9}
   GRAD=${10}
   NSAMPLE=${11}
-  CKPT="relbert_output/models/${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}.coneptnet-validated"
+  CKPT="relbert_output/models/${DATA_ALIAS}.${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}"
   MODEL_HF="${LANGUAGE_MODEL_ALIAS}-${DATA_ALIAS}-${MODE//_/-}-prompt-${TEMPLATE_ID}-${LOSS_ALIAS}-conceptnet-validated"
+
+  for i in $(seq 1 "${EPOCH}");
+  do
+    relbert-eval --overwrite --type validation_loss -c "${CKPT}/epoch_${i}" --export-dir "${CKPT}/epoch_${i}" -b 64 -d "relbert/conceptnet_high_confidence_v2"
+  done
+
+
+
   relbert-train -m "${LANGUAGE_MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample "${NSAMPLE}" --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
     --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" \
     -t "${TEMPLATE}" --data "${DATA}" --split "train" --data-eval "relbert/conceptnet_high_confidence" --split-eval "full"
@@ -99,7 +107,7 @@ finetuning_conceptnet_validated_classification() {
   LR=${9}
   GRAD=${10}
   NSAMPLE=${11}
-  CKPT="relbert_output/models/${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}.classification.conceptnet-validated"
+  CKPT="relbert_output/models/${DATA_ALIAS}.${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}.classification.conceptnet-validated"
   MODEL_HF="${LANGUAGE_MODEL_ALIAS}-${DATA_ALIAS}-${MODE//_/-}-prompt-${TEMPLATE_ID}-${LOSS_ALIAS}-classification-conceptnet-validated"
   relbert-train -m "${LANGUAGE_MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample "${NSAMPLE}" --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
     --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" -c \
@@ -124,14 +132,15 @@ experiment () {
   LR=${6}
   GRAD=${7}
   NSAMPLE=${8}
-  for MODE in "mask" "average" "average_no_mask"
+#  for MODE in "mask" "average" "average_no_mask"
+  for MODE in "mask" "average"
   do
 
-#    finetuning "${MODE}" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
-#    finetuning "${MODE}" "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
-#    finetuning "${MODE}" "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
+    finetuning "${MODE}" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
+    finetuning "${MODE}" "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
+    finetuning "${MODE}" "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
     finetuning "${MODE}" "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
-#    finetuning "${MODE}" "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
+    finetuning "${MODE}" "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
 
 #    finetuning_classification "${MODE}" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
 #    finetuning_classification "${MODE}" "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
@@ -150,15 +159,10 @@ experiment () {
 #    finetuning_conceptnet_validated_classification "${MODE}" "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
 #    finetuning_conceptnet_validated_classification "${MODE}" "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
 #    finetuning_conceptnet_validated_classification "${MODE}" "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${EPOCH}" "${LR}" "${GRAD}" "${NSAMPLE}"
-
   done
 }
 
-#experiment "relbert/semeval2012_relational_similarity" "semeval2012" "info_loob" "loob" 30 0.000005 8 640
-#experiment "relbert/semeval2012_relational_similarity" "semeval2012" "nce_logout" "nce" 30 0.000005 8 640
-#experiment "relbert/semeval2012_relational_similarity" "semeval2012" "triplet" "tri" 10 0.00005 8 320
-#experiment "relbert/conceptnet_high_confidence" "conceptnet" "nce_logout" "nce" 30 0.000005 8 640
 
-#experiment "relbert/semeval2012_relational_similarity" "semeval2012" "triplet" "tri" 2 0.0001 4 160
-
-experiment "relbert/semeval2012_relational_similarity_v3" "semeval2012-v3" "nce_logout" "nce" 2 0.0001 4 160
+#experiment "relbert/semeval2012_relational_similarity_v3" "semeval2012-v3" "nce_logout" "nce" 30 0.000005 8 640
+experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v4" "nce_logout" "nce" 30 0.000005 8 640
+experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v5" "nce_logout" "nce" 30 0.000005 8 640

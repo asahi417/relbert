@@ -213,7 +213,10 @@ class Trainer:
         for example in self.data:
             pairs_p = example['positives']
             pairs_n = example['negatives']
-            k = example['relation_type']
+            if 'level' in example:
+                k = f"{example['relation_type']}/{example['level']}"
+            else:
+                k = example['relation_type']
             dataset_p = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_p], return_ranking=True)
             dataset_n = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_n], return_ranking=False)
             loader_dict[k] = {
