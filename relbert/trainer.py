@@ -172,15 +172,18 @@ class Trainer:
             for example in self.data_eval:
                 pairs_p = example['positives']
                 pairs_n = example['negatives']
-                k = example['relation_type']
+                if 'level' in example:
+                    k = f"{example['relation_type']}/{example['level']}"
+                else:
+                    k = example['relation_type']
                 dataset_p = Dataset([encoded_pairs_dict_eval['__'.join(k)] for k in pairs_p], return_ranking=True)
                 dataset_n = Dataset([encoded_pairs_dict_eval['__'.join(k)] for k in pairs_n], return_ranking=False)
                 loader_dict[k] = {
                     'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
                     'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
                 }
-
-            for n, relation_key in tqdm(list(enumerate(self.data_eval['relation_type']))):
+            relation_keys = loader_dict.keys()
+            for n, relation_key in tqdm(list(enumerate(relation_keys))):
                 # data loader will return full instances
                 x_p = next(iter(loader_dict[relation_key]['positive']))
                 x_n = next(iter(loader_dict[relation_key]['negative']))
@@ -223,7 +226,7 @@ class Trainer:
                 'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
                 'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
             }
-        relation_keys = list(self.data['relation_type'])
+        relation_keys = loader_dict.keys()
         logging.info(f'start model training: {len(relation_keys)} relations')
         nce_loss = NCELoss(
             loss_function=self.config['loss_function'],

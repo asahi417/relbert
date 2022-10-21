@@ -163,6 +163,6 @@ experiment () {
 }
 
 
-#experiment "relbert/semeval2012_relational_similarity_v3" "semeval2012-v3" "nce_logout" "nce" 30 0.000005 8 640
+experiment "relbert/semeval2012_relational_similarity_v3" "semeval2012-v3" "nce_logout" "nce" 30 0.000005 8 640
 experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v4" "nce_logout" "nce" 30 0.000005 8 640
 experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v5" "nce_logout" "nce" 30 0.000005 8 640
