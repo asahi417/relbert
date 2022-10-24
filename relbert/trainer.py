@@ -176,8 +176,17 @@ class Trainer:
                     k = f"{example['relation_type']}/{example['level']}"
                 else:
                     k = example['relation_type']
-                dataset_p = Dataset([encoded_pairs_dict_eval['__'.join(k)] for k in pairs_p], return_ranking=True)
-                dataset_n = Dataset([encoded_pairs_dict_eval['__'.join(k)] for k in pairs_n], return_ranking=False)
+                if k in loader_dict:
+                    _index = 1
+                    while True:
+                        _k = f"{k}/{_index}"
+                        if _k not in loader_dict:
+                            k = _k
+                            break
+                        _index += 1
+
+                dataset_p = Dataset([encoded_pairs_dict_eval['__'.join(__k)] for __k in pairs_p], return_ranking=True)
+                dataset_n = Dataset([encoded_pairs_dict_eval['__'.join(__k)] for __k in pairs_n], return_ranking=False)
                 loader_dict[k] = {
                     'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
                     'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
@@ -220,8 +229,17 @@ class Trainer:
                 k = f"{example['relation_type']}/{example['level']}"
             else:
                 k = example['relation_type']
-            dataset_p = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_p], return_ranking=True)
-            dataset_n = Dataset([encoded_pairs_dict['__'.join(k)] for k in pairs_n], return_ranking=False)
+            dataset_p = Dataset([encoded_pairs_dict['__'.join(__k)] for __k in pairs_p], return_ranking=True)
+            dataset_n = Dataset([encoded_pairs_dict['__'.join(__k)] for __k in pairs_n], return_ranking=False)
+            if k in loader_dict:
+                _index = 1
+                while True:
+                    _k = f"{k}/{_index}"
+                    if _k not in loader_dict:
+                        k = _k
+                        break
+                    _index += 1
+
             loader_dict[k] = {
                 'positive': torch.utils.data.DataLoader(dataset_p, num_workers=0, batch_size=len(pairs_p)),
                 'negative': torch.utils.data.DataLoader(dataset_n, num_workers=0, batch_size=len(pairs_n))
