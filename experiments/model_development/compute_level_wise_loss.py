@@ -17,13 +17,16 @@ batch = 512
 max_length = 64
 target_split = 'validation'
 os.makedirs(f"relbert/semeval2012_relational_similarity_v4/level_wise_loss", exist_ok=True)
+skipped = []
 for _level in ['child', 'child_prototypical', 'parent']:
     for aggregate in ['average', 'mask']:
         for prompt in ['a', 'b', 'c', 'd', 'e']:
             for seed in range(3):
                 relbert_ckpt = glob(f'{root_dir}/semeval2012-v4.{prompt}.nce_logout.{aggregate}.{language_model}.*.{seed}')
                 if len(relbert_ckpt) != 1:
-                    raise ValueError(f'{root_dir}/semeval2012-v4.{prompt}.nce_logout.{aggregate}.{language_model}.*.{seed}')
+                    skipped.append(f'{root_dir}/semeval2012-v4.{prompt}.nce_logout.{aggregate}.{language_model}.*.{seed}')
+                    print(f'\tskip `{root_dir}/semeval2012-v4.{prompt}.nce_logout.{aggregate}.{language_model}.*.{seed}`')
+                    continue
 
                 for epoch in range(1, 16):
                     result = evaluate_validation_loss(
