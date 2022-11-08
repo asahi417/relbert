@@ -30,8 +30,8 @@ for _level in ['child', 'child_prototypical', 'parent']:
 
                 for epoch in range(1, 16):
                     result = evaluate_validation_loss(
-                        validation_data=f"relbert/semeval2012_relational_similarity_v4/epoch_{epoch}",
-                        relbert_ckpt=relbert_ckpt[0],
+                        validation_data=f"relbert/semeval2012_relational_similarity_v4",
+                        relbert_ckpt=f"{relbert_ckpt[0]}/epoch_{epoch}",
                         batch_size=batch,
                         max_length=max_length,
                         split=target_split,
