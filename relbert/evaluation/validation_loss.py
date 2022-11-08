@@ -20,6 +20,7 @@ def compute_loss(model,
                  exclude_relation,
                  loss_function: str,
                  batch_size: int,
+                 relation_level: str = None,
                  temperature_nce_rank: Dict = None,
                  temperature_nce_constant: float = None,
                  split: List or str = 'validation'):
@@ -30,6 +31,8 @@ def compute_loss(model,
     for s in split:
         logging.info(f'computing loss for the split {s}')
         data = load_dataset(validation_data, split=s)
+        if relation_level is not None:
+            data = data.filter(lambda _x: _x["level"] == relation_level)
         if exclude_relation is not None:
             data = data.filter(lambda _x: _x['relation_type'] not in exclude_relation)
         encoded_pairs_dict = model.encode_word_pairs(
@@ -65,6 +68,7 @@ def compute_loss(model,
 
 
 def evaluate_validation_loss(validation_data: str,
+                             relation_level: str = None,
                              relbert_ckpt: str = None,
                              max_length: int = 64,
                              batch_size: int = 64,
@@ -90,17 +94,14 @@ def evaluate_validation_loss(validation_data: str,
             temperature_nce_constant=temperature_nce_constant,
             split=split)
     split_alias = split if type(split) is str else '_'.join(sorted(split))
-    # result = {
-    #     f'{split_alias}_loss': validation_loss,
-    #     f'{split_alias}_data': validation_data,
-    #     f'{split_alias}_data/exclude_relation': exclude_relation
-    # }
     result = {
         'loss': validation_loss,
         'data': validation_data,
         'split': split_alias,
         'exclude_relation': exclude_relation
     }
+    if relation_level is not None:
+        result['relation_level'] = relation_level
     logging.info(str(result))
     del model
     return result
