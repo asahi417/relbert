@@ -8,7 +8,7 @@ from relbert.evaluation import evaluate_classification, evaluate_analogy, evalua
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
 
-root_dir = 'relbert_output/models'
+root_dir = 'models'
 language_model = 'roberta-base'
 data = 'semeval2012_relational_similarity_v4'
 language = 'en'
@@ -16,7 +16,7 @@ loss = 'nce'
 batch = 512
 max_length = 64
 target_split = 'validation'
-os.makedirs(f"relbert/semeval2012_relational_similarity_v4/level_wise_loss", exist_ok=True)
+os.makedirs("level_wise_loss", exist_ok=True)
 skipped = []
 for _level in ['child', 'child_prototypical', 'parent']:
     for aggregate in ['average', 'mask']:
@@ -30,14 +30,14 @@ for _level in ['child', 'child_prototypical', 'parent']:
 
                 for epoch in range(1, 16):
                     result = evaluate_validation_loss(
-                        validation_data=f"relbert/semeval2012_relational_similarity_v4",
+                        validation_data="relbert/semeval2012_relational_similarity_v4",
                         relbert_ckpt=f"{relbert_ckpt[0]}/epoch_{epoch}",
                         batch_size=batch,
                         max_length=max_length,
                         split=target_split,
                         relation_level=_level
                     )
-                    with open(f"relbert/semeval2012_relational_similarity_v4/level_wise_loss/{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json", 'w') as f:
+                    with open(f"level_wise_loss/{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json", 'w') as f:
                         json.dump(result, f)
 
 
