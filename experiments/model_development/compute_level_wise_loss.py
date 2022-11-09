@@ -29,6 +29,12 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     continue
 
                 for epoch in range(1, 16):
+                    path = f"level_wise_loss/{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json"
+                    if os.path.exists(path):
+                        with open(path) as f:
+                            result = json.load(f)
+                            if 'loss' in result and "relation_level" in result:
+                                continue
                     result = evaluate_validation_loss(
                         validation_data="relbert/semeval2012_relational_similarity_v4",
                         relbert_ckpt=f"{relbert_ckpt[0]}/epoch_{epoch}",
@@ -37,7 +43,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                         split=target_split,
                         relation_level=_level
                     )
-                    with open(f"level_wise_loss/{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json", 'w') as f:
+                    with open(path, 'w') as f:
                         json.dump(result, f)
-
+print(skipped)
 
