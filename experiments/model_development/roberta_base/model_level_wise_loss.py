@@ -91,32 +91,32 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
                         json.dump(relation_mapping, f)
 
-                # # push to model hub
-                # model_alias = f"{language_model}-semeval2012-v4-{aggregate}-prompt-{prompt}-nce-{seed}-{_level.replace('_', '-')}"
-                # url = create_repo(f"relbert/{model_alias}", exist_ok=True)
-                # args = {"use_auth_token": True, "repo_url": url, "organization": "relbert"}
-                # model = RelBERT(new_ckpt)
-                # assert model.is_trained
-                # if model.parallel:
-                #     model_ = model.model.module
-                # else:
-                #     model_ = model.model
-                # model_.push_to_hub(model_alias, **args)
-                # model_.config.push_to_hub(model_alias, **args)
-                # model.tokenizer.push_to_hub(model_alias, **args)
-                #
-                # readme = get_readme(
-                #     model_name=f"relbert/{model_alias}",
-                #     metric_classification=classification,
-                #     metric_analogy=analogy,
-                #     metric_relation_mapping=relation_mapping,
-                #     config=trainer_config,
-                # )
-                # with open(f"{new_ckpt}/README.md", 'w') as f:
-                #     f.write(readme)
-                # copy_tree(new_ckpt, model_alias)
-                # os.system(f"cd {model_alias} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
-                # shutil.rmtree(model_alias)  # clean up the cloned repo
+                # push to model hub
+                model_alias = f"{language_model}-semeval2012-v4-{aggregate}-prompt-{prompt}-nce-{seed}-{_level.replace('_', '-')}"
+                url = create_repo(f"relbert/{model_alias}", exist_ok=True)
+                args = {"use_auth_token": True, "repo_url": url, "organization": "relbert"}
+                model = RelBERT(new_ckpt)
+                assert model.is_trained
+                if model.parallel:
+                    model_ = model.model.module
+                else:
+                    model_ = model.model
+                model_.push_to_hub(model_alias, **args)
+                model_.config.push_to_hub(model_alias, **args)
+                model.tokenizer.push_to_hub(model_alias, **args)
+
+                readme = get_readme(
+                    model_name=f"relbert/{model_alias}",
+                    metric_classification=classification,
+                    metric_analogy=analogy,
+                    metric_relation_mapping=relation_mapping,
+                    config=trainer_config,
+                )
+                with open(f"{new_ckpt}/README.md", 'w') as f:
+                    f.write(readme)
+                copy_tree(new_ckpt, model_alias)
+                os.system(f"cd {model_alias} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
+                shutil.rmtree(model_alias)  # clean up the cloned repo
 
 print("SKIPPED CKPT")
 print(skipped)
