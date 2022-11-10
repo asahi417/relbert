@@ -79,7 +79,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
 
                 # push to model hub
                 model_alias = f"{language_model}-semeval2012-v4-{aggregate}-prompt-{prompt}-nce-{seed}-{_level.replace('_', '-')}"
-                url = create_repo(f"relbert/model_alias", exist_ok=True)
+                url = create_repo(f"relbert/{model_alias}", exist_ok=True)
                 args = {"use_auth_token": False, "repo_url": url, "organization": "relbert"}
                 model = RelBERT(new_ckpt)
                 assert model.is_trained
