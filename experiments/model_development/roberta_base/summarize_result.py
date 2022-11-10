@@ -4,20 +4,7 @@ import requests
 
 import pandas as pd
 
-
-# MODEL = "roberta-base"
-# # METHODS = ["average", "mask", "average-no-mask"]
-# METHODS = ["average", "mask"]
-# # LOSS = ["nce", "triplet", 'loob']
-# LOSS = ["nce", "loob"]
-# # DATA = ["semeval2012-v3", "semeval2012-v4", "semeval2012-v5"]
-# DATA = ["semeval2012-v4", "semeval2012-v5"]
-# PROMPT = ["a", "b", "c", "d", "e"]
-# # CLASSIFICATION = [True, False]
-# CLASSIFICATION = [False]
-#
 TMP_DIR = 'metric_files'
-EXPORT_DIR = 'output'
 
 
 def download(filename, url):
