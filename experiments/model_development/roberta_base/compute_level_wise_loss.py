@@ -17,7 +17,7 @@ loss = 'nce'
 batch = 512
 max_length = 64
 target_split = 'validation'
-os.makedirs("level_wise_loss", exist_ok=True)
+os.makedirs(f"{root_dir}/level_wise_loss", exist_ok=True)
 skipped = []
 for _level in ['child', 'child_prototypical', 'parent']:
     output_dir = f'{root_dir}/models/semeval2012-v4-{_level}'
@@ -33,7 +33,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                 relbert_ckpt = relbert_ckpt[0]
                 epoch_level = []
                 for epoch in range(1, 16):
-                    path = f"level_wise_loss/{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json"
+                    path = f"{root_dir}/level_wise_loss/{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json"
                     result = None
                     if os.path.exists(path):
                         with open(path) as f:
