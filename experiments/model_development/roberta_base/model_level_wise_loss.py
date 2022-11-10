@@ -66,16 +66,30 @@ for _level in ['child', 'child_prototypical', 'parent']:
                 with open(f"{new_ckpt}/trainer_config.json", 'w') as f:
                     json.dump(trainer_config, f)
 
-                classification = evaluate_classification(relbert_ckpt=new_ckpt, batch_size=batch)
-                with open(f"{new_ckpt}/classification.json", "w") as f:
-                    json.dump(classification, f)
-                analogy = evaluate_analogy(relbert_ckpt=new_ckpt, batch_size=batch, max_length=max_length)
-                with open(f"{new_ckpt}/analogy.json", "w") as f:
-                    json.dump(analogy, f)
-                mean_accuracy, _, perms_full = evaluate_relation_mapping(relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir="embeddings")
-                relation_mapping = {"accuracy": mean_accuracy, "prediction": perms_full}
-                with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
-                    json.dump(relation_mapping, f)
+                if os.path.exists(f"{new_ckpt}/classification.json"):
+                    with open(f"{new_ckpt}/classification.json", "r") as f:
+                        classification = json.load(f)
+                else:
+                    classification = evaluate_classification(relbert_ckpt=new_ckpt, batch_size=batch)
+                    with open(f"{new_ckpt}/classification.json", "w") as f:
+                        json.dump(classification, f)
+
+                if os.path.exists(f"{new_ckpt}/analogy.json"):
+                    with open(f"{new_ckpt}/analogy.json", "r") as f:
+                        analogy = json.load(f)
+                else:
+                    analogy = evaluate_analogy(relbert_ckpt=new_ckpt, batch_size=batch, max_length=max_length)
+                    with open(f"{new_ckpt}/analogy.json", "w") as f:
+                        json.dump(analogy, f)
+
+                if os.path.exists(f"{new_ckpt}/relation_mapping.json"):
+                    with open(f"{new_ckpt}/relation_mapping.json", "r") as f:
+                        relation_mapping = json.load(f)
+                else:
+                    mean_accuracy, _, perms_full = evaluate_relation_mapping(relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir="embeddings")
+                    relation_mapping = {"accuracy": mean_accuracy, "prediction": perms_full}
+                    with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
+                        json.dump(relation_mapping, f)
 
                 # push to model hub
                 model_alias = f"{language_model}-semeval2012-v4-{aggregate}-prompt-{prompt}-nce-{seed}-{_level.replace('_', '-')}"
