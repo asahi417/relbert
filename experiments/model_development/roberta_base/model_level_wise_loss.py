@@ -59,6 +59,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                 # create new model ckpt
                 best_epoch = epoch_level.index(max(epoch_level)) + 1
                 new_ckpt = f"{output_dir}/{aggregate}.{prompt}.{seed}"
+                print(new_ckpt)
                 copy_tree(f"{relbert_ckpt}/epoch_{best_epoch}", new_ckpt)
                 with open(f"{new_ckpt}/trainer_config.json", 'r') as f:
                     trainer_config = json.load(f)
