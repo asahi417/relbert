@@ -30,11 +30,14 @@ def get_result():
         for aggregate in ['average', 'mask']:
             for prompt in ['a', 'b', 'c', 'd', 'e']:
                 for seed in range(3):
-                    levels = ['', '-child', 'child-prototypical', '-parent'] if data == 'semeval2012-v4' else ['']
+                    levels = ['', '-child', '-child-prototypical', '-parent'] if data == 'semeval2012-v4' else ['']
                     for level in levels:
                         model = f'{language_model}-{data}-{aggregate}-prompt-{prompt}-{loss}-{seed}{level}'
                         try:
-                            result = {"prompt": prompt, "method": aggregate, 'data': data, 'seed': seed}
+                            result = {"prompt": prompt, "method": aggregate, 'data': data, 'seed': seed, "level": level}
+                            result.update({'epoch': download(
+                                f"config-{model}.json",
+                                f"https://huggingface.co/relbert/{model}/raw/main/trainer_config.json")['epoch']})
                             result.update({'loss': download(
                                 f"loss-{model}.json",
                                 f"https://huggingface.co/relbert/{model}/raw/main/validation_loss.json")['loss']})

@@ -92,7 +92,9 @@ def evaluate_validation_loss(validation_data: str,
             batch_size=batch_size,
             temperature_nce_rank=temperature_nce_rank,
             temperature_nce_constant=temperature_nce_constant,
-            split=split)
+            split=split,
+            relation_level=relation_level
+        )
     split_alias = split if type(split) is str else '_'.join(sorted(split))
     result = {
         'loss': validation_loss,
