@@ -58,7 +58,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                             json.dump(result, f)
                     epoch_level.append(result['loss'])
                 # create new model ckpt
-                best_epoch = epoch_level.index(max(epoch_level)) + 1
+                best_epoch = epoch_level.index(min(epoch_level)) + 1
                 new_ckpt = f"{output_dir}/{aggregate}.{prompt}.{seed}"
                 copy_tree(f"{relbert_ckpt}/epoch_{best_epoch}", new_ckpt)
                 with open(f"{new_ckpt}/trainer_config.json", 'r') as f:
@@ -66,6 +66,13 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     trainer_config['data_level'] = _level
                 with open(f"{new_ckpt}/trainer_config.json", 'w') as f:
                     json.dump(trainer_config, f)
+
+                with open(f"f{new_ckpt}/validation_loss.json") as f:
+                    validation_loss = json.load(f)
+                with open(f"f{new_ckpt}/validation_loss.json", "w") as f:
+                    validation_loss['level'] = _level
+                    validation_loss['loss'] = min(epoch_level)
+                    json.dump(validation_loss, f)
 
                 if os.path.exists(f"{new_ckpt}/classification.json"):
                     with open(f"{new_ckpt}/classification.json", "r") as f:
@@ -83,32 +90,24 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/analogy.json", "w") as f:
                         json.dump(analogy, f)
 
+                if os.path.exists(f"{new_ckpt}/relation_mapping.json"):
+                    with open(f"{new_ckpt}/relation_mapping.json", "r") as f:
+                        relation_mapping = json.load(f)
+                else:
+                    mean_accuracy, _, perms_full = evaluate_relation_mapping(
+                        relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir=f"embeddings/{new_ckpt.replace('/', '_')}"
+                    )
+                    relation_mapping = {"accuracy": mean_accuracy, "prediction": perms_full}
+                    with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
+                        json.dump(relation_mapping, f)
 
-
-
-
-
-                # if os.path.exists(f"{new_ckpt}/relation_mapping.json"):
-                #     with open(f"{new_ckpt}/relation_mapping.json", "r") as f:
-                #         relation_mapping = json.load(f)
-                # else:
-                #     mean_accuracy, _, perms_full = evaluate_relation_mapping(
-                #         relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir=f"embeddings/{new_ckpt.replace('/', '_')}"
-                #     )
-                #     relation_mapping = {"accuracy": mean_accuracy, "prediction": perms_full}
-                #     with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
-                #         json.dump(relation_mapping, f)
-
-                mean_accuracy, _, perms_full = evaluate_relation_mapping(
-                    relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir=f"embeddings/{new_ckpt.replace('/', '_')}"
-                )
-                relation_mapping = {"accuracy": mean_accuracy, "prediction": perms_full}
-                with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
-                    json.dump(relation_mapping, f)
-
-
-
-
+                # mean_accuracy, _, perms_full = evaluate_relation_mapping(
+                #     relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir=f"embeddings/{new_ckpt.replace('/', '_')}"
+                # )
+                # relation_mapping = {"accuracy": mean_accuracy, "prediction": perms_full}
+                # with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
+                #     json.dump(relation_mapping, f)
+                #
 
                 model_alias = f"{language_model}-semeval2012-v4-{aggregate}-prompt-{prompt}-nce-{seed}-{_level.replace('_', '-')}"
                 try:
