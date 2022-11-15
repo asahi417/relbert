@@ -67,9 +67,9 @@ for _level in ['child', 'child_prototypical', 'parent']:
                 with open(f"{new_ckpt}/trainer_config.json", 'w') as f:
                     json.dump(trainer_config, f)
 
-                with open(f"f{new_ckpt}/validation_loss.json") as f:
+                with open(f"{new_ckpt}/validation_loss.json") as f:
                     validation_loss = json.load(f)
-                with open(f"f{new_ckpt}/validation_loss.json", "w") as f:
+                with open(f"{new_ckpt}/validation_loss.json", "w") as f:
                     validation_loss['level'] = _level
                     validation_loss['loss'] = min(epoch_level)
                     json.dump(validation_loss, f)
