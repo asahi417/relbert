@@ -90,9 +90,10 @@ class NCELoss:
                 loss.append(- torch.log(nume_p / (deno_p + deno_n)))
             loss = stack_sum(loss)
         elif self.loss_function in ['nce_logout', 'info_loob']:
-            deno_n = torch.sum(torch.exp(
-                cos_3d(embedding_p.unsqueeze(1), embedding_n.unsqueeze(0)) / self.temperature_nce_constant),
-                dim=-1)
+            logit_n = torch.exp(
+                cos_3d(embedding_p.unsqueeze(1), embedding_n.unsqueeze(0)) / self.temperature_nce_constant
+            )
+            deno_n = torch.sum(logit_n, dim=-1)  # sum over negative
             logit_p = torch.exp(
                 cos_3d(embedding_p.unsqueeze(1), embedding_p.unsqueeze(0)) / self.temperature_nce_constant
             )
