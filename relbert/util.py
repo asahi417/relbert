@@ -113,7 +113,9 @@ class NCELoss:
         elif self.loss_function == 'triplet':
             # WARNING: triplet loss is not working properly
             distance_p = (torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0) + eps)**2, -1) + eps) ** 0.5
+            distance_n = (torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0) + eps) ** 2, -1) + eps) ** 0.5
             print(distance_p.shape)
+            print(distance_n.shape)
             input()
             distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0) + eps)**2
             for i, p in permutations(list(range(batch_size_positive)), 2):
