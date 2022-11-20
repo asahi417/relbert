@@ -111,23 +111,22 @@ class NCELoss:
             loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
             # WARNING: triplet loss is not working properly
-            # distance_p = (embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0))**2
-            # distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0))**2
+            distance_p = (embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0))**2
+            distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0))**2
             for i, p in permutations(list(range(batch_size_positive)), 2):
-                d_p = torch.sum((embedding_p[i] - embedding_p[p])**2) ** 0.5
-                print(d_p)
+                # d_p = torch.sum((embedding_p[i] - embedding_p[p])**2) ** 0.5
                 # loss.append(torch.sum(torch.clip(
                 #     distance_p[i, p].unsqueeze(0) ** 0.5 - distance_n[i] ** 0.5 - self.margin,
                 #     min=self.boundary)))
                 for n in range(len(embedding_n)):
-                    d_n = torch.sum((embedding_p[i] - embedding_n[n]) ** 2) ** 0.5
-                    print(d_n)
-                    loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
-                    print(loss)
-                    input()
-                    # loss.append(torch.sum(torch.clip(
-                    #     distance_p[i, p] ** 0.5 - distance_n[i, n] ** 0.5 - self.margin,
-                    #     min=self.boundary)))
+                    # d_n = torch.sum((embedding_p[i] - embedding_n[n]) ** 2) ** 0.5
+                    # print(d_n)
+                    # loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
+                    # print(loss)
+                    # input()
+                    loss.append(torch.sum(torch.clip(
+                        distance_p[i, p] ** 0.5 - distance_n[i, n] ** 0.5 - self.margin,
+                        min=self.boundary)))
             loss = stack_sum(loss)
         else:
             raise ValueError(f"unknown loss function {self.loss_function}")
