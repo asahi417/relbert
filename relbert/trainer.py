@@ -230,8 +230,8 @@ class Trainer:
         for example in self.data:
             pairs_p = example['positives']
             pairs_n = example['negatives']
-            if self.config['loss_function'] == "triplet" and len(pairs_p) < 2:
-                continue
+            # if self.config['loss_function'] == "triplet" and len(pairs_p) < 2:
+            #     continue
 
             if 'level' in example:
                 k = f"{example['relation_type']}/{example['level']}"
