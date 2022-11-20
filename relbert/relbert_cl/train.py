@@ -42,6 +42,7 @@ def main():
     parser.add_argument('-g', '--grad', help='', default=4, type=int)
     parser.add_argument('--export', help='', required=True, type=str)
     parser.add_argument('--fix-epoch', help='', action='store_true')
+    parser.add_argument('--relation-level', help="", nargs='+', default=None, type=str)
     opt = parser.parse_args()
 
     trainer = relbert.Trainer(
@@ -72,7 +73,8 @@ def main():
         gradient_accumulation=opt.grad,
         exclude_relation=opt.exclude_relation,
         exclude_relation_eval=opt.exclude_relation_eval,
-        fix_epoch=opt.fix_epoch
+        fix_epoch=opt.fix_epoch,
+        relation_level=opt.relation_level
     )
 
     # add file handler

@@ -1,7 +1,14 @@
 import random
 import logging
+import gc
+from itertools import permutations
 import numpy as np
 import torch
+
+
+def empty_gpu_cache():
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 def fix_seed(seed: int = 12):
@@ -108,13 +115,15 @@ class NCELoss:
             # distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0))**2
             distance_p = torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)) ** 2, -1)
             distance_n = torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)) ** 2, -1)
-            for i in range(batch_size_positive):
-                for p in range(batch_size_positive):
-                    if i != p:
-                        for n in range(len(embedding_n)):
-                            loss.append(torch.sum(torch.clip(
-                                distance_p[i, p] ** 0.5 - distance_n[i, n] ** 0.5 - self.margin,
-                                min=self.boundary)))
+            for i, p in permutations(list(range(batch_size_positive)), 2):
+                loss.append(torch.sum(torch.clip(
+                    distance_p[i, p].unsqueeze(0) ** 0.5 - distance_n[i] ** 0.5 - self.margin,
+                    min=self.boundary)))
+
+                # for n in range(len(embedding_n)):
+                #     loss.append(torch.sum(torch.clip(
+                #         distance_p[i, p] ** 0.5 - distance_n[i, n] ** 0.5 - self.margin,
+                #         min=self.boundary)))
             loss = stack_sum(loss)
         else:
             raise ValueError(f"unknown loss function {self.loss_function}")

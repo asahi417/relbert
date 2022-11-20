@@ -18,7 +18,7 @@ import torch
 from torch.optim.lr_scheduler import LambdaLR
 from datasets import load_dataset
 from .lm import RelBERT, Dataset
-from .util import fix_seed, NCELoss
+from .util import fix_seed, NCELoss, empty_gpu_cache
 
 
 def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_steps=None, last_epoch=-1):
@@ -81,7 +81,8 @@ class Trainer:
                  random_seed: int = 0,
                  exclude_relation: List or str = None,
                  exclude_relation_eval: List or str = None,
-                 fix_epoch: bool = False):
+                 fix_epoch: bool = False,
+                 relation_level: str or List = None):
         assert not os.path.exists(export), f'{export} is taken, use different name'
         # config
         self.config = dict(
@@ -110,6 +111,7 @@ class Trainer:
             n_sample=n_sample,
             gradient_accumulation=gradient_accumulation
         )
+        self.relation_level = relation_level
         logging.info('hyperparameters')
         for k, v in self.config.items():
             logging.info(f'\t * {k}: {str(v)[:min(100, len(str(v)))]}')
@@ -132,9 +134,16 @@ class Trainer:
         fix_seed(self.config['random_seed'])
         # get dataset
         self.data = load_dataset(self.config['data'], split=self.config['split'])
+        self.data_eval = load_dataset(self.config['data_eval'], split=self.config['split_eval'])
+
+        if relation_level is not None:
+            self.config['relation_level'] = relation_level
+            relation_level = [relation_level] if type(relation_level) is str else relation_level
+            self.data = self.data.filter(lambda _x: _x["level"] in relation_level)
+            self.data_eval = self.data_eval.filter(lambda _x: _x["level"] in relation_level)
+
         if self.config['exclude_relation'] is not None:
             self.data = self.data.filter(lambda x: x['relation_type'] not in self.config['exclude_relation'])
-        self.data_eval = load_dataset(self.config['data_eval'], split=self.config['split_eval'])
         if self.config['exclude_relation_eval'] is not None:
             self.data_eval = self.data_eval.filter(lambda x: x['relation_type'] not in self.config['exclude_relation_eval'])
 

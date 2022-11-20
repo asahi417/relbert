@@ -2,11 +2,10 @@ import json
 import os
 import statistics
 import logging
-from typing import List
 from itertools import chain
 from tqdm import tqdm
 from os.path import join as pj
-from typing import Dict
+from typing import Dict, List
 
 import torch
 from datasets import load_dataset
@@ -20,7 +19,7 @@ def compute_loss(model,
                  exclude_relation,
                  loss_function: str,
                  batch_size: int,
-                 relation_level: str = None,
+                 relation_level: str or List = None,
                  temperature_nce_rank: Dict = None,
                  temperature_nce_constant: float = None,
                  split: List or str = 'validation'):
@@ -32,7 +31,8 @@ def compute_loss(model,
         logging.info(f'computing loss for the split {s}')
         data = load_dataset(validation_data, split=s)
         if relation_level is not None:
-            data = data.filter(lambda _x: _x["level"] == relation_level)
+            relation_level = [relation_level] if type(relation_level) is str else relation_level
+            data = data.filter(lambda _x: _x["level"] in relation_level)
         if exclude_relation is not None:
             data = data.filter(lambda _x: _x['relation_type'] not in exclude_relation)
         encoded_pairs_dict = model.encode_word_pairs(
@@ -68,7 +68,7 @@ def compute_loss(model,
 
 
 def evaluate_validation_loss(validation_data: str,
-                             relation_level: str = None,
+                             relation_level: str or List = None,
                              relbert_ckpt: str = None,
                              max_length: int = 64,
                              batch_size: int = 64,

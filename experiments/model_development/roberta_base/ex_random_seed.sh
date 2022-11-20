@@ -1,13 +1,14 @@
-# FINETUNING
+# Try 10 random seeds (use the best config of the full model)
 TEMP=0.05
 TEMP_MIN=0.01
 LANGUAGE_MODEL="roberta-base"
 LANGUAGE_MODEL_ALIAS="roberta-base"
-DATA="relbert/semeval2012_relational_similarity_v4"
-DATA_ALIAS="semeval2012-v4"
 LR=0.000005
 GRAD=8
 NSAMPLE=640
+
+DATA="relbert/semeval2012_relational_similarity_v4"
+DATA_ALIAS="semeval2012-v4"
 
 
 finetuning() {
@@ -38,8 +39,3 @@ for S in "10" "11" "12" "13" "14" "15" "16" "17" "18"
 do
   finetuning "mask" "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 10 "${S}" "nce_logout" "nce"
 done
-
-#for S in "10" "11" "12" "13" "14" "15" "16" "17" "18"
-#do
-#  finetuning "mask" "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 10 "${S}" "triplet" "triplet"
-#done
