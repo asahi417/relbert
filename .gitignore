@@ -13,3 +13,5 @@ relbert_output
 metric_files
 huggingface
 experiments/prompt_mining/output
+__pycache__
+*.egg-info
