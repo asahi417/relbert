@@ -23,6 +23,7 @@ def stack_sum(_list):
     return torch.mean(torch.stack(_list))
 
 
+cos_3d = torch.nn.CosineSimilarity(dim=2)
 cos_2d = torch.nn.CosineSimilarity(dim=1)
 cos_1d = torch.nn.CosineSimilarity(dim=0)
 bce = torch.nn.BCELoss()
@@ -89,18 +90,28 @@ class NCELoss:
                 loss.append(- torch.log(nume_p / (deno_p + deno_n)))
             loss = stack_sum(loss)
         elif self.loss_function in ['nce_logout', 'info_loob']:
-            for i in range(batch_size_positive):
-                deno_n = torch.sum(torch.exp(
-                    cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.temperature_nce_constant))
-                for p in range(batch_size_positive):
-                    logit_p = torch.exp(
-                        cos_1d(embedding_p[i], embedding_p[p]) / self.temperature_nce_constant
-                    )
-                    if self.loss_function == 'info_loob':
-                        loss.append(- torch.log(logit_p / deno_n))
-                    else:
-                        loss.append(- torch.log(logit_p / (logit_p + deno_n)))
-            loss = stack_sum(loss)
+            deno_n = torch.sum(torch.exp(
+                cos_2d(embedding_p, embedding_n) / self.temperature_nce_constant), dim=-1)
+            logit_p = torch.exp(
+                cos_3d(embedding_p.unsqueeze(1), embedding_p.unsqueeze(0)) / self.temperature_nce_constant
+            )
+            if self.loss_function == 'info_loob':
+                loss = torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + eps)))
+            else:
+                loss = torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + logit_p + eps)))
+
+            # for i in range(batch_size_positive):
+            #     deno_n = torch.sum(torch.exp(
+            #         cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.temperature_nce_constant))
+            #     for p in range(batch_size_positive):
+            #         logit_p = torch.exp(
+            #             cos_1d(embedding_p[i], embedding_p[p]) / self.temperature_nce_constant
+            #         )
+            #         if self.loss_function == 'info_loob':
+            #             loss.append(- torch.log(logit_p / deno_n))
+            #         else:
+            #             loss.append(- torch.log(logit_p / (logit_p + deno_n)))
+            # loss = stack_sum(loss)
         elif self.loss_function == 'nce_login':
             for i in range(batch_size_positive):
                 deno_n = torch.sum(torch.exp(
