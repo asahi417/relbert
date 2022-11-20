@@ -206,7 +206,7 @@ class RelBERT:
             last_hidden_state = []
             for s, e in segment:
                 output = self.model(**{k: v[s:e].to(self.device) for k, v in encode.items()}, return_dict=True)
-                last_hidden_state.append(output.pop('last_hidden_state'))
+                last_hidden_state.append(output['last_hidden_state'])
                 del output
                 empty_gpu_cache()
             last_hidden_state = torch.concat(last_hidden_state)

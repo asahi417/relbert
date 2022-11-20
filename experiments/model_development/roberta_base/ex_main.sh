@@ -3,10 +3,10 @@ TEMP=0.05
 TEMP_MIN=0.01
 LANGUAGE_MODEL="roberta-base"
 LANGUAGE_MODEL_ALIAS="roberta-base"
-LR=0.000005
+LR=0.00001
 GRAD=8
-NSAMPLE=640
-EPOCH=15
+NSAMPLE=320
+EPOCH=10
 
 
 finetuning() {
@@ -19,7 +19,7 @@ finetuning() {
   LOSS_ALIAS=${7}
   RANDOM_SEED=${8}
   CKPT="relbert_output/models/${DATA_ALIAS}.${TEMPLATE_ID}.${LOSS}.${MODE}.${LANGUAGE_MODEL}.${LR}.${GRAD}.${TEMP}.${NSAMPLE}.${RANDOM_SEED}"
-  MODEL_HF="${LANGUAGE_MODEL_ALIAS}-${DATA_ALIAS}-${MODE//_/-}-prompt-${TEMPLATE_ID}-${LOSS_ALIAS}-${RANDOM_SEED}"
+  MODEL_HF="relbert-${LANGUAGE_MODEL_ALIAS}-${DATA_ALIAS}-${MODE//_/-}-prompt-${TEMPLATE_ID}-${LOSS_ALIAS}-${RANDOM_SEED}"
   relbert-train -m "${LANGUAGE_MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample "${NSAMPLE}" --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
     --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" \
     -t "${TEMPLATE}" --data "${DATA}" --split "train" --random-seed "${RANDOM_SEED}"
@@ -53,5 +53,5 @@ experiment () {
 }
 
 experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v4" "nce_logout" "nce"
-experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v4" "triplet" "triplet"
+#experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v4" "triplet" "triplet"
 #experiment "relbert/semeval2012_relational_similarity_v5" "semeval2012-v5" "nce_logout" "nce"

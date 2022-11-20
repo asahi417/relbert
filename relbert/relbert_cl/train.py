@@ -17,9 +17,7 @@ def main():
     parser.add_argument('--mode', help='', default='average_no_mask', type=str)
     parser.add_argument('--data', help='', default='relbert/semeval2012_relational_similarity', type=str)
     parser.add_argument('--split', help='', default='train', type=str)
-    parser.add_argument('--data-eval', help='', default='relbert/semeval2012_relational_similarity', type=str)
     parser.add_argument('--split-eval', help='', default='validation', type=str)
-
     parser.add_argument('--template-mode', help='', default='manual', type=str)
     parser.add_argument('-t', '--template', help='', default=TEMP, type=str)
     parser.add_argument('-l', '--loss-function', help='', default='nce_logout', type=str)
@@ -37,7 +35,6 @@ def main():
     parser.add_argument('--random-seed', help='random seed', default=0, type=int)
     parser.add_argument("--weight-decay", help="", default=0, type=float)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
-    parser.add_argument('--exclude-relation-eval', help="", nargs='+', default=None, type=str)
     parser.add_argument('--epoch-save', help='', default=1, type=int)
     parser.add_argument('-g', '--grad', help='', default=4, type=int)
     parser.add_argument('--export', help='', required=True, type=str)
@@ -52,7 +49,6 @@ def main():
         mode=opt.mode,
         data=opt.data,
         split=opt.split,
-        data_eval=opt.data_eval,
         split_eval=opt.split_eval,
         template_mode=opt.template_mode,
         template=opt.template,
@@ -72,7 +68,6 @@ def main():
         random_seed=opt.random_seed,
         gradient_accumulation=opt.grad,
         exclude_relation=opt.exclude_relation,
-        exclude_relation_eval=opt.exclude_relation_eval,
         fix_epoch=opt.fix_epoch,
         relation_level=opt.relation_level
     )

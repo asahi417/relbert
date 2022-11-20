@@ -1,14 +1,11 @@
-""" RelBERT fine-tuning with NCE loss
-TODO: add classification loss as another argument?
-TODO: argument to switch validation loss
-"""
+""" RelBERT fine-tuning with NCE loss """
 import os
 import logging
 import random
 import json
 import statistics
 from itertools import chain
-from typing import List, Dict
+from typing import List
 from tqdm import tqdm
 from glob import glob
 from os.path import join as pj
@@ -18,7 +15,7 @@ import torch
 from torch.optim.lr_scheduler import LambdaLR
 from datasets import load_dataset
 from .lm import RelBERT, Dataset
-from .util import fix_seed, NCELoss, empty_gpu_cache
+from .util import fix_seed, NCELoss
 
 
 def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_steps=None, last_epoch=-1):
@@ -60,7 +57,6 @@ class Trainer:
                  mode: str = 'average_no_mask',
                  data: str = 'relbert/semeval2012_relational_similarity',
                  split: str = 'train',
-                 data_eval: str = 'relbert/semeval2012_relational_similarity',
                  split_eval: str = 'validation',
                  template_mode: str = 'manual',
                  template: str = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>",
@@ -80,7 +76,6 @@ class Trainer:
                  weight_decay: float = 0,
                  random_seed: int = 0,
                  exclude_relation: List or str = None,
-                 exclude_relation_eval: List or str = None,
                  fix_epoch: bool = False,
                  relation_level: str or List = None):
         assert not os.path.exists(export), f'{export} is taken, use different name'
@@ -91,7 +86,6 @@ class Trainer:
             mode=mode,
             data=data,
             split=split,
-            data_eval=data_eval,
             split_eval=split_eval,
             template_mode=template_mode,
             template=template,
@@ -107,11 +101,10 @@ class Trainer:
             weight_decay=weight_decay,
             random_seed=random_seed,
             exclude_relation=exclude_relation,
-            exclude_relation_eval=exclude_relation_eval,
             n_sample=n_sample,
-            gradient_accumulation=gradient_accumulation
+            gradient_accumulation=gradient_accumulation,
+            relation_level=relation_level
         )
-        self.relation_level = relation_level
         logging.info('hyperparameters')
         for k, v in self.config.items():
             logging.info(f'\t * {k}: {str(v)[:min(100, len(str(v)))]}')
@@ -134,19 +127,16 @@ class Trainer:
         fix_seed(self.config['random_seed'])
         # get dataset
         self.data = load_dataset(self.config['data'], split=self.config['split'])
-        self.data_eval = load_dataset(self.config['data_eval'], split=self.config['split_eval'])
+        self.data_eval = load_dataset(self.config['data'], split=self.config['split_eval'])
 
-        if relation_level is not None:
-            self.config['relation_level'] = relation_level
+        if self.config['relation_level'] is not None:
             relation_level = [relation_level] if type(relation_level) is str else relation_level
             self.data = self.data.filter(lambda _x: _x["level"] in relation_level)
             self.data_eval = self.data_eval.filter(lambda _x: _x["level"] in relation_level)
 
         if self.config['exclude_relation'] is not None:
             self.data = self.data.filter(lambda x: x['relation_type'] not in self.config['exclude_relation'])
-        if self.config['exclude_relation_eval'] is not None:
-            self.data_eval = self.data_eval.filter(lambda x: x['relation_type'] not in self.config['exclude_relation_eval'])
-
+            self.data_eval = self.data_eval.filter(lambda x: x['relation_type'] not in self.config['exclude_relation'])
         self.model_parameters = list(self.model.model.named_parameters())
 
         # setup optimizer
@@ -314,7 +304,6 @@ class Trainer:
             for i in glob(pj(self.export_dir, 'epoch_*')):
                 with open(pj(i, 'validation_loss.json')) as f:
                     loss = json.load(f)["loss"]
-                    # loss = json.load(f)[f'{self.config["split_eval"]}_loss']
                 ckpt_loss.append([i, loss])
             best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
         copy_tree(best_ckpt, pj(self.export_dir, 'best_model'))
@@ -331,10 +320,8 @@ class Trainer:
             result = {
                 "split": self.config["split_eval"],
                 "loss": v_loss,
-                "data": self.config["data_eval"],
-                "exclude_relation": self.config["exclude_relation_eval"],
-                # f'{self.config["split_eval"]}_loss': v_loss,
-                # f'{self.config["split_eval"]}_data': self.config["data_eval"],
-                # f'{self.config["split_eval"]}_data/exclude_relation': self.config["exclude_relation_eval"]
+                "data": self.config["data"],
+                "exclude_relation": self.config["exclude_relation"],
+                "relation_level": self.config["relation_level"],
             }
             json.dump(result, f)
