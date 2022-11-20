@@ -15,3 +15,4 @@ huggingface
 experiments/prompt_mining/output
 __pycache__
 *.egg-info
+semeval2012_relational_similarity*

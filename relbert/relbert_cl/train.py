@@ -20,7 +20,7 @@ def main():
     parser.add_argument('--split-eval', help='', default='validation', type=str)
     parser.add_argument('--template-mode', help='', default='manual', type=str)
     parser.add_argument('-t', '--template', help='', default=TEMP, type=str)
-    parser.add_argument('-l', '--loss-function', help='', default='nce_logout', type=str)
+    parser.add_argument('-__init__.py', '--loss-function', help='', default='nce_logout', type=str)
     parser.add_argument('-c', '--classification-loss', help='', action='store_true')
     parser.add_argument('--temperature-nce-type', help='', default='linear', type=str)
     parser.add_argument('--temperature-nce-constant', help='', default=1.0, type=float)

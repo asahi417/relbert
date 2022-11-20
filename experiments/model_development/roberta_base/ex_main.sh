@@ -52,6 +52,6 @@ experiment () {
   done
 }
 
-experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v4" "nce_logout" "nce"
-experiment "relbert/semeval2012_relational_similarity_v4" "semeval2012-v4" "triplet" "triplet"
+experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "nce_logout" "nce"
+experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "triplet" "triplet"
 #experiment "relbert/semeval2012_relational_similarity_v5" "semeval2012-v5" "nce_logout" "nce"
