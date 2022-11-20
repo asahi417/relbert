@@ -58,11 +58,14 @@ class Dataset(torch.utils.data.Dataset):
 
 class PPL:
 
-    def __init__(self, model: str, max_length: int = 32):
+    def __init__(self, model: str, max_length: int = 32, is_causal: bool = None):
         self.max_length = max_length
 
         # model setup
-        self.is_causal = 'gpt' in model
+        if is_causal is None:
+            self.is_causal = 'gpt' in model
+        else:
+            self.is_causal = is_causal
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(model)
         self.config = transformers.AutoConfig.from_pretrained(model)
         if self.is_causal:

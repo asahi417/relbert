@@ -44,11 +44,12 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--data', help='analogy dataset (sat/bats/u2/u4/google)', required=True, type=str)
     parser.add_argument('-e', '--export-file', help='export file', required=True, type=str)
     parser.add_argument('-p', '--prompt', help=f'prompt type: {templates.keys()}', required=True, type=str)
+    parser.add_argument('--is-causal', help='', action='store_true')
     opt = parser.parse_args()
 
     # initialize
     logging.info(f'Computing perplexity with {opt.model} on {opt.data}')
-    scorer = PPL(opt.model)
+    scorer = PPL(opt.model, is_causal=opt.is_causal)
     dataset = load_dataset("relbert/analogy_questions", opt.data)
     os.makedirs(os.path.dirname(opt.export_file), exist_ok=True)
 

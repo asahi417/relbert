@@ -16,3 +16,8 @@ print(scorer.get_perplexity(sentence))
 python compute_analogy_perplexity.py -m 'distilbert-base-uncased' -d 'sat' -p 'is-to-as' -e 'output/sat_distilbert.json'
 ```
 Analogy dataset can be set by `-d` from `sat`/`bats`/`u2`/`u4`/`google`. The prompt can take one from five different one. See more detail by `python compute_analogy_perplexity.py -h`.
+
+For causal language model (eg. GPT and OPT), you need to specify `--is-causal` to switch computation.  
+```shell
+python compute_analogy_perplexity.py --is-causal -m 'gpt2' -d 'sat' -p 'is-to-as' -e 'output/sat_gpt2.json'
+```
