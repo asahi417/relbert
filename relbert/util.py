@@ -93,7 +93,6 @@ class NCELoss:
             deno_n = torch.sum(torch.exp(
                 cos_3d(embedding_p.unsqueeze(1), embedding_n.unsqueeze(0)) / self.temperature_nce_constant),
                 dim=-1)
-            print(deno_n.shape)
             logit_p = torch.exp(
                 cos_3d(embedding_p.unsqueeze(1), embedding_p.unsqueeze(0)) / self.temperature_nce_constant
             )
