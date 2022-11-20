@@ -59,7 +59,10 @@ if __name__ == '__main__':
         for data in tqdm(dataset[_split]):
             candidates = [data['stem'] + i for i in data['choice']]
             texts = [prompting_relation(i) for i in candidates]
-            ppl_list.append(scorer.get_perplexity(texts))
+            ppl = scorer.get_perplexity(texts)
+            ppl_list.append(
+                {"ppl": ppl, "texts": texts, "stem": data['stem'], "choice": data['choice'], "answer": data['answer']}
+            )
         output[_split] = ppl_list
 
     with open(opt.export_file, 'w') as f:
