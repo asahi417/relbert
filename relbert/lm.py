@@ -207,14 +207,14 @@ class RelBERT:
             for s, e in segment:
                 output = self.model(**{k: v[s:e].to(self.device) for k, v in encode.items()}, return_dict=True)
                 last_hidden_state.append(output['last_hidden_state'])
-                del output
-                empty_gpu_cache()
+                # del output
+                # empty_gpu_cache()
             last_hidden_state = torch.concat(last_hidden_state)
             labels = labels[:len(last_hidden_state)].to(self.device)
             embeddings = (last_hidden_state * labels.reshape(len(labels), -1, 1)).sum(1)
-            del labels
-            del last_hidden_state
-            empty_gpu_cache()
+            # del labels
+            # del last_hidden_state
+            # empty_gpu_cache()
             return embeddings
 
     def get_embedding(self, x: List, batch_size: int = None):
