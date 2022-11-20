@@ -26,12 +26,12 @@ def get_partition(_list):
 
 
 def input_ids_to_labels(input_ids, label_position: List = None, label_id: List = None, is_causal: bool = False, pad_token_id=None):
-    assert len(label_position) == len(label_id)
     label = [PAD_TOKEN_LABEL_ID] * len(input_ids)
     if is_causal:  # shift the label sequence for causal inference
         label = list(map(lambda x: PAD_TOKEN_LABEL_ID if x == pad_token_id else x, input_ids))
         label = label[1:] + [PAD_TOKEN_LABEL_ID]
     else:
+        assert len(label_position) == len(label_id)
         for p, i in zip(label_position, label_id):
             label[p] = i
     return label
