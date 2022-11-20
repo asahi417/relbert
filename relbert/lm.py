@@ -170,7 +170,7 @@ class RelBERT:
             self.model.save_pretrained(cache_dir)
         self.tokenizer.save_pretrained(cache_dir)
 
-    def encode_word_pairs(self, word_pairs):
+    def encode_word_pairs(self, word_pairs, parallel: bool = True):
         """ return a dictionary of word_pair: encode
         if return_list is True, return encode of every word_pairs with same order.
         otherwise, return dictionary
@@ -190,7 +190,14 @@ class RelBERT:
         word_pairs_dict_key = sorted(list(set(word_pairs_dict.keys())))
         word_pairs = [word_pairs_dict[k] for k in word_pairs_dict_key]
         logging.info(f'\t deduplicate: {len(word_pairs_dict_key)}')
-        encode = pool_map(word_pairs)
+        if parallel:
+            encode = pool_map(word_pairs)
+        else:
+            process = EncodePlus(tokenizer=self.tokenizer, max_length=self.max_length, template=self.template,
+                                 mode=self.mode, truncate_exceed_tokens=self.truncate_exceed_tokens)
+            encode = []
+            for p in word_pairs:
+                encode.append(process(p))
         return {k: e for k, e in zip(word_pairs_dict_key, encode)}
 
     def to_embedding(self, encode, batch_size: int = None):

@@ -219,9 +219,13 @@ class Trainer:
             Epoch to run validation eg) Every 100000 epoch, it will save model weight as default.
         """
         encoded_pairs_dict = self.model.encode_word_pairs(
-            list(chain(*(self.data['positives'] + self.data['negatives']))))
+            list(chain(*(self.data['positives'] + self.data['negatives']))),
+            parallel=False
+        )
         encoded_pairs_dict_eval = self.model.encode_word_pairs(
-            list(chain(*(self.data_eval['positives'] + self.data_eval['negatives']))))
+            list(chain(*(self.data_eval['positives'] + self.data_eval['negatives']))),
+            parallel=False
+        )
         loader_dict = {}
         for example in self.data:
             pairs_p = example['positives']
