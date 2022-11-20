@@ -80,7 +80,8 @@ class Trainer:
                  weight_decay: float = 0,
                  random_seed: int = 0,
                  exclude_relation: List or str = None,
-                 exclude_relation_eval: List or str = None):
+                 exclude_relation_eval: List or str = None,
+                 fix_epoch: bool = False):
         assert not os.path.exists(export), f'{export} is taken, use different name'
         # config
         self.config = dict(
@@ -149,7 +150,8 @@ class Trainer:
                  "weight_decay": 0.0}
             ]
         self.optimizer = torch.optim.AdamW(self.model_parameters, lr=self.config['lr'])
-        
+        self.fix_epoch = fix_epoch
+
         # scheduler
         self.scheduler = get_linear_schedule_with_warmup(
             self.optimizer,
@@ -287,23 +289,28 @@ class Trainer:
             logging.info(f"[epoch {e + 1}/{self.config['epoch']} complete] average loss: {mean_loss}, lr: {lr}")
 
             if (e + 1) % epoch_save == 0 and (e + 1) != 0:
-                v_loss = self.compute_loss(encoded_pairs_dict_eval)
-                self.save(e, v_loss)
-
+                if self.fix_epoch:
+                    self.save(e)
+                else:
+                    v_loss = self.compute_loss(encoded_pairs_dict_eval)
+                    self.save(e, v_loss)
         v_loss = self.compute_loss(encoded_pairs_dict_eval)
         self.save(self.config['epoch'] - 1, v_loss)
         logging.info(f'complete training: model ckpt was saved at {self.export_dir}')
-        # choose the best model
-        ckpt_loss = []
-        for i in glob(pj(self.export_dir, 'epoch_*')):
-            with open(pj(i, 'validation_loss.json')) as f:
-                loss = json.load(f)["loss"]
-                # loss = json.load(f)[f'{self.config["split_eval"]}_loss']
-            ckpt_loss.append([i, loss])
-        best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
+        if self.fix_epoch:
+            best_ckpt = pj(self.export_dir, f'epoch_{self.config["epoch"]}')
+        else:
+            # choose the best model
+            ckpt_loss = []
+            for i in glob(pj(self.export_dir, 'epoch_*')):
+                with open(pj(i, 'validation_loss.json')) as f:
+                    loss = json.load(f)["loss"]
+                    # loss = json.load(f)[f'{self.config["split_eval"]}_loss']
+                ckpt_loss.append([i, loss])
+            best_ckpt, loss = sorted(ckpt_loss, key=lambda _x: _x[1])[0]
         copy_tree(best_ckpt, pj(self.export_dir, 'best_model'))
 
-    def save(self, current_epoch, v_loss):
+    def save(self, current_epoch, v_loss=None):
         cache_dir = pj(self.export_dir, f'epoch_{current_epoch + 1}')
         os.makedirs(cache_dir, exist_ok=True)
         self.model.save(cache_dir)
