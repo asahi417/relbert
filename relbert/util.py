@@ -70,26 +70,8 @@ class NCELoss:
             return (_min - _max) / (1 - n) * (i - 1) + _min
         raise ValueError(f"unknown type: {self.temperature_nce_rank['type']}")
 
-    def __call__(self,
-                 embedding_p,
-                 embedding_n,
-                 rank=None):
-        loss = []
-        batch_size_positive = len(embedding_p)
-        if self.loss_function == 'nce_rank':
-            assert rank is not None
-            rank_map = {r: 1 + n for n, r in enumerate(sorted(rank))}
-            rank = [rank_map[r] for r in rank]
-            for i in range(batch_size_positive):
-                assert type(rank[i]) == int, rank[i]
-                tau = self.get_rank_temperature(rank[i], batch_size_positive)
-                deno_n = torch.sum(torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / tau))
-                dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
-                nume_p = stack_sum([d for n, d in enumerate(dist) if rank[n] >= rank[i]])
-                deno_p = stack_sum([d for n, d in enumerate(dist) if rank[n] < rank[i]])
-                loss.append(- torch.log(nume_p / (deno_p + deno_n)))
-            loss = stack_sum(loss)
-        elif self.loss_function in ['nce_logout', 'info_loob']:
+    def __call__(self, embedding_p, embedding_n, rank=None):
+        if self.loss_function in ['nce_logout', 'info_loob']:
             logit_n = torch.exp(
                 cos_3d(embedding_p.unsqueeze(1), embedding_n.unsqueeze(0)) / self.temperature_nce_constant
             )
@@ -101,59 +83,37 @@ class NCELoss:
                 loss = torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + eps)))
             else:
                 loss = torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + logit_p + eps)))
-
-            # for i in range(batch_size_positive):
-            #     deno_n = torch.sum(torch.exp(
-            #         cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.temperature_nce_constant))
-            #     for p in range(batch_size_positive):
-            #         logit_p = torch.exp(
-            #             cos_1d(embedding_p[i], embedding_p[p]) / self.temperature_nce_constant
-            #         )
-            #         if self.loss_function == 'info_loob':
-            #             loss.append(- torch.log(logit_p / deno_n))
-            #         else:
-            #             loss.append(- torch.log(logit_p / (logit_p + deno_n)))
-            # loss = stack_sum(loss)
-        elif self.loss_function == 'nce_login':
-            for i in range(batch_size_positive):
-                deno_n = torch.sum(torch.exp(
-                    cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.temperature_nce_constant))
-                logit_p = torch.sum(torch.exp(
-                    cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.temperature_nce_constant))
-                loss.append(- torch.log(logit_p / (logit_p + deno_n)))
-            loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
-            # WARNING: triplet loss is not working properly
             distance_p = (torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)) ** 2, -1) + eps) ** 0.5
             distance_n = (torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)) ** 2, -1) + eps) ** 0.5
             loss = torch.sum(torch.clip(
                 distance_p.unsqueeze(-1) - distance_n.unsqueeze(-2) - self.margin,
                 min=self.boundary))
-            # print(distance_p.shape)
-            # print(distance_n.shape)
-            # input()
-            # distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0) + eps)**2
-            # for i, p in permutations(list(range(batch_size_positive)), 2):
-            #     # d_p = torch.sum((embedding_p[i] - embedding_p[p])**2) ** 0.5
-            #     loss.append(torch.sum(torch.clip(
-            #         (distance_p[i, p].unsqueeze(0) + eps) - distance_n[i] - self.margin,
-            #         min=self.boundary)))
-            #     # loss.append(torch.sum(
-            #     #     distance_p[i, p].unsqueeze(0) ** 0.5 - distance_n[i] ** 0.5 - self.margin
-            #     # )
-            #     # for n in range(len(embedding_n)):
-            #         # d_n = torch.sum((embedding_p[i] - embedding_n[n]) ** 2) ** 0.5
-            #         # print(d_n)
-            #         # loss.append(torch.sum(torch.clip(d_p - d_n - self.margin, min=self.boundary)))
-            #         # print(loss)
-            #         # input()
-            #         # loss.append(torch.sum(torch.clip(
-            #         #     distance_p[i, p] ** 0.5 - distance_n[i, n] ** 0.5 - self.margin,
-            #         #     min=self.boundary)))
-            # loss = stack_sum(loss)
+        # elif self.loss_function == 'nce_login':
+        #     for i in range(batch_size_positive):
+        #         deno_n = torch.sum(torch.exp(
+        #             cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / self.temperature_nce_constant))
+        #         logit_p = torch.sum(torch.exp(
+        #             cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / self.temperature_nce_constant))
+        #         loss.append(- torch.log(logit_p / (logit_p + deno_n)))
+        #     loss = stack_sum(loss)
+        # elif self.loss_function == 'nce_rank':
+        #     assert rank is not None
+        #     rank_map = {r: 1 + n for n, r in enumerate(sorted(rank))}
+        #     rank = [rank_map[r] for r in rank]
+        #     for i in range(batch_size_positive):
+        #         assert type(rank[i]) == int, rank[i]
+        #         tau = self.get_rank_temperature(rank[i], batch_size_positive)
+        #         deno_n = torch.sum(torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_n) / tau))
+        #         dist = torch.exp(cos_2d(embedding_p[i].unsqueeze(0), embedding_p) / tau)
+        #         nume_p = stack_sum([d for n, d in enumerate(dist) if rank[n] >= rank[i]])
+        #         deno_p = stack_sum([d for n, d in enumerate(dist) if rank[n] < rank[i]])
+        #         loss.append(- torch.log(nume_p / (deno_p + deno_n)))
+        #     loss = stack_sum(loss)
         else:
             raise ValueError(f"unknown loss function {self.loss_function}")
         if self.linear is not None:
+            batch_size_positive = len(embedding_p)
             for i in range(batch_size_positive):
                 features = []
                 labels = []

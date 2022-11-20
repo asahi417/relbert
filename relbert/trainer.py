@@ -287,7 +287,7 @@ class Trainer:
                 self.optimizer.step()
                 self.scheduler.step()
                 mean_loss = round(sum(total_loss) / len(total_loss), 3)
-                lr = round(self.optimizer.param_groups[0]['lr'], 5)
+                lr = round(self.optimizer.param_groups[0]['lr'], 10)
                 logging.info(f"\t[step {n}/{len(relation_keys)}] average loss: {mean_loss}, lr: {lr}")
 
             mean_loss = round(sum(total_loss)/len(total_loss), 3)
