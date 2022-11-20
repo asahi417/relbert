@@ -1,7 +1,6 @@
 import random
 import logging
 import gc
-from itertools import permutations
 import numpy as np
 import torch
 
@@ -112,8 +111,8 @@ class NCELoss:
             loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
             # WARNING: triplet loss is not working properly
-            distance_p = (torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0) + eps)**2, -1) + eps) ** 0.5
-            distance_n = (torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0) + eps) ** 2, -1) + eps) ** 0.5
+            distance_p = (torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0)) ** 2, -1) + eps) ** 0.5
+            distance_n = (torch.sum((embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0)) ** 2, -1) + eps) ** 0.5
             loss = torch.sum(torch.clip(
                 distance_p.unsqueeze(-1) - distance_n.unsqueeze(-2) - self.margin,
                 min=self.boundary))
