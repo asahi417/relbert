@@ -276,6 +276,7 @@ class Trainer:
                 embedding_p = embedding[:batch_size_positive]
                 embedding_n = embedding[batch_size_positive:]
                 rank = x_p.pop('ranking').cpu().tolist()
+                print(len(embedding_n), len(embedding_p))
                 loss = nce_loss(embedding_p, embedding_n, rank)
                 loss.backward()
                 total_loss.append(loss.cpu().item())
