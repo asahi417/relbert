@@ -1,5 +1,0 @@
-[console_scripts]
-relbert-eval = relbert.relbert_cl.evaluate:main
-relbert-push-to-hub = relbert.relbert_cl.push_to_modelhub:main
-relbert-train = relbert.relbert_cl.train:main
-
