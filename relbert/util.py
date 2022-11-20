@@ -27,6 +27,7 @@ def stack_sum(_list):
 cos_2d = torch.nn.CosineSimilarity(dim=1)
 cos_1d = torch.nn.CosineSimilarity(dim=0)
 bce = torch.nn.BCELoss()
+eps = 1e-5
 
 
 class NCELoss:
@@ -37,8 +38,8 @@ class NCELoss:
                  temperature_nce_rank=None,
                  classification_loss: bool = False,
                  hidden_size: int = None,
-                 margin: int = 1,
-                 boundary: int = 0,
+                 margin: int = 0.1,
+                 boundary: int = 0.001,
                  device=None,
                  parallel=False):
         self.loss_function = loss_function
@@ -111,13 +112,18 @@ class NCELoss:
             loss = stack_sum(loss)
         elif self.loss_function == 'triplet':
             # WARNING: triplet loss is not working properly
-            distance_p = (embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0))**2
-            distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0))**2
+            distance_p = (torch.sum((embedding_p.unsqueeze(1) - embedding_p.unsqueeze(0) + eps)**2, -1) + eps) ** 0.5
+            print(distance_p.shape)
+            input()
+            distance_n = (embedding_p.unsqueeze(1) - embedding_n.unsqueeze(0) + eps)**2
             for i, p in permutations(list(range(batch_size_positive)), 2):
                 # d_p = torch.sum((embedding_p[i] - embedding_p[p])**2) ** 0.5
                 loss.append(torch.sum(torch.clip(
-                    distance_p[i, p].unsqueeze(0) ** 0.5 - distance_n[i] ** 0.5 - self.margin,
+                    (distance_p[i, p].unsqueeze(0) + eps) - distance_n[i] - self.margin,
                     min=self.boundary)))
+                # loss.append(torch.sum(
+                #     distance_p[i, p].unsqueeze(0) ** 0.5 - distance_n[i] ** 0.5 - self.margin
+                # )
                 # for n in range(len(embedding_n)):
                     # d_n = torch.sum((embedding_p[i] - embedding_n[n]) ** 2) ** 0.5
                     # print(d_n)
