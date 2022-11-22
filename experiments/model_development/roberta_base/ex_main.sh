@@ -23,12 +23,12 @@ finetuning() {
 #  relbert-train -m "${LANGUAGE_MODEL}" --mode "${MODE}" -l "${LOSS}" -e "${EPOCH}" -b 128 --n-sample "${NSAMPLE}" --export "${CKPT}" --lr "${LR}" -g "${GRAD}" \
 #    --temperature-nce-constant "${TEMP}" --temperature-nce-max "${TEMP}" --temperature-nce-min "${TEMP_MIN}" \
 #    -t "${TEMPLATE}" --data "${DATA}" --split "train" --random-seed "${RANDOM_SEED}"
-#  relbert-push-to-hub -o relbert -m "${CKPT}/best_model" -a "${MODEL_HF}"
-  git clone "https://huggingface.co/relbert/${MODEL_HF}"
-  relbert-eval --overwrite --type analogy -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
-  relbert-eval --overwrite --type classification -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
-  relbert-eval --overwrite --type relation_mapping -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
-  relbert-push-to-hub -o 'relbert' -a "${MODEL_HF}" -m "${MODEL_HF}"
+  relbert-push-to-hub -o 'relbert' -m "${CKPT}/best_model" -a "${MODEL_HF}"
+#  git clone "https://huggingface.co/relbert/${MODEL_HF}"
+#  relbert-eval --overwrite --type analogy -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
+#  relbert-eval --overwrite --type classification -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
+#  relbert-eval --overwrite --type relation_mapping -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
+#  relbert-push-to-hub -o 'relbert' -a "${MODEL_HF}" -m "${MODEL_HF}"
   rm -rf "${MODEL_HF}"
 }
 
@@ -41,9 +41,9 @@ experiment () {
 
 #  MODE="mask"
 #  MODE="average"
-  R="0"
+#  R="0"
 #  R="1"
-#  R="2"
+  R="2"
   for MODE in "mask" "average"
   do
     finetuning "${MODE}" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
@@ -66,4 +66,4 @@ experiment () {
 }
 
 experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "nce_logout" "nce"
-experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "triplet" "triplet"
+#experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "triplet" "triplet"
