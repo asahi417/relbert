@@ -20,7 +20,7 @@ def get_readme(model_name: str,
                metric_classification: Dict = None,
                metric_relation_mapping: Dict = None,
                ):
-    config_text = "\n".join([f" - {k}: {v}" for k, v in config.items()])
+    config_text = "\n".join([f' - {k}: "{v}"' for k, v in config.items()])
     dataset_link = f"[{config['data']}](https://huggingface.co/datasets/{config['data']})"
     return f"""---
 datasets:
