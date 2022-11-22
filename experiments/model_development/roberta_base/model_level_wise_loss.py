@@ -24,6 +24,7 @@ loss_alias = os.getenv("LOSS_ALIAS", "nce")
 print(f"loss: {loss}, loss_alias: {loss_alias}")
 batch = 512
 max_length = 64
+epoch = 10
 target_split = 'validation'
 os.makedirs(f"{root_dir}/level_wise_loss", exist_ok=True)
 skipped = []
@@ -41,7 +42,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     continue
                 relbert_ckpt = relbert_ckpt[0]
                 epoch_level = []
-                for epoch in range(1, 16):
+                for epoch in range(1, epoch + 1):
                     path = f"{root_dir}/level_wise_loss/{loss_alias}.{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json"
                     result = None
                     if os.path.exists(path):
