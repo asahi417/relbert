@@ -18,8 +18,10 @@ language_model = 'roberta-base'
 data = 'semeval2012_relational_similarity_v6'
 version = 'semeval2012-v6'
 language = 'en'
-loss = 'nce'
-loss_alias = 'nce_logout'
+
+loss = os.getenv("LOSS", "nce")
+loss_alias = os.getenv("LOSS_ALIAS", "nce")
+print(f"loss: {loss}, loss_alias: {loss_alias}")
 batch = 512
 max_length = 64
 target_split = 'validation'
