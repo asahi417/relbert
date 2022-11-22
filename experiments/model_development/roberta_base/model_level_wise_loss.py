@@ -15,9 +15,11 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logg
 
 root_dir = 'relbert_output'
 language_model = 'roberta-base'
-data = 'semeval2012_relational_similarity_v4'
+data = 'semeval2012_relational_similarity_v6'
+version = 'semeval2012-v6'
 language = 'en'
 loss = 'nce'
+loss_alias = 'nce_logout'
 batch = 512
 max_length = 64
 target_split = 'validation'
@@ -25,20 +27,20 @@ os.makedirs(f"{root_dir}/level_wise_loss", exist_ok=True)
 skipped = []
 error = []
 for _level in ['child', 'child_prototypical', 'parent']:
-    output_dir = f'{root_dir}/models/semeval2012-v4-{_level}'
+    output_dir = f'{root_dir}/models/{version}-{_level}'
     os.makedirs(output_dir, exist_ok=True)
     for aggregate in ['average', 'mask']:
         for prompt in ['a', 'b', 'c', 'd', 'e']:
             for seed in range(3):
-                relbert_ckpt = glob(f'{root_dir}/models/semeval2012-v4.{prompt}.nce_logout.{aggregate}.{language_model}.*.{seed}')
+                relbert_ckpt = glob(f'{root_dir}/models/{version}.{prompt}.{loss_alias}.{aggregate}.{language_model}.*.{seed}')
                 if len(relbert_ckpt) != 1:
-                    skipped.append(f'{root_dir}/models/semeval2012-v4.{prompt}.nce_logout.{aggregate}.{language_model}.*.{seed}')
-                    print(f'\tskip `{root_dir}/models/semeval2012-v4.{prompt}.nce_logout.{aggregate}.{language_model}.*.{seed}`')
+                    skipped.append(f'{root_dir}/models/{version}.{prompt}.{loss_alias}.{aggregate}.{language_model}.*.{seed}')
+                    print(f'\tskip `{root_dir}/models/{version}.{prompt}.{loss_alias}.{aggregate}.{language_model}.*.{seed}`')
                     continue
                 relbert_ckpt = relbert_ckpt[0]
                 epoch_level = []
                 for epoch in range(1, 16):
-                    path = f"{root_dir}/level_wise_loss/{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json"
+                    path = f"{root_dir}/level_wise_loss/{loss_alias}.{_level}.{aggregate}.{prompt}.{seed}.{epoch}.json"
                     result = None
                     if os.path.exists(path):
                         with open(path) as f:
@@ -47,7 +49,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                                 result = tmp_result
                     if result is None:
                         result = evaluate_validation_loss(
-                            validation_data="relbert/semeval2012_relational_similarity_v4",
+                            validation_data=f"relbert/{data}",
                             relbert_ckpt=f"{relbert_ckpt}/epoch_{epoch}",
                             batch_size=batch,
                             max_length=max_length,
@@ -59,7 +61,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     epoch_level.append(result['loss'])
                 # create new model ckpt
                 best_epoch = epoch_level.index(min(epoch_level)) + 1
-                new_ckpt = f"{output_dir}/{aggregate}.{prompt}.{seed}"
+                new_ckpt = f"{output_dir}/{loss_alias}.{aggregate}.{prompt}.{seed}"
                 copy_tree(f"{relbert_ckpt}/epoch_{best_epoch}", new_ckpt)
                 with open(f"{new_ckpt}/trainer_config.json", 'r') as f:
                     trainer_config = json.load(f)
@@ -101,44 +103,37 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
                         json.dump(relation_mapping, f)
 
-                # mean_accuracy, _, perms_full = evaluate_relation_mapping(
-                #     relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir=f"embeddings/{new_ckpt.replace('/', '_')}"
-                # )
-                # relation_mapping = {"accuracy": mean_accuracy, "prediction": perms_full}
-                # with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
-                #     json.dump(relation_mapping, f)
+
+                # model_alias = f"relbert-{language_model}-{version}-{aggregate}-prompt-{prompt}-{loss}-{seed}-{_level.replace('_', '-')}"
+                # try:
+                #     # push to model hub
+                #     url = create_repo(f"relbert/{model_alias}", exist_ok=True)
+                #     args = {"use_auth_token": True, "repo_url": url, "organization": "relbert"}
+                #     model = RelBERT(new_ckpt)
+                #     assert model.is_trained
+                #     if model.parallel:
+                #         model_ = model.model.module
+                #     else:
+                #         model_ = model.model
+                #     model_.push_to_hub(model_alias, **args)
+                #     model_.config.push_to_hub(model_alias, **args)
+                #     model.tokenizer.push_to_hub(model_alias, **args)
                 #
-
-                model_alias = f"{language_model}-semeval2012-v4-{aggregate}-prompt-{prompt}-nce-{seed}-{_level.replace('_', '-')}"
-                try:
-                    # push to model hub
-                    url = create_repo(f"relbert/{model_alias}", exist_ok=True)
-                    args = {"use_auth_token": True, "repo_url": url, "organization": "relbert"}
-                    model = RelBERT(new_ckpt)
-                    assert model.is_trained
-                    if model.parallel:
-                        model_ = model.model.module
-                    else:
-                        model_ = model.model
-                    model_.push_to_hub(model_alias, **args)
-                    model_.config.push_to_hub(model_alias, **args)
-                    model.tokenizer.push_to_hub(model_alias, **args)
-
-                    readme = get_readme(
-                        model_name=f"relbert/{model_alias}",
-                        metric_classification=classification,
-                        metric_analogy=analogy,
-                        metric_relation_mapping=relation_mapping,
-                        config=trainer_config,
-                    )
-                    with open(f"{new_ckpt}/README.md", 'w') as f:
-                        f.write(readme)
-                    copy_tree(new_ckpt, model_alias)
-                    os.system(f"cd {model_alias} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
-                    shutil.rmtree(model_alias)  # clean up the cloned repo
-                except Exception:
-                    error.append(model_alias)
-                    pass
+                #     readme = get_readme(
+                #         model_name=f"relbert/{model_alias}",
+                #         metric_classification=classification,
+                #         metric_analogy=analogy,
+                #         metric_relation_mapping=relation_mapping,
+                #         config=trainer_config,
+                #     )
+                #     with open(f"{new_ckpt}/README.md", 'w') as f:
+                #         f.write(readme)
+                #     copy_tree(new_ckpt, model_alias)
+                #     os.system(f"cd {model_alias} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
+                #     shutil.rmtree(model_alias)  # clean up the cloned repo
+                # except Exception:
+                #     error.append(model_alias)
+                #     pass
 
 print("SKIPPED CKPT")
 print(skipped)
