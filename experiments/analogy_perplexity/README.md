@@ -25,5 +25,28 @@ python compute_analogy_perplexity.py --is-causal -m 'gpt2' -d 'sat' -p 'is-to-as
 
 ## Experiment
 ```shell
-python compute_analogy_perplexity.py -m 'gpt2' -d 'sat' -p 'is-to-as' -e 'output/sat_distilbert.json'
+experiment_causal () {
+  for DATA in 'sat' 'u2' 'u4'
+  do
+    for TEMP in 'is-to-what' 'is-to-as' 'rel-same' 'what-is-to' 'she-to-as' 'as-what-same'
+    do
+      python compute_analogy_perplexity.py --is-causal -m "${1}" -b "${2}" -d "${DATA}" -p "${TEMP}" -e "output/perplexity.${1}.${DATA}.${TEMP}.json"
+    done
+  done
+}
+
+experiment_mlm () {
+  for DATA in 'sat' 'u2' 'u4'
+  do
+    for TEMP in 'is-to-what' 'is-to-as' 'rel-same' 'what-is-to' 'she-to-as' 'as-what-same'
+    do
+      python compute_analogy_perplexity.py -m "${1}" -b "${2}" -d "${DATA}" -p "${TEMP}" -e "output/perplexity.${1}.${DATA}.${TEMP}.json"
+    done
+  done
+}
+
+experiment_causal "gpt2" 128
+experiment_causal "gpt2-large" 128
+experiment_mlm "roberta-base" 128
+experiment_mlm "roberta-large" 128
 ```

@@ -21,8 +21,6 @@ templates = {
 def prompting_relation(relation_words, template_type: str = 'is-to-what'):
     """ to convert a SAT style analogy set into a natural sentence with a template """
 
-
-
     def check_position(text, positions, tokens):
         for p, t in zip(positions, tokens):
             assert text[p[0]: p[1]] == t, '{} != {}'.format(text[p[0]: p[1]], t)
