@@ -25,9 +25,9 @@ finetuning() {
 #    -t "${TEMPLATE}" --data "${DATA}" --split "train" --random-seed "${RANDOM_SEED}"
 #  relbert-push-to-hub -o 'relbert' -m "${CKPT}/best_model" -a "${MODEL_HF}"
   git clone "https://huggingface.co/relbert/${MODEL_HF}"
-  relbert-eval --overwrite --type analogy -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
-  relbert-eval --overwrite --type classification -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
-  relbert-eval --overwrite --type relation_mapping -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
+  relbert-eval --type analogy -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
+  relbert-eval --type classification -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
+  relbert-eval --type relation_mapping -c "${MODEL_HF}" --export-dir "${MODEL_HF}" -b 512
   relbert-push-to-hub -o 'relbert' -a "${MODEL_HF}" -m "${MODEL_HF}"
   rm -rf "${MODEL_HF}"
 }
@@ -39,8 +39,8 @@ experiment () {
   LOSS=${3}
   LOSS_ALIAS=${4}
 
-  R="1"
-#  R="2"
+#  R="1"
+  R="2"
   for MODE in "mask" "average"
   do
     finetuning "${MODE}" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"

@@ -24,38 +24,45 @@ def download(filename, url):
 
 def get_result():
     output = []
-    loss = 'nce'
     language_model = 'roberta-base'
-    for data in ['semeval2012-v4', 'semeval2012-v5']:
-        for aggregate in ['average', 'mask']:
-            for prompt in ['a', 'b', 'c', 'd', 'e']:
-                for seed in range(3):
-                    levels = ['', '-child', '-child-prototypical', '-parent'] if data == 'semeval2012-v4' else ['']
-                    for level in levels:
-                        model = f'{language_model}-{data}-{aggregate}-prompt-{prompt}-{loss}-{seed}{level}'
-                        try:
-                            result = {"prompt": prompt, "method": aggregate, 'data': data, 'seed': seed, "level": level}
-                            result.update({'epoch': download(
-                                f"config-{model}.json",
-                                f"https://huggingface.co/relbert/{model}/raw/main/trainer_config.json")['epoch']})
-                            result.update({'loss': download(
-                                f"loss-{model}.json",
-                                f"https://huggingface.co/relbert/{model}/raw/main/validation_loss.json")['loss']})
-                            result.update({k: v for k, v in download(
-                                f"analogy-{model}.json",
-                                f"https://huggingface.co/relbert/{model}/raw/main/analogy.json"
-                            ).items() if 'valid' not in k})
-                            result.update({k: v['test/f1_micro'] for k, v in download(
-                                f"classification-{model}.json",
-                                f"https://huggingface.co/relbert/{model}/raw/main/classification.json"
-                            ).items()})
-                            result.update({'relation_mapping_accuracy': download(
-                                f"relation_mapping-{model}.json",
-                                f"https://huggingface.co/relbert/{model}/raw/main/relation_mapping.json"
-                            )['accuracy']})
-                            output.append(result)
-                        except Exception:
-                            print(model)
+    for loss in ['nce', 'triplet']:
+        for data in ['semeval2012-v6']:
+            for aggregate in ['average', 'mask']:
+                for prompt in ['a', 'b', 'c', 'd', 'e']:
+                    for seed in range(3):
+                        levels = ['', '-child', '-child-prototypical', '-parent']
+                        for level in levels:
+                            model = f'{language_model}-{data}-{aggregate}-prompt-{prompt}-{loss}-{seed}{level}'
+                            try:
+                                result = {
+                                    "prompt": prompt,
+                                    "method": aggregate,
+                                    'data': data,
+                                    'seed': seed,
+                                    "level": level,
+                                    "loss": loss
+                                }
+                                result.update({'epoch': download(
+                                    f"config-{model}.json",
+                                    f"https://huggingface.co/relbert/{model}/raw/main/trainer_config.json")['epoch']})
+                                result.update({'loss': download(
+                                    f"loss-{model}.json",
+                                    f"https://huggingface.co/relbert/{model}/raw/main/validation_loss.json")['loss']})
+                                result.update({k: v for k, v in download(
+                                    f"analogy-{model}.json",
+                                    f"https://huggingface.co/relbert/{model}/raw/main/analogy.json"
+                                ).items() if 'valid' not in k})
+                                result.update({k: v['test/f1_micro'] for k, v in download(
+                                    f"classification-{model}.json",
+                                    f"https://huggingface.co/relbert/{model}/raw/main/classification.json"
+                                ).items()})
+                                result.update({'relation_mapping_accuracy': download(
+                                    f"relation_mapping-{model}.json",
+                                    f"https://huggingface.co/relbert/{model}/raw/main/relation_mapping.json"
+                                )['accuracy']})
+                                output.append(result)
+                            except Exception:
+                                print(model)
     df = pd.DataFrame(output)
     df.pop('distance_function')
     return df

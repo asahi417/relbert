@@ -20,7 +20,7 @@ version = 'semeval2012-v6'
 language = 'en'
 
 loss = os.getenv("LOSS", "nce")
-loss_alias = os.getenv("LOSS_ALIAS", "nce")
+loss_alias = os.getenv("LOSS_ALIAS", "nce_logout")
 print(f"loss: {loss}, loss_alias: {loss_alias}")
 batch = 512
 max_length = 64

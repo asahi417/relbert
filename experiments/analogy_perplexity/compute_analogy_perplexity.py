@@ -41,6 +41,7 @@ def prompting_relation(relation_words, template_type: str = 'is-to-what'):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-m', '--model', help='language model', required=True, type=str)
+    parser.add_argument('-b', '--batch-size', help='batch size', default=128, type=int)
     parser.add_argument('-d', '--data', help='analogy dataset (sat/bats/u2/u4/google)', required=True, type=str)
     parser.add_argument('-e', '--export-file', help='export file', required=True, type=str)
     parser.add_argument('-p', '--prompt', help=f'prompt type: {templates.keys()}', required=True, type=str)
@@ -60,7 +61,7 @@ if __name__ == '__main__':
         for data in tqdm(dataset[_split]):
             candidates = [data['stem'] + i for i in data['choice']]
             texts = [prompting_relation(i) for i in candidates]
-            ppl = scorer.get_perplexity(texts)
+            ppl = scorer.get_perplexity(texts, batch_size=opt.batch_size)
             ppl_list.append(
                 {"ppl": ppl, "texts": texts, "stem": data['stem'], "choice": data['choice'], "answer": data['answer']}
             )

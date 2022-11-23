@@ -21,3 +21,9 @@ For causal language model (eg. GPT and OPT), you need to specify `--is-causal` t
 ```shell
 python compute_analogy_perplexity.py --is-causal -m 'gpt2' -d 'sat' -p 'is-to-as' -e 'output/sat_gpt2.json'
 ```
+
+
+## Experiment
+```shell
+python compute_analogy_perplexity.py -m 'gpt2' -d 'sat' -p 'is-to-as' -e 'output/sat_distilbert.json'
+```
