@@ -23,7 +23,7 @@ for i in glob(f"{opt.output_dir}/*.json"):
             accuracy.append(int(int(single_entry['answer']) == prediction))
         result[f'accuracy ({_split})'] = mean(accuracy) * 100
     full_result.append(result)
-df = pd.DataFrame(full_result)
+df = pd.DataFrame(full_result).sort_values(by=['model', 'data', 'prompt'])
 df.to_csv(opt.export_file, index=False)
 # with open(opt.export_file, 'w') as f:
 #     f.write()
