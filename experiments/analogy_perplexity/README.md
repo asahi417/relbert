@@ -26,7 +26,7 @@ python compute_analogy_perplexity.py --is-causal -m 'gpt2' -d 'sat' -p 'is-to-as
 ## Experiment
 ```shell
 experiment_causal () {
-  for DATA in 'sat' 'u2' 'u4'
+  for DATA in 'sat_full' 'sat' 'u2' 'u4'
   do
     for TEMP in 'is-to-what' 'is-to-as' 'rel-same' 'what-is-to' 'she-to-as' 'as-what-same'
     do
@@ -36,7 +36,7 @@ experiment_causal () {
 }
 
 experiment_mlm () {
-  for DATA in 'sat' 'u2' 'u4'
+  for DATA in 'sat_full' 'sat' 'u2' 'u4'
   do
     for TEMP in 'is-to-what' 'is-to-as' 'rel-same' 'what-is-to' 'she-to-as' 'as-what-same'
     do
