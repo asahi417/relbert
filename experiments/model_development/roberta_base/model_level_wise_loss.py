@@ -51,6 +51,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                             if 'loss' in tmp_result and "relation_level" in tmp_result:
                                 result = tmp_result
                     if result is None:
+                        raise ValueError("stop")
                         result = evaluate_validation_loss(
                             validation_data=f"relbert/{data}",
                             relbert_ckpt=f"{relbert_ckpt}/epoch_{epoch}",
@@ -83,6 +84,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/classification.json", "r") as f:
                         classification = json.load(f)
                 else:
+                    raise ValueError("stop")
                     classification = evaluate_classification(relbert_ckpt=new_ckpt, batch_size=batch)
                     with open(f"{new_ckpt}/classification.json", "w") as f:
                         json.dump(classification, f)
@@ -91,6 +93,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/analogy.json", "r") as f:
                         analogy = json.load(f)
                 else:
+                    raise ValueError("stop")
                     analogy = evaluate_analogy(relbert_ckpt=new_ckpt, batch_size=batch, max_length=max_length)
                     with open(f"{new_ckpt}/analogy.json", "w") as f:
                         json.dump(analogy, f)
@@ -99,6 +102,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/relation_mapping.json", "r") as f:
                         relation_mapping = json.load(f)
                 else:
+                    raise ValueError("stop")
                     mean_accuracy, _, perms_full = evaluate_relation_mapping(
                         relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir=f"embeddings/{new_ckpt.replace('/', '_')}"
                     )

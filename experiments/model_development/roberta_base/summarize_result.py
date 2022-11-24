@@ -8,18 +8,17 @@ TMP_DIR = 'metric_files'
 
 
 def download(filename, url):
-    print(f'download {url}')
     try:
         with open(f'{TMP_DIR}/{filename}') as f_reader:
-            json.load(f_reader)
+            return json.load(f_reader)
     except Exception:
+        print(f'download {url}')
         os.makedirs(TMP_DIR, exist_ok=True)
         with open(f'{TMP_DIR}/{filename}', "wb") as f_reader:
             r = requests.get(url)
             f_reader.write(r.content)
     with open(f'{TMP_DIR}/{filename}') as f_reader:
-        tmp = json.load(f_reader)
-    return tmp
+        return json.load(f_reader)
 
 
 def get_result():
@@ -32,7 +31,7 @@ def get_result():
                     for seed in range(3):
                         levels = ['', '-child', '-child-prototypical', '-parent']
                         for level in levels:
-                            model = f'{language_model}-{data}-{aggregate}-prompt-{prompt}-{loss}-{seed}{level}'
+                            model = f'relbert-{language_model}-{data}-{aggregate}-prompt-{prompt}-{loss}-{seed}{level}'
                             try:
                                 result = {
                                     "prompt": prompt,
@@ -64,7 +63,8 @@ def get_result():
                             except Exception:
                                 print(model)
     df = pd.DataFrame(output)
-    df.pop('distance_function')
+    print(df.columns)
+    # df.pop('distance_function')
     return df
 
 
