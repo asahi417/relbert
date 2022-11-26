@@ -39,7 +39,7 @@ def get_result():
                                     'data': data,
                                     'seed': seed,
                                     "level": level,
-                                    "loss": loss
+                                    "loss_function": loss
                                 }
                                 result.update({'epoch': download(
                                     f"config-{model}.json",
@@ -64,7 +64,7 @@ def get_result():
                                 print(model)
     df = pd.DataFrame(output)
     print(df.columns)
-    # df.pop('distance_function')
+    df.pop('distance_function')
     return df
 
 

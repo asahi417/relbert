@@ -19,8 +19,8 @@ data = 'semeval2012_relational_similarity_v6'
 version = 'semeval2012-v6'
 language = 'en'
 
-loss = os.getenv("LOSS", "nce")
-loss_alias = os.getenv("LOSS_ALIAS", "nce_logout")
+loss = os.getenv("LOSS", "loob")
+loss_alias = os.getenv("LOSS_ALIAS", "info_loob")
 print(f"loss: {loss}, loss_alias: {loss_alias}")
 batch = 512
 max_length = 64
@@ -51,7 +51,6 @@ for _level in ['child', 'child_prototypical', 'parent']:
                             if 'loss' in tmp_result and "relation_level" in tmp_result:
                                 result = tmp_result
                     if result is None:
-                        raise ValueError("stop")
                         result = evaluate_validation_loss(
                             validation_data=f"relbert/{data}",
                             relbert_ckpt=f"{relbert_ckpt}/epoch_{epoch}",
@@ -84,7 +83,6 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/classification.json", "r") as f:
                         classification = json.load(f)
                 else:
-                    raise ValueError("stop")
                     classification = evaluate_classification(relbert_ckpt=new_ckpt, batch_size=batch)
                     with open(f"{new_ckpt}/classification.json", "w") as f:
                         json.dump(classification, f)
@@ -93,7 +91,6 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/analogy.json", "r") as f:
                         analogy = json.load(f)
                 else:
-                    raise ValueError("stop")
                     analogy = evaluate_analogy(relbert_ckpt=new_ckpt, batch_size=batch, max_length=max_length)
                     with open(f"{new_ckpt}/analogy.json", "w") as f:
                         json.dump(analogy, f)
@@ -102,7 +99,6 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/relation_mapping.json", "r") as f:
                         relation_mapping = json.load(f)
                 else:
-                    raise ValueError("stop")
                     mean_accuracy, _, perms_full = evaluate_relation_mapping(
                         relbert_ckpt=new_ckpt, batch_size=batch, cache_embedding_dir=f"embeddings/{new_ckpt.replace('/', '_')}"
                     )
@@ -110,37 +106,36 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/relation_mapping.json", "w") as f:
                         json.dump(relation_mapping, f)
 
-
-                model_alias = f"relbert-{language_model}-{version}-{aggregate}-prompt-{prompt}-{loss}-{seed}-{_level.replace('_', '-')}"
-                try:
-                    # push to model hub
-                    url = create_repo(f"relbert/{model_alias}", exist_ok=True)
-                    args = {"use_auth_token": True, "repo_url": url, "organization": "relbert"}
-                    model = RelBERT(new_ckpt)
-                    assert model.is_trained
-                    if model.parallel:
-                        model_ = model.model.module
-                    else:
-                        model_ = model.model
-                    model_.push_to_hub(model_alias, **args)
-                    model_.config.push_to_hub(model_alias, **args)
-                    model.tokenizer.push_to_hub(model_alias, **args)
-
-                    readme = get_readme(
-                        model_name=f"relbert/{model_alias}",
-                        metric_classification=classification,
-                        metric_analogy=analogy,
-                        metric_relation_mapping=relation_mapping,
-                        config=trainer_config,
-                    )
-                    with open(f"{new_ckpt}/README.md", 'w') as f:
-                        f.write(readme)
-                    copy_tree(new_ckpt, model_alias)
-                    os.system(f"cd {model_alias} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
-                    shutil.rmtree(model_alias)  # clean up the cloned repo
-                except Exception:
-                    error.append(model_alias)
-                    pass
+                # model_alias = f"relbert-{language_model}-{version}-{aggregate}-prompt-{prompt}-{loss}-{seed}-{_level.replace('_', '-')}"
+                # try:
+                #     # push to model hub
+                #     url = create_repo(f"relbert/{model_alias}", exist_ok=True)
+                #     args = {"use_auth_token": True, "repo_url": url, "organization": "relbert"}
+                #     model = RelBERT(new_ckpt)
+                #     assert model.is_trained
+                #     if model.parallel:
+                #         model_ = model.model.module
+                #     else:
+                #         model_ = model.model
+                #     model_.push_to_hub(model_alias, **args)
+                #     model_.config.push_to_hub(model_alias, **args)
+                #     model.tokenizer.push_to_hub(model_alias, **args)
+                #
+                #     readme = get_readme(
+                #         model_name=f"relbert/{model_alias}",
+                #         metric_classification=classification,
+                #         metric_analogy=analogy,
+                #         metric_relation_mapping=relation_mapping,
+                #         config=trainer_config,
+                #     )
+                #     with open(f"{new_ckpt}/README.md", 'w') as f:
+                #         f.write(readme)
+                #     copy_tree(new_ckpt, model_alias)
+                #     os.system(f"cd {model_alias} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
+                #     shutil.rmtree(model_alias)  # clean up the cloned repo
+                # except Exception:
+                #     error.append(model_alias)
+                #     pass
 
 print("SKIPPED CKPT")
 print(skipped)
