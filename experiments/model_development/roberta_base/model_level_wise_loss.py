@@ -76,6 +76,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                 with open(f"{new_ckpt}/validation_loss.json") as f:
                     validation_loss = json.load(f)
                 with open(f"{new_ckpt}/validation_loss.json", "w") as f:
+                    print(f"{new_ckpt}/validation_loss.json")
                     raise ValueError("stop")
                     validation_loss['level'] = _level
                     validation_loss['loss'] = min(epoch_level)
@@ -85,6 +86,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/classification.json", "r") as f:
                         classification = json.load(f)
                 else:
+                    print(f"{new_ckpt}/classification.json")
                     raise ValueError("stop")
                     classification = evaluate_classification(relbert_ckpt=new_ckpt, batch_size=batch)
                     with open(f"{new_ckpt}/classification.json", "w") as f:
@@ -94,6 +96,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/analogy.json", "r") as f:
                         analogy = json.load(f)
                 else:
+                    print(f"{new_ckpt}/analogy.json")
                     raise ValueError("stop")
                     analogy = evaluate_analogy(relbert_ckpt=new_ckpt, batch_size=batch, max_length=max_length)
                     with open(f"{new_ckpt}/analogy.json", "w") as f:
@@ -103,6 +106,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                     with open(f"{new_ckpt}/relation_mapping.json", "r") as f:
                         relation_mapping = json.load(f)
                 else:
+                    print(f"{new_ckpt}/relation_mapping.json")
                     raise ValueError("stop")
                     mean_accuracy, _, perms_full = evaluate_relation_mapping(
                         relbert_ckpt=new_ckpt,
