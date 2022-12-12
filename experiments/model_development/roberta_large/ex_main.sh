@@ -5,8 +5,8 @@ LANGUAGE_MODEL="roberta-large"
 LANGUAGE_MODEL_ALIAS="roberta-large"
 LR=0.000005
 GRAD=8
-NSAMPLE=320
-EPOCH=10
+NSAMPLE=640
+EPOCH=15
 
 
 finetuning() {
@@ -39,17 +39,17 @@ experiment () {
   LOSS=${3}
   LOSS_ALIAS=${4}
   R="0"
-  MODE="mask"
-#  for MODE in "mask" "average"
-#  do
-  finetuning "${MODE}" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
-  finetuning "${MODE}" "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
-  finetuning "${MODE}" "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
-  finetuning "${MODE}" "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
-  finetuning "${MODE}" "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
-#  done
+#  MODE="mask"
+  for MODE in "mask" "average"
+  do
+    finetuning "${MODE}" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
+    finetuning "${MODE}" "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
+    finetuning "${MODE}" "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
+    finetuning "${MODE}" "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
+    finetuning "${MODE}" "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${DATA}" "${DATA_ALIAS}" "${LOSS}" "${LOSS_ALIAS}" "${R}"
+  done
 }
 
-#experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "nce_logout" "nce"
+experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "nce_logout" "nce"
 #experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "triplet" "triplet"
-experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "info_loob" "loob"
+#experiment "relbert/semeval2012_relational_similarity_v6" "semeval2012-v6" "info_loob" "loob"

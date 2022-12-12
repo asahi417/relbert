@@ -24,7 +24,7 @@ def download(filename, url):
 def get_result():
     output = []
     language_model = 'roberta-base'
-    for loss in ['nce', 'triplet']:
+    for loss in ['nce', 'triplet', 'loob']:
         for data in ['semeval2012-v6']:
             for aggregate in ['average', 'mask']:
                 for prompt in ['a', 'b', 'c', 'd', 'e']:

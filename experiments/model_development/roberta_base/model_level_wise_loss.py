@@ -85,7 +85,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                         classification = json.load(f)
                 else:
                     print(f"{new_ckpt}/classification.json")
-                    raise ValueError("stop")
+                    # raise ValueError("stop")
                     classification = evaluate_classification(relbert_ckpt=new_ckpt, batch_size=batch)
                     with open(f"{new_ckpt}/classification.json", "w") as f:
                         json.dump(classification, f)
@@ -95,7 +95,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                         analogy = json.load(f)
                 else:
                     print(f"{new_ckpt}/analogy.json")
-                    raise ValueError("stop")
+                    # raise ValueError("stop")
                     analogy = evaluate_analogy(relbert_ckpt=new_ckpt, batch_size=batch, max_length=max_length)
                     with open(f"{new_ckpt}/analogy.json", "w") as f:
                         json.dump(analogy, f)
@@ -105,7 +105,7 @@ for _level in ['child', 'child_prototypical', 'parent']:
                         relation_mapping = json.load(f)
                 else:
                     print(f"{new_ckpt}/relation_mapping.json")
-                    raise ValueError("stop")
+                    # raise ValueError("stop")
                     mean_accuracy, _, perms_full = evaluate_relation_mapping(
                         relbert_ckpt=new_ckpt,
                         batch_size=batch,
