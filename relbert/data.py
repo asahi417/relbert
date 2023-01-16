@@ -19,8 +19,11 @@ semeval_relations = {
 }
 
 
-def get_training_data(data_name: str = 'semeval2012', n_sample: int = 10, cache_dir: str = None,
-                      validation_set: bool = False, exclude_relation: str = None):
+def get_training_data(data_name: str = 'semeval2012',
+                      n_sample: int = 10,
+                      cache_dir: str = None,
+                      validation_set: bool = False,
+                      exclude_relation: str = None):
     """ Get RelBERT training data
     - SemEval 2012 task 2 dataset (case sensitive)
 

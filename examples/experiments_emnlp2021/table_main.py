@@ -77,7 +77,7 @@ df_classification_we.columns = [''] + ['macro', 'micro'] * 5
 #####################
 # RelBERT (analogy) #
 #####################
-df = pd.read_csv('examples/experiments/output/eval/accuracy.analogy.csv', index_col=0)
+df = pd.read_csv('examples/experiments_emnlp2021/output/eval/accuracy.analogy.csv', index_col=0)
 df = df[df.template_type != df.template_type].sort_values(by=['validation_loss', 'data'])
 lm = 'roberta'
 # lm = 'albert'
@@ -108,7 +108,7 @@ print(best_models)
 ############################
 # RelBERT (classification) #
 ############################
-df = pd.read_csv('examples/experiments/output/eval/accuracy.classification.csv', index_col=0)
+df = pd.read_csv('examples/experiments_emnlp2021/output/eval/accuracy.classification.csv', index_col=0)
 df = df.sort_values(by=['data'])
 f1 = []
 config = {}

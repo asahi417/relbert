@@ -106,15 +106,15 @@ pip install .
 ```
 First, you need to compute prompts for AutoPrompt and P-tuning.
 ```shell
-sh ./examples/experiments/main/prompt.sh
+sh ./examples/experiments_emnlp2021/main/prompt.sh
 ```
 Then, you can train RelBERT model.
 ```shell
-sh ./examples/experiments/main/train.sh
+sh ./examples/experiments_emnlp2021/main/train.sh
 ```
 Once models are trained, you can evaluate them.
 ```shell
-sh ./examples/experiments/main/evaluate.sh
+sh ./examples/experiments_emnlp2021/main/evaluate.sh
 ```
 
 ## Citation
