@@ -22,16 +22,6 @@ def internet_connection():
         return False
 
 
-def cosine_similarity(a, b):
-    norm_a = sum(map(lambda x: x * x, a)) ** 0.5
-    norm_b = sum(map(lambda x: x * x, b)) ** 0.5
-    return sum(map(lambda x: x[0] * x[1], zip(a, b)))/norm_a/norm_b
-
-
-def euclidean_distance(a, b):
-    return sum(map(lambda x: (x[0] - x[1])**2, zip(a, b))) ** 0.5
-
-
 def wget(url, cache_dir: str = './cache', gdrive_filename: str = None):
     """ wget and uncompress data_iterator """
     path = _wget(url, cache_dir, gdrive_filename=gdrive_filename)

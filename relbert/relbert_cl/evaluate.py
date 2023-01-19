@@ -54,7 +54,7 @@ def main():
                 target_analogy='sat_full',
             )
         else:
-            raise ValueError('unknown test type: {}'.format(opt.type))
+            raise ValueError(f'unknown test type: {opt.type}')
         pd.DataFrame(full_result).to_csv(opt.export_file)
 
 

@@ -12,6 +12,7 @@ from datasets import load_dataset
 from .list_keeper import ListKeeper
 from .lm import RelBERT
 from .util import triplet_loss, fix_seed
+from .data import get_training_data
 
 DEFAULT_TEMPLATE = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"
 
@@ -160,16 +161,17 @@ class Trainer:
         logger.addHandler(file_handler)
 
         # get dataset
-        data = load_dataset(self.config['data'], split=self.config['split'])
-        self.all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
-        self.all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
-        assert self.all_positive.keys() == self.all_negative.keys(), \
-            f"{self.all_positive.keys()} != {self.all_negative.keys()}"
-        if self.config['exclude_relation'] is not None:
-            self.all_positive = {k: v for k, v in self.all_positive.items() if k not in self.config['exclude_relation']}
-            self.all_negative = {k: v for k, v in self.all_negative.items() if k not in self.config['exclude_relation']}
-        parent = list(set([i.split("/")[0] for i in self.all_negative.keys()]))
-        self.relation_structure = {p: [i for i in self.all_positive.keys() if p == i.split("/")[0]] for p in parent}
+        self.all_positive, self.all_negative, self.relation_structure = get_training_data(self.config['data'])
+        # data = load_dataset(self.config['data'], split=self.config['split'])
+        # self.all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
+        # self.all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
+        # assert self.all_positive.keys() == self.all_negative.keys(), \
+        #     f"{self.all_positive.keys()} != {self.all_negative.keys()}"
+        # if self.config['exclude_relation'] is not None:
+        #     self.all_positive = {k: v for k, v in self.all_positive.items() if k not in self.config['exclude_relation']}
+        #     self.all_negative = {k: v for k, v in self.all_negative.items() if k not in self.config['exclude_relation']}
+        # parent = list(set([i.split("/")[0] for i in self.all_negative.keys()]))
+        # self.relation_structure = {p: [i for i in self.all_positive.keys() if p == i.split("/")[0]] for p in parent}
 
         # calculate the number of trial to cover all combination in batch
         n_pos = min(len(i) for i in self.all_positive.values())
@@ -259,8 +261,8 @@ class Trainer:
 
     def train_single_epoch(self, data_loader, global_step: int, total_loss: int = 0):
 
+        loss = None
         for n, x in enumerate(data_loader):
-
             self.optimizer.zero_grad()
             global_step += 1
             encode = {k: torch.cat([
@@ -288,6 +290,13 @@ class Trainer:
             if (n + 1) % self.config['gradient_accumulation'] != 0:
                 continue
 
+            loss.backward()
+            total_loss += loss.cpu().item()
+            self.optimizer.step()
+            self.scheduler.step()
+            loss = None
+
+        if loss is not None:
             loss.backward()
             total_loss += loss.cpu().item()
             self.optimizer.step()
