@@ -59,12 +59,12 @@ def _wget(url: str, cache_dir, gdrive_filename: str = None):
     os.makedirs(cache_dir, exist_ok=True)
     if url.startswith('https://drive.google.com'):
         assert gdrive_filename is not None, 'please provide fileaname for gdrive download'
-        return gdown.download(url, '{}/{}'.format(cache_dir, gdrive_filename), quiet=False)
+        return gdown.download(url, f'{cache_dir}/{gdrive_filename}', quiet=False)
     filename = os.path.basename(url)
-    with open('{}/{}'.format(cache_dir, filename), "wb") as f:
+    with open(f'{cache_dir}/{filename}', "wb") as f:
         r = requests.get(url)
         f.write(r.content)
-    return '{}/{}'.format(cache_dir, filename)
+    return f'{cache_dir}/{filename}'
 
 
 def fix_seed(seed: int = 12):
@@ -96,6 +96,8 @@ def triplet_loss(tensor_anchor,
             # the 3-way discriminative loss used in SBERT
             feature_positive = torch.cat([v_anchor, v_positive, torch.abs(v_anchor - v_positive)], dim=1)
             feature_negative = torch.cat([v_anchor, v_negative, torch.abs(v_anchor - v_negative)], dim=1)
+            print(feature_positive.shape)
+            input()
             feature = torch.cat([feature_positive, feature_negative])
             pred = torch.sigmoid(linear(feature))
             label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
