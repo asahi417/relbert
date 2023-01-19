@@ -3,7 +3,9 @@ import logging
 import argparse
 from glob import glob
 import pandas as pd
-from relbert.evaluator import evaluate_classification, evaluate_analogy
+from relbert.evaluator import evaluate_classification
+from relbert import evaluate_analogy
+
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
 
@@ -42,8 +44,15 @@ def main():
         if opt.type == 'classification':
             full_result += evaluate_classification(relbert_ckpt=m, batch_size=opt.batch)
         elif opt.type == 'analogy':
-            full_result += evaluate_analogy(relbert_ckpt=m, batch_size=opt.batch,
-                                            mode=opt.mode, template_type=opt.template_type, max_length=opt.max_length)
+            full_result += evaluate_analogy(
+                relbert_ckpt=m,
+                max_length=opt.max_length,
+                batch_size=opt.batch,
+                distance_function='cosine_similarity',
+                reverse_pair=False,
+                bi_direction_pair=False,
+                target_analogy='sat_full',
+            )
         else:
             raise ValueError('unknown test type: {}'.format(opt.type))
         pd.DataFrame(full_result).to_csv(opt.export_file)

@@ -1,5 +1,6 @@
 """ Train RelBERT model.
 relbert-train -o relbert_output/ckpt/tmp
+relbert-eval -c relbert_output/ckpt/tmp/model --export-file tmp.csv
 """
 import argparse
 import logging
