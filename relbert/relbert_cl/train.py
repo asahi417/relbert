@@ -24,7 +24,7 @@ def main():
     parser.add_argument('-b', '--batch', help='batch size', default=64, type=int)
     parser.add_argument('-s', '--random-seed', help='random seed', default=0, type=int)
     parser.add_argument('-g', '--gradient-accumulation', help='gradient accumulation', default=1, type=int)
-    parser.add_argument('-r' '--lr', help='learning rate', default=0.00002, type=float)
+    parser.add_argument('-r', '--lr', help='learning rate', default=0.00002, type=float)
     parser.add_argument('-w', "--lr-warmup", help="linear warmup of lr", default=10, type=int)
 
     # others
