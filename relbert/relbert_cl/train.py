@@ -1,5 +1,5 @@
 """ Train RelBERT model.
-relbert-train -m roberta-large -n -p -s -t d --export relbert_output/ckpt/roberta_custom_d
+relbert-train -o relbert_output/ckpt/tmp
 """
 import argparse
 import logging

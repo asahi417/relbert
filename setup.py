@@ -31,18 +31,17 @@ setup(
         "torch",
         "tqdm",
         "requests",
-        "tfrecord",
-        "tensorboard",
         "gdown",
         "pandas",
         "numpy",
         "transformers",
         "sentencepiece",
-        "tensorboard",
         "truecase",
         "scikit-learn",
         "gensim==3.8.1",
-        "datasets"
+        "datasets",
+        "PySocks!=1.5.7",
+        "charset-normalizer<3.0,>=2.0"
     ],
     python_requires='>=3.6',
     entry_points={

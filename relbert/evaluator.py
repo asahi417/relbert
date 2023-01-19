@@ -10,7 +10,8 @@ from sklearn.neural_network import MLPClassifier
 
 from .lm import RelBERT
 from .data import get_lexical_relation_data, get_analogy_data, get_training_data
-from .util import Dataset, triplet_loss, fix_seed
+from .util import triplet_loss, fix_seed
+from .trainer import Dataset
 
 __all__ = ['evaluate_classification', 'evaluate_analogy']
 

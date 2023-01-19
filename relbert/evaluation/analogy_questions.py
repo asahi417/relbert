@@ -3,9 +3,8 @@ from itertools import chain
 import torch
 
 from datasets import load_dataset
+from ..lm import RelBERT
 
-# from ..lm import RelBERT
-from relbert.lm import RelBERT
 
 def cosine_similarity(a, b, zero_vector_mask: float = -100):
     norm_a = sum(map(lambda x: x * x, a)) ** 0.5
