@@ -1,6 +1,7 @@
 """ get SemEval2012 task 2 dataset """
 import os
 import json
+# from datasets import load_dataset
 from glob import glob
 
 from .util import wget, home_dir
@@ -83,14 +84,6 @@ def get_training_data(data_name: str = 'semeval2012',
                              list(zip(*list(filter(lambda x: x[0] < 0, lines_scale[:n_sample_max]))))[1]]
                 _positive = [tuple(i.split(':')) for i in
                              list(zip(*list(filter(lambda x: x[0] > 0, lines_scale[-n_sample_max:]))))[1]]
-                # print(len(_positive))
-                # print(len(_positive))
-                # __negative = [tuple(i.split(':')) for i in
-                #               list(zip(*list(filter(lambda x: x[0] < 0, lines_scale))))[1]]
-                # __positive = [tuple(i.split(':')) for i in
-                #               list(zip(*list(filter(lambda x: x[0] > 0, lines_scale))))[1]]
-                # tmp.append(len(__positive) + len(__negative))
-                # input()
                 v_negative = _negative[::int(len(_negative) * (1 - v_rate))]
                 v_positive = _positive[::int(len(_positive) * (1 - v_rate))]
                 t_negative = [i for i in _negative if i not in v_negative]
@@ -105,7 +98,6 @@ def get_training_data(data_name: str = 'semeval2012',
             all_relation_type[relation_id] = relation_type
         parent = list(set([i[:-1] for i in all_relation_type.keys()]))
         relation_structure = {p: [i for i in all_relation_type.keys() if p == i[:-1]] for p in parent}
-        # print(sum(tmp)/len(tmp))
         return all_positive, all_negative, relation_structure
     else:
         raise ValueError('unknown data: {}'.format(data_name))

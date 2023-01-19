@@ -40,8 +40,9 @@ setup(
         "sentencepiece",
         "tensorboard",
         "truecase",
-        "sklearn",
-        "gensim==3.8.1"
+        "scikit-learn",
+        "gensim==3.8.1",
+        "datasets"
     ],
     python_requires='>=3.6',
     entry_points={

@@ -1,54 +1,168 @@
 """ Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
 import os
 import logging
-from itertools import product, combinations
 import random
-from typing import Dict
+from typing import Dict, List
+from itertools import product, combinations
 
 import torch
-from torch import nn
-from torch.utils.tensorboard import SummaryWriter
 
+from .list_keeper import ListKeeper
 from .lm import RelBERT
 from .data import get_training_data
-from .config import Config
-from .util import get_linear_schedule_with_warmup, triplet_loss, fix_seed, Dataset
+from .util import triplet_loss, fix_seed
+
+DEFAULT_TEMPLATE = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"
 
 
-class BaseTrainer:
+class Dataset(torch.utils.data.Dataset):
+    """ Dataset loader for triplet loss. """
 
-    def __init__(self, cache_dir: str = None):
-        self.cache_dir = cache_dir
-        self.model = None
-        self.model_parameters = None
-        self.config = None
-        self.linear = None
-        self.discriminative_loss = None
-        self.checkpoint_dir = None
-        self.all_positive = None
-        self.all_negative = None
-        self.relation_structure = None
-        self.n_trial = None
-        self.optimizer = None
-        self.scheduler = None
-        self.scaler = None
-        self.device = None
-        self.parallel = None
-        self.hidden_size = None
+    float_tensors = ['attention_mask']
 
-    def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
-        raise NotImplementedError
+    def __init__(self,
+                 positive_samples: Dict,
+                 negative_samples: Dict = None,
+                 pairwise_input: bool = True,
+                 relation_structure: Dict = None,
+                 deterministic_index: int = None):
+        if negative_samples is not None:
+            assert positive_samples.keys() == negative_samples.keys()
+        self.positive_samples = positive_samples
+        self.negative_samples = negative_samples
+        self.pairwise_input = pairwise_input
+        self.relation_structure = relation_structure
+        self.pattern_id = None
+        self.deterministic_index = deterministic_index
+        if self.pairwise_input:
+            self.keys = sorted(list(positive_samples.keys()))
+            self.pattern_id = {k: list(product(
+                list(combinations(range(len(self.positive_samples[k])), 2)), list(range(len(self.negative_samples[k])))
+            )) for k in self.keys}
+        else:
+            self.keys = sorted(list(self.positive_samples.keys()))
+            assert all(len(self.positive_samples[k]) == 1 for k in self.keys)
+            assert self.negative_samples is None
 
-    def save(self, current_epoch):
-        raise NotImplementedError
+    @staticmethod
+    def rand_sample(_list):
+        return _list[random.randint(0, len(_list) - 1)]
 
-    def setup(self, exclude_relation=None):
-        fix_seed(self.config.random_seed)
-        self.checkpoint_dir = self.config.cache_dir
+    def __len__(self):
+        return len(self.keys)
+
+    def to_tensor(self, name, data):
+        if name in self.float_tensors:
+            return torch.tensor(data, dtype=torch.float32)
+        return torch.tensor(data, dtype=torch.long)
+
+    def __getitem__(self, idx):
+        # relation type for positive sample
+        relation_type = self.keys[idx]
+        if self.pairwise_input:
+
+            # sampling pair from the relation type for anchor positive sample
+            if self.deterministic_index:
+                (a, b), n = self.pattern_id[relation_type][self.deterministic_index]
+            else:
+                (a, b), n = self.rand_sample(self.pattern_id[relation_type])
+            positive_a = self.positive_samples[relation_type][a]
+            positive_b = self.positive_samples[relation_type][b]
+            negative = self.negative_samples[relation_type][n]
+            tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
+            tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
+            tensor_negative = {k: self.to_tensor(k, v) for k, v in negative.items()}
+            output = {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
+            if self.relation_structure is not None:
+
+                # sampling relation type that shares same parent class with the positive sample
+                parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
+                assert len(parent_relation) == 1
+                relation_positive = self.rand_sample(self.relation_structure[parent_relation[0]])
+
+                # sampling positive from the relation type
+                positive_parent = self.rand_sample(self.positive_samples[relation_positive])
+                output['positive_parent'] = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
+
+                # sampling relation type from different parent class (negative)
+                parent_relation_n = self.rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
+                relation_negative = self.rand_sample(self.relation_structure[parent_relation_n])
+
+                # sample individual entry from the relation
+                negative_parent = self.rand_sample(self.positive_samples[relation_negative])
+                output['negative_parent'] = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
+            return output
+        else:
+            # deterministic sampling for prediction
+            positive_a = self.positive_samples[relation_type][0]
+            return {k: self.to_tensor(k, v) for k, v in positive_a.items()}
+
+
+class Trainer:
+    """ Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
+
+    def __init__(self,
+                 output_dir: str,
+                 template: str,
+                 model: str = 'roberta-large',
+                 max_length: int = 64,
+                 epoch: int = 1,
+                 batch: int = 64,
+                 random_seed: int = 0,
+                 gradient_accumulation: int = 1,
+                 lr: float = 0.00002,
+                 lr_warmup: int = 10,
+                 n_sample: int = 10,
+                 aggregation_mode: str = 'average_no_mask',
+                 data: str = 'semeval2012',
+                 exclude_relation: List or str = None,
+                 split: str = 'train',
+                 split_eval: str = 'validation',
+                 loss_function: str = 'triplet',
+                 classification_loss: bool = True,
+                 loss_function_config: Dict = None):
+
+        # load language model
+        self.model = RelBERT(model=model, max_length=max_length, aggregation_mode=aggregation_mode, template=template)
+        assert not self.model.is_trained, f'{model} is already trained'
+        self.model.train()
+        self.hidden_size = self.model.model_config.hidden_size
+        
+        # config
+        self.output_dir = output_dir
+        os.makedirs(self.output_dir, exist_ok=True)
+        self.config = dict(
+            template=template,
+            model=model,
+            max_length=max_length,
+            epoch=epoch,
+            batch=batch,
+            random_seed=random_seed,
+            gradient_accumulation=gradient_accumulation,
+            lr=lr,
+            lr_warmup=lr_warmup,
+            n_sample=n_sample,
+            aggregation_mode=aggregation_mode,
+            data=data,
+            exclude_relation=exclude_relation,
+            split=split,
+            split_eval=split_eval,
+            loss_function=loss_function,
+            classification_loss=classification_loss,
+            loss_function_config=loss_function_config
+        )
+        fix_seed(self.config['random_seed'])
+
+        # add file handler
+        logger = logging.getLogger()
+        file_handler = logging.FileHandler(f'{self.output_dir}/training.log')
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
+        logger.addHandler(file_handler)
+
         # get dataset
         self.all_positive, self.all_negative, self.relation_structure = get_training_data(
-            data_name=self.config.data, n_sample=self.config.n_sample, cache_dir=self.cache_dir,
-            exclude_relation=exclude_relation
+            data_name=self.config['data'], n_sample=self.config['n_sample'], exclude_relation=self.config['exclude_relation']
         )
 
         # calculate the number of trial to cover all combination in batch
@@ -56,208 +170,117 @@ class BaseTrainer:
         n_neg = min(len(i) for i in self.all_negative.values())
         self.n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
 
-        if self.config.softmax_loss:
+        # classification loss
+        model_parameters = list(self.model.model.named_parameters())
+        self.linear = None
+        if self.config['classification_loss']:
             logging.info('add linear layer for softmax_loss')
-            self.linear = nn.Linear(self.hidden_size * 3, 1)  # three way feature
+            self.linear = torch.nn.Linear(self.hidden_size * 3, 1)  # three way feature
             self.linear.weight.data.normal_(std=0.02)
-            self.discriminative_loss = nn.BCELoss()
-            self.linear.to(self.device)
-            self.model_parameters += list(self.linear.named_parameters())
-            if self.parallel:
+            self.discriminative_loss = torch.nn.BCELoss()
+            self.linear.to(self.model.device)
+            model_parameters += list(self.linear.named_parameters())
+            if self.model.parallel:
                 self.linear = torch.nn.DataParallel(self.linear)
-
-        # setup optimizer
-        if self.config.weight_decay is not None or self.config.weight_decay != 0:
-            no_decay = ["bias", "LayerNorm.weight"]
-            self.model_parameters = [
-                {"params": [p for n, p in self.model_parameters if not any(nd in n for nd in no_decay)],
-                 "weight_decay": self.config.weight_decay},
-                {"params": [p for n, p in self.model_parameters if any(nd in n for nd in no_decay)], "weight_decay": 0.0}
-            ]
-
-        if self.config.optimizer == 'adamax':
-            self.optimizer = torch.optim.Adamax(self.model_parameters, lr=self.config.lr)
-        elif self.config.optimizer == 'sgd':
-            self.optimizer = torch.optim.SGD(self.model_parameters, lr=self.config.lr, momentum=self.config.momentum)
-        elif self.config.optimizer == 'adam':
-            self.optimizer = torch.optim.AdamW(self.model_parameters, lr=self.config.lr)
-        else:
-            raise ValueError('unknown optimizer: {}'.format(self.config.optimizer))
+        self.optimizer = torch.optim.AdamW(model_parameters, lr=self.config['lr'])
 
         # scheduler
-        self.scheduler = get_linear_schedule_with_warmup(
-            self.optimizer,
-            num_warmup_steps=self.config.lr_warmup,
-            num_training_steps=self.config.epoch if self.config.lr_decay else None)
+        def lr_lambda(current_step: int):
+            current_step += 1
+            if current_step < self.config['lr_warmup']:
+                return float(current_step) / float(max(1, self.config['lr_warmup']))
+            return 1
 
-        # GPU mixture precision
-        self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.fp16)
+        self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda, -1)
 
-    def train(self, num_workers: int = 1, epoch_save: int = 1):
-        """ Train model.
+    def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
+        if type(positive_samples) is not dict:
+            assert relation_structure is None
+            assert negative_samples is None
+            assert len(positive_samples) > 0, len(positive_samples)
+            assert type(positive_samples) is list and all(type(i) is tuple for i in positive_samples)
+            positive_samples = {k: [v] for k, v in enumerate(positive_samples)}
+        key = list(positive_samples.keys())
+        positive_samples_list = ListKeeper([positive_samples[k] for k in key])
+        logging.debug(f'{len(positive_samples)} positive data to encode')
 
-        Parameters
-        ----------
-        num_workers : int
-            Workers for DataLoader.
-        epoch_save : int
-            Epoch to run validation eg) Every 100000 epoch, it will save model weight as default.
-        """
-        writer = SummaryWriter(log_dir=self.config.cache_dir)
+        negative_sample_list = None
+        if negative_samples is not None:
+            assert len(negative_samples) > 0, len(negative_samples)
+            assert negative_samples.keys() == positive_samples.keys()
+            negative_sample_list = ListKeeper([negative_samples[k] for k in key])
+            logging.debug(f'{len(negative_samples)} positive data to encode')
 
-        if self.config.parent_contrast:
-            param = self.preprocess(self.all_positive, self.all_negative, self.relation_structure)
-        else:
-            param = self.preprocess(self.all_positive, self.all_negative)
+        positive_embedding_dict = self.model.encode_word_pairs(positive_samples_list.flatten_list)
+        positive_embedding = [positive_embedding_dict[f"{a}__{b}"] for a, b in positive_samples_list.flatten_list]
+        positive_embedding = positive_samples_list.restore_structure(positive_embedding)
+        positive_embedding = {key[n]: v for n, v in enumerate(positive_embedding)}
+        negative_embedding = None
+        if negative_sample_list is not None:
+            negative_embedding_dict = self.model.encode_word_pairs(negative_sample_list.flatten_list)
+            negative_embedding = [negative_embedding_dict[f"{a}__{b}"] for a, b in negative_sample_list.flatten_list]
+            negative_embedding = negative_sample_list.restore_structure(negative_embedding)
+            negative_embedding = {key[n]: v for n, v in enumerate(negative_embedding)}
+        return {
+            'positive_samples': positive_embedding,
+            'negative_samples': negative_embedding,
+            'relation_structure': relation_structure
+        }
 
-        logging.info('start model training')
+    def train(self, epoch_save: int = None):
+        """ Train model. """
+        data = self.preprocess(self.all_positive, self.all_negative, self.relation_structure)
         batch_index = list(range(self.n_trial))
         global_step = 0
 
-        with torch.cuda.amp.autocast(enabled=self.config.fp16):
-            for e in range(self.config.epoch):  # loop over the epoch
-                random.shuffle(batch_index)
-                for n, bi in enumerate(batch_index):
-                    dataset = Dataset(deterministic_index=bi, **param)
-                    loader = torch.utils.data.DataLoader(
-                        dataset, batch_size=self.config.batch, shuffle=True, num_workers=num_workers, drop_last=True)
-                    mean_loss, global_step = self.train_single_epoch(loader, global_step=global_step, writer=writer)
-                    inst_lr = self.optimizer.param_groups[0]['lr']
-                    logging.info('[epoch {}/{}, batch_id {}/{}] average loss: {}, lr: {}'.format(
-                        e, self.config.epoch, n, self.n_trial, round(mean_loss, 3), inst_lr))
-                if (e + 1) % epoch_save == 0 and (e + 1) != 0:
-                    self.save(e)
+        for e in range(self.config['epoch']):  # loop over the epoch
+            random.shuffle(batch_index)
+            for n, bi in enumerate(batch_index):
+                dataset = Dataset(deterministic_index=bi, pairwise_input=True, **data)
+                loader = torch.utils.data.DataLoader(dataset, batch_size=self.config['batch'], shuffle=True, drop_last=True)
+                mean_loss, global_step = self.train_single_epoch(loader, global_step)
+                logging.info(f"[epoch {e + 1}/{self.config['epoch']}, batch_id {n}/{self.n_trial}], "
+                             f"loss: {round(mean_loss, 3)}, lr: {self.optimizer.param_groups[0]['lr']}")
+            if epoch_save is not None and (e + 1) % epoch_save == 0 and (e + 1) != self.config['epoch']:
+                self.model.save(f'{self.output_dir}/epoch_{e + 1}')
 
-        writer.close()
-        self.save(e)
-        logging.info('complete training: model ckpt was saved at {}'.format(self.checkpoint_dir))
+        self.model.save(f'{self.output_dir}/model')
+        logging.info(f'complete training: model ckpt was saved at {self.output_dir}')
 
-    def model_output(self, encode):
-        raise NotImplementedError
+    def train_single_epoch(self, data_loader, global_step: int, total_loss: int = 0):
 
-    def train_single_epoch(self, data_loader, global_step: int, writer):
-        total_loss = 0
-        bce = nn.BCELoss()
-        step_in_epoch = len(data_loader)
-        for x in data_loader:
-            global_step += 1
+        for n, x in enumerate(data_loader):
 
             self.optimizer.zero_grad()
-            if self.config.parent_contrast:
-                encode = {k: torch.cat([x['positive_a'][k], x['positive_b'][k], x['negative'][k],
-                                        x['positive_parent'][k], x['negative_parent'][k]])
-                          for k in x['positive_a'].keys()}
-                embedding = self.model_output(encode)
-                v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
+            global_step += 1
+            encode = {k: torch.cat([
+                x['positive_a'][k],
+                x['positive_b'][k],
+                x['negative'][k],
+                x['positive_parent'][k],
+                x['negative_parent'][k]]) for k in x['positive_a'].keys()}
+            embedding = self.model.to_embedding(encode)
+            v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
 
-                # contrastive loss
-                loss = triplet_loss(v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc,
-                                    margin=self.config.mse_margin, in_batch_negative=self.config.in_batch_negative)
+            if self.config['loss_function'] == 'triplet':
+                loss = triplet_loss(
+                    tensor_anchor=v_anchor,
+                    tensor_positive=v_positive,
+                    tensor_negative=v_negative,
+                    tensor_positive_parent=v_positive_hc,
+                    tensor_negative_parent=v_negative_hc,
+                    margin=self.config['loss_function_config']['mse_margin'],
+                    linear=self.linear,
+                    device=self.model.device)
             else:
-                encode = {k: torch.cat([x['positive_a'][k], x['positive_b'][k], x['negative'][k]])
-                          for k in x['positive_a'].keys()}
-                embedding = self.model_output(encode)
-                v_anchor, v_positive, v_negative = embedding.chunk(3)
+                raise ValueError(f"unknown loss function: {self.config['loss_function']}")
 
-                # contrastive loss
-                loss = triplet_loss(v_anchor, v_positive, v_negative,
-                                    margin=self.config.mse_margin, in_batch_negative=self.config.in_batch_negative,
-                                    linear=self.linear, device=self.device)
+            if (n + 1) % self.config['gradient_accumulation'] != 0:
+                continue
 
-
-            # backward: calculate gradient
-            self.scaler.scale(loss).backward()
-
-            inst_loss = loss.cpu().item()
-            writer.add_scalar('train/loss', inst_loss, global_step)
-
-            # update optimizer
-            inst_lr = self.optimizer.param_groups[0]['lr']
-            writer.add_scalar('train/learning_rate', inst_lr, global_step)
-
-            # aggregate average loss over epoch
-            total_loss += inst_loss
-
-            self.scaler.step(self.optimizer)
-            self.scaler.update()
+            loss.backward()
+            total_loss += loss.cpu().item()
+            self.optimizer.step()
             self.scheduler.step()
 
-        return total_loss / step_in_epoch, global_step
-
-
-class Trainer(BaseTrainer):
-    """ Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
-
-    def __init__(self,
-                 export: str = None,
-                 model: str = 'roberta-large',
-                 max_length: int = 64,
-                 mode: str = 'average_no_mask',
-                 data: str = 'semeval2012',
-                 n_sample: int = 10,
-                 template_type: str = 'a',
-                 softmax_loss: bool = True,
-                 in_batch_negative: bool = True,
-                 parent_contrast: bool = True,
-                 mse_margin: float = 1,
-                 epoch: int = 1,
-                 batch: int = 64,
-                 lr: float = 0.00002,
-                 lr_decay: bool = False,
-                 lr_warmup: int = 100,
-                 weight_decay: float = 0,
-                 optimizer: str = 'adam',
-                 momentum: float = 0.9,
-                 fp16: bool = False,
-                 random_seed: int = 0,
-                 cache_dir: str = None,
-                 exclude_relation=None):
-        super(Trainer, self).__init__(cache_dir=cache_dir)
-
-        # load language model
-        self.model = RelBERT(
-            model=model, max_length=max_length, cache_dir=self.cache_dir, mode=mode, template_type=template_type)
-        self.model_parameters = list(self.model.model.named_parameters())
-        assert not self.model.is_trained, '{} is already trained'.format(model)
-        self.model.train()
-        self.hidden_size = self.model.hidden_size
-
-        # config
-        self.config = Config(
-            model=model,
-            max_length=max_length,
-            mode=mode,
-            data=data,
-            n_sample=n_sample,
-            custom_template=self.model.custom_template,
-            template=self.model.template,
-            softmax_loss=softmax_loss,
-            in_batch_negative=in_batch_negative,
-            parent_contrast=parent_contrast,
-            mse_margin=mse_margin,
-            epoch=epoch,
-            lr_warmup=lr_warmup,
-            batch=batch,
-            lr=lr,
-            lr_decay=lr_decay,
-            weight_decay=weight_decay,
-            optimizer=optimizer,
-            momentum=momentum,
-            fp16=fp16,
-            random_seed=random_seed,
-            export=export,
-        )
-        self.device = self.model.device
-        self.parallel = self.model.parallel
-        self.setup(exclude_relation)
-
-    def save(self, current_epoch):
-        cache_dir = '{}/epoch_{}'.format(self.checkpoint_dir, current_epoch + 1)
-        os.makedirs(cache_dir, exist_ok=True)
-        self.model.save(cache_dir)
-
-    def preprocess(self, positive_samples, negative_samples: Dict = None, relation_structure: Dict = None):
-        return self.model.preprocess(positive_samples, negative_samples, relation_structure)
-
-    def model_output(self, encode):
-        return self.model.to_embedding(encode)
+        return total_loss / len(data_loader), global_step

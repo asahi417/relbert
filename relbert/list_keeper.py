@@ -48,8 +48,7 @@ class ListKeeper:
         self.flatten_list = flatten_list(_list)
 
     def restore_structure(self, values):
-        assert len(values) == len(self.flatten_list), 'inconsistent length: {} != {}'.format(
-            len(values), len(self.flatten_list))
+        assert len(values) == len(self.flatten_list), f'inconsistent length: {len(values)} != {len(self.flatten_list)}'
         return restore_list(self.original_list, values)
 
     def __len__(self):
