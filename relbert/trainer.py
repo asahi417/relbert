@@ -252,7 +252,7 @@ class Trainer:
                 self.model.save(f'{self.output_dir}/epoch_{e + 1}')
 
         self.model.save(f'{self.output_dir}/model')
-        with open(f"{self.output_dir}/model/config.json", 'w') as f:
+        with open(f"{self.output_dir}/model/finetuning_config.json", 'w') as f:
             json.dump(self.config, f, indent=2)
 
         logging.info(f'complete training: model ckpt was saved at {self.output_dir}')
