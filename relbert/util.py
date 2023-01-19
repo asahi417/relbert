@@ -95,8 +95,6 @@ def triplet_loss(tensor_anchor,
             # the 3-way discriminative loss used in SBERT
             feature_positive = torch.cat([v_anchor, v_positive, torch.abs(v_anchor - v_positive)], dim=1)
             feature_negative = torch.cat([v_anchor, v_negative, torch.abs(v_anchor - v_negative)], dim=1)
-            print(feature_positive.shape)
-            input()
             feature = torch.cat([feature_positive, feature_negative])
             pred = torch.sigmoid(linear(feature))
             label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
@@ -105,21 +103,18 @@ def triplet_loss(tensor_anchor,
         return _loss
 
     def sample_augmentation(v_anchor, v_positive):
-        v_anchor_aug = v_anchor.unsqueeze(-1).permute(2, 0, 1).repeat(
-            len(v_anchor), 1, 1).reshape(len(v_anchor), -1)
-        v_positive_aug = v_positive.unsqueeze(-1).permute(2, 0, 1).repeat(
-            len(v_positive), 1, 1).reshape(len(v_positive), -1)
-        v_negative_aug = v_positive.unsqueeze(-1).permute(0, 2, 1).repeat(
-            1, len(v_positive), 1).reshape(len(v_positive), -1)
+        v_anchor_aug = v_anchor.unsqueeze(-1).permute(2, 0, 1).repeat(len(v_anchor), 1, 1).reshape(len(v_anchor), -1)
+        v_positive_aug = v_positive.unsqueeze(-1).permute(2, 0, 1).repeat(len(v_positive), 1, 1).reshape(len(v_positive), -1)
+        v_negative_aug = v_positive.unsqueeze(-1).permute(0, 2, 1).repeat(1, len(v_positive), 1).reshape(len(v_positive), -1)
         return v_anchor_aug, v_positive_aug, v_negative_aug
 
     def get_contrastive_loss_aug(v_anchor, v_positive):
+        print(v_anchor.shape, v_positive.shape)
         a, p, n = sample_augmentation(v_anchor, v_positive)
+        print(a.shape, p.shape, n.shape)
         return get_contrastive_loss(a, p, n)
 
-    print('child')
     loss = get_contrastive_loss(tensor_anchor, tensor_positive, tensor_negative)
-    print('parent')
     loss += get_contrastive_loss(tensor_positive, tensor_anchor, tensor_negative)
 
     # In-batch Negative Sampling
