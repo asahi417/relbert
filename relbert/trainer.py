@@ -115,7 +115,7 @@ class Trainer:
                  lr_warmup: int = 10,
                  n_sample: int = 10,
                  aggregation_mode: str = 'average_no_mask',
-                 data: str = 'semeval2012',
+                 data: str = 'relbert/semeval2012_relational_similarity',
                  exclude_relation: List or str = None,
                  split: str = 'train',
                  loss_function: str = 'triplet',
@@ -161,6 +161,7 @@ class Trainer:
 
         # get dataset
         data = load_dataset(self.config['data'], split=self.config['split'])
+        # all_positive = {i['relation_type']: i['positives'] for i in data_h}
         self.all_positive = {i['relation_type']: i['positives'] for i in data}
         self.all_negative = {i['relation_type']: i['negatives'] for i in data}
         assert self.all_positive.keys() == self.all_negative.keys(), \
@@ -169,7 +170,9 @@ class Trainer:
             self.all_positive = {k: v for k, v in self.all_positive.items() if k not in self.config['exclude_relation']}
             self.all_negative = {k: v for k, v in self.all_negative.items() if k not in self.config['exclude_relation']}
         parent = list(set([i.split("/")[0] for i in self.all_negative.keys()]))
-        self.relation_structure = {p: [i for i in self.all_negative.keys() if p == i[:-1]] for p in parent}
+        # parent = list(set([i.split("/")[0] for i in all_positive.keys()]))
+        # self.relation_structure = {p: [i for i in self.all_negative.keys() if p == i[:-1]] for p in parent}
+        self.relation_structure = {p: [i for i in self.all_positive.keys() if p == i.split("/")[0]] for p in parent}
 
         # calculate the number of trial to cover all combination in batch
         n_pos = min(len(i) for i in self.all_positive.values())
