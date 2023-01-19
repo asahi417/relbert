@@ -2,6 +2,7 @@
 relbert-train -o relbert_output/ckpt/tmp
 relbert-train -o relbert_output/ckpt/tmp -b 32 -g 2
 relbert-eval -c relbert_output/ckpt/tmp2/model --export-file tmp/tmp2.csv
+relbert-eval -c relbert_output/ckpt/tmp3/model --export-file tmp/tmp3.csv
 """
 import argparse
 import logging

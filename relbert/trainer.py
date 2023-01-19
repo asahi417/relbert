@@ -162,6 +162,22 @@ class Trainer:
 
         # get dataset
         self.all_positive, self.all_negative, self.relation_structure = get_training_data()
+        #
+        # # check
+        # all_positive_1, all_negative_1, relation_structure_1 = get_training_data()
+        #
+        # data = load_dataset(self.config['data'], split=self.config['split'])
+        # all_positive_2 = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
+        # all_negative_2 = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
+        # parent = list(set([i.split("/")[0] for i in all_negative_2.keys()]))
+        # relation_structure_2 = {p: [i for i in all_positive_2.keys() if p == i.split("/")[0]] for p in parent}
+        #
+        # assert all_positive_1 == all_positive_2
+        # assert all_negative_1 == all_negative_2
+        # assert relation_structure_1 == relation_structure_2
+        # input()
+
+
         # data = load_dataset(self.config['data'], split=self.config['split'])
         # self.all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
         # self.all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}

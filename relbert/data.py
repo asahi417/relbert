@@ -45,7 +45,6 @@ def get_training_data(data_name: str = 'semeval2012',
     v_rate = 0.2
     n_sample_max = 10
     assert n_sample <= n_sample_max
-    cache_dir = cache_dir if cache_dir is not None else home_dir
     cache_dir = '{}/data'.format(home_dir)
 
     os.makedirs(cache_dir, exist_ok=True)

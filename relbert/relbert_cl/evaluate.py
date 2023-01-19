@@ -3,7 +3,7 @@ import logging
 import argparse
 from glob import glob
 import pandas as pd
-from relbert.evaluator import evaluate_classification
+# from relbert.evaluator import evaluate_classification
 from relbert import evaluate_analogy
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
@@ -41,9 +41,9 @@ def main():
         logging.info("RUN RelBERT")
         ckpts = [i for i in sorted(glob(opt.ckpt_dir)) if os.path.isdir(i) and i not in done_list]
     for m in ckpts:
-        if opt.type == 'classification':
-            full_result += evaluate_classification(relbert_ckpt=m, batch_size=opt.batch)
-        elif opt.type == 'analogy':
+        # if opt.type == 'classification':
+        #     full_result += evaluate_classification(relbert_ckpt=m, batch_size=opt.batch)
+        if opt.type == 'analogy':
             full_result += evaluate_analogy(
                 relbert_ckpt=m,
                 max_length=opt.max_length,
