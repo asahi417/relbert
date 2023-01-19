@@ -84,23 +84,24 @@ def triplet_loss(tensor_anchor,
                  device: str = 'gpu'):
     """ Compute contrastive triplet loss with in batch augmentation which enables to propagate error on quadratic
     of batch size. """
-    boundary = 0
     bce = nn.BCELoss()
 
-    def get_contrastive_loss(v_anchor, v_positive, v_negative):
-        distance_positive = torch.sum((v_anchor - v_positive) ** 2, -1) ** 0.5
-        distance_negative = torch.sum((v_anchor - v_negative) ** 2, -1) ** 0.5
-        _loss = torch.sum(torch.clip(distance_positive - distance_negative - margin, min=boundary))
+    def classification_loss(v_anchor, v_positive, v_negative):
+        # the 3-way discriminative loss used in SBERT
         if linear is not None:
-            # the 3-way discriminative loss used in SBERT
             feature_positive = torch.cat([v_anchor, v_positive, torch.abs(v_anchor - v_positive)], dim=1)
             feature_negative = torch.cat([v_anchor, v_negative, torch.abs(v_anchor - v_negative)], dim=1)
             feature = torch.cat([feature_positive, feature_negative])
             pred = torch.sigmoid(linear(feature))
             label = torch.tensor([1] * len(feature_positive) + [0] * len(feature_negative),
                                  dtype=torch.float32, device=device)
-            _loss += bce(pred, label.unsqueeze(-1))
-        return _loss
+            return bce(pred, label.unsqueeze(-1))
+        return 0
+
+    def main_loss(v_anchor, v_positive, v_negative):
+        distance_positive = torch.sum((v_anchor - v_positive) ** 2, -1) ** 0.5
+        distance_negative = torch.sum((v_anchor - v_negative) ** 2, -1) ** 0.5
+        return torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
 
     def sample_augmentation(v_anchor, v_positive):
         v_anchor_aug = v_anchor.unsqueeze(-1).permute(2, 0, 1).repeat(len(v_anchor), 1, 1).reshape(len(v_anchor), -1)
@@ -108,24 +109,22 @@ def triplet_loss(tensor_anchor,
         v_negative_aug = v_positive.unsqueeze(-1).permute(0, 2, 1).repeat(1, len(v_positive), 1).reshape(len(v_positive), -1)
         return v_anchor_aug, v_positive_aug, v_negative_aug
 
-    def get_contrastive_loss_aug(v_anchor, v_positive):
-        print(v_anchor.shape, v_positive.shape)
-        a, p, n = sample_augmentation(v_anchor, v_positive)
-        print(a.shape, p.shape, n.shape)
-        return get_contrastive_loss(a, p, n)
-
-    loss = get_contrastive_loss(tensor_anchor, tensor_positive, tensor_negative)
-    loss += get_contrastive_loss(tensor_positive, tensor_anchor, tensor_negative)
+    loss = main_loss(tensor_anchor, tensor_positive, tensor_negative)
+    loss += main_loss(tensor_positive, tensor_anchor, tensor_negative)
+    loss += classification_loss(tensor_anchor, tensor_positive, tensor_negative)
 
     # In-batch Negative Sampling
     # No elements in single batch share same relation type, so here we construct negative sample within batch
     # by regarding positive sample from other entries as its negative. The original negative is the hard
     # negatives from same relation type and the in batch negative is easy negative from other relation types.
-    loss += get_contrastive_loss_aug(tensor_anchor, tensor_positive)
-    loss += get_contrastive_loss_aug(tensor_positive, tensor_anchor)
+    a, p, n = sample_augmentation(tensor_anchor, tensor_positive)
+    loss += main_loss(a, p, n)
+    a, p, n = sample_augmentation(tensor_positive, tensor_anchor)
+    loss += main_loss(a, p, n)
 
+    # contrastive loss of the parent class
     if tensor_positive_parent is not None and tensor_negative_parent is not None:
-        # contrastive loss of the parent class
-        loss += get_contrastive_loss(tensor_anchor, tensor_positive_parent, tensor_negative_parent)
-        loss += get_contrastive_loss(tensor_positive_parent, tensor_anchor, tensor_negative_parent)
+        loss += main_loss(tensor_anchor, tensor_positive_parent, tensor_negative_parent)
+        loss += main_loss(tensor_positive_parent, tensor_anchor, tensor_negative_parent)
+        loss += classification_loss(tensor_anchor, tensor_positive_parent, tensor_negative_parent)
     return loss
