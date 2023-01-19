@@ -161,7 +161,7 @@ class Trainer:
         logger.addHandler(file_handler)
 
         # get dataset
-        self.all_positive, self.all_negative, self.relation_structure = get_training_data(self.config['data'])
+        self.all_positive, self.all_negative, self.relation_structure = get_training_data()
         # data = load_dataset(self.config['data'], split=self.config['split'])
         # self.all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
         # self.all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
