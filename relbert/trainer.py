@@ -182,8 +182,8 @@ class Trainer:
             model_parameters += list(self.linear.named_parameters())
             if self.model.parallel:
                 self.linear = torch.nn.DataParallel(self.linear)
-        # self.optimizer = torch.optim.AdamW(model_parameters, lr=self.config['lr'])
-        self.optimizer = torch.optim.AdamW(self.model.model.named_parameters(), lr=self.config['lr'])
+        self.optimizer = torch.optim.AdamW(
+            [{"params": [p for n, p in model_parameters], "weight_decay": 0}], lr=self.config['lr'])
 
         # scheduler
         def lr_lambda(current_step: int):
