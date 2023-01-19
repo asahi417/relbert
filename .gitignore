@@ -4,3 +4,4 @@ cache
 common_word_pairs.pkl
 gensim-vector.tmp
 model_hub
+semeval2012_relational_similarity

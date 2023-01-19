@@ -7,10 +7,10 @@ from typing import Dict, List
 from itertools import product, combinations
 
 import torch
+from datasets import load_dataset
 
 from .list_keeper import ListKeeper
 from .lm import RelBERT
-from .data import get_training_data
 from .util import triplet_loss, fix_seed
 
 DEFAULT_TEMPLATE = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"
@@ -118,7 +118,6 @@ class Trainer:
                  data: str = 'semeval2012',
                  exclude_relation: List or str = None,
                  split: str = 'train',
-                 split_eval: str = 'validation',
                  loss_function: str = 'triplet',
                  classification_loss: bool = True,
                  loss_function_config: Dict = None):
@@ -147,7 +146,6 @@ class Trainer:
             data=data,
             exclude_relation=exclude_relation,
             split=split,
-            split_eval=split_eval,
             loss_function=loss_function,
             classification_loss=classification_loss,
             loss_function_config=loss_function_config
@@ -162,9 +160,16 @@ class Trainer:
         logger.addHandler(file_handler)
 
         # get dataset
-        self.all_positive, self.all_negative, self.relation_structure = get_training_data(
-            data_name=self.config['data'], n_sample=self.config['n_sample'], exclude_relation=self.config['exclude_relation']
-        )
+        data = load_dataset(self.config['data'], split=self.config['split'])
+        self.all_positive = {i['relation_type']: i['positives'] for i in data}
+        self.all_negative = {i['relation_type']: i['negatives'] for i in data}
+        assert self.all_positive.keys() == self.all_negative.keys(), \
+            f"{self.all_positive.keys()} != {self.all_negative.keys()}"
+        if self.config['exclude_relation'] is not None:
+            self.all_positive = {k: v for k, v in self.all_positive.items() if k not in self.config['exclude_relation']}
+            self.all_negative = {k: v for k, v in self.all_negative.items() if k not in self.config['exclude_relation']}
+        parent = list(set([i.split("/")[0] for i in self.all_negative.keys()]))
+        self.relation_structure = {p: [i for i in self.all_negative.keys() if p == i[:-1]] for p in parent}
 
         # calculate the number of trial to cover all combination in batch
         n_pos = min(len(i) for i in self.all_positive.values())

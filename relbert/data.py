@@ -4,7 +4,7 @@ import json
 # from datasets import load_dataset
 from glob import glob
 
-from .util import wget, home_dir
+from relbert.util import wget, home_dir
 
 semeval_relations = {
     1: "Class Inclusion",  # Hypernym
@@ -46,7 +46,8 @@ def get_training_data(data_name: str = 'semeval2012',
     n_sample_max = 10
     assert n_sample <= n_sample_max
     cache_dir = cache_dir if cache_dir is not None else home_dir
-    cache_dir = '{}/data'.format(cache_dir)
+    cache_dir = '{}/data'.format(home_dir)
+
     os.makedirs(cache_dir, exist_ok=True)
     remove_relation = None
     if exclude_relation:
@@ -65,7 +66,6 @@ def get_training_data(data_name: str = 'semeval2012',
         all_positive = {}
         all_negative = {}
         all_relation_type = {}
-        # tmp = []
         for i in files_scale:
             relation_id = i.split('-')[-1].replace('.txt', '')
             if remove_relation and int(relation_id[:-1]) in remove_relation:
