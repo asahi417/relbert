@@ -176,7 +176,6 @@ class Trainer:
         self.linear = None
         if self.config['classification_loss']:
             logging.info('add linear layer for softmax_loss')
-            print(self.hidden_size * 3)
             self.linear = torch.nn.Linear(self.hidden_size * 3, 1)  # three way feature
             self.linear.weight.data.normal_(std=0.02)
             self.discriminative_loss = torch.nn.BCELoss()

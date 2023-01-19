@@ -84,7 +84,6 @@ def triplet_loss(tensor_anchor,
                  device: str = 'gpu'):
     """ Compute contrastive triplet loss with in batch augmentation which enables to propagate error on quadratic
     of batch size. """
-    loss = 0
     boundary = 0
     bce = nn.BCELoss()
 
@@ -118,7 +117,9 @@ def triplet_loss(tensor_anchor,
         a, p, n = sample_augmentation(v_anchor, v_positive)
         return get_contrastive_loss(a, p, n)
 
-    loss += get_contrastive_loss(tensor_anchor, tensor_positive, tensor_negative)
+    print('child')
+    loss = get_contrastive_loss(tensor_anchor, tensor_positive, tensor_negative)
+    print('parent')
     loss += get_contrastive_loss(tensor_positive, tensor_anchor, tensor_negative)
 
     # In-batch Negative Sampling
