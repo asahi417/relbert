@@ -162,7 +162,7 @@ class Trainer:
         # get dataset
         data = load_dataset(self.config['data'], split=self.config['split'])
         self.all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
-        self.all_negative = {i['relation_type']: i['negatives'] for i in data}
+        self.all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
         assert self.all_positive.keys() == self.all_negative.keys(), \
             f"{self.all_positive.keys()} != {self.all_negative.keys()}"
         if self.config['exclude_relation'] is not None:
