@@ -1,6 +1,6 @@
 """ Train RelBERT model.
 relbert-train -o relbert_output/ckpt/tmp
-relbert-train -o relbert_output/ckpt/tmp2 -b 32 -g 2
+relbert-train -o relbert_output/ckpt/tmp -b 32 -g 2
 relbert-eval -c relbert_output/ckpt/tmp/model --export-file tmp.csv
 """
 import argparse
@@ -32,10 +32,9 @@ def main():
     # others
     parser.add_argument('--n-sample', help='sample size', default=10, type=int)
     parser.add_argument('--aggregation-mode', help='aggregation mode', default='average_no_mask', type=str)
-    parser.add_argument('--data', help='data', default='semeval2012', type=str)
+    parser.add_argument('--data', help='data', default='relbert/semeval2012_relational_similarity', type=str)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
     parser.add_argument('--split', help='', default='train', type=str)
-    parser.add_argument('--split-eval', help='', default='validation', type=str)
     parser.add_argument('--loss', help='', default='triplet', type=str)
     parser.add_argument('-c', '--classification-loss', help='softmax loss', action='store_true')
 
@@ -67,7 +66,6 @@ def main():
         data=opt.data,
         exclude_relation=opt.exclude_relation,
         split=opt.split,
-        split_eval=opt.split_eval,
         loss_function=opt.loss,
         classification_loss=opt.classification_loss,
         loss_function_config=loss_function_config
