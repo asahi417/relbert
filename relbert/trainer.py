@@ -169,7 +169,7 @@ class Trainer:
             model_parameters += list(self.linear.named_parameters())
             if self.model.parallel:
                 self.linear = torch.nn.DataParallel(self.linear)
-        self.optimizer = torch.optim.SGD(
+        self.optimizer = torch.optim.AdamW(
             [{"params": [p for n, p in model_parameters], "weight_decay": 0}], lr=self.config['lr'])
 
         # scheduler
@@ -184,6 +184,8 @@ class Trainer:
     def train(self, epoch_save: int = 1):
         """ Train model. """
         positive_embedding, negative_embedding, relation_structure, n_trial = self.process_data()
+        print(positive_embedding)
+        input()
         batch_index = list(range(n_trial))
         global_step = 0
 
@@ -269,12 +271,12 @@ class Trainer:
         if self.config['exclude_relation'] is not None:
             all_positive = {k: v for k, v in all_positive.items() if k not in self.config['exclude_relation']}
             all_negative = {k: v for k, v in all_negative.items() if k not in self.config['exclude_relation']}
-        key = list(all_positive.keys())
+        key = sorted(list(all_positive.keys()))
         logging.info(f'{len(key)} relations exist')
 
         # relation structure
         parent = list(set([i.split("/")[0] for i in all_negative.keys()]))
-        relation_structure = {p: [i for i in all_positive.keys() if p == i.split("/")[0]] for p in parent}
+        relation_structure = {p: [i for i in all_positive.keys() if p == i.split("/")[0]] for p in sorted(parent)}
 
         # flatten pairs to encode them efficiently
         def _encode(pairs):
