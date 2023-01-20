@@ -169,7 +169,7 @@ class Trainer:
             model_parameters += list(self.linear.named_parameters())
             if self.model.parallel:
                 self.linear = torch.nn.DataParallel(self.linear)
-        self.optimizer = torch.optim.AdamW(
+        self.optimizer = torch.optim.SGD(
             [{"params": [p for n, p in model_parameters], "weight_decay": 0}], lr=self.config['lr'])
 
         # scheduler
@@ -217,10 +217,8 @@ class Trainer:
 
         loss = None
         for n, x in enumerate(data_loader):
-            print(x)
-            input()
             self.optimizer.zero_grad()
-            fix_seed(self.config['random_seed'], self.model.device == 'cuda')
+            # fix_seed(self.config['random_seed'], self.model.device == 'cuda')
             global_step += 1
             encode = {k: torch.cat([
                 x['positive_a'][k],
