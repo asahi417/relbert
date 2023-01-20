@@ -7,6 +7,7 @@ relbert-train -o relbert_output/ckpt/batch39grad2 -b 39 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch39grad2/model -o relbert_output/ckpt/batch39grad2/model/analogy.json
 
 relbert-train -o relbert_output/ckpt/batch36 -b 36 -e 1
+relbert-train -o relbert_output/ckpt/batch26 -b 26 -e 1
 
 relbert-train -o relbert_output/ckpt/batch36lr005 -b 36 -e 1 -r 0.000005
 relbert-eval-analogy -m relbert_output/ckpt/batch36lr005/model -o relbert_output/ckpt/batch36lr005/model/analogy.json

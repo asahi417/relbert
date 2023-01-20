@@ -221,35 +221,21 @@ class Trainer:
         for n, x in enumerate(data_loader):
             self.optimizer.zero_grad()
             global_step += 1
-            l_v_anchor, l_v_positive, l_v_negative, l_v_positive_hc, l_v_negative_hc = [], [], [], [], []
-            for _ in range(num_accumulation):
-                encode = {k: torch.cat([
-                    x['positive_a'][k],
-                    x['positive_b'][k],
-                    x['negative'][k],
-                    x['positive_parent'][k],
-                    x['negative_parent'][k]]) for k in x['positive_a'].keys()}
-                embedding = self.model.to_embedding(encode)
-                v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
-                print(v_anchor.shape)
-                l_v_anchor.append(v_anchor)
-                l_v_positive.append(v_positive)
-                l_v_negative.append(v_negative)
-                l_v_positive_hc.append(v_positive_hc)
-                l_v_negative_hc.append(v_negative_hc)
-            print(torch.cat(l_v_anchor).shape)
+            encode = {k: torch.cat([
+                x['positive_a'][k],
+                x['positive_b'][k],
+                x['negative'][k],
+                x['positive_parent'][k],
+                x['negative_parent'][k]]) for k in x['positive_a'].keys()}
+            embedding = self.model.to_embedding(encode)
+            v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
             if self.config['loss_function'] == 'triplet':
                 loss = triplet_loss(
-                    # tensor_anchor=v_anchor,
-                    # tensor_positive=v_positive,
-                    # tensor_negative=v_negative,
-                    # tensor_positive_parent=v_positive_hc,
-                    # tensor_negative_parent=v_negative_hc,
-                    tensor_anchor=torch.cat(l_v_anchor),
-                    tensor_positive=torch.cat(l_v_positive),
-                    tensor_negative=torch.cat(l_v_negative),
-                    tensor_positive_parent=torch.cat(l_v_positive_hc),
-                    tensor_negative_parent=torch.cat(l_v_negative_hc),
+                    tensor_anchor=v_anchor,
+                    tensor_positive=v_positive,
+                    tensor_negative=v_negative,
+                    tensor_positive_parent=v_positive_hc,
+                    tensor_negative_parent=v_negative_hc,
                     margin=self.config['loss_function_config']['mse_margin'],
                     linear=self.linear,
                     device=self.model.device)
