@@ -184,8 +184,6 @@ class Trainer:
     def train(self, epoch_save: int = 1):
         """ Train model. """
         positive_embedding, negative_embedding, relation_structure, n_trial = self.process_data()
-        print(positive_embedding)
-        input()
         batch_index = list(range(n_trial))
         global_step = 0
 
