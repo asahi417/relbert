@@ -67,8 +67,9 @@ def get_training_data(data_name: str = 'semeval2012',
         all_relation_type = {}
         for i in files_scale:
             relation_id = i.split('-')[-1].replace('.txt', '')
-            if remove_relation and int(relation_id[:-1]) in remove_relation:
-                continue
+            relation_id = f"{relation_id[:-1]}/{relation_id[-1]}"
+            # if remove_relation and int(relation_id[:-1]) in remove_relation:
+            #     continue
             with open('{}/{}'.format(path_answer, i), 'r') as f:
                 lines_answer = [l.replace('"', '').split('\t') for l in f.read().split('\n')
                                 if not l.startswith('#') and len(l)]
@@ -95,8 +96,8 @@ def get_training_data(data_name: str = 'semeval2012',
                     all_positive[relation_id] = t_positive[-n_sample:]
 
             all_relation_type[relation_id] = relation_type
-        parent = list(set([i[:-1] for i in all_relation_type.keys()]))
-        relation_structure = {p: [i for i in all_relation_type.keys() if p == i[:-1]] for p in parent}
+        parent = list(set([i.split('/')[0] for i in all_relation_type.keys()]))
+        relation_structure = {p: sorted([i for i in all_relation_type.keys() if p == i.split('/')[0]]) for p in parent}
         return all_positive, all_negative, relation_structure
     else:
         raise ValueError('unknown data: {}'.format(data_name))

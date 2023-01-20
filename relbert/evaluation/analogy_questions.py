@@ -25,12 +25,14 @@ def evaluate_analogy(relbert_ckpt: str = None,
                      distance_function: str = 'cosine_similarity',
                      reverse_pair: bool = False,
                      bi_direction_pair: bool = False,
-                     target_analogy: str = None):
-    model = RelBERT(relbert_ckpt, max_length=max_length)
-    assert model.is_trained, 'model is not trained'
+                     target_analogy: str = None,
+                     aggregation_mode: str = None,
+                     template: str = None):
+    model = RelBERT(relbert_ckpt, max_length=max_length, template=template, aggregation_mode=aggregation_mode)
     target_analogy = ['sat_full', 'sat', 'u2', 'u4', 'google', 'bats'] if target_analogy is None else [target_analogy]
     model.eval()
-    result = {"distance_function": distance_function}
+    result = {"distance_function": distance_function, 'model': relbert_ckpt, 'template': model.template,
+              'aggregation': model.aggregation_mode}
     with torch.no_grad():
 
         # Analogy test

@@ -47,7 +47,7 @@ setup(
     entry_points={
         'console_scripts': [
             'relbert-train = relbert.relbert_cl.train:main',
-            'relbert-eval = relbert.relbert_cl.evaluate:main',
+            'relbert-eval-analogy = relbert.relbert_cl.evaluate:main_analogy',
             'relbert-prompt-discrete = relbert.relbert_cl.prompt_discrete:main',
             'relbert-prompt-continuous = relbert.relbert_cl.prompt_continuous:main'
         ]
