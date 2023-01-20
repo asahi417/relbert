@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 import argparse
 from relbert import evaluate_analogy
@@ -31,5 +32,5 @@ def main_analogy():
     if os.path.dirname(opt.output_file) != '':
         os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)
     with open(opt.output_file, 'w') as f:
-        f.write(out)
+        json.dump(out, f)
 
