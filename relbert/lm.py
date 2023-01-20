@@ -125,8 +125,7 @@ class RelBERT:
             self.aggregation_mode = aggregation_mode
             self.template = template
             self.is_trained = False
-            self.model_config.update({'relbert_config': {
-                'aggregation_mode': aggregation_mode, 'template': self.template}})
+            self.model_config.update({'relbert_config': {'aggregation_mode': aggregation_mode, 'template': self.template}})
         self.model = transformers.AutoModel.from_pretrained(model, config=self.model_config, local_files_only=not self.internet)
 
         # GPU setup

@@ -126,6 +126,9 @@ class Trainer:
         self.model = RelBERT(model=model, max_length=max_length, aggregation_mode=aggregation_mode, template=template)
         assert not self.model.is_trained, f'{model} is already trained'
         self.model.train()
+        if self.model.device == 'cuda':
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
         self.hidden_size = self.model.model_config.hidden_size
         
         # config

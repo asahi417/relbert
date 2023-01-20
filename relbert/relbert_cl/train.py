@@ -1,7 +1,10 @@
 """ Train RelBERT model.
-relbert-train -o relbert_output/ckpt/tmp -b 79
-relbert-eval-analogy -d sat_full -m relbert_output/ckpt/tmp/epoch_1 -o best.json
-relbert-eval-analogy -d sat_full -m relbert_output/ckpt/tmp/model -o best.json
+relbert-train -o relbert_output/ckpt/tmp1 -b 79 -e 1
+relbert-train -o relbert_output/ckpt/tmp2 -b 79 -e 1
+relbert-train -o relbert_output/ckpt/tmp3 -b 79 -e 1
+relbert-eval-analogy -m relbert_output/ckpt/tmp1/model -o best1.json
+relbert-eval-analogy -m relbert_output/ckpt/tmp2/model -o best2.json
+relbert-eval-analogy -m relbert_output/ckpt/tmp3/model -o best3.json
 """
 import argparse
 import logging
@@ -70,7 +73,3 @@ def main():
     )
 
     trainer.train(epoch_save=opt.epoch_save)
-
-
-if __name__ == '__main__':
-    main()
