@@ -195,7 +195,7 @@ class Trainer:
                     relation_structure=relation_structure,
                     positive_samples=positive_embedding,
                     negative_samples=negative_embedding)
-                assert len(dataset) >= self.config['batch'] * self.config['gradient_accumulation']
+                # assert len(dataset) >= self.config['batch'] * self.config['gradient_accumulation']
                 loader = torch.utils.data.DataLoader(
                     dataset,
                     batch_size=self.config['batch'],

@@ -1,7 +1,7 @@
 """ Train RelBERT model.
 
-relbert-train -o relbert_output/ckpt/batch32grad2 -b 32 -g 2 -e 1
-relbert-eval-analogy -m relbert_output/ckpt/batch32grad2/model -o relbert_output/ckpt/batch32grad2/model/analogy.json
+relbert-train -o relbert_output/ckpt/batch32grad3 -b 32 -g 3 -e 1
+relbert-eval-analogy -m relbert_output/ckpt/batch32grad3/model -o relbert_output/ckpt/batch32grad3/model/analogy.json
 
 relbert-train -o relbert_output/ckpt/batch32grad2class -b 32 -g 2 -e 1 -c
 relbert-eval-analogy -m relbert_output/ckpt/batch32grad2class/model -o relbert_output/ckpt/batch32grad2class/model/analogy.json
