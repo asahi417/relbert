@@ -126,9 +126,6 @@ class Trainer:
         self.model = RelBERT(model=model, max_length=max_length, aggregation_mode=aggregation_mode, template=template)
         assert not self.model.is_trained, f'{model} is already trained'
         self.model.train()
-        if self.model.device == 'cuda':
-            torch.backends.cudnn.deterministic = True
-            torch.backends.cudnn.benchmark = False
         self.hidden_size = self.model.model_config.hidden_size
         
         # config
@@ -152,7 +149,7 @@ class Trainer:
             classification_loss=classification_loss,
             loss_function_config=loss_function_config
         )
-        fix_seed(self.config['random_seed'])
+        fix_seed(self.config['random_seed'], self.model.device == 'cuda')
 
         # add file handler
         logger = logging.getLogger()
@@ -221,6 +218,7 @@ class Trainer:
         loss = None
         for n, x in enumerate(data_loader):
             self.optimizer.zero_grad()
+            fix_seed(self.config['random_seed'], self.model.device == 'cuda')
             global_step += 1
             encode = {k: torch.cat([
                 x['positive_a'][k],

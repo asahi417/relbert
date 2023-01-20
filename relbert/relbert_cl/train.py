@@ -1,10 +1,11 @@
 """ Train RelBERT model.
 relbert-train -o relbert_output/ckpt/tmp1 -b 79 -e 1
 relbert-train -o relbert_output/ckpt/tmp2 -b 79 -e 1
-relbert-train -o relbert_output/ckpt/tmp3 -b 79 -e 1
+relbert-train -o relbert_output/ckpt/tmp3 -b 39 -e 1 -g 2
+
 relbert-eval-analogy -m relbert_output/ckpt/tmp1/model -o best1.json
 relbert-eval-analogy -m relbert_output/ckpt/tmp2/model -o best2.json
-relbert-eval-analogy -m relbert_output/ckpt/tmp3/model -o best3.json
+
 """
 import argparse
 import logging

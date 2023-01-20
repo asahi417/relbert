@@ -57,11 +57,16 @@ def _wget(url: str, cache_dir, gdrive_filename: str = None):
     return f'{cache_dir}/{filename}'
 
 
-def fix_seed(seed: int = 12):
+def fix_seed(seed: int = 12, cuda: bool = True):
     """ Fix random seed. """
     np.random.seed(seed)
     random.seed(seed)
     torch.manual_seed(seed)
+    if cuda:
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
 
 def triplet_loss(tensor_anchor,
