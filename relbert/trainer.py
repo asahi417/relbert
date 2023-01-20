@@ -111,7 +111,6 @@ class Trainer:
                  epoch: int = 1,
                  batch: int = 64,
                  random_seed: int = 0,
-                 gradient_accumulation: int = 1,
                  lr: float = 0.00002,
                  lr_warmup: int = 10,
                  aggregation_mode: str = 'average_no_mask',
@@ -138,7 +137,6 @@ class Trainer:
             epoch=epoch,
             batch=batch,
             random_seed=random_seed,
-            gradient_accumulation=gradient_accumulation,
             lr=lr,
             lr_warmup=lr_warmup,
             aggregation_mode=aggregation_mode,
@@ -184,6 +182,12 @@ class Trainer:
     def train(self, epoch_save: int = 1):
         """ Train model. """
         positive_embedding, negative_embedding, relation_structure, n_trial = self.process_data()
+        assert len(positive_embedding) >= self.config['batch']
+        if len(positive_embedding) == self.config['batch']:
+            num_accumulation = 1
+        else:
+            num_accumulation = int(len(positive_embedding) / self.config['batch'])
+        logging.info(f'num_accumulation: {num_accumulation}')
         batch_index = list(range(n_trial))
         global_step = 0
 
@@ -195,13 +199,12 @@ class Trainer:
                     relation_structure=relation_structure,
                     positive_samples=positive_embedding,
                     negative_samples=negative_embedding)
-                # assert len(dataset) >= self.config['batch'] * self.config['gradient_accumulation']
                 loader = torch.utils.data.DataLoader(
                     dataset,
                     batch_size=self.config['batch'],
                     shuffle=True,
-                    drop_last=False)
-                mean_loss, global_step = self.train_single_epoch(loader, global_step)
+                    drop_last=True)
+                mean_loss, global_step = self.train_single_epoch(loader, global_step, num_accumulation)
                 logging.info(f"[epoch {e + 1}/{self.config['epoch']}, batch_id {n}/{n_trial}], "
                              f"loss: {round(mean_loss, 3)}, lr: {self.optimizer.param_groups[0]['lr']}")
             if epoch_save is not None and (e + 1) % epoch_save == 0 and (e + 1) != self.config['epoch']:
@@ -213,7 +216,7 @@ class Trainer:
 
         logging.info(f'complete training: model ckpt was saved at {self.output_dir}')
 
-    def train_single_epoch(self, data_loader, global_step: int, total_loss: int = 0):
+    def train_single_epoch(self, data_loader, global_step: int, num_accumulation: int, total_loss: int = 0):
 
         loss = None
         for n, x in enumerate(data_loader):
@@ -241,7 +244,10 @@ class Trainer:
             else:
                 raise ValueError(f"unknown loss function: {self.config['loss_function']}")
 
-            if (n + 1) % self.config['gradient_accumulation'] != 0:
+            # if (n + 1) % self.config['gradient_accumulation'] != 0:
+            #     continue
+
+            if (n + 1) % num_accumulation != 0:
                 continue
 
             loss.backward()

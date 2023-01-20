@@ -3,8 +3,6 @@
 relbert-train -o relbert_output/ckpt/batch32grad3 -b 32 -g 3 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch32grad3/model -o relbert_output/ckpt/batch32grad3/model/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch32grad2class -b 32 -g 2 -e 1 -c
-relbert-eval-analogy -m relbert_output/ckpt/batch32grad2class/model -o relbert_output/ckpt/batch32grad2class/model/analogy.json
 
 relbert-train -o relbert_output/ckpt/batch79grad1 -b 79 -g 1 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch79grad1/model -o relbert_output/ckpt/batch79grad1/model/analogy.json
@@ -12,26 +10,9 @@ relbert-eval-analogy -m relbert_output/ckpt/batch79grad1/model -o relbert_output
 relbert-train -o relbert_output/ckpt/batch39grad2 -b 39 -g 2 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch39grad2/model -o relbert_output/ckpt/batch39grad2/model/analogy.json
 
+relbert-train -o relbert_output/ckpt/batch36grad3lr005 -b 36 -g 3 -e 1 -r 0.000005
+relbert-eval-analogy -m relbert_output/ckpt/batch36grad3lr005/model -o relbert_output/ckpt/batch36grad3lr005/model/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch36grad2 -b 36 -g 2 -e 1
-relbert-eval-analogy -m relbert_output/ckpt/batch36grad2/model -o relbert_output/ckpt/batch36grad2/model/analogy.json
-
-relbert-train -o relbert_output/ckpt/batch36grad2 -b 36 -g 2 -e 1
-relbert-eval-analogy -m relbert_output/ckpt/batch36grad2/model -o relbert_output/ckpt/batch36grad2/model/analogy.json
-
-
-relbert-train -o relbert_output/ckpt/batch36grad2lr01 -b 36 -g 2 -e 1 -r 0.00001
-relbert-eval-analogy -m relbert_output/ckpt/batch36grad2lr01/model -o relbert_output/ckpt/batch36grad2lr01/model/analogy.json
-
-relbert-train -o relbert_output/ckpt/batch36grad2lr005 -b 36 -g 2 -e 1 -r 0.000005
-relbert-eval-analogy -m relbert_output/ckpt/batch36grad2lr005/model -o relbert_output/ckpt/batch36grad2lr005/model/analogy.json
-
-
-relbert-train -o relbert_output/ckpt/batch26grad3 -b 26 -g 3 -e 1
-relbert-eval-analogy -m relbert_output/ckpt/batch26grad3/model -o relbert_output/ckpt/batch26grad3/model/analogy.json
-
-relbert-train -o relbert_output/ckpt/batch26grad3lr05 -b 26 -g 3 -e 1 -r 0.00005
-relbert-eval-analogy -m relbert_output/ckpt/batch26grad3lr05/model -o relbert_output/ckpt/batch26grad3lr05/model/analogy.json
 """
 import argparse
 import logging
@@ -55,7 +36,6 @@ def main():
     parser.add_argument('-e', '--epoch', help='training epochs', default=1, type=int)
     parser.add_argument('-b', '--batch', help='batch size', default=64, type=int)
     parser.add_argument('-s', '--random-seed', help='random seed', default=0, type=int)
-    parser.add_argument('-g', '--gradient-accumulation', help='gradient accumulation', default=1, type=int)
     parser.add_argument('-r', '--lr', help='learning rate', default=0.00002, type=float)
     parser.add_argument('-w', "--lr-warmup", help="linear warmup of lr", default=10, type=int)
 
@@ -87,7 +67,6 @@ def main():
         epoch=opt.epoch,
         batch=opt.batch,
         random_seed=opt.random_seed,
-        gradient_accumulation=opt.gradient_accumulation,
         lr=opt.lr,
         lr_warmup=opt.lr_warmup,
         aggregation_mode=opt.aggregation_mode,
