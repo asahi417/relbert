@@ -1,5 +1,6 @@
 """ Train RelBERT model.
 relbert-train -o relbert_output/ckpt/tmp -b 79
+relbert-eval-analogy -d sat_full -m relbert_output/ckpt/tmp/epoch_1 -o best.json
 relbert-eval-analogy -d sat_full -m relbert_output/ckpt/tmp/model -o best.json
 """
 import argparse
@@ -29,7 +30,6 @@ def main():
     parser.add_argument('-w', "--lr-warmup", help="linear warmup of lr", default=10, type=int)
 
     # others
-    parser.add_argument('--n-sample', help='sample size', default=10, type=int)
     parser.add_argument('--aggregation-mode', help='aggregation mode', default='average_no_mask', type=str)
     parser.add_argument('--data', help='data', default='relbert/semeval2012_relational_similarity', type=str)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
@@ -60,7 +60,6 @@ def main():
         gradient_accumulation=opt.gradient_accumulation,
         lr=opt.lr,
         lr_warmup=opt.lr_warmup,
-        n_sample=opt.n_sample,
         aggregation_mode=opt.aggregation_mode,
         data=opt.data,
         exclude_relation=opt.exclude_relation,
