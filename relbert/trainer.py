@@ -203,7 +203,7 @@ class Trainer:
                     dataset,
                     batch_size=self.config['batch'],
                     shuffle=True,
-                    drop_last=True)
+                    drop_last=False)
                 mean_loss, global_step = self.train_single_epoch(loader, global_step, num_accumulation)
                 logging.info(f"[epoch {e + 1}/{self.config['epoch']}, batch_id {n}/{n_trial}], "
                              f"loss: {round(mean_loss, 3)}, lr: {self.optimizer.param_groups[0]['lr']}")
