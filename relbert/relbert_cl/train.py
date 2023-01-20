@@ -1,5 +1,13 @@
 """ Train RelBERT model.
 
+
+relbert-train -o relbert_output/ckpt/batch36 -b 36 -e 1
+relbert-train -o relbert_output/ckpt/batch36 -b 36 -e 1
+
+
+relbert-eval-analogy -m relbert_output/ckpt/batch39grad2/model -o relbert_output/ckpt/batch39grad2/model/analogy.json
+
+
 relbert-train -o relbert_output/ckpt/batch79grad1 -b 79 -g 1 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch79grad1/model -o relbert_output/ckpt/batch79grad1/model/analogy.json
 
