@@ -1,18 +1,16 @@
 """ Train RelBERT model.
 
-relbert-train -o relbert_output/ckpt/batch32grad3 -b 32 -g 3 -e 1
-relbert-eval-analogy -m relbert_output/ckpt/batch32grad3/model -o relbert_output/ckpt/batch32grad3/model/analogy.json
-
-
 relbert-train -o relbert_output/ckpt/batch79grad1 -b 79 -g 1 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch79grad1/model -o relbert_output/ckpt/batch79grad1/model/analogy.json
 
 relbert-train -o relbert_output/ckpt/batch39grad2 -b 39 -g 2 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch39grad2/model -o relbert_output/ckpt/batch39grad2/model/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch36grad3lr005 -b 36 -g 3 -e 1 -r 0.000005
-relbert-eval-analogy -m relbert_output/ckpt/batch36grad3lr005/model -o relbert_output/ckpt/batch36grad3lr005/model/analogy.json
+relbert-train -o relbert_output/ckpt/batch36lr005 -b 36 -e 1 -r 0.000005
+relbert-eval-analogy -m relbert_output/ckpt/batch36lr005/model -o relbert_output/ckpt/batch36lr005/model/analogy.json
 
+relbert-train -o relbert_output/ckpt/batch36lr005rand42 -b 36 -e 1 -r 0.000005 -s 42
+relbert-eval-analogy -m relbert_output/ckpt/batch36lr005rand42/model -o relbert_output/ckpt/batch36lr005rand42/model/analogy.json
 """
 import argparse
 import logging
