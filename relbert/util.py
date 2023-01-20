@@ -5,6 +5,7 @@ import zipfile
 import gzip
 import requests
 import urllib.request
+from typing import Dict
 
 import gdown
 import numpy as np
@@ -69,17 +70,21 @@ def fix_seed(seed: int = 12, cuda: bool = True):
         torch.backends.cudnn.benchmark = False
 
 
-def triplet_loss(tensor_anchor,
-                 tensor_positive,
-                 tensor_negative,
-                 tensor_positive_parent=None,
-                 tensor_negative_parent=None,
-                 margin: int = 1,
-                 linear=None,
-                 device: str = 'gpu'):
+def contrastive_loss(
+        tensor_anchor,
+        tensor_positive,
+        tensor_negative,
+        tensor_positive_parent=None,
+        tensor_negative_parent=None,
+        linear=None,
+        loss_function: str = 'triplet',
+        loss_function_config: Dict = None,
+        device: str = 'gpu'):
     """ Compute contrastive triplet loss with in batch augmentation which enables to propagate error on quadratic
     of batch size. """
     bce = nn.BCELoss()
+    cos_3d = torch.nn.CosineSimilarity(dim=2)
+    eps = 1e-5
 
     def classification_loss(v_anchor, v_positive, v_negative):
         # the 3-way discriminative loss used in SBERT
@@ -93,9 +98,24 @@ def triplet_loss(tensor_anchor,
         return 0
 
     def main_loss(v_anchor, v_positive, v_negative):
-        distance_positive = torch.sum((v_anchor - v_positive) ** 2, -1) ** 0.5
-        distance_negative = torch.sum((v_anchor - v_negative) ** 2, -1) ** 0.5
-        return torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
+        if loss_function == 'triplet':
+            distance_positive = torch.sum((v_anchor - v_positive) ** 2, -1) ** 0.5
+            distance_negative = torch.sum((v_anchor - v_negative) ** 2, -1) ** 0.5
+            return torch.sum(torch.clip(distance_positive - distance_negative - loss_function_config['mse_margin'], min=0))
+        elif loss_function in ['nce', 'info_loob']:
+            v = torch.cat([v_anchor, v_positive], dim=0)
+            logit_n = torch.exp(
+                cos_3d(v.unsqueeze(1), v_negative.unsqueeze(0)) / loss_function_config['temperature']
+            )
+            deno_n = torch.sum(logit_n, dim=-1)  # sum over negative
+            logit_p = torch.exp(
+                cos_3d(v.unsqueeze(1), v.unsqueeze(0)) / loss_function_config['temperature']
+            )
+            if loss_function == 'info_loob':
+                return torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + eps)))
+            return torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + logit_p + eps)))
+        else:
+            raise ValueError(f"unknown loss type: {loss_function}")
 
     def sample_augmentation(v_anchor, v_positive):
         v_anchor_aug = v_anchor.unsqueeze(-1).permute(2, 0, 1).repeat(len(v_anchor), 1, 1).reshape(len(v_anchor), -1)

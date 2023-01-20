@@ -11,7 +11,7 @@ from datasets import load_dataset
 
 from .list_keeper import ListKeeper
 from .lm import RelBERT
-from .util import triplet_loss, fix_seed
+from .util import contrastive_loss, fix_seed
 
 
 DEFAULT_TEMPLATE = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"
@@ -230,18 +230,16 @@ class Trainer:
                 x['negative_parent'][k]]) for k in x['positive_a'].keys()}
             embedding = self.model.to_embedding(encode)
             v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
-            if self.config['loss_function'] == 'triplet':
-                loss = triplet_loss(
-                    tensor_anchor=v_anchor,
-                    tensor_positive=v_positive,
-                    tensor_negative=v_negative,
-                    tensor_positive_parent=v_positive_hc,
-                    tensor_negative_parent=v_negative_hc,
-                    margin=self.config['loss_function_config']['mse_margin'],
-                    linear=self.linear,
-                    device=self.model.device)
-            else:
-                raise ValueError(f"unknown loss function: {self.config['loss_function']}")
+            loss = contrastive_loss(
+                tensor_anchor=v_anchor,
+                tensor_positive=v_positive,
+                tensor_negative=v_negative,
+                tensor_positive_parent=v_positive_hc,
+                tensor_negative_parent=v_negative_hc,
+                loss_function=self.config['loss_function'],
+                loss_function_config=self.config['loss_function_config'],
+                linear=self.linear,
+                device=self.model.device)
 
             if (n + 1) % num_accumulation != 0:
                 continue

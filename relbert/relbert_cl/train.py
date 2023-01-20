@@ -1,27 +1,16 @@
 """ Train RelBERT model.
+relbert-train -o relbert_output/ckpt/batch39 -b 39 -e 1
+relbert-eval-analogy -m relbert_output/ckpt/batch39/model -o relbert_output/ckpt/batch39/model/analogy.json
 
+relbert-train -o relbert_output/ckpt/batch39c -b 39 -e 1 -c
+relbert-eval-analogy -m relbert_output/ckpt/batch39c/model -o relbert_output/ckpt/batch39c/model/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch36 -b 36 -e 1
-relbert-train -o relbert_output/ckpt/batch36 -b 36 -e 1
+relbert-train -o relbert_output/ckpt/batch39nce -b 39 -e 1 --loss nce
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce/model -o relbert_output/ckpt/batch39nce/model/analogy.json
 
+relbert-train -o relbert_output/ckpt/batch79nce -b 79 -e 1 --loss nce
+relbert-eval-analogy -m relbert_output/ckpt/batch79nce/model -o relbert_output/ckpt/batch79nce/model/analogy.json
 
-relbert-eval-analogy -m relbert_output/ckpt/batch39grad2/model -o relbert_output/ckpt/batch39grad2/model/analogy.json
-
-
-relbert-train -o relbert_output/ckpt/batch79grad1 -b 79 -g 1 -e 1
-relbert-eval-analogy -m relbert_output/ckpt/batch79grad1/model -o relbert_output/ckpt/batch79grad1/model/analogy.json
-
-relbert-train -o relbert_output/ckpt/batch39grad2 -b 39 -e 1
-relbert-eval-analogy -m relbert_output/ckpt/batch39grad2/model -o relbert_output/ckpt/batch39grad2/model/analogy.json
-
-relbert-train -o relbert_output/ckpt/batch36 -b 36 -e 1
-relbert-train -o relbert_output/ckpt/batch26 -b 26 -e 1
-
-relbert-train -o relbert_output/ckpt/batch36lr005 -b 36 -e 1 -r 0.000005
-relbert-eval-analogy -m relbert_output/ckpt/batch36lr005/model -o relbert_output/ckpt/batch36lr005/model/analogy.json
-
-relbert-train -o relbert_output/ckpt/batch36lr005rand42 -b 36 -e 1 -r 0.000005 -s 42
-relbert-eval-analogy -m relbert_output/ckpt/batch36lr005rand42/model -o relbert_output/ckpt/batch36lr005rand42/model/analogy.json
 """
 import argparse
 import logging
@@ -58,6 +47,7 @@ def main():
 
     # config: triplet loss
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
+    parser.add_argument('--temperature', help='temperature for nce', default=0.1, type=float)
 
     # misc
     parser.add_argument('--epoch-save', help='interval to save model weight', default=1, type=int)
@@ -67,7 +57,7 @@ def main():
     if opt.loss == 'triplet':
         loss_function_config = {'mse_margin': opt.mse_margin}
     else:
-        loss_function_config = {}
+        loss_function_config = {'temperature': opt.temperature}
     trainer = relbert.Trainer(
         output_dir=opt.output_dir,
         template=opt.template,
