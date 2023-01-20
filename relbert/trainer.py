@@ -186,7 +186,7 @@ class Trainer:
         if len(positive_embedding) == self.config['batch']:
             num_accumulation = 1
         else:
-            num_accumulation = int(len(positive_embedding) / self.config['batch']) + 1
+            num_accumulation = int(len(positive_embedding) / self.config['batch'])
         logging.info(f'num_accumulation: {num_accumulation}')
         batch_index = list(range(n_trial))
         global_step = 0
