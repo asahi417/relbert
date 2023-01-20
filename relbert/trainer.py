@@ -200,7 +200,7 @@ class Trainer:
                     dataset,
                     batch_size=self.config['batch'],
                     shuffle=True,
-                    drop_last=True)
+                    drop_last=False)
                 mean_loss, global_step = self.train_single_epoch(loader, global_step)
                 logging.info(f"[epoch {e + 1}/{self.config['epoch']}, batch_id {n}/{n_trial}], "
                              f"loss: {round(mean_loss, 3)}, lr: {self.optimizer.param_groups[0]['lr']}")
@@ -218,7 +218,6 @@ class Trainer:
         loss = None
         for n, x in enumerate(data_loader):
             self.optimizer.zero_grad()
-            # fix_seed(self.config['random_seed'], self.model.device == 'cuda')
             global_step += 1
             encode = {k: torch.cat([
                 x['positive_a'][k],
