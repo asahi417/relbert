@@ -217,6 +217,8 @@ class Trainer:
 
         loss = None
         for n, x in enumerate(data_loader):
+            print(x)
+            input()
             self.optimizer.zero_grad()
             fix_seed(self.config['random_seed'], self.model.device == 'cuda')
             global_step += 1
