@@ -5,11 +5,20 @@ relbert-eval-analogy -m relbert_output/ckpt/batch39/model -o relbert_output/ckpt
 relbert-train -o relbert_output/ckpt/batch39c -b 39 -e 1 -c
 relbert-eval-analogy -m relbert_output/ckpt/batch39c/model -o relbert_output/ckpt/batch39c/model/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch39nce -b 39 -e 1 --loss nce
-relbert-eval-analogy -m relbert_output/ckpt/batch39nce/model -o relbert_output/ckpt/batch39nce/model/analogy.json
+relbert-train -o relbert_output/ckpt/batch39nce05lr005 -b 39 -e 10 --loss nce --temperature 0.05 -r 0.000005
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_1 -o relbert_output/ckpt/batch39nce05lr005/epoch_1/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_2 -o relbert_output/ckpt/batch39nce05lr005/epoch_2/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_3 -o relbert_output/ckpt/batch39nce05lr005/epoch_3/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_4 -o relbert_output/ckpt/batch39nce05lr005/epoch_4/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_5 -o relbert_output/ckpt/batch39nce05lr005/epoch_5/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_6 -o relbert_output/ckpt/batch39nce05lr005/epoch_6/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch79nce -b 79 -e 1 --loss nce
-relbert-eval-analogy -m relbert_output/ckpt/batch79nce/model -o relbert_output/ckpt/batch79nce/model/analogy.json
+relbert-train -o relbert_output/ckpt/batch39nce -b 39 -e 10 --loss nce --temperature 0.05 -r 0.00001
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce/epoch_1 -o relbert_output/ckpt/batch39nce/epoch_1/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce/epoch_2 -o relbert_output/ckpt/batch39nce/epoch_2/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce/epoch_3 -o relbert_output/ckpt/batch39nce/epoch_3/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce/epoch_4 -o relbert_output/ckpt/batch39nce/epoch_4/analogy.json
+relbert-eval-analogy -m relbert_output/ckpt/batch39nce/epoch_5 -o relbert_output/ckpt/batch39nce/epoch_4/analogy.json
 
 """
 import argparse

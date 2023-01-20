@@ -117,24 +117,27 @@ def contrastive_loss(
         else:
             raise ValueError(f"unknown loss type: {loss_function}")
 
-    def sample_augmentation(v_anchor, v_positive):
-        v_anchor_aug = v_anchor.unsqueeze(-1).permute(2, 0, 1).repeat(len(v_anchor), 1, 1).reshape(len(v_anchor), -1)
-        v_positive_aug = v_positive.unsqueeze(-1).permute(2, 0, 1).repeat(len(v_positive), 1, 1).reshape(len(v_positive), -1)
-        v_negative_aug = v_positive.unsqueeze(-1).permute(0, 2, 1).repeat(1, len(v_positive), 1).reshape(len(v_positive), -1)
-        return v_anchor_aug, v_positive_aug, v_negative_aug
-
     loss = main_loss(tensor_anchor, tensor_positive, tensor_negative)
     loss += main_loss(tensor_positive, tensor_anchor, tensor_negative)
     loss += classification_loss(tensor_anchor, tensor_positive, tensor_negative)
 
-    # In-batch Negative Sampling
-    # No elements in single batch share same relation type, so here we construct negative sample within batch
-    # by regarding positive sample from other entries as its negative. The original negative is the hard
-    # negatives from same relation type and the in batch negative is easy negative from other relation types.
-    a, p, n = sample_augmentation(tensor_anchor, tensor_positive)
-    loss += main_loss(a, p, n)
-    a, p, n = sample_augmentation(tensor_positive, tensor_anchor)
-    loss += main_loss(a, p, n)
+    def sample_augmentation(v_anchor, v_positive):
+        v_anchor_aug = v_anchor.unsqueeze(-1).permute(2, 0, 1).repeat(len(v_anchor), 1, 1).reshape(len(v_anchor), -1)
+        v_positive_aug = v_positive.unsqueeze(-1).permute(2, 0, 1).repeat(len(v_positive), 1, 1).reshape(
+            len(v_positive), -1)
+        v_negative_aug = v_positive.unsqueeze(-1).permute(0, 2, 1).repeat(1, len(v_positive), 1).reshape(
+            len(v_positive), -1)
+        return v_anchor_aug, v_positive_aug, v_negative_aug
+
+    if loss_function == 'triplet':
+        # In-batch Negative Sampling
+        # No elements in single batch share same relation type, so here we construct negative sample within batch
+        # by regarding positive sample from other entries as its negative. The original negative is the hard
+        # negatives from same relation type and the in batch negative is easy negative from other relation types.
+        a, p, n = sample_augmentation(tensor_anchor, tensor_positive)
+        loss += main_loss(a, p, n)
+        a, p, n = sample_augmentation(tensor_positive, tensor_anchor)
+        loss += main_loss(a, p, n)
 
     # contrastive loss of the parent class
     if tensor_positive_parent is not None and tensor_negative_parent is not None:
