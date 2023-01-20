@@ -28,7 +28,8 @@ def main_analogy():
         aggregation_mode=opt.aggregation_mode,
         template=opt.template
     )
-    os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)
+    if os.path.dirname(opt.output_file) != '':
+        os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)
     with open(opt.output_file, 'w') as f:
         f.write(out)
 
