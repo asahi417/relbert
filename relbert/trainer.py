@@ -12,7 +12,7 @@ from datasets import load_dataset
 from .list_keeper import ListKeeper
 from .lm import RelBERT
 from .util import triplet_loss, fix_seed
-from .data import get_training_data
+
 
 DEFAULT_TEMPLATE = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"
 
@@ -160,45 +160,6 @@ class Trainer:
         file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
         logger.addHandler(file_handler)
 
-        # # get dataset
-        # self.all_positive, self.all_negative, self.relation_structure = get_training_data()
-        # #
-        # # check
-        # all_positive_1, all_negative_1, relation_structure_1 = get_training_data()
-        #
-        # data = load_dataset(self.config['data'], split=self.config['split'])
-        # all_positive_2 = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
-        # all_negative_2 = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
-        # parent = list(set([i.split("/")[0] for i in all_negative_2.keys()]))
-        # relation_structure_2 = {p: [i for i in all_positive_2.keys() if p == i.split("/")[0]] for p in parent}
-        #
-        # assert all_positive_1.keys() == all_positive_2.keys()
-        # print(relation_structure_1)
-        # print(relation_structure_2)
-        # assert relation_structure_1 == relation_structure_2
-        # for k in all_positive_1.keys():
-        #     print(all_positive_1[k], all_positive_2[k])
-        #     assert all_positive_1[k] == all_positive_2[k]
-        #     assert all_negative_1 == all_negative_2
-        #
-        # input()
-
-        data = load_dataset(self.config['data'], split=self.config['split'])
-        self.all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
-        self.all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
-        assert self.all_positive.keys() == self.all_negative.keys(), \
-            f"{self.all_positive.keys()} != {self.all_negative.keys()}"
-        if self.config['exclude_relation'] is not None:
-            self.all_positive = {k: v for k, v in self.all_positive.items() if k not in self.config['exclude_relation']}
-            self.all_negative = {k: v for k, v in self.all_negative.items() if k not in self.config['exclude_relation']}
-        parent = list(set([i.split("/")[0] for i in self.all_negative.keys()]))
-        self.relation_structure = {p: [i for i in self.all_positive.keys() if p == i.split("/")[0]] for p in parent}
-
-        # calculate the number of trial to cover all combination in batch
-        n_pos = min(len(i) for i in self.all_positive.values())
-        n_neg = min(len(i) for i in self.all_negative.values())
-        self.n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
-
         # classification loss
         model_parameters = list(self.model.model.named_parameters())
         self.linear = None
@@ -222,50 +183,55 @@ class Trainer:
 
         self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda, -1)
 
-    def process_data(self):
-        if type(self.all_positive) is not dict:
-            assert self.relation_structure is None
-            assert self.all_negative is None
-            assert len(self.all_positive) > 0, len(self.all_positive)
-            assert type(self.all_positive) is list and all(type(i) is tuple for i in self.all_positive)
-            self.all_positive = {k: [v] for k, v in enumerate(self.all_positive)}
-        key = list(self.all_positive.keys())
-        positive_samples_list = ListKeeper([self.all_positive[k] for k in key])
-        logging.debug(f'{len(self.all_positive)} positive data to encode')
+    def process_data(self):  # TODO: skip parent relation if no hierarchy is provided
+        # raw data
+        data = load_dataset(self.config['data'], split=self.config['split'])
+        all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
+        all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
+        assert all_positive.keys() == all_negative.keys(), \
+            f"{all_positive.keys()} != {all_negative.keys()}"
+        if self.config['exclude_relation'] is not None:
+            all_positive = {k: v for k, v in all_positive.items() if k not in self.config['exclude_relation']}
+            all_negative = {k: v for k, v in all_negative.items() if k not in self.config['exclude_relation']}
+        key = list(all_positive.keys())
+        logging.info(f'{len(key)} relations exist')
 
-        negative_sample_list = None
-        if self.all_negative is not None:
-            assert len(self.all_negative) > 0, len(self.all_negative)
-            assert self.all_negative.keys() == self.all_positive.keys()
-            negative_sample_list = ListKeeper([self.all_negative[k] for k in key])
-            logging.debug(f'{len(self.all_negative)} positive data to encode')
+        # relation structure
+        parent = list(set([i.split("/")[0] for i in all_negative.keys()]))
+        relation_structure = {p: [i for i in all_positive.keys() if p == i.split("/")[0]] for p in parent}
 
-        positive_embedding_dict = self.model.encode_word_pairs(positive_samples_list.flatten_list)
-        positive_embedding = [positive_embedding_dict[f"{a}__{b}"] for a, b in positive_samples_list.flatten_list]
-        positive_embedding = positive_samples_list.restore_structure(positive_embedding)
-        positive_embedding = {key[n]: v for n, v in enumerate(positive_embedding)}
-        negative_embedding = None
-        if negative_sample_list is not None:
-            negative_embedding_dict = self.model.encode_word_pairs(negative_sample_list.flatten_list)
-            negative_embedding = [negative_embedding_dict[f"{a}__{b}"] for a, b in negative_sample_list.flatten_list]
-            negative_embedding = negative_sample_list.restore_structure(negative_embedding)
-            negative_embedding = {key[n]: v for n, v in enumerate(negative_embedding)}
-        return positive_embedding, negative_embedding
+        # flatten pairs to encode them efficiently
+        def _encode(pairs):
+            sample_list = ListKeeper([pairs[k] for k in key])
+            sample_dict = self.model.encode_word_pairs(sample_list.flatten_list)
+            embedding = [sample_dict[f"{a}__{b}"] for a, b in sample_list.flatten_list]
+            embedding = sample_list.restore_structure(embedding)
+            return {key[n]: v for n, v in enumerate(embedding)}
+
+        positive_embedding = _encode(all_positive)
+        negative_embedding = _encode(all_negative)
+
+        # calculate the number of trial to cover all combination in batch
+        n_pos = min(len(i) for i in all_positive.values())
+        n_neg = min(len(i) for i in all_negative.values())
+        n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
+
+        return positive_embedding, negative_embedding, relation_structure, n_trial
 
     def train(self, epoch_save: int = 1):
         """ Train model. """
-        positive_embedding, negative_embedding = self.process_data()
-        batch_index = list(range(self.n_trial))
+        positive_embedding, negative_embedding, relation_structure, n_trial = self.process_data()
+        batch_index = list(range(n_trial))
         global_step = 0
 
         for e in range(self.config['epoch']):  # loop over the epoch
             random.shuffle(batch_index)
             for n, bi in enumerate(batch_index):
-                dataset = Dataset(deterministic_index=bi, pairwise_input=True, positive_samples=positive_embedding,
-                                  negative_samples=negative_embedding, relation_structure=self.relation_structure)
+                dataset = Dataset(deterministic_index=bi, relation_structure=relation_structure,
+                                  positive_samples=positive_embedding, negative_samples=negative_embedding)
                 loader = torch.utils.data.DataLoader(dataset, batch_size=self.config['batch'], shuffle=True, drop_last=True)
                 mean_loss, global_step = self.train_single_epoch(loader, global_step)
-                logging.info(f"[epoch {e + 1}/{self.config['epoch']}, batch_id {n}/{self.n_trial}], "
+                logging.info(f"[epoch {e + 1}/{self.config['epoch']}, batch_id {n}/{n_trial}], "
                              f"loss: {round(mean_loss, 3)}, lr: {self.optimizer.param_groups[0]['lr']}")
             if epoch_save is not None and (e + 1) % epoch_save == 0 and (e + 1) != self.config['epoch']:
                 self.model.save(f'{self.output_dir}/epoch_{e + 1}')

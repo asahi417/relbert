@@ -1,8 +1,6 @@
 """ Train RelBERT model.
-relbert-train -o relbert_output/ckpt/tmp
-relbert-train -o relbert_output/ckpt/tmp -b 32 -g 2
-relbert-eval -c relbert_output/ckpt/tmp2/model --export-file tmp/tmp2.csv
-relbert-eval -c relbert_output/ckpt/tmp3/model --export-file tmp/tmp3.csv
+relbert-train -o relbert_output/ckpt/tmp -b 79
+relbert-eval-analogy -d sat_full -m relbert_output/ckpt/tmp/model -o best.json
 """
 import argparse
 import logging
@@ -43,7 +41,7 @@ def main():
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
 
     # misc
-    parser.add_argument('--epoch-save', help='interval to save model weight', default=None, type=int)
+    parser.add_argument('--epoch-save', help='interval to save model weight', default=1, type=int)
 
     # logging
     opt = parser.parse_args()
