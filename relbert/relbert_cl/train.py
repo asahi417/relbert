@@ -1,10 +1,12 @@
 """ Train RelBERT model.
+# Triplet Loss
 relbert-train -o relbert_output/ckpt/batch39 -b 39 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch39/model -o relbert_output/ckpt/batch39/model/analogy.json
 relbert-train -o relbert_output/ckpt/batch39c -b 39 -e 1 -c
 relbert-eval-analogy -m relbert_output/ckpt/batch39c/model -o relbert_output/ckpt/batch39c/model/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch32nce -b 32 -e 10 --loss nce --temperature 0.05 -r 0.000001 --num-negative 400
+# NCE Loss
+relbert-train -o relbert_output/ckpt/nce/batch32nce -b 32 -e 10 --loss nce --temperature 0.05 -r 0.000001 --num-negative 400
 
 relbert-eval-analogy -m relbert_output/ckpt/batch32nce/epoch_1 -o relbert_output/ckpt/batch32nce/epoch_1/analogy.json
 relbert-eval-analogy -m relbert_output/ckpt/batch32nce/epoch_2 -o relbert_output/ckpt/batch32nce/epoch_2/analogy.json

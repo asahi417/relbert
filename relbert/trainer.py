@@ -178,8 +178,7 @@ class Trainer:
                 return torch.tensor(data, dtype=torch.float32)
             return torch.tensor(data, dtype=torch.long)
 
-        relation_types = list(positive_encode.keys())
-        features = positive_encode[relation_types[0]][0].keys()
+        features = positive_encode[list(positive_encode.keys())[0]][0].keys()
         positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
         negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
         negative_encode = {
@@ -192,6 +191,7 @@ class Trainer:
                 positive_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in v])) for _k in features}
                 n_list = list(chain(*[_v for _k, _v in relation_structure.items() if _k != k]))
                 negative_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in n_list])) for _k in features}
+        relation_types = list(positive_encode.keys())
 
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
