@@ -30,13 +30,10 @@ setup(
     install_requires=[
         "torch",
         "tqdm",
-        "requests",
-        # "gdown",
         "pandas",
         "numpy",
         "transformers",
         "sentencepiece",
-        "truecase",
         "scikit-learn",
         # "gensim==3.8.1",
         "datasets",
@@ -47,9 +44,8 @@ setup(
     entry_points={
         'console_scripts': [
             'relbert-train = relbert.relbert_cl.train:main',
-            'relbert-eval-analogy = relbert.relbert_cl.evaluate:main_analogy',
-            'relbert-prompt-discrete = relbert.relbert_cl.prompt_discrete:main',
-            'relbert-prompt-continuous = relbert.relbert_cl.prompt_continuous:main'
+            'relbert-eval-analogy = relbert.relbert_cl.evaluate:main_analogy'
+            'relbert-eval-loss = relbert.relbert_cl.evaluate:main_validation_loss'
         ]
     }
 )

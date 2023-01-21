@@ -5,7 +5,7 @@ import random
 import json
 from typing import Dict, List
 from itertools import product, combinations, chain
-
+from statistics import mean
 import torch
 from datasets import load_dataset
 
@@ -15,6 +15,12 @@ from .util import fix_seed, loss_triplet, loss_nce
 
 
 DEFAULT_TEMPLATE = "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"
+
+
+def to_tensor(name, data):
+    if name in ['attention_mask']:
+        return torch.tensor(data, dtype=torch.float32)
+    return torch.tensor(data, dtype=torch.long)
 
 
 class DatasetTriplet(torch.utils.data.Dataset):
@@ -41,11 +47,6 @@ class DatasetTriplet(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.keys)
 
-    def to_tensor(self, name, data):
-        if name in self.float_tensors:
-            return torch.tensor(data, dtype=torch.float32)
-        return torch.tensor(data, dtype=torch.long)
-
     def __getitem__(self, idx):
         # relation type for positive sample
         relation_type = self.keys[idx]
@@ -54,9 +55,9 @@ class DatasetTriplet(torch.utils.data.Dataset):
         positive_a = self.positive_samples[relation_type][a]
         positive_b = self.positive_samples[relation_type][b]
         negative = self.negative_samples[relation_type][n]
-        tensor_positive_a = {k: self.to_tensor(k, v) for k, v in positive_a.items()}
-        tensor_positive_b = {k: self.to_tensor(k, v) for k, v in positive_b.items()}
-        tensor_negative = {k: self.to_tensor(k, v) for k, v in negative.items()}
+        tensor_positive_a = {k: to_tensor(k, v) for k, v in positive_a.items()}
+        tensor_positive_b = {k: to_tensor(k, v) for k, v in positive_b.items()}
+        tensor_negative = {k: to_tensor(k, v) for k, v in negative.items()}
         output = {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
         if self.relation_structure is not None:
             
@@ -67,7 +68,7 @@ class DatasetTriplet(torch.utils.data.Dataset):
 
             # sampling positive from the relation type
             positive_parent = self.rand_sample(self.positive_samples[relation_positive])
-            output['positive_parent'] = {k: self.to_tensor(k, v) for k, v in positive_parent.items()}
+            output['positive_parent'] = {k: to_tensor(k, v) for k, v in positive_parent.items()}
 
             # sampling relation type from different parent class (negative)
             parent_relation_n = self.rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
@@ -75,7 +76,7 @@ class DatasetTriplet(torch.utils.data.Dataset):
 
             # sample individual entry from the relation
             negative_parent = self.rand_sample(self.positive_samples[relation_negative])
-            output['negative_parent'] = {k: self.to_tensor(k, v) for k, v in negative_parent.items()}
+            output['negative_parent'] = {k: to_tensor(k, v) for k, v in negative_parent.items()}
         return output
 
 
@@ -84,7 +85,7 @@ class Trainer:
 
     def __init__(self,
                  output_dir: str,
-                 template: str,
+                 template: str = None,
                  model: str = 'roberta-large',
                  max_length: int = 64,
                  epoch: int = 1,
@@ -96,14 +97,13 @@ class Trainer:
                  data: str = 'relbert/semeval2012_relational_similarity',
                  exclude_relation: List or str = None,
                  split: str = 'train',
+                 split_valid: str = 'validation',
                  loss_function: str = 'triplet',
                  classification_loss: bool = True,
                  loss_function_config: Dict = None):
 
         # load language model
         self.model = RelBERT(model=model, max_length=max_length, aggregation_mode=aggregation_mode, template=template)
-        assert not self.model.is_trained, f'{model} is already trained'
-        self.model.train()
         self.hidden_size = self.model.model_config.hidden_size
         
         # config
@@ -159,7 +159,9 @@ class Trainer:
         self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda, -1)
 
     def train(self, epoch_save: int = 1):
-        positive_encode, negative_encode, relation_structure = self.process_data()
+        assert not self.model.is_trained, f'model is already trained'
+        self.model.train()
+        positive_encode, negative_encode, relation_structure = self.process_data(self.config['split'])
         if self.config['loss_function'] == 'triplet':
             self._train_triplet(positive_encode, negative_encode, relation_structure, epoch_save)
         elif self.config['loss_function'] in ['nce', 'iloob']:
@@ -171,13 +173,18 @@ class Trainer:
             json.dump(self.config, f, indent=2)
         logging.info(f'complete training: model ckpt was saved at {self.output_dir}')
 
+    def validate(self):
+        self.model.eval()
+        with torch.no_grad():
+            positive_encode, negative_encode, relation_structure = self.process_data(self.config['split_valid'])
+            if self.config['loss_function'] == 'triplet':
+                return self._valid_triplet(positive_encode, negative_encode, relation_structure)
+            elif self.config['loss_function'] in ['nce', 'iloob']:
+                return self._valid_nce(positive_encode, negative_encode, relation_structure)
+            else:
+                raise ValueError(f"unknown loss function {self.config['loss_function']}")
+
     def _train_nce(self, positive_encode, negative_encode, relation_structure, epoch_save):
-
-        def to_tensor(name, data):
-            if name in ['attention_mask']:
-                return torch.tensor(data, dtype=torch.float32)
-            return torch.tensor(data, dtype=torch.long)
-
         features = positive_encode[list(positive_encode.keys())[0]][0].keys()
         positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
         negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
@@ -248,6 +255,43 @@ class Trainer:
             if epoch_save is not None and (e + 1) % epoch_save == 0 and (e + 1) != self.config['epoch']:
                 logging.info(f"saving ckpt at `{self.output_dir}/epoch_{e + 1}`")
                 self.model.save(f'{self.output_dir}/epoch_{e + 1}')
+
+    def _valid_nce(self, positive_encode, negative_encode, relation_structure):
+        features = positive_encode[list(positive_encode.keys())[0]][0].keys()
+        positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
+        negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
+        negative_encode = {
+            k: {_k: list(chain(*[v[_k]] + [b[_k] for a, b in positive_encode.items() if a != k])) for
+                _k in features} for k, v in negative_encode.items()}
+
+        # add parent relation types
+        if relation_structure is not None:
+            for k, v in relation_structure.items():
+                positive_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in v])) for _k in features}
+                n_list = list(chain(*[_v for _k, _v in relation_structure.items() if _k != k]))
+                negative_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in n_list])) for _k in features}
+        loss = []
+
+        for n, r_type in enumerate(positive_encode.keys()):
+
+            # embedding for positive samples
+            pos = {k: to_tensor(k, v) for k, v in positive_encode[r_type].items()}
+            positive_embedding = self.model.to_embedding(pos, batch_size=self.config['batch'])
+
+            # embedding for negative samples
+            neg = {k: to_tensor(k, v) for k, v in negative_encode[r_type].items()}
+            negative_embedding = self.model.to_embedding(neg, batch_size=self.config['batch'])
+
+            # loss computation
+            tmp_loss = loss_nce(
+                tensor_positive=positive_embedding,
+                tensor_negative=negative_embedding,
+                temperature=self.config['loss_function_config']['temperature'],
+                info_loob=self.config['loss_function'] == 'iloob',
+                linear=self.linear,
+                device=self.model.device)
+            loss.append(tmp_loss.cpu().item())
+        return mean(loss)
 
     def _train_triplet(self, positive_encode, negative_encode, relation_structure, epoch_save):
         num_accumulation = 1
@@ -326,9 +370,57 @@ class Trainer:
             if epoch_save is not None and (e + 1) % epoch_save == 0 and (e + 1) != self.config['epoch']:
                 self.model.save(f'{self.output_dir}/epoch_{e + 1}')
 
-    def process_data(self):
+    def _valid_triplet(self, positive_encode, negative_encode, relation_structure):
+        n_pos = min(len(i) for i in positive_encode.values())
+        n_neg = min(len(i) for i in negative_encode.values())
+        n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
+
+        loss = []
+        for n, bi in enumerate(range(n_trial)):
+
+            # loader
+            dataset = DatasetTriplet(
+                deterministic_index=bi,
+                relation_structure=relation_structure,
+                positive_samples=positive_encode,
+                negative_samples=negative_encode)
+            data_loader = torch.utils.data.DataLoader(
+                dataset,
+                batch_size=self.config['batch'],
+                shuffle=True,
+                drop_last=False)
+
+            # model training
+            for _n, x in enumerate(data_loader):
+                if relation_structure is None:
+                    encode = {k: torch.cat([x['positive_a'][k], x['positive_b'][k], x['negative'][k]])
+                              for k in x['positive_a'].keys()}
+                    embedding = self.model.to_embedding(encode)
+                    v_anchor, v_positive, v_negative = embedding.chunk(3)
+                    v_positive_hc = v_negative_hc = None
+                else:
+                    encode = {k: torch.cat([
+                        x['positive_a'][k], x['positive_b'][k], x['negative'][k],
+                        x['positive_parent'][k], x['negative_parent'][k]]) for k in x['positive_a'].keys()}
+                    embedding = self.model.to_embedding(encode)
+                    v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
+
+                tmp_loss = loss_triplet(
+                    tensor_anchor=v_anchor,
+                    tensor_positive=v_positive,
+                    tensor_negative=v_negative,
+                    tensor_positive_parent=v_positive_hc,
+                    tensor_negative_parent=v_negative_hc,
+                    margin=self.config['loss_function_config']['mse_margin'],
+                    linear=self.linear,
+                    device=self.model.device)
+                loss.append(tmp_loss.cpu().item())
+
+        return mean(loss)
+
+    def process_data(self, split):
         # raw data
-        data = load_dataset(self.config['data'], split=self.config['split'])
+        data = load_dataset(self.config['data'], split=split)
         all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
         all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
         assert all_positive.keys() == all_negative.keys(), \
