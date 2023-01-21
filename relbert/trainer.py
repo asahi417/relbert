@@ -183,14 +183,9 @@ class Trainer:
         positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
         negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
         negative_encode = {
-            k: {_k: list(chain(*[negative_encode[k][_k]] + [a[_k] for a, b in positive_encode.items() if a != k])) for
+            k: {_k: list(chain(*[v[_k]] + [b[_k] for a, b in positive_encode.items() if a != k])) for
                 _k in features} for k, v in negative_encode.items()}
-        # positive_encode = {k: {_k: to_tensor(_k, [x[_k] for x in v]) for _k in features} for k, v in
-        #                    positive_encode.items()}
-        # negative_encode = {
-        #     k: {_k: torch.cat(
-        #         [b[_k] for a, b in positive_encode.items() if a != k] + [to_tensor(_k, [x[_k] for x in v])]
-        #     ) for _k in features} for k, v in negative_encode.items()}
+
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_types)
