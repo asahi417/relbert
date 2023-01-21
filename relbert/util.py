@@ -104,6 +104,7 @@ def contrastive_loss(
             return torch.sum(torch.clip(distance_positive - distance_negative - loss_function_config['mse_margin'], min=0))
         elif loss_function in ['nce', 'info_loob']:
             v = torch.cat([v_anchor, v_positive], dim=0)
+            print(v.shape, v_negative.shape)
             logit_n = torch.exp(
                 cos_3d(v.unsqueeze(1), v_negative.unsqueeze(0)) / loss_function_config['temperature']
             )
