@@ -34,7 +34,6 @@ def main_validation_loss():
         batch=opt.batch,
         data=opt.data,
         exclude_relation=opt.exclude_relation,
-        split=opt.split,
         loss_function=opt.loss,
         classification_loss=opt.classification_loss,
         loss_function_config=loss_function_config,
