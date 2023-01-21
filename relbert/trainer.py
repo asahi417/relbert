@@ -84,7 +84,7 @@ class Trainer:
     """ Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
 
     def __init__(self,
-                 output_dir: str,
+                 output_dir: str = None,
                  template: str = None,
                  model: str = 'roberta-large',
                  max_length: int = 64,
@@ -108,7 +108,15 @@ class Trainer:
         
         # config
         self.output_dir = output_dir
-        os.makedirs(self.output_dir, exist_ok=True)
+        if self.output_dir is not None:
+            os.makedirs(self.output_dir, exist_ok=True)
+            # add file handler
+            logger = logging.getLogger()
+            file_handler = logging.FileHandler(f'{self.output_dir}/training.log')
+            file_handler.setLevel(logging.INFO)
+            file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
+            logger.addHandler(file_handler)
+
         self.config = dict(
             template=template,
             model=model,
@@ -127,13 +135,6 @@ class Trainer:
             loss_function_config=loss_function_config
         )
         fix_seed(self.config['random_seed'], self.model.device == 'cuda')
-
-        # add file handler
-        logger = logging.getLogger()
-        file_handler = logging.FileHandler(f'{self.output_dir}/training.log')
-        file_handler.setLevel(logging.INFO)
-        file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
-        logger.addHandler(file_handler)
 
         # classification loss
         model_parameters = list(self.model.model.named_parameters())
@@ -160,6 +161,7 @@ class Trainer:
 
     def train(self, epoch_save: int = 1):
         assert not self.model.is_trained, f'model is already trained'
+        assert self.output_dir is not None, f'output_dir is not specified'
         self.model.train()
         positive_encode, negative_encode, relation_structure = self.process_data(self.config['split'])
         if self.config['loss_function'] == 'triplet':

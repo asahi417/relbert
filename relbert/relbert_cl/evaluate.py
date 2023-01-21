@@ -29,7 +29,6 @@ def main_validation_loss():
     else:
         loss_function_config = {}
     trainer = Trainer(
-        output_dir=opt.output_dir,
         model=opt.model,
         max_length=opt.max_length,
         batch=opt.batch,
