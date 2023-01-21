@@ -130,6 +130,7 @@ class Trainer:
             data=data,
             exclude_relation=exclude_relation,
             split=split,
+            split_valid=split_valid,
             loss_function=loss_function,
             classification_loss=classification_loss,
             loss_function_config=loss_function_config
