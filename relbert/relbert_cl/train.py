@@ -4,7 +4,7 @@ relbert-eval-analogy -m relbert_output/ckpt/batch39/model -o relbert_output/ckpt
 relbert-train -o relbert_output/ckpt/batch39c -b 39 -e 1 -c
 relbert-eval-analogy -m relbert_output/ckpt/batch39c/model -o relbert_output/ckpt/batch39c/model/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch64nce -b 64 -e 10 --loss nce --temperature 0.05 -r 0.00005
+relbert-train -o relbert_output/ckpt/batch32nce -b 32 -e 10 --loss nce --temperature 0.05 -r 0.00005 --num-negative 10 --num-positive 10
 relbert-eval-analogy -m relbert_output/ckpt/batch64nce/epoch_1 -o relbert_output/ckpt/batch64nce/epoch_1/analogy.json
 relbert-eval-analogy -m relbert_output/ckpt/batch64nce/epoch_2 -o relbert_output/ckpt/batch64nce/epoch_2/analogy.json
 relbert-eval-analogy -m relbert_output/ckpt/batch64nce/epoch_3 -o relbert_output/ckpt/batch64nce/epoch_3/analogy.json

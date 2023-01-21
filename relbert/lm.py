@@ -181,11 +181,11 @@ class RelBERT:
     def to_embedding(self, encode, batch_size: int = None):
         """ Compute embedding from batch of encode. """
         labels = encode.pop('labels')
-        if batch_size is None:
+        size = len(labels)
+        if batch_size is None or batch_size > size:
             output = self.model(**{k: v.to(self.device) for k, v in encode.items()}, return_dict=True)
             return (output['last_hidden_state'] * labels.to(self.device).reshape(len(labels), -1, 1)).sum(1)
         else:
-            size = len(labels)
             chunks = list(range(0, size, batch_size)) + [size]
             segment = [(a, b) for a, b in zip(chunks[:-1], chunks[1:])]
             last_hidden_state = []
