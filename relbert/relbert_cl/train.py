@@ -73,6 +73,7 @@ def main():
     # config: triplet loss
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('--temperature', help='temperature for nce', default=0.1, type=float)
+    parser.add_argument('--gradient-accumulation', help='gradient accumulation', default=1, type=int)
 
     # misc
     parser.add_argument('--epoch-save', help='interval to save model weight', default=1, type=int)
@@ -81,8 +82,10 @@ def main():
     opt = parser.parse_args()
     if opt.loss == 'triplet':
         loss_function_config = {'mse_margin': opt.mse_margin}
+    elif opt.loss in ['nce', 'iloob']:
+        loss_function_config = {'temperature': opt.temperature, "gradient_accumulation": opt.gradient_accumulation}
     else:
-        loss_function_config = {'temperature': opt.temperature}
+        loss_function_config = {}
     trainer = relbert.Trainer(
         output_dir=opt.output_dir,
         template=opt.template,

@@ -70,21 +70,18 @@ def fix_seed(seed: int = 12, cuda: bool = True):
         torch.backends.cudnn.benchmark = False
 
 
-def contrastive_loss(
+def loss_triplet(
         tensor_anchor,
         tensor_positive,
         tensor_negative,
         tensor_positive_parent=None,
         tensor_negative_parent=None,
+        margin: float = 1.0,
         linear=None,
-        loss_function: str = 'triplet',
-        loss_function_config: Dict = None,
         device: str = 'gpu'):
     """ Compute contrastive triplet loss with in batch augmentation which enables to propagate error on quadratic
     of batch size. """
     bce = nn.BCELoss()
-    cos_3d = torch.nn.CosineSimilarity(dim=2)
-    eps = 1e-5
 
     def classification_loss(v_anchor, v_positive, v_negative):
         # the 3-way discriminative loss used in SBERT
@@ -98,25 +95,9 @@ def contrastive_loss(
         return 0
 
     def main_loss(v_anchor, v_positive, v_negative):
-        if loss_function == 'triplet':
-            distance_positive = torch.sum((v_anchor - v_positive) ** 2, -1) ** 0.5
-            distance_negative = torch.sum((v_anchor - v_negative) ** 2, -1) ** 0.5
-            return torch.sum(torch.clip(distance_positive - distance_negative - loss_function_config['mse_margin'], min=0))
-        elif loss_function in ['nce', 'info_loob']:
-            v = torch.cat([v_anchor, v_positive], dim=0)
-            print(v.shape, v_negative.shape)
-            logit_n = torch.exp(
-                cos_3d(v.unsqueeze(1), v_negative.unsqueeze(0)) / loss_function_config['temperature']
-            )
-            deno_n = torch.sum(logit_n, dim=-1)  # sum over negative
-            logit_p = torch.exp(
-                cos_3d(v.unsqueeze(1), v.unsqueeze(0)) / loss_function_config['temperature']
-            )
-            if loss_function == 'info_loob':
-                return torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + eps)))
-            return torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + logit_p + eps)))
-        else:
-            raise ValueError(f"unknown loss type: {loss_function}")
+        distance_positive = torch.sum((v_anchor - v_positive) ** 2, -1) ** 0.5
+        distance_negative = torch.sum((v_anchor - v_negative) ** 2, -1) ** 0.5
+        return torch.sum(torch.clip(distance_positive - distance_negative - margin, min=0))
 
     loss = main_loss(tensor_anchor, tensor_positive, tensor_negative)
     loss += main_loss(tensor_positive, tensor_anchor, tensor_negative)
@@ -130,15 +111,14 @@ def contrastive_loss(
             len(v_positive), -1)
         return v_anchor_aug, v_positive_aug, v_negative_aug
 
-    if loss_function == 'triplet':
-        # In-batch Negative Sampling
-        # No elements in single batch share same relation type, so here we construct negative sample within batch
-        # by regarding positive sample from other entries as its negative. The original negative is the hard
-        # negatives from same relation type and the in batch negative is easy negative from other relation types.
-        a, p, n = sample_augmentation(tensor_anchor, tensor_positive)
-        loss += main_loss(a, p, n)
-        a, p, n = sample_augmentation(tensor_positive, tensor_anchor)
-        loss += main_loss(a, p, n)
+    # In-batch Negative Sampling
+    # No elements in single batch share same relation type, so here we construct negative sample within batch
+    # by regarding positive sample from other entries as its negative. The original negative is the hard
+    # negatives from same relation type and the in batch negative is easy negative from other relation types.
+    a, p, n = sample_augmentation(tensor_anchor, tensor_positive)
+    loss += main_loss(a, p, n)
+    a, p, n = sample_augmentation(tensor_positive, tensor_anchor)
+    loss += main_loss(a, p, n)
 
     # contrastive loss of the parent class
     if tensor_positive_parent is not None and tensor_negative_parent is not None:
@@ -146,3 +126,19 @@ def contrastive_loss(
         loss += main_loss(tensor_positive_parent, tensor_anchor, tensor_negative_parent)
         loss += classification_loss(tensor_anchor, tensor_positive_parent, tensor_negative_parent)
     return loss
+
+
+def loss_nce(tensor_positive, tensor_negative, temperature: float = 1.0, info_loob: bool = False):
+    cos_3d = torch.nn.CosineSimilarity(dim=2)
+    eps = 1e-5
+    logit_n = torch.exp(
+        cos_3d(tensor_positive.unsqueeze(1), tensor_negative.unsqueeze(0)) / temperature
+    )
+    deno_n = torch.sum(logit_n, dim=-1)  # sum over negative
+    logit_p = torch.exp(
+        cos_3d(tensor_positive.unsqueeze(1), tensor_positive.unsqueeze(0)) / temperature
+    )
+    if info_loob:
+        return torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + eps)))
+    return torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + logit_p + eps)))
+
