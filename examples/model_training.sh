@@ -20,9 +20,3 @@ for e in 1 2 3 4 5 6 7 8 9; do
     relbert-eval-analogy -m "${MODEL}/epoch_${e}" -o "${MODEL}/epoch_${e}/analogy.json" -d sat_full
 done
 relbert-eval-analogy -m "${MODEL}/model" -o "${MODEL}/model/analogy.json" -d sat_full
-
-"a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>"
-"b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>"
-"c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>"
-"d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>"
-"e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>"
