@@ -13,7 +13,7 @@ def main_validation_loss():
     parser.add_argument('-o', '--output-file', help='export file', required=True, type=str)
     parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
     parser.add_argument('-l', '--max-length', help='for vanilla LM', default=64, type=int)
-    parser.add_argument('-d', '--data', help='target analogy', default=None, type=str)
+    parser.add_argument('--data', help='data', default='relbert/semeval2012_relational_similarity', type=str)
     parser.add_argument('--loss', help='', default='triplet', type=str)
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('--temperature', help='temperature for nce', default=0.05, type=float)
