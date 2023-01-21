@@ -4,7 +4,7 @@ import logging
 import random
 import json
 from typing import Dict, List
-from itertools import product, combinations
+from itertools import product, combinations, chain
 
 import torch
 from datasets import load_dataset
@@ -180,20 +180,40 @@ class Trainer:
 
         relation_types = list(positive_encode.keys())
         features = positive_encode[relation_types[0]][0].keys()
-        positive_encode = {k: {_k: to_tensor(_k, [x[_k] for x in v]) for _k in features} for k, v in
-                           positive_encode.items()}
+        positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
+        negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
         negative_encode = {
-            k: {_k: torch.cat(
-                [b[_k] for a, b in positive_encode.items() if a != k] + [to_tensor(_k, [x[_k] for x in v])]
-            ) for _k in features} for k, v in negative_encode.items()}
+            k: {_k: list(chain(*[negative_encode[k][_k]] + [a[_k] for a, b in positive_encode.items() if a != k])) for
+                _k in features} for k, v in negative_encode.items()}
+        # positive_encode = {k: {_k: to_tensor(_k, [x[_k] for x in v]) for _k in features} for k, v in
+        #                    positive_encode.items()}
+        # negative_encode = {
+        #     k: {_k: torch.cat(
+        #         [b[_k] for a, b in positive_encode.items() if a != k] + [to_tensor(_k, [x[_k] for x in v])]
+        #     ) for _k in features} for k, v in negative_encode.items()}
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_types)
             loss = None
             for n, r_type in enumerate(relation_types):
                 self.optimizer.zero_grad()
-                positive_embedding = self.model.to_embedding(positive_encode[r_type], batch_size=self.config['batch'])
-                negative_embedding = self.model.to_embedding(negative_encode[r_type], batch_size=self.config['batch'])
+
+                pos = positive_encode[r_type]
+                if len(pos['input_ids']) > self.config['loss_function_config']['num_positive']:
+                    ids = list(range(len(pos['input_ids'])))
+                    random.shuffle(ids)
+                    pos = {k: [v[i] for i in ids] for k, v in pos.items()}
+                pos = {k: to_tensor(k, v) for k, v in pos.items()}
+                positive_embedding = self.model.to_embedding(pos, batch_size=self.config['batch'])
+
+                neg = negative_encode[r_type]
+                if len(neg['input_ids']) > self.config['loss_function_config']['num_negative']:
+                    ids = list(range(len(neg['input_ids'])))
+                    random.shuffle(ids)
+                    neg = {k: [v[i] for i in ids] for k, v in neg.items()}
+                neg = {k: to_tensor(k, v) for k, v in neg.items()}
+                negative_embedding = self.model.to_embedding(neg, batch_size=self.config['batch'])
+
                 loss = loss_nce(
                     tensor_positive=positive_embedding,
                     tensor_negative=negative_embedding,
