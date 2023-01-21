@@ -173,12 +173,20 @@ class Trainer:
 
     def _train_nce(self, positive_encode, negative_encode, relation_structure, epoch_save):
         relation_types = list(positive_encode.keys())
+        features = positive_encode[relation_types[0]][0].keys()
+        positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
+
+        negative_encode = {k: {_k: [x[_k] for x in v] + [b[_k] for a, b in positive_encode.items() if a != k] for _k in features} for k, v in negative_encode.items()}
+        print(negative_encode[relation_types[0]])
+        input()
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_types)
             loss = None
             for n, r_type in enumerate(relation_types):
                 self.optimizer.zero_grad()
+                print(positive_encode[r_type])
+                input()
                 positive_embedding = self.model.to_embedding(positive_encode[r_type], batch_size=self.config['batch'])
                 negative_embedding = self.model.to_embedding(
                     negative_encode[r_type] + [v for k, v in positive_encode.items() if k != r_type],

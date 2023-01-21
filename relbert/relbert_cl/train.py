@@ -1,31 +1,10 @@
 """ Train RelBERT model.
 relbert-train -o relbert_output/ckpt/batch39 -b 39 -e 1
 relbert-eval-analogy -m relbert_output/ckpt/batch39/model -o relbert_output/ckpt/batch39/model/analogy.json
-
 relbert-train -o relbert_output/ckpt/batch39c -b 39 -e 1 -c
 relbert-eval-analogy -m relbert_output/ckpt/batch39c/model -o relbert_output/ckpt/batch39c/model/analogy.json
 
-relbert-train -o relbert_output/ckpt/batch39nce05lr005 -b 39 -e 10 --loss nce --temperature 0.05 -r 0.000005
-relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_1 -o relbert_output/ckpt/batch39nce05lr005/epoch_1/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_2 -o relbert_output/ckpt/batch39nce05lr005/epoch_2/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_3 -o relbert_output/ckpt/batch39nce05lr005/epoch_3/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_4 -o relbert_output/ckpt/batch39nce05lr005/epoch_4/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_5 -o relbert_output/ckpt/batch39nce05lr005/epoch_5/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch39nce05lr005/epoch_6 -o relbert_output/ckpt/batch39nce05lr005/epoch_6/analogy.json
-
-relbert-train -o relbert_output/ckpt/batch64_02 -b 64 -e 10 --loss nce --temperature 0.1 -r 0.0001
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_1 -o relbert_output/ckpt/batch64_02/epoch_1/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_2 -o relbert_output/ckpt/batch64_02/epoch_2/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_3 -o relbert_output/ckpt/batch64_02/epoch_3/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_4 -o relbert_output/ckpt/batch64_02/epoch_4/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_5 -o relbert_output/ckpt/batch64_02/epoch_5/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_6 -o relbert_output/ckpt/batch64_02/epoch_6/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_7 -o relbert_output/ckpt/batch64_02/epoch_7/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_8 -o relbert_output/ckpt/batch64_02/epoch_8/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/epoch_9 -o relbert_output/ckpt/batch64_02/epoch_9/analogy.json
-relbert-eval-analogy -m relbert_output/ckpt/batch64_02/model -o relbert_output/ckpt/batch64_02/model/analogy.json
-
-relbert-train -o relbert_output/ckpt/batch64nce -b 64 -e 10 --loss nce --temperature 0.05 -r 0.0001
+relbert-train -o relbert_output/ckpt/batch64nce -b 64 -e 10 --loss nce --temperature 0.05 -r 0.00005
 relbert-eval-analogy -m relbert_output/ckpt/batch64nce/epoch_1 -o relbert_output/ckpt/batch64nce/epoch_1/analogy.json
 relbert-eval-analogy -m relbert_output/ckpt/batch64nce/epoch_2 -o relbert_output/ckpt/batch64nce/epoch_2/analogy.json
 relbert-eval-analogy -m relbert_output/ckpt/batch64nce/epoch_3 -o relbert_output/ckpt/batch64nce/epoch_3/analogy.json
