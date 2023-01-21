@@ -45,8 +45,9 @@ from tqdm import tqdm
 
 from numpy import dot
 from numpy.linalg import norm
-from relbert import RelBERT
 from datasets import load_dataset
+
+from ..lm import RelBERT
 
 
 def cosine_similarity(a, b):
