@@ -172,12 +172,19 @@ class Trainer:
         logging.info(f'complete training: model ckpt was saved at {self.output_dir}')
 
     def _train_nce(self, positive_encode, negative_encode, relation_structure, epoch_save):
+
+        def to_tensor(name, data):
+            if name in ['attention_mask']:
+                return torch.tensor(data, dtype=torch.float32)
+            return torch.tensor(data, dtype=torch.long)
+
         relation_types = list(positive_encode.keys())
         features = positive_encode[relation_types[0]][0].keys()
-        positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
+        positive_encode = {k: {_k: to_tensor(_k, [x[_k] for x in v]) for _k in features} for k, v in
+                           positive_encode.items()}
         negative_encode = {
-            k: {_k: [x[_k] for x in v] + [b[_k] for a, b in positive_encode.items() if a != k] for _k in features} for
-            k, v in negative_encode.items()}
+            k: {_k: to_tensor(_k, [x[_k] for x in v] + [b[_k] for a, b in positive_encode.items() if a != k]) for _k in
+                features} for k, v in negative_encode.items()}
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_types)
