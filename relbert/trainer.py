@@ -186,6 +186,13 @@ class Trainer:
             k: {_k: list(chain(*[v[_k]] + [b[_k] for a, b in positive_encode.items() if a != k])) for
                 _k in features} for k, v in negative_encode.items()}
 
+        # add parent relation types
+        if relation_structure is not None:
+            for k, v in relation_structure.items():
+                positive_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in v])) for _k in features}
+                n_list = list(chain(*[_v for _k, _v in relation_structure.items() if _k != k]))
+                negative_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in n_list])) for _k in features}
+
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_types)
@@ -193,28 +200,34 @@ class Trainer:
             for n, r_type in enumerate(relation_types):
                 self.optimizer.zero_grad()
 
+                # embedding for positive samples
                 pos = positive_encode[r_type]
                 if len(pos['input_ids']) > self.config['loss_function_config']['num_positive']:
                     ids = list(range(len(pos['input_ids'])))
                     random.shuffle(ids)
-                    pos = {k: [v[i] for i in ids[:self.config['loss_function_config']['num_positive']]] for k, v in pos.items()}
+                    pos = {k: [v[i] for i in ids[:self.config['loss_function_config']['num_positive']]] for k, v in
+                           pos.items()}
                 pos = {k: to_tensor(k, v) for k, v in pos.items()}
                 positive_embedding = self.model.to_embedding(pos, batch_size=self.config['batch'])
 
+                # embedding for negative samples
                 neg = negative_encode[r_type]
                 if len(neg['input_ids']) > self.config['loss_function_config']['num_negative']:
                     ids = list(range(len(neg['input_ids'])))
                     random.shuffle(ids)
-                    neg = {k: [v[i] for i in ids[:self.config['loss_function_config']['num_negative']]] for k, v in neg.items()}
+                    neg = {k: [v[i] for i in ids[:self.config['loss_function_config']['num_negative']]] for k, v in
+                           neg.items()}
                 neg = {k: to_tensor(k, v) for k, v in neg.items()}
                 negative_embedding = self.model.to_embedding(neg, batch_size=self.config['batch'])
 
+                # loss computation
                 loss = loss_nce(
                     tensor_positive=positive_embedding,
                     tensor_negative=negative_embedding,
                     temperature=self.config['loss_function_config']['temperature'],
                     info_loob=self.config['loss_function'] == 'iloob',
-                )
+                    linear=self.linear,
+                    device=self.model.device)
                 if (n + 1) % self.config['loss_function_config']['gradient_accumulation'] != 0:
                     continue
                 loss.backward()
@@ -233,10 +246,10 @@ class Trainer:
                 self.optimizer.step()
                 self.scheduler.step()
             if epoch_save is not None and (e + 1) % epoch_save == 0 and (e + 1) != self.config['epoch']:
+                logging.info(f"saving ckpt at `{self.output_dir}/epoch_{e + 1}`")
                 self.model.save(f'{self.output_dir}/epoch_{e + 1}')
 
     def _train_triplet(self, positive_encode, negative_encode, relation_structure, epoch_save):
-
         num_accumulation = 1
         if len(positive_encode) != self.config['batch']:
             num_accumulation = int(len(positive_encode) / self.config['batch'])

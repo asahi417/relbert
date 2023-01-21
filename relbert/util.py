@@ -79,8 +79,7 @@ def loss_triplet(
         margin: float = 1.0,
         linear=None,
         device: str = 'gpu'):
-    """ Compute contrastive triplet loss with in batch augmentation which enables to propagate error on quadratic
-    of batch size. """
+    """ Triplet Loss """
     bce = nn.BCELoss()
 
     def classification_loss(v_anchor, v_positive, v_negative):
@@ -128,7 +127,14 @@ def loss_triplet(
     return loss
 
 
-def loss_nce(tensor_positive, tensor_negative, temperature: float = 1.0, info_loob: bool = False):
+def loss_nce(tensor_positive,
+             tensor_negative,
+             temperature: float = 1.0,
+             info_loob: bool = False,
+             linear=None,
+             device: str = 'gpu'):
+    """ NCE loss"""
+    bce = nn.BCELoss()
     cos_3d = torch.nn.CosineSimilarity(dim=2)
     eps = 1e-5
     logit_n = torch.exp(
@@ -139,6 +145,27 @@ def loss_nce(tensor_positive, tensor_negative, temperature: float = 1.0, info_lo
         cos_3d(tensor_positive.unsqueeze(1), tensor_positive.unsqueeze(0)) / temperature
     )
     if info_loob:
-        return torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + eps)))
-    return torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + logit_p + eps)))
-
+        loss = torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + eps)))
+    else:
+        loss = torch.sum(- torch.log(logit_p / (deno_n.unsqueeze(-1) + logit_p + eps)))
+    if linear is not None:
+        batch_size_positive = len(tensor_positive)
+        for i in range(batch_size_positive):
+            features = []
+            labels = []
+            for j in range(batch_size_positive):
+                feature = torch.cat(
+                    [tensor_positive[i], tensor_positive[j], torch.abs(tensor_positive[i] - tensor_positive[j])],
+                    dim=0)
+                features.append(feature)
+                labels.append([1])
+            for j in range(len(tensor_negative)):
+                feature = torch.cat(
+                    [tensor_positive[i], tensor_negative[j], torch.abs(tensor_positive[i] - tensor_negative[j])],
+                    dim=0)
+                features.append(feature)
+                labels.append([0])
+            pred = torch.sigmoid(linear(torch.stack(features)))
+            labels = torch.tensor(labels, dtype=torch.float32, device=device)
+            loss += bce(pred, labels)
+    return loss
