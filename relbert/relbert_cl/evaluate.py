@@ -99,14 +99,11 @@ def main_relation_mapping():
     parser.add_argument('-m', '--model', help='model', required=True, type=str)
     parser.add_argument('-o', '--output-file', help='export file', required=True, type=str)
     parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
-    parser.add_argument('-l', '--max-length', help='for vanilla LM', default=64, type=int)
-    parser.add_argument('--target-relation', help='target relation', default=None, type=str)
+    parser.add_argument('--data', default="relbert/scientific_and_creative_analogy", type=str)
     opt = parser.parse_args()
-    out = evaluate_classification(
+    out = evaluate_relation_mapping(
         relbert_ckpt=opt.model,
-        max_length=opt.max_length,
-        batch_size=opt.batch,
-        target_relation=opt.target_relation,
+        batch_size=opt.batch
     )
     if os.path.dirname(opt.output_file) != '':
         os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)

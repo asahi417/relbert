@@ -127,6 +127,7 @@ class RelBERT:
             self.is_trained = False
             self.model_config.update({'relbert_config': {'aggregation_mode': aggregation_mode, 'template': self.template}})
         self.model = transformers.AutoModel.from_pretrained(model, config=self.model_config, local_files_only=not self.internet)
+        self.hidden_size = self.model.config.hidden_size
 
         # GPU setup
         self.device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'

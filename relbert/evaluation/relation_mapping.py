@@ -54,11 +54,10 @@ def cosine_similarity(a, b):
     return dot(a, b) / (norm(a) * norm(b) + 1e-4)
 
 
-def evaluate_relation_mapping(relbert_ckpt: str = None,
-                              batch_size: int = 512,
-                              cache_embedding_dir: str = 'embeddings'):
+def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_embedding_dir: str = 'embeddings',
+                              dataset: str = "relbert/scientific_and_creative_analogy"):
     # data
-    data = [i for i in load_dataset("relbert/relation_mapping")["test"]]    
+    data = [i for i in load_dataset(dataset)["test"]]
     # compute embedding
     model = None
     model_alias = os.path.basename(relbert_ckpt)
