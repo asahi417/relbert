@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
 
+VERSION = '0.0.2'
+
 with open('README.md', 'r') as f:
     readme = f.read()
 
-VERSION = '0.0.2'
 setup(
     name='relbert',
     packages=find_packages(exclude=['tests']),
@@ -27,15 +28,22 @@ setup(
       ],
     include_package_data=True,
     test_suite='tests',
+    extras_require={
+        "visualization": [
+            'umap-learn',
+            'hdbscan',
+            'seaborn',
+            'gensim==3.8.1'
+        ]
+    },
     install_requires=[
         "torch",
         "tqdm",
         "pandas",
-        "numpy",
+        "numpy==1.23.5",  # https://stackoverflow.com/questions/74947992/how-to-remove-the-error-systemerror-initialization-of-internal-failed-without
         "transformers",
         "sentencepiece",
         "scikit-learn",
-        # "gensim==3.8.1",
         "datasets",
         "PySocks!=1.5.7",
         "charset-normalizer<3.0,>=2.0"
@@ -45,6 +53,7 @@ setup(
         'console_scripts': [
             'relbert-train = relbert.relbert_cl.train:main',
             'relbert-eval-analogy = relbert.relbert_cl.evaluate:main_analogy',
+            'relbert-eval-classification = relbert.relbert_cl.evaluate:main_classification',
             'relbert-eval-loss = relbert.relbert_cl.evaluate:main_validation_loss'
         ]
     }
