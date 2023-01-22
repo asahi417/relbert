@@ -94,8 +94,8 @@ def main_classification():
         json.dump(out, f)
 
 
-def main_classification():
-    parser = argparse.ArgumentParser(description='RelBERT evaluation on lexical relation classification')
+def main_relation_mapping():
+    parser = argparse.ArgumentParser(description='RelBERT evaluation on relation mapping')
     parser.add_argument('-m', '--model', help='model', required=True, type=str)
     parser.add_argument('-o', '--output-file', help='export file', required=True, type=str)
     parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)

@@ -4,9 +4,9 @@ train_triplet () {
   TEMPLATE_ID=${2}
   TEMPLATE=${3}
   MODEL_CKPT="relbert_output/ckpt/triplet/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
-#  relbert-train -o "${MODEL_CKPT}" -b 39 -e 1 --loss triplet -t "${TEMPLATE}" -s "${RANDOM_SEED}"
-#  relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 64 --loss triplet
-#  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.json" -b 64
+  relbert-train -o "${MODEL_CKPT}" -b 39 -e 1 --loss triplet -t "${TEMPLATE}" -s "${RANDOM_SEED}"
+  relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 64 --loss triplet
+  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.json" -b 64
   relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 64
 }
 
@@ -23,12 +23,9 @@ train_nce () {
   TEMPLATE=${3}
   MODEL_CKPT="relbert_output/ckpt/nce/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
   relbert-train -o "${MODEL_CKPT}" -b 32 -e 10 --loss nce -r 0.000005 -s "${RANDOM_SEED}"
-  for e in 1 2 3 4 5 6 7 8 9; do
-    relbert-eval-loss -m "${MODEL_CKPT}/epoch_${e}" -o "${MODEL_CKPT}/epoch_${e}/loss.json" -b 32 --loss nce
-    relbert-eval-analogy -m "${MODEL_CKPT}/epoch_${e}" -o "${MODEL_CKPT}/epoch_${e}/analogy.json" -b 32
-  done
   relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 32 --loss nce
   relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.json" -b 32
+  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 32
 }
 
 train_nce "0" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>"
@@ -45,12 +42,9 @@ train_iloob () {
   TEMPLATE=${3}
   MODEL_CKPT="relbert_output/ckpt/iloob/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
   relbert-train -o "${MODEL_CKPT}" -b 32 -e 10 --loss iloob -r 0.000005 -s "${RANDOM_SEED}"
-  for e in 1 2 3 4 5 6 7 8 9; do
-    relbert-eval-loss -m "${MODEL_CKPT}/epoch_${e}" -o "${MODEL_CKPT}/epoch_${e}/loss.json" -b 32  --loss iloob
-    relbert-eval-analogy -m "${MODEL_CKPT}/epoch_${e}" -o "${MODEL_CKPT}/epoch_${e}/analogy.json" -b 32
-  done
   relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 32 --loss iloob
   relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.json" -b 32
+  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 32
 }
 
 train_iloob "0" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>"

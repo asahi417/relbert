@@ -198,10 +198,10 @@ class Trainer:
         # add parent relation types
         if relation_structure is not None:
             for k, v in relation_structure.items():
-                positive_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in v])) for _k in features}
-                n_list = list(chain(*[_v for _k, _v in relation_structure.items() if _k != k]))
-                negative_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in n_list])) for _k in features}
-        relation_types = list(positive_encode.keys())
+                positive_encode[k] = {_k: sorted(list(chain(*[positive_encode[_v][_k] for _v in v]))) for _k in features}
+                n_list = sorted(list(chain(*[_v for _k, _v in relation_structure.items() if _k != k])))
+                negative_encode[k] = {_k: sorted(list(chain(*[positive_encode[_v][_k] for _v in n_list]))) for _k in features}
+        relation_types = sorted(list(positive_encode.keys()))
 
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
