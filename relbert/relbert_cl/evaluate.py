@@ -145,6 +145,8 @@ def main_analogy_relation_data():
     parser.add_argument('--aggregation-mode', help='aggregation mode (for vanilla LM)', default='average_no_mask', type=str)
     parser.add_argument('-t', '--template', help='template (for vanilla LM)', default=None, type=str)
     parser.add_argument('--overwrite', help='', action='store_true')
+    parser.add_argument('--reverse-pair', help='', action='store_true')
+    parser.add_argument('--bi-direction-pair', help='', action='store_true')
     opt = parser.parse_args()
 
     if not opt.overwrite and os.path.exists(opt.output_file):
@@ -163,8 +165,8 @@ def main_analogy_relation_data():
         max_length=opt.max_length,
         batch_size=opt.batch,
         distance_function='cosine_similarity',
-        reverse_pair=False,
-        bi_direction_pair=False,
+        reverse_pair=opt.reverse_pair,
+        bi_direction_pair=opt.bi_direction_pair,
         aggregation_mode=opt.aggregation_mode,
         template=opt.template,
         hf_dataset=Dataset.from_list(analogy_data),
