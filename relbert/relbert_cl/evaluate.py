@@ -21,7 +21,12 @@ def main_validation_loss():
     parser.add_argument('-c', '--classification-loss', help='softmax loss', action='store_true')
     parser.add_argument('--split', help='', default='validation', type=str)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
+    parser.add_argument('--overwrite', help='', action='store_true')
     opt = parser.parse_args()
+
+    if not opt.overwrite and os.path.exists(opt.output_file):
+        logging.info(f"{opt.output_file} exists, skip")
+        return
 
     if opt.loss == 'triplet':
         loss_function_config = {'mse_margin': opt.mse_margin}
@@ -56,7 +61,13 @@ def main_analogy():
     parser.add_argument('-d', '--data', help='target analogy', default=None, type=str)
     parser.add_argument('--aggregation-mode', help='aggregation mode (for vanilla LM)', default='average_no_mask', type=str)
     parser.add_argument('-t', '--template', help='template (for vanilla LM)', default=None, type=str)
+    parser.add_argument('--overwrite', help='', action='store_true')
     opt = parser.parse_args()
+
+    if not opt.overwrite and os.path.exists(opt.output_file):
+        logging.info(f"{opt.output_file} exists, skip")
+        return
+
     out = evaluate_analogy(
         relbert_ckpt=opt.model,
         max_length=opt.max_length,
@@ -81,7 +92,13 @@ def main_classification():
     parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
     parser.add_argument('-l', '--max-length', help='for vanilla LM', default=64, type=int)
     parser.add_argument('--target-relation', help='target relation', default=None, type=str)
+    parser.add_argument('--overwrite', help='', action='store_true')
     opt = parser.parse_args()
+
+    if not opt.overwrite and os.path.exists(opt.output_file):
+        logging.info(f"{opt.output_file} exists, skip")
+        return
+
     out = evaluate_classification(
         relbert_ckpt=opt.model,
         max_length=opt.max_length,
@@ -100,7 +117,13 @@ def main_relation_mapping():
     parser.add_argument('-o', '--output-file', help='export file', required=True, type=str)
     parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
     parser.add_argument('--data', default="relbert/scientific_and_creative_analogy", type=str)
+    parser.add_argument('--overwrite', help='', action='store_true')
     opt = parser.parse_args()
+
+    if not opt.overwrite and os.path.exists(opt.output_file):
+        logging.info(f"{opt.output_file} exists, skip")
+        return
+
     out = evaluate_relation_mapping(
         relbert_ckpt=opt.model,
         batch_size=opt.batch
@@ -121,7 +144,12 @@ def main_analogy_relation_data():
     parser.add_argument('--split', help='target split', default='validation', type=str)
     parser.add_argument('--aggregation-mode', help='aggregation mode (for vanilla LM)', default='average_no_mask', type=str)
     parser.add_argument('-t', '--template', help='template (for vanilla LM)', default=None, type=str)
+    parser.add_argument('--overwrite', help='', action='store_true')
     opt = parser.parse_args()
+
+    if not opt.overwrite and os.path.exists(opt.output_file):
+        logging.info(f"{opt.output_file} exists, skip")
+        return
 
     tmp_data = load_dataset(opt.data, split=opt.split)
     analogy_data = [{"stem": i['positives'][0], "choice": i["negatives"] + [i['positives'][1]], "answer": 2,
