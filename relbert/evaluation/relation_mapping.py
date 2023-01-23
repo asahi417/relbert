@@ -112,6 +112,7 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
         source = _data['source']
         target = _data['target']
         perms = []
+        print(list(enumerate(permutations(target, len(target)))))
         for n, tmp_target in tqdm(list(enumerate(permutations(target, len(target))))):
             print(n)
             list_sim = []
@@ -146,6 +147,7 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
             'similarity_true': tmp[0]['similarity_mean']
         })
         del embedding_dict
+        del
         gc.collect()
     mean_accuracy = mean(accuracy)
     logging.info(f'Accuracy: {mean_accuracy}')
