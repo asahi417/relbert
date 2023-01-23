@@ -126,7 +126,7 @@ def main_relation_mapping():
         logging.info(f"{opt.output_file} exists, skip")
         return
 
-    out, _, _ = evaluate_relation_mapping(
+    mean_accuracy, sims_full, _ = evaluate_relation_mapping(
         relbert_ckpt=opt.model,
         batch_size=opt.batch,
         dataset=opt.data
@@ -134,7 +134,7 @@ def main_relation_mapping():
     if os.path.dirname(opt.output_file) != '':
         os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)
     with open(opt.output_file, 'w') as f:
-        json.dump(out, f)
+        json.dump({"accuracy": mean_accuracy, "sims_full": sims_full}, f)
 
 
 def main_analogy_relation_data():
