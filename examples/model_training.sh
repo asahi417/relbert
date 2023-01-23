@@ -9,6 +9,7 @@ train_triplet () {
 #  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.json" -b 64
   relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 64
 #  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64
+  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.json" -b 64
 }
 
 train_triplet "0" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>"

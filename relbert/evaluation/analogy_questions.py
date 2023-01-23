@@ -2,7 +2,7 @@ import logging
 from itertools import chain
 import torch
 
-from datasets import load_dataset
+from datasets import load_dataset, Dataset
 
 from ..lm import RelBERT
 
@@ -27,22 +27,31 @@ def evaluate_analogy(relbert_ckpt: str = None,
                      bi_direction_pair: bool = False,
                      target_analogy: str = None,
                      aggregation_mode: str = None,
-                     template: str = None):
+                     template: str = None,
+                     hf_dataset: Dataset = None,
+                     hf_dataset_name: str = ""):
     model = RelBERT(relbert_ckpt, max_length=max_length, template=template, aggregation_mode=aggregation_mode)
-    target_analogy = ['sat_full', 'sat', 'u2', 'u4', 'google', 'bats'] if target_analogy is None else [target_analogy]
+    if hf_dataset is not None:
+        assert type(hf_dataset) is Dataset, f"unknown type: {type(hf_dataset)}"
+        target_data = [(hf_dataset_name, hf_dataset)]
+    else:
+        target = ['sat_full', 'sat', 'u2', 'u4', 'google', 'bats'] if target_analogy is None else [target_analogy]
+        target_data = [(t, load_dataset('relbert/analogy_questions', t, split='test')) for t in target]
     model.eval()
     result = {"distance_function": distance_function, 'model': relbert_ckpt, 'template': model.template,
               'aggregation': model.aggregation_mode}
     with torch.no_grad():
 
         # Analogy test
-        for d in target_analogy:
-            test = load_dataset('relbert/analogy_questions', d, split='test')
+        for d, test in target_data:
             all_pairs = list(chain(*list(chain(*[[test['stem']] + test['choice']]))))
-            val = None
-            if d != 'sat_full':
+
+            if d in ['sat', 'u2', 'u4', 'google', 'bats']:
                 val = load_dataset('relbert/analogy_questions', d, split='validation')
                 all_pairs += list(chain(*list(chain(*[[val['stem']] + val['choice']]))))
+            else:
+                val = None
+
             if reverse_pair:
                 all_pairs = [[b, a] for a, b in all_pairs]
             elif bi_direction_pair:
@@ -79,6 +88,7 @@ def evaluate_analogy(relbert_ckpt: str = None,
                         raise ValueError('failed to compute similarity')
                     accuracy.append(single_data['answer'] == pred)
                 return sum(accuracy) / len(accuracy)
+
             # get prediction
             result[f'{d}/test'] = prediction(test)
             if val is not None:

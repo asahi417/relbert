@@ -3,6 +3,7 @@ import json
 import logging
 import argparse
 from relbert import Trainer, evaluate_analogy, evaluate_classification, evaluate_relation_mapping
+from datasets import Dataset, load_dataset
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -18,7 +19,7 @@ def main_validation_loss():
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
     parser.add_argument('--temperature', help='temperature for nce', default=0.05, type=float)
     parser.add_argument('-c', '--classification-loss', help='softmax loss', action='store_true')
-    parser.add_argument('--split-valid', help='', default='validation', type=str)
+    parser.add_argument('--split', help='', default='validation', type=str)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
     opt = parser.parse_args()
 
@@ -55,7 +56,6 @@ def main_analogy():
     parser.add_argument('-d', '--data', help='target analogy', default=None, type=str)
     parser.add_argument('--aggregation-mode', help='aggregation mode (for vanilla LM)', default='average_no_mask', type=str)
     parser.add_argument('-t', '--template', help='template (for vanilla LM)', default=None, type=str)
-    parser.add_argument('-c', '--classification-loss', help='softmax loss', action='store_true')
     opt = parser.parse_args()
     out = evaluate_analogy(
         relbert_ckpt=opt.model,
@@ -110,3 +110,36 @@ def main_relation_mapping():
     with open(opt.output_file, 'w') as f:
         json.dump(out, f)
 
+
+def main_analogy_relation_data():
+    parser = argparse.ArgumentParser(description='RelBERT evaluation on training data converted into analogy question')
+    parser.add_argument('-m', '--model', help='model', required=True, type=str)
+    parser.add_argument('-o', '--output-file', help='export file', required=True, type=str)
+    parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
+    parser.add_argument('-l', '--max-length', help='for vanilla LM', default=64, type=int)
+    parser.add_argument('--data', help='target data', default='relbert/semeval2012_relational_similarity', type=str)
+    parser.add_argument('--split', help='target split', default='validation', type=str)
+    parser.add_argument('--aggregation-mode', help='aggregation mode (for vanilla LM)', default='average_no_mask', type=str)
+    parser.add_argument('-t', '--template', help='template (for vanilla LM)', default=None, type=str)
+    opt = parser.parse_args()
+
+    tmp_data = load_dataset(opt.data, split=opt.split)
+    analogy_data = [{"stem": i['positives'][0], "choice": i["negatives"] + [i['positives'][1]], "answer": 2,
+                     "prefix": i["relation_type"]} for i in tmp_data] + [
+                       {"stem": i['positives'][1], "choice": i["negatives"] + [i['positives'][0]], "answer": 2,
+                        "prefix": i["relation_type"]} for i in tmp_data]
+    out = evaluate_analogy(
+        relbert_ckpt=opt.model,
+        max_length=opt.max_length,
+        batch_size=opt.batch,
+        distance_function='cosine_similarity',
+        reverse_pair=False,
+        bi_direction_pair=False,
+        aggregation_mode=opt.aggregation_mode,
+        template=opt.template,
+        dataset=Dataset.from_list(analogy_data)
+    )
+    if os.path.dirname(opt.output_file) != '':
+        os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)
+    with open(opt.output_file, 'w') as f:
+        json.dump(out, f)

@@ -53,6 +53,7 @@ setup(
         'console_scripts': [
             'relbert-train = relbert.relbert_cl.train:main',
             'relbert-eval-analogy = relbert.relbert_cl.evaluate:main_analogy',
+            'relbert-eval-analogy-relation-data = relbert.relbert_cl.evaluate:main_analogy_relation_data',
             'relbert-eval-classification = relbert.relbert_cl.evaluate:main_classification',
             'relbert-eval-mapping = relbert.relbert_cl.evaluate:main_relation_mapping',
             'relbert-eval-loss = relbert.relbert_cl.evaluate:main_validation_loss'
