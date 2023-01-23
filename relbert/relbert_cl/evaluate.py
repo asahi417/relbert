@@ -62,6 +62,8 @@ def main_analogy():
     parser.add_argument('--aggregation-mode', help='aggregation mode (for vanilla LM)', default='average_no_mask', type=str)
     parser.add_argument('-t', '--template', help='template (for vanilla LM)', default=None, type=str)
     parser.add_argument('--overwrite', help='', action='store_true')
+    parser.add_argument('--reverse-pair', help='', action='store_true')
+    parser.add_argument('--bi-direction-pair', help='', action='store_true')
     opt = parser.parse_args()
 
     if not opt.overwrite and os.path.exists(opt.output_file):
