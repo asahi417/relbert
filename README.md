@@ -45,12 +45,8 @@ pip install relbert
 RelBERT can give you a high-quality relation embedding vector of a word pair. First, you need to define the model class with a RelBERT checkpoint.
 ```python
 from relbert import RelBERT
-model = RelBERT('relbert/relbert-roberta-large')
+model = RelBERT()
 ```
-As the model checkpoint, we release following three models on the huggingface modelhub.
-- [`asahi417/relbert-roberta-large`](https://huggingface.co/asahi417/relbert-roberta-large): RelBERT based on RoBERTa large with custom prompt (recommended as this is the best model in our experiments).
-- [`asahi417/relbert-roberta-large-autoprompt`](https://huggingface.co/asahi417/relbert-roberta-large-autoprompt): RelBERT based on RoBERTa large with AutoPrompt.  
-- [`asahi417/relbert-roberta-large-ptuning`](https://huggingface.co/asahi417/relbert-roberta-large-ptuning): RelBERT based on RoBERTa large with P-tuning.
 
 Then you give a word pair to the model to get the embedding.
 ```python
@@ -96,25 +92,6 @@ model.most_similar('Tokyo__Japan')
       ('Beijing__China', 0.9996539354324341)]
 ```
 
-## Reproduce the Experiments
-To reproduce the experimental result of our EMNLP 2021 paper, you have to clone the repository.
-```shell
-git clone https://github.com/asahi417/relbert
-cd relbert
-pip install .
-```
-First, you need to compute prompts for AutoPrompt and P-tuning.
-```shell
-sh ./examples/experiments_emnlp2021/main/prompt.sh
-```
-Then, you can train RelBERT model.
-```shell
-sh ./examples/experiments_emnlp2021/main/train.sh
-```
-Once models are trained, you can evaluate them.
-```shell
-sh ./examples/experiments_emnlp2021/main/evaluate.sh
-```
 
 ## Citation
 If you use any of these resources, please cite the following [paper](https://arxiv.org/abs/2110.15705):
