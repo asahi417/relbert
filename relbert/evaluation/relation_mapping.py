@@ -42,6 +42,7 @@ from statistics import mean
 from itertools import permutations
 from os.path import join as pj
 from tqdm import tqdm
+import gc
 
 from numpy import dot
 from numpy.linalg import norm
@@ -96,6 +97,8 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
     for data_id, _data in enumerate(data):
         logging.info(f'[{relbert_ckpt}]: {data_id}/{len(data)}')
         cache_embedding = pj(cache_embedding_dir, relbert_ckpt.replace("/", "_"), f'vector.{data_id}.json')
+
+        print(f"loading {cache_embedding}")
         with open(cache_embedding) as f:
             embedding_dict = json.load(f)
         # similarity
@@ -105,6 +108,7 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
             with open(cache_sim) as f:
                 sim = json.load(f)
 
+        print(len(sim))
         source = _data['source']
         target = _data['target']
         perms = []
@@ -141,6 +145,8 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
             'similarity': pred[0]['similarity_mean'],
             'similarity_true': tmp[0]['similarity_mean']
         })
+        del embedding_dict
+        gc.collect()
     mean_accuracy = mean(accuracy)
     logging.info(f'Accuracy: {mean_accuracy}')
     del model
