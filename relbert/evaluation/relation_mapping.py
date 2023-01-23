@@ -111,10 +111,12 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
         print(len(sim))
         source = _data['source']
         target = _data['target']
+        print(source)
+        print(target)
+        print(len(source), len(target))
         perms = []
-        print(list(enumerate(permutations(target, len(target)))))
+        input()
         for n, tmp_target in tqdm(list(enumerate(permutations(target, len(target))))):
-            print(n)
             list_sim = []
             for id_x in range(len(target)):
                 _list_sim = []
