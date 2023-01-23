@@ -173,7 +173,8 @@ def main_analogy_relation_data():
         aggregation_mode=opt.aggregation_mode,
         template=opt.template,
         hf_dataset=Dataset.from_list(analogy_data),
-        hf_dataset_name=opt.data
+        hf_dataset_name=opt.data,
+        hf_dataset_split=opt.split
     )
     if os.path.dirname(opt.output_file) != '':
         os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)

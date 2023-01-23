@@ -29,14 +29,17 @@ def evaluate_analogy(relbert_ckpt: str = None,
                      aggregation_mode: str = None,
                      template: str = None,
                      hf_dataset: Dataset = None,
-                     hf_dataset_name: str = ""):
+                     hf_dataset_name: str = "",
+                     hf_dataset_split: str = 'validation'):
     model = RelBERT(relbert_ckpt, max_length=max_length, template=template, aggregation_mode=aggregation_mode)
     if hf_dataset is not None:
         assert type(hf_dataset) is Dataset, f"unknown type: {type(hf_dataset)}"
         target_data = [(hf_dataset_name, hf_dataset)]
+        target_split = hf_dataset_split
     else:
         target = ['sat_full', 'sat', 'u2', 'u4', 'google', 'bats'] if target_analogy is None else [target_analogy]
         target_data = [(t, load_dataset('relbert/analogy_questions', t, split='test')) for t in target]
+        target_split = 'test'
     model.eval()
     result = {"distance_function": distance_function, 'model': relbert_ckpt, 'template': model.template,
               'aggregation': model.aggregation_mode}
@@ -90,9 +93,9 @@ def evaluate_analogy(relbert_ckpt: str = None,
                 return sum(accuracy) / len(accuracy)
 
             # get prediction
-            result[f'{d}/test'] = prediction(test)
+            result[f'{d}/{target_split}'] = prediction(test)
             if val is not None:
-                result[f'{d}/valid'] = prediction(val)
+                result[f'{d}/validation'] = prediction(val)
     if "sat_full/test" in result:
         result['sat_full'] = result.pop('sat_full/test')
     logging.info(str(result))
