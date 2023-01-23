@@ -61,11 +61,11 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
     # compute embedding
     model = None
     model_alias = os.path.basename(relbert_ckpt)
-    os.makedirs(pj(cache_embedding_dir, model_alias), exist_ok=True)
+    os.makedirs(pj(cache_embedding_dir, relbert_ckpt.replace("/", "_")), exist_ok=True)
     logging.info('COMPUTE EMBEDDING')
     for data_id, _data in enumerate(data):
-        logging.info(f'[{model_alias}]: {data_id}/{len(data)}')
-        cache_file = pj(cache_embedding_dir, model_alias, f'vector.{data_id}.json')
+        logging.info(f'[{relbert_ckpt}]: {data_id}/{len(data)}')
+        cache_file = pj(cache_embedding_dir, relbert_ckpt.replace("/", "_"), f'vector.{data_id}.json')
         embedding_dict = {}
         if os.path.exists(cache_file):
             with open(cache_file) as f:
@@ -95,13 +95,13 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
 
     logging.info('SOLVING RELATION MAPPING')
     for data_id, _data in enumerate(data):
-        logging.info(f'[{model_alias}]: {data_id}/{len(data)}')
-        cache_embedding = pj(cache_embedding_dir, model_alias, f'vector.{data_id}.json')
+        logging.info(f'[{relbert_ckpt}]: {data_id}/{len(data)}')
+        cache_embedding = pj(cache_embedding_dir, relbert_ckpt.replace("/", "_"), f'vector.{data_id}.json')
         with open(cache_embedding) as f:
             embedding_dict = json.load(f)
         # similarity
         sim = {}
-        cache_sim = pj(cache_embedding_dir, model_alias, f'sim.{data_id}.json')
+        cache_sim = pj(cache_embedding_dir, relbert_ckpt.replace("/", "_"), f'sim.{data_id}.json')
         if os.path.exists(cache_sim):
             with open(cache_sim) as f:
                 sim = json.load(f)
