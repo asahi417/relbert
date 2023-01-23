@@ -60,7 +60,6 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
     data = [i for i in load_dataset(dataset)["test"]]
     # compute embedding
     model = None
-    model_alias = os.path.basename(relbert_ckpt)
     os.makedirs(pj(cache_embedding_dir, relbert_ckpt.replace("/", "_")), exist_ok=True)
     logging.info('COMPUTE EMBEDDING')
     for data_id, _data in enumerate(data):
@@ -110,13 +109,13 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
         target = _data['target']
         perms = []
         for n, tmp_target in tqdm(list(enumerate(permutations(target, len(target))))):
+            print(n)
             list_sim = []
             for id_x in range(len(target)):
                 _list_sim = []
                 for id_y in range(len(target)):
                     if id_x == id_y:
                         continue
-            # for id_x, id_y in permutations(range(len(target)), 2):
                     _id = f'{source[id_x]}__{source[id_y]} || {tmp_target[id_x]}__{tmp_target[id_y]}'
                     if _id not in sim:
                         sim[_id] = cosine_similarity(
@@ -130,7 +129,6 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
             perms.append({'target': tmp_target, 'similarity_mean': mean(list_sim)})
         sims_full.extend([{'pair': k, 'sim': v, 'data_id': data_id} for k, v in sim.items()])
         pred = sorted(perms, key=lambda _x: _x['similarity_mean'], reverse=True)
-        # assert len(pred) == 1, pred
         accuracy.append(mean([int(t == p) for t, p in zip(target, pred[0]['target'])]))
         tmp = [i for i in perms if list(i['target']) == target]
         assert len(tmp) == 1, perms
