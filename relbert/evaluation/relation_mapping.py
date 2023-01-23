@@ -98,7 +98,7 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
         logging.info(f'[{relbert_ckpt}]: {data_id}/{len(data)}')
         cache_embedding = pj(cache_embedding_dir, relbert_ckpt.replace("/", "_"), f'vector.{data_id}.json')
 
-        print(f"loading {cache_embedding}")
+        logging.info(f"loading {cache_embedding}")
         with open(cache_embedding) as f:
             embedding_dict = json.load(f)
         # similarity
@@ -108,7 +108,6 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
             with open(cache_sim) as f:
                 sim = json.load(f)
 
-        print(len(sim))
         source = _data['source']
         target = _data['target']
         print(source)

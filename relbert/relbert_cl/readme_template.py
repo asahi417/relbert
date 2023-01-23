@@ -37,7 +37,7 @@ model-index:
       type: sorting-task
     dataset:
       name: Relation Mapping
-      args: relbert/scientific_and_creative_analogy
+      args: relbert/relation_mapping
       type: relation-mapping
     metrics:
     - name: Accuracy
@@ -198,7 +198,7 @@ This model achieves the following results on the relation understanding tasks:
     - Micro F1 score on EVALution: {metric_classification["lexical_relation_classification/EVALution"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on K&H+N: {metric_classification["lexical_relation_classification/K&H+N"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on ROOT09: {metric_classification["lexical_relation_classification/ROOT09"]["test/f1_micro"] if metric_classification is not None else None}
-- Relation Mapping ([dataset](https://huggingface.co/datasets/relbert/scientific_and_creative_analogy), [full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)):
+- Relation Mapping ([dataset](https://huggingface.co/datasets/relbert/relation_mapping), [full result](https://huggingface.co/{model_name}/raw/main/relation_mapping.json)):
     - Accuracy on Relation Mapping: {metric_relation_mapping['accuracy'] if metric_relation_mapping is not None else None} 
 
 

@@ -13,7 +13,7 @@ train_triplet () {
 #  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.reverse.json" -b 64 --reverse-pair
 #  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.bidirection.json" -b 64 --bi-direction-pair
 #  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 64
-  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64
+#  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64
   relbert-push-to-hub -m "${MODEL_CKPT}/model" -a "relbert-roberta-large-triplet-${TEMPLATE_ID}-${RANDOM_SEED}"
 }
 

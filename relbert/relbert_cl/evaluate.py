@@ -118,7 +118,7 @@ def main_relation_mapping():
     parser.add_argument('-m', '--model', help='model', required=True, type=str)
     parser.add_argument('-o', '--output-file', help='export file', required=True, type=str)
     parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
-    parser.add_argument('--data', default="relbert/scientific_and_creative_analogy", type=str)
+    parser.add_argument('--data', default="relbert/relation_mapping", type=str)
     parser.add_argument('--overwrite', help='', action='store_true')
     opt = parser.parse_args()
 
