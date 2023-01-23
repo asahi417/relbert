@@ -128,7 +128,8 @@ def main_relation_mapping():
 
     out = evaluate_relation_mapping(
         relbert_ckpt=opt.model,
-        batch_size=opt.batch
+        batch_size=opt.batch,
+        dataset=opt.data
     )
     if os.path.dirname(opt.output_file) != '':
         os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)
