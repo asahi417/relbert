@@ -41,7 +41,8 @@ setup(
         "tqdm",
         "pandas",
         "numpy==1.23.5",  # https://stackoverflow.com/questions/74947992/how-to-remove-the-error-systemerror-initialization-of-internal-failed-without
-        "transformers",
+        "transformers<=4.21.2",  # push-to-model is not working for latest version
+        "huggingface-hub<=0.9.1",
         "sentencepiece",
         "scikit-learn",
         "datasets",
@@ -56,7 +57,8 @@ setup(
             'relbert-eval-analogy-relation-data = relbert.relbert_cl.evaluate:main_analogy_relation_data',
             'relbert-eval-classification = relbert.relbert_cl.evaluate:main_classification',
             'relbert-eval-mapping = relbert.relbert_cl.evaluate:main_relation_mapping',
-            'relbert-eval-loss = relbert.relbert_cl.evaluate:main_validation_loss'
+            'relbert-eval-loss = relbert.relbert_cl.evaluate:main_validation_loss',
+            'relbert-push-to-hub = relbert.relbert_cl.push_to_hub:main'
         ]
     }
 )

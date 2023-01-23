@@ -5,15 +5,14 @@
 
 # RelBERT
 We release the package `relbert` that includes the official implementation of
-***Distilling Relation Embeddings from Pre-trained Language Models***
+***Distilling Relation Embeddings from Pre-trained Language Models*** ([https://aclanthology.org/2021.emnlp-main.712/](https://aclanthology.org/2021.emnlp-main.712/))
 that has been accepted by the [**EMNLP 2021 main conference**](https://2021.emnlp.org/)
-(check the camera-ready version [here](https://arxiv.org/abs/2110.15705)).
 
 ### What's RelBERT?
 RelBERT is a state-of-the-art lexical relation embedding model (i.e. model representing any word pair such as "Paris-France" as a fixed-length vector) based on large-scale pretrained masked language models. RelBERT also establishes a very strong baseline to solve analogies in a zero-shot transfer fashion and even outperform strong few-shot models such as [GPT-3](https://arxiv.org/abs/2005.14165) and [Analogical Proportion (AP)](https://aclanthology.org/2021.acl-long.280/).
 
 |                    |   SAT (full) |   SAT |   U2 |   U4 |   Google |   BATS |
-|:-------------------|-----------:|------:|-----:|-----:|---------:|-------:|
+|:-------------------|-------------:|------:|-----:|-----:|---------:|-------:|
 | [GloVe](https://nlp.stanford.edu/projects/glove/)              |       48.9 |  47.8 | 46.5 | 39.8 |     96   |   68.7 |
 | [FastText](https://fasttext.cc/)           |       49.7 |  47.8 | 43   | 40.7 |     96.6 |   72   |
 | [RELATIVE](http://josecamachocollados.com/papers/relative_ijcai2019.pdf)           |       24.9 |  24.6 | 32.5 | 27.1 |     62   |   39   |
@@ -46,7 +45,7 @@ pip install relbert
 RelBERT can give you a high-quality relation embedding vector of a word pair. First, you need to define the model class with a RelBERT checkpoint.
 ```python
 from relbert import RelBERT
-model = RelBERT('asahi417/relbert-roberta-large')
+model = RelBERT('relbert/relbert-roberta-large')
 ```
 As the model checkpoint, we release following three models on the huggingface modelhub.
 - [`asahi417/relbert-roberta-large`](https://huggingface.co/asahi417/relbert-roberta-large): RelBERT based on RoBERTa large with custom prompt (recommended as this is the best model in our experiments).
@@ -120,14 +119,19 @@ sh ./examples/experiments_emnlp2021/main/evaluate.sh
 ## Citation
 If you use any of these resources, please cite the following [paper](https://arxiv.org/abs/2110.15705):
 ```
-@inproceedings{ushio-etal-2021-distilling-relation-embeddings,
-    title = "{D}istilling {R}elation {E}mbeddings from {P}re-trained {L}anguage {M}odels",
+@inproceedings{ushio-etal-2021-distilling,
+    title = "Distilling Relation Embeddings from Pretrained Language Models",
     author = "Ushio, Asahi  and
-      Schockaert, Steven  and
-      Camacho-Collados, Jose",
-    booktitle = "EMNLP 2021",
+      Camacho-Collados, Jose  and
+      Schockaert, Steven",
+    booktitle = "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
     year = "2021",
-    address = "Online",
+    address = "Online and Punta Cana, Dominican Republic",
     publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.emnlp-main.712",
+    doi = "10.18653/v1/2021.emnlp-main.712",
+    pages = "9044--9062",
+    abstract = "Pre-trained language models have been found to capture a surprisingly rich amount of lexical knowledge, ranging from commonsense properties of everyday concepts to detailed factual knowledge about named entities. Among others, this makes it possible to distill high-quality word vectors from pre-trained language models. However, it is currently unclear to what extent it is possible to distill relation embeddings, i.e. vectors that characterize the relationship between two words. Such relation embeddings are appealing because they can, in principle, encode relational knowledge in a more fine-grained way than is possible with knowledge graphs. To obtain relation embeddings from a pre-trained language model, we encode word pairs using a (manually or automatically generated) prompt, and we fine-tune the language model such that relationally similar word pairs yield similar output vectors. We find that the resulting relation embeddings are highly competitive on analogy (unsupervised) and relation classification (supervised) benchmarks, even without any task-specific fine-tuning. Source code to reproduce our experimental results and the model checkpoints are available in the following repository: https://github.com/asahi417/relbert",
 }
 ```
