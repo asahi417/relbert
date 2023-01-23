@@ -30,46 +30,49 @@ def get_result(language_model: str = 'roberta-large', random_seed: int = 0):
                 config = download(
                     f"config-{model}.json",
                     f"https://huggingface.co/relbert/{model}/raw/main/finetuning_config.json")
-
-                for _type in ['forward', 'reverse', 'bidirection']:
-                    download(
-                        f"analogy-validation-{model}.{_type}.json",
-                        f"https://huggingface.co/relbert/{model}/raw/main/analogy_relation_dataset.{_type}.json"
-                    )[f"{config['data']}/test"]
-
-                loss_value = download(
+                result = {"template_id": prompt, "model": config['model'], 'loss_function': config['loss_function']}
+                result['validation_loss'] = download(
                     f"loss-{model}.json",
                     f"https://huggingface.co/relbert/{model}/raw/main/loss.json")['loss']
-                relation_classification = {k: v['test/f1_micro'] for k, v in download(
+
+                tmp_result = {}
+                for _type in ['forward', 'reverse', 'bidirection']:
+                    tmp_result[_type] = download(
+                        f"analogy-validation-{model}.{_type}.json",
+                        f"https://huggingface.co/relbert/{model}/raw/main/analogy_relation_dataset.{_type}.json"
+                    )[f"{config['data']}/validation"]
+                tmp_result['mean'] = (tmp_result["forward"] + tmp_result["reverse"]) / 2
+                for k, v in tmp_result.items():
+                    result[f"validation_analogy.{k}"] = v
+
+                _type = 'forward'
+                result.update({f"{k}": v for k, v in download(
+                    f"analogy-{model}.json",
+                    f"https://huggingface.co/relbert/{model}/raw/main/analogy.{_type}.json"
+                ).items() if 'test' in k or k == "sat_full"})
+
+                result.update({os.path.basename(k): v['test/f1_micro'] for k, v in download(
                     f"classification-{model}.json",
                     f"https://huggingface.co/relbert/{model}/raw/main/classification.json"
-                ).items()}
-                analogy = {k: v for k, v in download(
-                    f"analogy-{model}.json",
-                    f"https://huggingface.co/relbert/{model}/raw/main/analogy.json"
-                ).items() if 'valid' not in k}
+                ).items()})
 
-
-                result = {'template': config['template'], "template_id": prompt, "model": config['model']}
-                result.update({'loss': })
-                result.update({k: v for k, v in download(
-                    f"analogy-{model}.json",
-                    f"https://huggingface.co/relbert/{model}/raw/main/analogy.json"
-                ).items() if 'valid' not in k})
-                result.update()
                 result.update({'relation_mapping_accuracy': download(
                     f"relation_mapping-{model}.json",
                     f"https://huggingface.co/relbert/{model}/raw/main/relation_mapping.json"
                 )['accuracy']})
+
+                # for _type in ['forward', 'reverse', 'bidirection']:
+                #     result.update({f"{k}.{_type}": v for k, v in download(
+                #         f"analogy-{model}.json",
+                #         f"https://huggingface.co/relbert/{model}/raw/main/analogy.{_type}.json"
+                #     ).items() if 'test' in k or k == "sat_full"})
+
                 output.append(result)
             except Exception:
                 print(model)
     df = pd.DataFrame(output)
-    print(df.columns)
-    df.pop('distance_function')
     return df
 
 
 full_output = get_result()
-os.makedirs('summary', exist_ok=True)
-full_output.to_csv('summary/roberta_base.parameter_search.csv', index=False)
+full_output.to_csv('examples/model_training/result.csv', index=False)
