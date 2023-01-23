@@ -126,7 +126,7 @@ def main_relation_mapping():
         logging.info(f"{opt.output_file} exists, skip")
         return
 
-    out = evaluate_relation_mapping(
+    out, _, _ = evaluate_relation_mapping(
         relbert_ckpt=opt.model,
         batch_size=opt.batch,
         dataset=opt.data
