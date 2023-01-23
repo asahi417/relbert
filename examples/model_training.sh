@@ -28,7 +28,7 @@ train_nce () {
 #  relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 32 --loss nce
 #  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.json" -b 32
 #  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64
-  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 32
+#  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 32
   relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.json" -b 32
 }
 
