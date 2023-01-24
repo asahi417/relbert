@@ -43,7 +43,7 @@ def main_validation_loss():
         loss_function=opt.loss,
         classification_loss=opt.classification_loss,
         loss_function_config=loss_function_config,
-        split_valid=opt.split_valid
+        split_valid=opt.split
     )
     loss = trainer.validate()
     if os.path.dirname(opt.output_file) != '':
