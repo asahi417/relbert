@@ -55,17 +55,17 @@ train_iloob () {
   TEMPLATE_ID=${2}
   TEMPLATE=${3}
   MODEL_CKPT="relbert_output/ckpt/iloob/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
-  relbert-train -o "${MODEL_CKPT}" -b 32 -e 10 --loss iloob -r 0.000005 -t "${TEMPLATE}" -s "${RANDOM_SEED}"
+#  relbert-train -o "${MODEL_CKPT}" -b 32 -e 10 --loss iloob -r 0.000005 -t "${TEMPLATE}" -s "${RANDOM_SEED}"
   relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 32 --loss iloob
-  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.forward.json" -b 64
-  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.reverse.json" -b 64 --reverse-pair
-  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.bidirection.json" -b 64 --bi-direction-pair
-  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.forward.json" -b 64
-  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.reverse.json" -b 64 --reverse-pair
-  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.bidirection.json" -b 64 --bi-direction-pair
-  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 32
-  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64
-  relbert-push-to-hub -m "${MODEL_CKPT}/model" -a "relbert-roberta-large-iloob-${TEMPLATE_ID}-${RANDOM_SEED}"
+#  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.forward.json" -b 64
+#  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.reverse.json" -b 64 --reverse-pair
+#  relbert-eval-analogy -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.bidirection.json" -b 64 --bi-direction-pair
+#  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.forward.json" -b 64
+#  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.reverse.json" -b 64 --reverse-pair
+#  relbert-eval-analogy-relation-data -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.bidirection.json" -b 64 --bi-direction-pair
+#  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 32
+#  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64
+#  relbert-push-to-hub -m "${MODEL_CKPT}/model" -a "relbert-roberta-large-iloob-${TEMPLATE_ID}-${RANDOM_SEED}"
 }
 
 train_iloob "0" "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>"

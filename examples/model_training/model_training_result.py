@@ -23,53 +23,51 @@ def download(filename, url):
 
 def get_result(language_model: str = 'roberta-large', random_seed: int = 0):
     output = []
-    for loss in ['nce', 'triplet']:
+    for loss in ['nce', 'triplet', "iloob"]:
         for prompt in ['a', 'b', 'c', 'd', 'e']:
             model = f'relbert-{language_model}-{loss}-{prompt}-{random_seed}'
-            try:
-                config = download(
-                    f"config-{model}.json",
-                    f"https://huggingface.co/relbert/{model}/raw/main/finetuning_config.json")
-                result = {"template_id": prompt, "model": config['model'], 'loss_function': config['loss_function']}
-                result['validation_loss'] = download(
-                    f"loss-{model}.json",
-                    f"https://huggingface.co/relbert/{model}/raw/main/loss.json")['loss']
 
-                tmp_result = {}
-                for _type in ['forward', 'reverse', 'bidirection']:
-                    tmp_result[_type] = download(
-                        f"analogy-validation-{model}.{_type}.json",
-                        f"https://huggingface.co/relbert/{model}/raw/main/analogy_relation_dataset.{_type}.json"
-                    )[f"{config['data']}/validation"]
-                tmp_result['mean'] = (tmp_result["forward"] + tmp_result["reverse"]) / 2
-                for k, v in tmp_result.items():
-                    result[f"validation_analogy.{k}"] = v
+            config = download(
+                f"config-{model}.json",
+                f"https://huggingface.co/relbert/{model}/raw/main/finetuning_config.json")
+            result = {"template_id": prompt, "model": config['model'], 'loss_function': config['loss_function']}
+            # result['validation_loss'] = download(
+            #     f"loss-{model}.json",
+            #     f"https://huggingface.co/relbert/{model}/raw/main/loss.json")['loss']
 
-                _type = 'forward'
-                result.update({f"{k}": v for k, v in download(
-                    f"analogy-{model}.json",
-                    f"https://huggingface.co/relbert/{model}/raw/main/analogy.{_type}.json"
-                ).items() if 'test' in k or k == "sat_full"})
+            tmp_result = {}
+            for _type in ['forward', 'reverse', 'bidirection']:
+                tmp_result[_type] = download(
+                    f"analogy-validation-{model}.{_type}.json",
+                    f"https://huggingface.co/relbert/{model}/raw/main/analogy_relation_dataset.{_type}.json"
+                )[f"{config['data']}/validation"]
+            tmp_result['mean'] = (tmp_result["forward"] + tmp_result["reverse"]) / 2
+            for k, v in tmp_result.items():
+                result[f"validation_analogy.{k}"] = v
 
-                result.update({os.path.basename(k): v['test/f1_micro'] for k, v in download(
-                    f"classification-{model}.json",
-                    f"https://huggingface.co/relbert/{model}/raw/main/classification.json"
-                ).items()})
+            _type = 'forward'
+            result.update({f"{k}": v for k, v in download(
+                f"analogy-{model}.json",
+                f"https://huggingface.co/relbert/{model}/raw/main/analogy.{_type}.json"
+            ).items() if 'test' in k or k == "sat_full"})
 
-                result.update({'relation_mapping_accuracy': download(
-                    f"relation_mapping-{model}.json",
-                    f"https://huggingface.co/relbert/{model}/raw/main/relation_mapping.json"
-                )['accuracy']})
+            result.update({os.path.basename(k): v['test/f1_micro'] for k, v in download(
+                f"classification-{model}.json",
+                f"https://huggingface.co/relbert/{model}/raw/main/classification.json"
+            ).items()})
 
-                # for _type in ['forward', 'reverse', 'bidirection']:
-                #     result.update({f"{k}.{_type}": v for k, v in download(
-                #         f"analogy-{model}.json",
-                #         f"https://huggingface.co/relbert/{model}/raw/main/analogy.{_type}.json"
-                #     ).items() if 'test' in k or k == "sat_full"})
+            result.update({'relation_mapping_accuracy': download(
+                f"relation_mapping-{model}.json",
+                f"https://huggingface.co/relbert/{model}/raw/main/relation_mapping.json"
+            )['accuracy']})
 
-                output.append(result)
-            except Exception:
-                print(model)
+            # for _type in ['forward', 'reverse', 'bidirection']:
+            #     result.update({f"{k}.{_type}": v for k, v in download(
+            #         f"analogy-{model}.json",
+            #         f"https://huggingface.co/relbert/{model}/raw/main/analogy.{_type}.json"
+            #     ).items() if 'test' in k or k == "sat_full"})
+
+            output.append(result)
     df = pd.DataFrame(output)
     return df
 

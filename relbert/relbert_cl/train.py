@@ -29,6 +29,7 @@ def main():
     parser.add_argument('--data', help='data', default='relbert/semeval2012_relational_similarity', type=str)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
     parser.add_argument('--split', help='', default='train', type=str)
+    parser.add_argument('--split-valid', help='', default='validation', type=str)
     parser.add_argument('--loss', help='', default='triplet', type=str)
     parser.add_argument('-c', '--classification-loss', help='softmax loss', action='store_true')
 
@@ -69,6 +70,7 @@ def main():
         data=opt.data,
         exclude_relation=opt.exclude_relation,
         split=opt.split,
+        split_valid=opt.split_valid,
         loss_function=opt.loss,
         classification_loss=opt.classification_loss,
         loss_function_config=loss_function_config
