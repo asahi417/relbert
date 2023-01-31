@@ -2,7 +2,8 @@ import logging
 from itertools import chain
 import torch
 
-from datasets import load_dataset, Dataset
+from typing import List
+from datasets import load_dataset
 
 from ..lm import RelBERT
 
@@ -19,44 +20,26 @@ def euclidean_distance(a, b):
     return sum(map(lambda x: (x[0] - x[1])**2, zip(a, b))) ** 0.5
 
 
-def evaluate_analogy(relbert_ckpt: str = None,
+def evaluate_analogy(target_analogy: List or str,
+                     relbert_ckpt: str = None,
                      max_length: int = 64,
                      batch_size: int = 64,
                      distance_function: str = 'cosine_similarity',
                      reverse_pair: bool = False,
                      bi_direction_pair: bool = False,
-                     target_analogy: str = None,
                      target_analogy_split: str = "test",
                      aggregation_mode: str = None,
-                     template: str = None,
-                     hf_dataset: Dataset = None,
-                     hf_dataset_name: str = "",
-                     hf_dataset_split: str = 'validation'):
+                     template: str = None):
     model = RelBERT(relbert_ckpt, max_length=max_length, template=template, aggregation_mode=aggregation_mode)
-    if hf_dataset is not None:
-        assert type(hf_dataset) is Dataset, f"unknown type: {type(hf_dataset)}"
-        target_data = [(hf_dataset_name, hf_dataset)]
-        target_split = hf_dataset_split
-    else:
-        target = ['sat_full', 'sat', 'u2', 'u4', 'google', 'bats'] if target_analogy is None else [target_analogy]
-        target_data = [(t, load_dataset('relbert/analogy_questions', t, split=target_analogy_split)) for t in target]
-        target_split = target_analogy_split
     model.eval()
-    result = {"distance_function": distance_function, 'model': relbert_ckpt, 'template': model.template,
-              'aggregation': model.aggregation_mode}
+    target = [target_analogy] if type(target_analogy) is str else target_analogy
+    target_data = [(t, load_dataset('relbert/analogy_questions', t, split=target_analogy_split)) for t in target]
+    result = {}
     with torch.no_grad():
 
         # Analogy test
         for d, test in target_data:
-            print(test)
             all_pairs = list(chain(*list(chain(*[[test['stem']] + test['choice']]))))
-
-            if d in ['sat', 'u2', 'u4', 'google', 'bats'] and target_split != 'validation':
-                val = load_dataset('relbert/analogy_questions', d, split='validation')
-                all_pairs += list(chain(*list(chain(*[[val['stem']] + val['choice']]))))
-            else:
-                val = None
-
             if reverse_pair:
                 all_pairs = [[b, a] for a, b in all_pairs]
             elif bi_direction_pair:
@@ -95,11 +78,7 @@ def evaluate_analogy(relbert_ckpt: str = None,
                 return sum(accuracy) / len(accuracy)
 
             # get prediction
-            result[f'{d}/{target_split}'] = prediction(test)
-            if val is not None:
-                result[f'{d}/validation'] = prediction(val)
-    if "sat_full/test" in result:
-        result['sat_full'] = result.pop('sat_full/test')
+            result[f'{d}/{target_analogy_split}'] = prediction(test)
     logging.info(str(result))
     del model
     return result
