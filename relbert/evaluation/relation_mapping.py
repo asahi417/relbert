@@ -151,5 +151,4 @@ def evaluate_relation_mapping(relbert_ckpt: str, batch_size: int = 512, cache_em
     mean_accuracy = mean(accuracy)
     logging.info(f'Accuracy: {mean_accuracy}')
     del model
-    return mean_accuracy, sims_full, perms_full
-
+    return {"accuracy": mean_accuracy, "sims_full": sims_full}

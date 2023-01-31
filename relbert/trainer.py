@@ -144,8 +144,8 @@ class Trainer:
             total_loss = []
             random.shuffle(relation_types)
             loss = None
+            self.optimizer.zero_grad()
             for n, r_type in enumerate(relation_types):
-                self.optimizer.zero_grad()
 
                 # embedding for positive samples
                 pos = positive_encode[r_type]
@@ -181,6 +181,7 @@ class Trainer:
                 total_loss.append(loss.cpu().item())
                 self.optimizer.step()
                 self.scheduler.step()
+                self.optimizer.zero_grad()
                 loss = None
 
                 # log
