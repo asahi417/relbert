@@ -36,6 +36,7 @@ class DatasetTriplet(torch.utils.data.Dataset):
         self.relation_structure = relation_structure
         self.deterministic_index = deterministic_index
         self.keys = sorted(list(positive_samples.keys()))
+        print("pattern id")
         self.pattern_id = {k: list(product(
             list(combinations(range(len(self.positive_samples[k])), 2)), list(range(len(self.negative_samples[k])))
         )) for k in self.keys}
