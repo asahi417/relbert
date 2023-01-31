@@ -315,17 +315,19 @@ class Trainer:
             for n, bi in enumerate(batch_index):
 
                 # loader
+                print("dataset")
                 dataset = DatasetTriplet(
                     deterministic_index=bi,
                     relation_structure=relation_structure,
                     positive_samples=positive_encode,
                     negative_samples=negative_encode)
+                print("loader")
                 data_loader = torch.utils.data.DataLoader(
                     dataset,
                     batch_size=self.config['batch'],
                     shuffle=True,
                     drop_last=False)
-
+                print("training")
                 # model training
                 total_loss = 0
                 loss = None
