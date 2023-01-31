@@ -157,10 +157,6 @@ def main_analogy_relation_data():
         return
 
     tmp_data = load_dataset(opt.data, split=opt.split)
-    # analogy_data = [{"stem": i['positives'][0], "choice": i["negatives"] + [i['positives'][1]], "answer": 2,
-    #                  "prefix": i["relation_type"]} for i in tmp_data] + [
-    #                    {"stem": i['positives'][1], "choice": i["negatives"] + [i['positives'][0]], "answer": 2,
-    #                     "prefix": i["relation_type"]} for i in tmp_data]
     analogy_data = [{"stem": i['positives'][0], "choice": i["negatives"] + [i['positives'][1]], "answer": 2,
                      "prefix": i["relation_type"]} for i in tmp_data]
     out = evaluate_analogy(

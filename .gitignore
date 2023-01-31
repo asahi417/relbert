@@ -4,5 +4,14 @@ cache
 common_word_pairs.pkl
 gensim-vector.tmp
 model_hub
-semeval2012_relational_similarity
+
 metric_files
+
+# huggingface dataset
+analogy_questions
+semeval2012_relational_similarity
+fewshot_link_prediction
+t_rex
+t_rex_relation_similarity
+conceptnet_high_confidence
+conceptnet
