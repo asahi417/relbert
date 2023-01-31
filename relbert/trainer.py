@@ -101,11 +101,14 @@ class Trainer:
                  split_valid: str = 'validation',
                  loss_function: str = 'triplet',
                  classification_loss: bool = True,
-                 loss_function_config: Dict = None):
+                 loss_function_config: Dict = None,
+                 parallel_preprocess: bool = True,
+                 augment_negative_by_positive: bool = False):
 
         # load language model
         self.model = RelBERT(model=model, max_length=max_length, aggregation_mode=aggregation_mode, template=template)
         self.hidden_size = self.model.model_config.hidden_size
+        self.parallel_preprocess = parallel_preprocess
         
         # config
         self.output_dir = output_dir
@@ -135,7 +138,8 @@ class Trainer:
             split_valid=split_valid,
             loss_function=loss_function,
             classification_loss=classification_loss,
-            loss_function_config=loss_function_config
+            loss_function_config=loss_function_config,
+            augment_negative_by_positive=augment_negative_by_positive
         )
         fix_seed(self.config['random_seed'], self.model.device == 'cuda')
 
@@ -193,9 +197,6 @@ class Trainer:
         features = positive_encode[list(positive_encode.keys())[0]][0].keys()
         positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
         negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
-        negative_encode = {
-            k: {_k: list(chain(*[v[_k]] + [b[_k] for a, b in positive_encode.items() if a != k])) for
-                _k in features} for k, v in negative_encode.items()}
 
         # add parent relation types
         if relation_structure is not None:
@@ -265,9 +266,6 @@ class Trainer:
         features = positive_encode[list(positive_encode.keys())[0]][0].keys()
         positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
         negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
-        negative_encode = {
-            k: {_k: list(chain(*[v[_k]] + [b[_k] for a, b in positive_encode.items() if a != k])) for
-                _k in features} for k, v in negative_encode.items()}
 
         # add parent relation types
         if relation_structure is not None:
@@ -304,10 +302,14 @@ class Trainer:
             num_accumulation = int(len(positive_encode) / self.config['batch'])
         logging.info(f'num_accumulation: {num_accumulation}')
 
+        # approx lower bound of the number of trial
         n_pos = min(len(i) for i in positive_encode.values())
         n_neg = min(len(i) for i in negative_encode.values())
         n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
+        if self.config['loss_function_config']['max_trial_per_epoch'] is not None:
+            n_trial = min(self.config['loss_function_config']['max_trial_per_epoch'], n_trial)
         batch_index = list(range(n_trial))
+
         for e in range(self.config['epoch']):  # loop over the epoch
             random.shuffle(batch_index)
             for n, bi in enumerate(batch_index):
@@ -379,7 +381,8 @@ class Trainer:
         n_pos = min(len(i) for i in positive_encode.values())
         n_neg = min(len(i) for i in negative_encode.values())
         n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
-
+        if self.config['loss_function_config']['max_trial_per_epoch'] is not None:
+            n_trial = min(self.config['loss_function_config']['max_trial_per_epoch'], n_trial)
         loss = []
         for n, bi in enumerate(range(n_trial)):
 
@@ -437,23 +440,34 @@ class Trainer:
         logging.info(f'{len(key)} relations exist')
 
         # relation structure
-        if all("/" not in i for i in all_negative.keys()):
+        if all("/" not in i for i in key):
             relation_structure = None
             logging.info("no relation hierarchy is provided")
         else:
-            parent = list(set([i.split("/")[0] for i in all_negative.keys()]))
-            relation_structure = {p: [i for i in all_positive.keys() if p == i.split("/")[0]] for p in sorted(parent)}
+            parent = list(set([i.split("/")[0] for i in key]))
+            relation_structure = {p: [i for i in key if p == i.split("/")[0]] for p in sorted(parent)}
             logging.info(f"relation_structure: {relation_structure}")
 
         # flatten pairs to encode them efficiently
         def _encode(pairs):
             sample_list = ListKeeper([pairs[k] for k in key])
-            sample_dict = self.model.encode_word_pairs(sample_list.flatten_list)
-            embedding = [sample_dict[f"{a}__{b}"] for a, b in sample_list.flatten_list]
-            embedding = sample_list.restore_structure(embedding)
-            return {key[n]: v for n, v in enumerate(embedding)}
+            if len(sample_list.flatten_list) == 0:
+                return None
+            sample_dict = self.model.encode_word_pairs(sample_list.flatten_list, parallel=self.parallel_preprocess)
+            e = [sample_dict[f"{a}__{b}"] for a, b in sample_list.flatten_list]
+            e = sample_list.restore_structure(e)
+            return {key[n]: v for n, v in enumerate(e)}
 
         positive_encode = _encode(all_positive)
+        assert positive_encode is not None
         negative_encode = _encode(all_negative)
+        if self.config['augment_negative_by_positive']:
+            tmp = {k: list(chain(*[v for _k, v in positive_encode.keys() if k != _k])) for k in key}
+            if negative_encode is None:
+                negative_encode = tmp
+            else:
+                negative_encode = {k: v + tmp[k] for k, v in negative_encode.items()}
+
+        assert negative_encode is not None
         assert len(positive_encode) >= self.config['batch']
         return positive_encode, negative_encode, relation_structure

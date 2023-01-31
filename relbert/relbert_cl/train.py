@@ -33,21 +33,27 @@ def main():
     parser.add_argument('--split-valid', help='', default='validation', type=str)
     parser.add_argument('--loss', help='', default='triplet', type=str)
     parser.add_argument('-c', '--classification-loss', help='softmax loss', action='store_true')
+    parser.add_argument('-a', '--augment-negative-by-positive', help='', action='store_true')
 
-    # config: triplet loss
+    # config: loss
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
+    parser.add_argument('--max-trial-per-epoch', help='', default=300, type=int)
     parser.add_argument('--temperature', help='temperature for nce', default=0.05, type=float)
     parser.add_argument('--gradient-accumulation', help='gradient accumulation', default=1, type=int)
     parser.add_argument('--num-negative', help='gradient accumulation', default=400, type=int)
     parser.add_argument('--num-positive', help='gradient accumulation', default=10, type=int)
 
     # misc
+    parser.add_argument('-p', '--parallel', help='', action='store_true')
     parser.add_argument('--epoch-save', help='interval to save model weight', default=1, type=int)
 
     # logging
     opt = parser.parse_args()
     if opt.loss == 'triplet':
-        loss_function_config = {'mse_margin': opt.mse_margin}
+        loss_function_config = {
+            'mse_margin': opt.mse_margin,
+            'max_trial_per_epoch': opt.max_trial_per_epoch
+        }
     elif opt.loss in ['nce', 'iloob']:
         loss_function_config = {
             'temperature': opt.temperature,
@@ -75,7 +81,8 @@ def main():
         split_valid=opt.split_valid,
         loss_function=opt.loss,
         classification_loss=opt.classification_loss,
-        loss_function_config=loss_function_config
+        loss_function_config=loss_function_config,
+        parallel_preprocess=opt.parallel,
+        augment_negative_by_positive=opt.augment_negative_by_positive
     )
-
     trainer.train(epoch_save=opt.epoch_save)

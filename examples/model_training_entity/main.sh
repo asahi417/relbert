@@ -5,6 +5,12 @@ train_triplet () {
   RANDOM_SEED=${1}
   TEMPLATE_ID=${2}
   TEMPLATE=${3}
+  for ME in 1 2 3 4
+  do
+    for MP in 10 25 50 100
+    do
+      MODEL_CKPT="relbert_output/ckpt/triplet/t_rex.${ME}.${MP}.template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
+
   MODEL_CKPT="relbert_output/ckpt/triplet/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
   relbert-train -d 'relbert/t_rex_relational_similarity' -n "min_entity_1_max_predicate_100"  -o "${MODEL_CKPT}" -b 39 -e 1 --loss triplet -t "${TEMPLATE}" -s "${RANDOM_SEED}"
 

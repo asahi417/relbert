@@ -4,11 +4,10 @@ train_triplet () {
   TEMPLATE_ID=${2}
   TEMPLATE=${3}
   MODEL_CKPT="relbert_output/ckpt/triplet/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
-  relbert-train -o "${MODEL_CKPT}" -b 39 -e 1 --loss triplet -t "${TEMPLATE}" -s "${RANDOM_SEED}"
+  relbert-train -p -o "${MODEL_CKPT}" -b 39 -e 1 --loss triplet -t "${TEMPLATE}" -s "${RANDOM_SEED}"
 
   # for validation
-  relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 64 --loss triplet
-  relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "relbert/relbert-roberta-large" -o "tmp.json" -b 64
+  relbert-eval-loss -p -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 64 --loss triplet
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.forward.json" -b 64
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.reverse.json" -b 64 --reverse-pair
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.bidirection.json" -b 64 --bi-direction-pair
@@ -36,10 +35,10 @@ train_nce () {
   TEMPLATE_ID=${2}
   TEMPLATE=${3}
   MODEL_CKPT="relbert_output/ckpt/nce/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
-  relbert-train -o "${MODEL_CKPT}" -b 32 -e 10 --loss nce -r 0.000005 -t "${TEMPLATE}" -s "${RANDOM_SEED}"
+  relbert-train -p -o "${MODEL_CKPT}" -b 32 -e 10 --loss nce -r 0.000005 -t "${TEMPLATE}" -s "${RANDOM_SEED}" -a
 
   # for validation
-  relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 32 --loss nce
+  relbert-eval-loss -p -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 32 --loss nce -a
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.forward.json" -b 64
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.reverse.json" -b 64 --reverse-pair
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.bidirection.json" -b 64 --bi-direction-pair
@@ -68,10 +67,10 @@ train_iloob () {
   TEMPLATE_ID=${2}
   TEMPLATE=${3}
   MODEL_CKPT="relbert_output/ckpt/iloob/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
-  relbert-train -o "${MODEL_CKPT}" -b 32 -e 10 --loss iloob -r 0.000005 -t "${TEMPLATE}" -s "${RANDOM_SEED}"
+  relbert-train -p -o "${MODEL_CKPT}" -b 32 -e 10 --loss iloob -r 0.000005 -t "${TEMPLATE}" -s "${RANDOM_SEED}" -a
 
   # for validation
-  relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 32 --loss nce
+  relbert-eval-loss -p -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 32 --loss nce -a
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.forward.json" -b 64
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.reverse.json" -b 64 --reverse-pair
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy_relation_dataset.bidirection.json" -b 64 --bi-direction-pair

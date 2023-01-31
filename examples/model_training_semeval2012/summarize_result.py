@@ -73,4 +73,4 @@ def get_result(language_model: str = 'roberta-large', random_seed: int = 0):
 
 
 full_output = get_result()
-full_output.to_csv('examples/model_training/result.csv', index=False)
+full_output.to_csv('result.csv', index=False)

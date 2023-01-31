@@ -3,6 +3,7 @@ import os
 import logging
 from typing import List
 from multiprocessing import Pool
+from tqdm import tqdm
 
 import transformers
 import torch
@@ -175,7 +176,7 @@ class RelBERT:
                 aggregation_mode=self.aggregation_mode,
                 truncate_exceed_tokens=self.truncate_exceed_tokens)
             encode = []
-            for p in word_pairs:
+            for p in tqdm(word_pairs):
                 encode.append(process(p))
         return {k: e for k, e in zip(word_pairs_dict_key, encode)}
 
