@@ -26,6 +26,7 @@ def evaluate_analogy(relbert_ckpt: str = None,
                      reverse_pair: bool = False,
                      bi_direction_pair: bool = False,
                      target_analogy: str = None,
+                     target_analogy_split: str = "test",
                      aggregation_mode: str = None,
                      template: str = None,
                      hf_dataset: Dataset = None,
@@ -38,8 +39,8 @@ def evaluate_analogy(relbert_ckpt: str = None,
         target_split = hf_dataset_split
     else:
         target = ['sat_full', 'sat', 'u2', 'u4', 'google', 'bats'] if target_analogy is None else [target_analogy]
-        target_data = [(t, load_dataset('relbert/analogy_questions', t, split='test')) for t in target]
-        target_split = 'test'
+        target_data = [(t, load_dataset('relbert/analogy_questions', t, split=target_analogy_split)) for t in target]
+        target_split = target_analogy_split
     model.eval()
     result = {"distance_function": distance_function, 'model': relbert_ckpt, 'template': model.template,
               'aggregation': model.aggregation_mode}
@@ -47,9 +48,10 @@ def evaluate_analogy(relbert_ckpt: str = None,
 
         # Analogy test
         for d, test in target_data:
+            print(test)
             all_pairs = list(chain(*list(chain(*[[test['stem']] + test['choice']]))))
 
-            if d in ['sat', 'u2', 'u4', 'google', 'bats']:
+            if d in ['sat', 'u2', 'u4', 'google', 'bats'] and target_split != 'validation':
                 val = load_dataset('relbert/analogy_questions', d, split='validation')
                 all_pairs += list(chain(*list(chain(*[[val['stem']] + val['choice']]))))
             else:

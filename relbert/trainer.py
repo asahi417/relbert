@@ -95,6 +95,7 @@ class Trainer:
                  lr_warmup: int = 10,
                  aggregation_mode: str = 'average_no_mask',
                  data: str = 'relbert/semeval2012_relational_similarity',
+                 data_name: str = None,
                  exclude_relation: List or str = None,
                  split: str = 'train',
                  split_valid: str = 'validation',
@@ -128,6 +129,7 @@ class Trainer:
             lr_warmup=lr_warmup,
             aggregation_mode=aggregation_mode,
             data=data,
+            data_name=data_name,
             exclude_relation=exclude_relation,
             split=split,
             split_valid=split_valid,
@@ -423,7 +425,7 @@ class Trainer:
 
     def process_data(self, split):
         # raw data
-        data = load_dataset(self.config['data'], split=split)
+        data = load_dataset(self.config['data'], self.config['data_name'], split=split)
         all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
         all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
         assert all_positive.keys() == all_negative.keys(), \

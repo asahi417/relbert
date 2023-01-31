@@ -26,7 +26,8 @@ def main():
 
     # others
     parser.add_argument('--aggregation-mode', help='aggregation mode', default='average_no_mask', type=str)
-    parser.add_argument('--data', help='data', default='relbert/semeval2012_relational_similarity', type=str)
+    parser.add_argument('-d', '--data', help='data', default='relbert/semeval2012_relational_similarity', type=str)
+    parser.add_argument('-n', '--data-name', help='name', default=None, type=str)
     parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
     parser.add_argument('--split', help='', default='train', type=str)
     parser.add_argument('--split-valid', help='', default='validation', type=str)
