@@ -69,6 +69,7 @@ def main():
         lr_warmup=opt.lr_warmup,
         aggregation_mode=opt.aggregation_mode,
         data=opt.data,
+        data_name=opt.data_name,
         exclude_relation=opt.exclude_relation,
         split=opt.split,
         split_valid=opt.split_valid,

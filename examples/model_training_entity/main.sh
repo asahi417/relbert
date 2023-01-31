@@ -1,10 +1,12 @@
+relbert-train -d 'relbert/t_rex_relational_similarity' -n "filter_unified.min_entity_1_max_predicate_100"  -o "tmp" -b 39 -e 1 --loss triplet -s "0"
+
 # TRIPLET LOSS
 train_triplet () {
   RANDOM_SEED=${1}
   TEMPLATE_ID=${2}
   TEMPLATE=${3}
   MODEL_CKPT="relbert_output/ckpt/triplet/template-${TEMPLATE_ID}.random-${RANDOM_SEED}"
-  relbert-train --data 'relbert/t_rex_relational_similarity' -o "${MODEL_CKPT}" -b 39 -e 1 --loss triplet -t "${TEMPLATE}" -s "${RANDOM_SEED}"
+  relbert-train -d 'relbert/t_rex_relational_similarity' -n "min_entity_1_max_predicate_100"  -o "${MODEL_CKPT}" -b 39 -e 1 --loss triplet -t "${TEMPLATE}" -s "${RANDOM_SEED}"
 
   # for validation
   relbert-eval-loss -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/loss.json" -b 64 --loss triplet
