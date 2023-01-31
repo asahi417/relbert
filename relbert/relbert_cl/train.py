@@ -37,7 +37,6 @@ def main():
 
     # config: loss
     parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
-    parser.add_argument('--max-trial-per-epoch', help='', default=300, type=int)
     parser.add_argument('--temperature', help='temperature for nce', default=0.05, type=float)
     parser.add_argument('--gradient-accumulation', help='gradient accumulation', default=1, type=int)
     parser.add_argument('--num-negative', help='gradient accumulation', default=400, type=int)
@@ -50,10 +49,7 @@ def main():
     # logging
     opt = parser.parse_args()
     if opt.loss == 'triplet':
-        loss_function_config = {
-            'mse_margin': opt.mse_margin,
-            'max_trial_per_epoch': opt.max_trial_per_epoch
-        }
+        loss_function_config = {'mse_margin': opt.mse_margin}
     elif opt.loss in ['nce', 'iloob']:
         loss_function_config = {
             'temperature': opt.temperature,

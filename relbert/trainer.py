@@ -4,8 +4,8 @@ import logging
 import random
 import json
 from typing import Dict, List
-from itertools import product, combinations, chain
-from statistics import mean
+from itertools import combinations, chain
+from tqdm import tqdm
 import torch
 from datasets import load_dataset
 
@@ -23,71 +23,15 @@ def to_tensor(name, data):
     return torch.tensor(data, dtype=torch.long)
 
 
-class DatasetTriplet(torch.utils.data.Dataset):
-    """ Dataset loader for triplet loss. """
-
-    float_tensors = ['attention_mask']
-
-    def __init__(self,
-                 deterministic_index: int,
-                 positive_samples: Dict,
-                 negative_samples: Dict,
-                 relation_structure: Dict,
-                 pattern_id: Dict):
-        if negative_samples is not None:
-            assert positive_samples.keys() == negative_samples.keys()
-        self.positive_samples = positive_samples
-        self.negative_samples = negative_samples
-        self.relation_structure = relation_structure
-        self.deterministic_index = deterministic_index
-        self.keys = sorted(list(positive_samples.keys()))
-        self.pattern_id = pattern_id
-
-    @staticmethod
-    def rand_sample(_list):
-        return _list[random.randint(0, len(_list) - 1)]
-
-    def __len__(self):
-        return len(self.keys)
-
-    def __getitem__(self, idx):
-        # relation type for positive sample
-        relation_type = self.keys[idx]
-        # sampling pair from the relation type for anchor positive sample
-        (a, b), n = self.pattern_id[relation_type][self.deterministic_index]
-        positive_a = self.positive_samples[relation_type][a]
-        positive_b = self.positive_samples[relation_type][b]
-        negative = self.negative_samples[relation_type][n]
-        tensor_positive_a = {k: to_tensor(k, v) for k, v in positive_a.items()}
-        tensor_positive_b = {k: to_tensor(k, v) for k, v in positive_b.items()}
-        tensor_negative = {k: to_tensor(k, v) for k, v in negative.items()}
-        output = {'positive_a': tensor_positive_a, 'positive_b': tensor_positive_b, 'negative': tensor_negative}
-        if self.relation_structure is not None:
-            
-            # sampling relation type that shares same parent class with the positive sample
-            parent_relation = [k for k, v in self.relation_structure.items() if relation_type in v]
-            assert len(parent_relation) == 1
-            relation_positive = self.rand_sample(self.relation_structure[parent_relation[0]])
-
-            # sampling positive from the relation type
-            positive_parent = self.rand_sample(self.positive_samples[relation_positive])
-            output['positive_parent'] = {k: to_tensor(k, v) for k, v in positive_parent.items()}
-
-            # sampling relation type from different parent class (negative)
-            parent_relation_n = self.rand_sample([k for k in self.relation_structure.keys() if k != parent_relation[0]])
-            relation_negative = self.rand_sample(self.relation_structure[parent_relation_n])
-
-            # sample individual entry from the relation
-            negative_parent = self.rand_sample(self.positive_samples[relation_negative])
-            output['negative_parent'] = {k: to_tensor(k, v) for k, v in negative_parent.items()}
-        return output
+def rand_sample(_list):
+    return _list[random.randint(0, len(_list) - 1)]
 
 
 class Trainer:
     """ Train relation BERT with prompted relation pairs from SemEval 2012 task 2. """
 
     def __init__(self,
-                 output_dir: str = None,
+                 output_dir: str,
                  template: str = None,
                  model: str = 'roberta-large',
                  max_length: int = 64,
@@ -115,14 +59,13 @@ class Trainer:
         
         # config
         self.output_dir = output_dir
-        if self.output_dir is not None:
-            os.makedirs(self.output_dir, exist_ok=True)
-            # add file handler
-            logger = logging.getLogger()
-            file_handler = logging.FileHandler(f'{self.output_dir}/training.log')
-            file_handler.setLevel(logging.INFO)
-            file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
-            logger.addHandler(file_handler)
+        os.makedirs(self.output_dir, exist_ok=True)
+        # add file handler
+        logger = logging.getLogger()
+        file_handler = logging.FileHandler(f'{self.output_dir}/training.log')
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s'))
+        logger.addHandler(file_handler)
 
         self.config = dict(
             template=template,
@@ -171,7 +114,6 @@ class Trainer:
 
     def train(self, epoch_save: int = 1):
         assert not self.model.is_trained, f'model is already trained'
-        assert self.output_dir is not None, f'output_dir is not specified'
         self.model.train()
         positive_encode, negative_encode, relation_structure = self.process_data(self.config['split'])
         if self.config['loss_function'] == 'triplet':
@@ -184,17 +126,6 @@ class Trainer:
         with open(f"{self.output_dir}/model/finetuning_config.json", 'w') as f:
             json.dump(self.config, f, indent=2)
         logging.info(f'complete training: model ckpt was saved at {self.output_dir}')
-
-    def validate(self):
-        self.model.eval()
-        with torch.no_grad():
-            positive_encode, negative_encode, relation_structure = self.process_data(self.config['split_valid'])
-            if self.config['loss_function'] == 'triplet':
-                return self._valid_triplet(positive_encode, negative_encode, relation_structure)
-            elif self.config['loss_function'] in ['nce', 'iloob']:
-                return self._valid_nce(positive_encode, negative_encode, relation_structure)
-            else:
-                raise ValueError(f"unknown loss function {self.config['loss_function']}")
 
     def _train_nce(self, positive_encode, negative_encode, relation_structure, epoch_save):
         features = positive_encode[list(positive_encode.keys())[0]][0].keys()
@@ -265,183 +196,99 @@ class Trainer:
                 logging.info(f"saving ckpt at `{self.output_dir}/epoch_{e + 1}`")
                 self.model.save(f'{self.output_dir}/epoch_{e + 1}')
 
-    def _valid_nce(self, positive_encode, negative_encode, relation_structure):
-        features = positive_encode[list(positive_encode.keys())[0]][0].keys()
-        positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
-        negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
-
-        # add parent relation types
-        if relation_structure is not None:
-            for k, v in relation_structure.items():
-                positive_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in v])) for _k in features}
-                n_list = list(chain(*[_v for _k, _v in relation_structure.items() if _k != k]))
-                negative_encode[k] = {_k: list(chain(*[positive_encode[_v][_k] for _v in n_list])) for _k in features}
-        loss = []
-
-        for n, r_type in enumerate(positive_encode.keys()):
-
-            # embedding for positive samples
-            pos = {k: to_tensor(k, v) for k, v in positive_encode[r_type].items()}
-            positive_embedding = self.model.to_embedding(pos, batch_size=self.config['batch'])
-
-            # embedding for negative samples
-            neg = {k: to_tensor(k, v) for k, v in negative_encode[r_type].items()}
-            negative_embedding = self.model.to_embedding(neg, batch_size=self.config['batch'])
-
-            # loss computation
-            tmp_loss = loss_nce(
-                tensor_positive=positive_embedding,
-                tensor_negative=negative_embedding,
-                temperature=self.config['loss_function_config']['temperature'],
-                info_loob=self.config['loss_function'] == 'iloob',
-                linear=self.linear,
-                device=self.model.device)
-            loss.append(tmp_loss.cpu().item())
-        return mean(loss)
-
     def _train_triplet(self, positive_encode, negative_encode, relation_structure, epoch_save):
-        num_accumulation = 1
-        if len(positive_encode) != self.config['batch']:
-            num_accumulation = int(len(positive_encode) / self.config['batch'])
-        logging.info(f'num_accumulation: {num_accumulation}')
 
-        # approx lower bound of the number of trial
-        n_pos = min(len(i) for i in positive_encode.values())
-        n_neg = min(len(i) for i in negative_encode.values())
-        n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
-        batch_index = list(range(n_trial))
-        pattern_id = {k: list(product(
-            list(combinations(range(len(v)), 2)), list(range(len(negative_encode[k])))
-        )) for k, v in positive_encode.items()}
+        def get_batch(_list):
+            _index = list(range(len(_list)))
+            _index = _index[::self.config['batch']] + [len(_list)]
+            return [_list[_s:_e] for _s, _e in zip(_index[:-1], _index[1:])]
 
+        def get_parent_sample(relation_type):
+            # sampling relation type that shares same parent class with the positive sample
+            parent_relation = [k for k, v in relation_structure.items() if relation_type in v]
+            assert len(parent_relation) == 1
+            relation_positive = rand_sample(relation_structure[parent_relation[0]])
+
+            # sampling positive from the relation type
+            positive_parent = rand_sample(positive_encode[relation_positive])
+
+            # sampling relation type from different parent class (negative)
+            parent_relation_n = rand_sample([k for k in relation_structure.keys() if k != parent_relation[0]])
+            relation_negative = rand_sample(relation_structure[parent_relation_n])
+
+            # sample individual entry from the relation
+            negative_parent = rand_sample(positive_encode[relation_negative])
+            return positive_parent, negative_parent
+
+        features = positive_encode[list(positive_encode.keys())[0]][0].keys()
+        positive_pairs = {k: list(combinations(positive_encode[k], 2)) for k in sorted(positive_encode.keys())}
+        n_iter_per_epoch = max(len(v) for k, v in positive_pairs.items())
+        n_iter_per_epoch_neg = max(len(v) for k, v in negative_encode.items())
+        relation_types = sorted(list(positive_encode.keys()))
         for e in range(self.config['epoch']):  # loop over the epoch
-            random.shuffle(batch_index)
-            for n, bi in enumerate(batch_index):
-                # if self.config['loss_function_config']['max_trial_per_epoch'] is not None and self.config['loss_function_config']['max_trial_per_epoch'] > n:
-                #     break
+            pbar = tqdm(total=n_iter_per_epoch * n_iter_per_epoch_neg)
+            random.shuffle(relation_types)
+            for v in positive_pairs.values():
+                random.shuffle(v)
+            for v in negative_encode.values():
+                random.shuffle(v)
 
-                # loader
-                print("dataset")
-                dataset = DatasetTriplet(
-                    deterministic_index=bi,
-                    relation_structure=relation_structure,
-                    positive_samples=positive_encode,
-                    negative_samples=negative_encode,
-                    pattern_id=pattern_id)
-                print("loader")
-                data_loader = torch.utils.data.DataLoader(
-                    dataset,
-                    batch_size=self.config['batch'],
-                    shuffle=True,
-                    drop_last=False)
-                print("training")
-                # model training
-                total_loss = 0
-                loss = None
-                for _n, x in enumerate(data_loader):
+            total_loss = []
+            for i_pos in range(n_iter_per_epoch):
+                for i_neg in range(n_iter_per_epoch_neg):
+                    pbar.update(1)
+                    _positive_pairs = {k: v[i_pos % len(v)] for k, v in positive_pairs.items()}
+                    _negative_encode = {k: v[i_neg % len(v)] for k, v in negative_encode.items()}
                     self.optimizer.zero_grad()
-                    if relation_structure is None:
-                        encode = {k: torch.cat([x['positive_a'][k], x['positive_b'][k], x['negative'][k]])
-                                  for k in x['positive_a'].keys()}
-                        embedding = self.model.to_embedding(encode)
-                        v_anchor, v_positive, v_negative = embedding.chunk(3)
-                        v_positive_hc = v_negative_hc = None
-                    else:
-                        encode = {k: torch.cat([
-                            x['positive_a'][k], x['positive_b'][k], x['negative'][k],
-                            x['positive_parent'][k], x['negative_parent'][k]]) for k in x['positive_a'].keys()}
-                        embedding = self.model.to_embedding(encode)
-                        v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
-
-                    loss = loss_triplet(
-                        tensor_anchor=v_anchor,
-                        tensor_positive=v_positive,
-                        tensor_negative=v_negative,
-                        tensor_positive_parent=v_positive_hc,
-                        tensor_negative_parent=v_negative_hc,
-                        margin=self.config['loss_function_config']['mse_margin'],
-                        linear=self.linear,
-                        device=self.model.device)
-
-                    if (_n + 1) % num_accumulation != 0:
-                        continue
-
-                    loss.backward()
-                    total_loss += loss.cpu().item()
-                    self.optimizer.step()
-                    self.scheduler.step()
                     loss = None
+                    for _n, batch_relations in enumerate(get_batch(relation_types)):
 
-                if loss is not None:
+                        a = {h: to_tensor(h, [_positive_pairs[x][0][h] for x in batch_relations]) for h in features}
+                        p = {h: to_tensor(h, [_positive_pairs[x][1][h] for x in batch_relations]) for h in features}
+                        n = {h: to_tensor(h, [_negative_encode[x][h] for x in batch_relations]) for h in features}
+                        v_a = self.model.to_embedding(a)
+                        v_p = self.model.to_embedding(p)
+                        v_n = self.model.to_embedding(n)
+                        v_p_par = None
+                        v_n_par = None
+                        if relation_structure is not None:
+                            tmp = [get_parent_sample(x) for x in batch_relations]
+                            p_par = {h: to_tensor(h, [x[0][h] for x in tmp]) for h in features}
+                            n_par = {h: to_tensor(h, [x[1][h] for x in tmp]) for h in features}
+                            v_p_par = self.model.to_embedding(p_par)
+                            v_n_par = self.model.to_embedding(n_par)
+                        loss = loss_triplet(
+                            tensor_anchor=v_a,
+                            tensor_positive=v_p,
+                            tensor_negative=v_n,
+                            tensor_positive_parent=v_p_par,
+                            tensor_negative_parent=v_n_par,
+                            margin=self.config['loss_function_config']['mse_margin'],
+                            linear=self.linear,
+                            device=self.model.device)
+                        total_loss.append(loss.cpu().item())
+
+                    assert loss is not None
                     loss.backward()
-                    total_loss += loss.cpu().item()
                     self.optimizer.step()
                     self.scheduler.step()
-                mean_loss = total_loss / len(data_loader)
+
+                mean_loss = sum(total_loss) / len(total_loss)
 
                 # log
-                logging.info(f"[epoch {e + 1}/{self.config['epoch']}, batch_id {n}/{n_trial}], "
-                             f"loss: {round(mean_loss, 3)}, lr: {self.optimizer.param_groups[0]['lr']}")
+                logging.info(
+                    f"[epoch {e + 1}/{self.config['epoch']}, batch_id {pbar.n+1}/{pbar.total}], "
+                    f"loss: {round(mean_loss, 3)}, lr: {self.optimizer.param_groups[0]['lr']}")
 
             if epoch_save is not None and (e + 1) % epoch_save == 0 and (e + 1) != self.config['epoch']:
                 self.model.save(f'{self.output_dir}/epoch_{e + 1}')
-
-    def _valid_triplet(self, positive_encode, negative_encode, relation_structure):
-        n_pos = min(len(i) for i in positive_encode.values())
-        n_neg = min(len(i) for i in negative_encode.values())
-        n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
-        if self.config['loss_function_config']['max_trial_per_epoch'] is not None:
-            n_trial = min(self.config['loss_function_config']['max_trial_per_epoch'], n_trial)
-        loss = []
-        for n, bi in enumerate(range(n_trial)):
-
-            # loader
-            dataset = DatasetTriplet(
-                deterministic_index=bi,
-                relation_structure=relation_structure,
-                positive_samples=positive_encode,
-                negative_samples=negative_encode)
-            data_loader = torch.utils.data.DataLoader(
-                dataset,
-                batch_size=self.config['batch'],
-                shuffle=True,
-                drop_last=False)
-
-            # model training
-            for _n, x in enumerate(data_loader):
-                if relation_structure is None:
-                    encode = {k: torch.cat([x['positive_a'][k], x['positive_b'][k], x['negative'][k]])
-                              for k in x['positive_a'].keys()}
-                    embedding = self.model.to_embedding(encode)
-                    v_anchor, v_positive, v_negative = embedding.chunk(3)
-                    v_positive_hc = v_negative_hc = None
-                else:
-                    encode = {k: torch.cat([
-                        x['positive_a'][k], x['positive_b'][k], x['negative'][k],
-                        x['positive_parent'][k], x['negative_parent'][k]]) for k in x['positive_a'].keys()}
-                    embedding = self.model.to_embedding(encode)
-                    v_anchor, v_positive, v_negative, v_positive_hc, v_negative_hc = embedding.chunk(5)
-
-                tmp_loss = loss_triplet(
-                    tensor_anchor=v_anchor,
-                    tensor_positive=v_positive,
-                    tensor_negative=v_negative,
-                    tensor_positive_parent=v_positive_hc,
-                    tensor_negative_parent=v_negative_hc,
-                    margin=self.config['loss_function_config']['mse_margin'],
-                    linear=self.linear,
-                    device=self.model.device)
-                loss.append(tmp_loss.cpu().item())
-
-        return mean(loss)
 
     def process_data(self, split):
         # raw data
         data = load_dataset(self.config['data'], self.config['data_name'], split=split)
         all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
         all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
-        assert all_positive.keys() == all_negative.keys(), \
-            f"{all_positive.keys()} != {all_negative.keys()}"
+        assert all_positive.keys() == all_negative.keys(), f"{all_positive.keys()} != {all_negative.keys()}"
         if self.config['exclude_relation'] is not None:
             all_positive = {k: v for k, v in all_positive.items() if k not in self.config['exclude_relation']}
             all_negative = {k: v for k, v in all_negative.items() if k not in self.config['exclude_relation']}
@@ -471,11 +318,10 @@ class Trainer:
         assert positive_encode is not None
         negative_encode = _encode(all_negative)
         if self.config['augment_negative_by_positive']:
-            tmp = {k: list(chain(*[v for _k, v in positive_encode.items() if k != _k])) for k in key}
             if negative_encode is None:
-                negative_encode = tmp
+                negative_encode = {k: list(chain(*[v for _k, v in positive_encode.items() if k != _k])) for k in key}
             else:
-                negative_encode = {k: v + tmp[k] for k, v in negative_encode.items()}
+                negative_encode = {k: negative_encode[k] + list(chain(*[v for _k, v in positive_encode.items() if k != _k])) for k in key}
 
         assert negative_encode is not None
         assert len(positive_encode) >= self.config['batch']

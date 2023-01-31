@@ -2,61 +2,9 @@ import os
 import json
 import logging
 import argparse
-from relbert import Trainer, evaluate_analogy, evaluate_classification, evaluate_relation_mapping
-from datasets import Dataset, load_dataset
+from relbert import evaluate_analogy, evaluate_classification, evaluate_relation_mapping
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
-
-
-def main_validation_loss():
-    parser = argparse.ArgumentParser(description='compute validation loss')
-    parser.add_argument('-m', '--model', help='model', required=True, type=str)
-    parser.add_argument('-o', '--output-file', help='export file', required=True, type=str)
-    parser.add_argument('-b', '--batch', help='batch size', default=512, type=int)
-    parser.add_argument('-l', '--max-length', help='for vanilla LM', default=64, type=int)
-    parser.add_argument('--data', help='data', default='relbert/semeval2012_relational_similarity', type=str)
-    parser.add_argument('--loss', help='', default='triplet', type=str)
-    parser.add_argument('--mse-margin', help='contrastive loss margin', default=1, type=int)
-    parser.add_argument('--temperature', help='temperature for nce', default=0.05, type=float)
-    parser.add_argument('-c', '--classification-loss', help='softmax loss', action='store_true')
-    parser.add_argument('-a', '--augment-negative-by-positive', help='', action='store_true')
-    parser.add_argument('--split', help='', default='validation', type=str)
-    parser.add_argument('--exclude-relation', help="", nargs='+', default=None, type=str)
-    parser.add_argument('--overwrite', help='', action='store_true')
-    parser.add_argument('-p', '--parallel', help='', action='store_true')
-    opt = parser.parse_args()
-
-    if not opt.overwrite and os.path.exists(opt.output_file):
-        logging.info(f"{opt.output_file} exists, skip")
-        return
-
-    if opt.loss == 'triplet':
-        loss_function_config = {
-            'mse_margin': opt.mse_margin,
-            'max_trial_per_epoch': opt.max_trial_per_epoch
-        }
-    elif opt.loss in ['nce', 'iloob']:
-        loss_function_config = {'temperature': opt.temperature}
-    else:
-        loss_function_config = {}
-    trainer = Trainer(
-        model=opt.model,
-        max_length=opt.max_length,
-        batch=opt.batch,
-        data=opt.data,
-        exclude_relation=opt.exclude_relation,
-        loss_function=opt.loss,
-        classification_loss=opt.classification_loss,
-        loss_function_config=loss_function_config,
-        split_valid=opt.split,
-        parallel_preprocess=opt.parallel_preprocess,
-        augment_negative_by_positive=opt.augment_negative_by_positive
-    )
-    loss = trainer.validate()
-    if os.path.dirname(opt.output_file) != '':
-        os.makedirs(os.path.dirname(opt.output_file), exist_ok=True)
-    with open(opt.output_file, 'w') as f:
-        json.dump({"loss": loss}, f)
 
 
 def main_analogy():
