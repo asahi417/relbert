@@ -28,7 +28,12 @@ class DatasetTriplet(torch.utils.data.Dataset):
 
     float_tensors = ['attention_mask']
 
-    def __init__(self, deterministic_index: int, positive_samples: Dict, negative_samples: Dict, relation_structure: Dict):
+    def __init__(self,
+                 deterministic_index: int,
+                 positive_samples: Dict,
+                 negative_samples: Dict,
+                 relation_structure: Dict,
+                 pattern_id: Dict):
         if negative_samples is not None:
             assert positive_samples.keys() == negative_samples.keys()
         self.positive_samples = positive_samples
@@ -36,10 +41,7 @@ class DatasetTriplet(torch.utils.data.Dataset):
         self.relation_structure = relation_structure
         self.deterministic_index = deterministic_index
         self.keys = sorted(list(positive_samples.keys()))
-        print("pattern id")
-        self.pattern_id = {k: list(product(
-            list(combinations(range(len(self.positive_samples[k])), 2)), list(range(len(self.negative_samples[k])))
-        )) for k in self.keys}
+        self.pattern_id = pattern_id
 
     @staticmethod
     def rand_sample(_list):
@@ -307,13 +309,16 @@ class Trainer:
         n_pos = min(len(i) for i in positive_encode.values())
         n_neg = min(len(i) for i in negative_encode.values())
         n_trial = len(list(product(combinations(range(n_pos), 2), range(n_neg))))
-        if self.config['loss_function_config']['max_trial_per_epoch'] is not None:
-            n_trial = min(self.config['loss_function_config']['max_trial_per_epoch'], n_trial)
         batch_index = list(range(n_trial))
+        pattern_id = {k: list(product(
+            list(combinations(range(len(v)), 2)), list(range(len(negative_encode[k])))
+        )) for k, v in positive_encode.items()}
 
         for e in range(self.config['epoch']):  # loop over the epoch
             random.shuffle(batch_index)
             for n, bi in enumerate(batch_index):
+                # if self.config['loss_function_config']['max_trial_per_epoch'] is not None and self.config['loss_function_config']['max_trial_per_epoch'] > n:
+                #     break
 
                 # loader
                 print("dataset")
@@ -321,7 +326,8 @@ class Trainer:
                     deterministic_index=bi,
                     relation_structure=relation_structure,
                     positive_samples=positive_encode,
-                    negative_samples=negative_encode)
+                    negative_samples=negative_encode,
+                    pattern_id=pattern_id)
                 print("loader")
                 data_loader = torch.utils.data.DataLoader(
                     dataset,
