@@ -462,7 +462,7 @@ class Trainer:
         assert positive_encode is not None
         negative_encode = _encode(all_negative)
         if self.config['augment_negative_by_positive']:
-            tmp = {k: list(chain(*[v for _k, v in positive_encode.keys() if k != _k])) for k in key}
+            tmp = {k: list(chain(*[v for _k, v in positive_encode.items() if k != _k])) for k in key}
             if negative_encode is None:
                 negative_encode = tmp
             else:

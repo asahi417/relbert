@@ -1,4 +1,4 @@
-relbert-train -d 'relbert/t_rex_relational_similarity' -n "filter_unified.min_entity_1_max_predicate_100"  -o "tmp" -b 39 -e 1 --loss triplet -s "0"
+relbert-train -d 'relbert/t_rex_relational_similarity' -n "filter_unified.min_entity_1_max_predicate_100"  -o "tmp" -b 39 -e 1 --loss triplet -s "0" -a
 
 # TRIPLET LOSS
 train_triplet () {
