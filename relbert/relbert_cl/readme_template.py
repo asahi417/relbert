@@ -53,7 +53,7 @@ model-index:
     metrics:
     - name: Accuracy
       type: accuracy
-      value: {metric_analogy['sat_full'] if metric_analogy is not None else None}
+      value: {metric_analogy['sat_full/test'] if metric_analogy is not None else None}
   - task:
       name: Analogy Questions (SAT)
       type: multiple-choice-qa
@@ -109,6 +109,28 @@ model-index:
     - name: Accuracy
       type: accuracy
       value: {metric_analogy['u4/test'] if metric_analogy is not None else None}
+  - task:
+      name: Analogy Questions (ConceptNet Analogy)
+      type: multiple-choice-qa
+    dataset:
+      name: ConceptNet Analogy
+      args: relbert/analogy_questions
+      type: analogy-questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['conceptnet_relational_similarity/test'] if metric_analogy is not None else None}
+  - task:
+      name: Analogy Questions (TREX Analogy)
+      type: multiple-choice-qa
+    dataset:
+      name: TREX Analogy
+      args: relbert/analogy_questions
+      type: analogy-questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['t_rex_relational_similarity/test'] if metric_analogy is not None else None}
   - task:
       name: Lexical Relation Classification (BLESS)
       type: classification
@@ -186,12 +208,14 @@ model-index:
 RelBERT based on [{config["model"]}](https://huggingface.co/{config["model"]}) fine-tuned on {dataset_link} (see the [`relbert`](https://github.com/asahi417/relbert) for more detail of fine-tuning).
 This model achieves the following results on the relation understanding tasks:
 - Analogy Question ([dataset](https://huggingface.co/datasets/relbert/analogy_questions), [full result](https://huggingface.co/{model_name}/raw/main/analogy.forward.json)):
-    - Accuracy on SAT (full): {metric_analogy['sat_full'] if metric_analogy is not None else None} 
+    - Accuracy on SAT (full): {metric_analogy['sat_full/test'] if metric_analogy is not None else None} 
     - Accuracy on SAT: {metric_analogy['sat/test'] if metric_analogy is not None else None}
     - Accuracy on BATS: {metric_analogy['bats/test'] if metric_analogy is not None else None}
     - Accuracy on U2: {metric_analogy['u2/test'] if metric_analogy is not None else None}
     - Accuracy on U4: {metric_analogy['u4/test'] if metric_analogy is not None else None}
     - Accuracy on Google: {metric_analogy['google/test'] if metric_analogy is not None else None}
+    - Accuracy on ConceptNet Analogy: {metric_analogy['conceptnet_relational_similarity/test'] if metric_analogy is not None else None}
+    - Accuracy on T-Rex Analogy: {metric_analogy['t_rex_relational_similarity/test'] if metric_analogy is not None else None}
 - Lexical Relation Classification ([dataset](https://huggingface.co/datasets/relbert/lexical_relation_classification), [full result](https://huggingface.co/{model_name}/raw/main/classification.json)):
     - Micro F1 score on BLESS: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on CogALexV: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"] if metric_classification is not None else None}

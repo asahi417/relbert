@@ -5,7 +5,7 @@ train_triplet () {
   MODEL_CKPT="relbert_output/ckpt/triplet_semeval2012/template-${TEMPLATE_ID}"
 
   # train
-  relbert-train -p -o "${MODEL_CKPT}" -b 64 -e 1 --loss triplet -t "${TEMPLATE}"
+  relbert-train -p -o "${MODEL_CKPT}" -b 64 -e 5 --loss triplet -t "${TEMPLATE}"
 
   # for evaluation
   relbert-eval-analogy -d 'sat_full' 'sat' 'u2' 'u4' 'google' 'bats' 't_rex_relational_similarity' 'conceptnet_relational_similarity' -s 'test' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.forward.json" -b 64
@@ -14,11 +14,11 @@ train_triplet () {
   relbert-eval-analogy -d 'sat' 'u2' 'u4' 'google' 'bats' 'semeval2012_relational_similarity' 't_rex_relational_similarity' 'conceptnet_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.forward.json" -b 64
   relbert-eval-analogy -d 'sat' 'u2' 'u4' 'google' 'bats' 'semeval2012_relational_similarity' 't_rex_relational_similarity' 'conceptnet_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.reverse.json" -b 64 --reverse-pair
   relbert-eval-analogy -d 'sat' 'u2' 'u4' 'google' 'bats' 'semeval2012_relational_similarity' 't_rex_relational_similarity' 'conceptnet_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.bidirection.json" -b 64 --bi-direction-pair
-  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 64
-  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64 --overwrite
-
-  # upload
-  relbert-push-to-hub -m "${MODEL_CKPT}/model" -a "relbert-roberta-large-triplet-${TEMPLATE_ID}-semeval2012"
+#  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 64
+#  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64 --overwrite
+#
+#  # upload
+#  relbert-push-to-hub -m "${MODEL_CKPT}/model" -a "relbert-roberta-large-triplet-${TEMPLATE_ID}-semeval2012"
 }
 
 train_triplet "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>"
@@ -43,11 +43,11 @@ train_nce () {
   relbert-eval-analogy -d 'sat' 'u2' 'u4' 'google' 'bats' 'semeval2012_relational_similarity' 't_rex_relational_similarity' 'conceptnet_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.forward.json" -b 64
   relbert-eval-analogy -d 'sat' 'u2' 'u4' 'google' 'bats' 'semeval2012_relational_similarity' 't_rex_relational_similarity' 'conceptnet_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.reverse.json" -b 64 --reverse-pair
   relbert-eval-analogy -d 'sat' 'u2' 'u4' 'google' 'bats' 'semeval2012_relational_similarity' 't_rex_relational_similarity' 'conceptnet_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.bidirection.json" -b 64 --bi-direction-pair
-  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 64
-  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64 --overwrite
-
-  # upload
-  relbert-push-to-hub -m "${MODEL_CKPT}/model" -a "relbert-roberta-large-nce-${TEMPLATE_ID}-semeval2012"
+#  relbert-eval-classification -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/classification.json" -b 64
+#  relbert-eval-mapping -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/relation_mapping.json" -b 64 --overwrite
+#
+#  # upload
+#  relbert-push-to-hub -m "${MODEL_CKPT}/model" -a "relbert-roberta-large-nce-${TEMPLATE_ID}-semeval2012"
 }
 
 train_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>"
