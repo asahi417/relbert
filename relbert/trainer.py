@@ -131,6 +131,9 @@ class Trainer:
         features = positive_encode[list(positive_encode.keys())[0]][0].keys()
         positive_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in positive_encode.items()}
         negative_encode = {k: {_k: [x[_k] for x in v] for _k in features} for k, v in negative_encode.items()}
+        negative_encode = {
+            k: {_k: list(chain(*[v[_k]] + [b[_k] for a, b in positive_encode.items() if a != k])) for
+                _k in features} for k, v in negative_encode.items()}
 
         # add parent relation types
         if relation_structure is not None:
@@ -143,10 +146,10 @@ class Trainer:
         for e in range(self.config['epoch']):  # loop over the epoch
             total_loss = []
             random.shuffle(relation_types)
-            loss = None
-            self.optimizer.zero_grad()
+            # loss = None
             for n, r_type in enumerate(relation_types):
 
+                self.optimizer.zero_grad()
                 # embedding for positive samples
                 pos = positive_encode[r_type]
                 if len(pos['input_ids']) > self.config['loss_function_config']['num_positive']:
@@ -175,24 +178,24 @@ class Trainer:
                     info_loob=self.config['loss_function'] == 'iloob',
                     linear=self.linear,
                     device=self.model.device)
-                if (n + 1) % self.config['loss_function_config']['gradient_accumulation'] != 0:
-                    continue
+                # if (n + 1) % self.config['loss_function_config']['gradient_accumulation'] != 0:
+                #     continue
                 loss.backward()
                 total_loss.append(loss.cpu().item())
                 self.optimizer.step()
                 self.scheduler.step()
-                self.optimizer.zero_grad()
-                loss = None
+                # self.optimizer.zero_grad()
+                # loss = None
 
                 # log
                 logging.info(f"[epoch {e + 1}/{self.config['epoch']}, batch_id {n}/{len(relation_types)}], "
                              f"loss: {round(total_loss[-1], 3)}, lr: {self.optimizer.param_groups[0]['lr']}")
 
-            if loss is not None:
-                loss.backward()
-                total_loss += loss.cpu().item()
-                self.optimizer.step()
-                self.scheduler.step()
+            # if loss is not None:
+            #     loss.backward()
+            #     total_loss += loss.cpu().item()
+            #     self.optimizer.step()
+            #     self.scheduler.step()
             if epoch_save is not None and (e + 1) % epoch_save == 0 and (e + 1) != self.config['epoch']:
                 logging.info(f"saving ckpt at `{self.output_dir}/epoch_{e + 1}`")
                 self.model.save(f'{self.output_dir}/epoch_{e + 1}')
@@ -242,7 +245,7 @@ class Trainer:
                     _negative_encode = {k: v[i_neg % len(v)] for k, v in negative_encode.items()}
                     self.optimizer.zero_grad()
                     loss = None
-                    for _n, batch_relations in enumerate(get_batch(relation_types)):
+                    for batch_relations in get_batch(relation_types):
 
                         a = {h: to_tensor(h, [_positive_pairs[x][0][h] for x in batch_relations]) for h in features}
                         p = {h: to_tensor(h, [_positive_pairs[x][1][h] for x in batch_relations]) for h in features}
@@ -316,14 +319,14 @@ class Trainer:
             return {key[n]: v for n, v in enumerate(e)}
 
         positive_encode = _encode(all_positive)
-        assert positive_encode is not None
-        negative_encode = _encode(all_negative)
-        if self.config['augment_negative_by_positive']:
-            if negative_encode is None:
-                negative_encode = {k: list(chain(*[v for _k, v in positive_encode.items() if k != _k])) for k in key}
-            else:
-                negative_encode = {k: negative_encode[k] + list(chain(*[v for _k, v in positive_encode.items() if k != _k])) for k in key}
 
+        negative_encode = _encode(all_negative)
+        # if self.config['augment_negative_by_positive']:
+        #     if negative_encode is None:
+        #         negative_encode = {k: list(chain(*[v for _k, v in positive_encode.items() if k != _k])) for k in key}
+        #     else:
+        #         negative_encode = {k: negative_encode[k] + list(chain(*[v for _k, v in positive_encode.items() if k != _k])) for k in key}
+        assert positive_encode is not None
         assert negative_encode is not None
         assert len(positive_encode) >= self.config['batch']
         return positive_encode, negative_encode, relation_structure

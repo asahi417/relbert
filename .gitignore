@@ -15,3 +15,5 @@ t_rex
 t_rex_relation_similarity
 conceptnet_high_confidence
 conceptnet
+nell
+nell_relational_similarity

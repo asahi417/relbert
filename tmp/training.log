@@ -1,7 +1,0 @@
-2023-01-31 17:16:57,705 WARNING  Found cached dataset t_rex_relational_similarity (/Users/asahi/.cache/huggingface/datasets/relbert___t_rex_relational_similarity/filter_unified.min_entity_1_max_predicate_100/0.0.2/4eff5befac17f6ff5b8124b00617e0b54fe2e0e56532b0ef57c024ee8ae08e43)
-2023-01-31 17:16:57,801 INFO     208 relations exist
-2023-01-31 17:16:57,801 INFO     no relation hierarchy is provided
-2023-01-31 17:16:57,820 INFO     encode word pairs
-2023-01-31 17:16:57,821 INFO     	 original: 7071
-2023-01-31 17:16:57,832 INFO     	 deduplicate: 6951
-2023-01-31 17:17:02,311 INFO     num_accumulation: 5
