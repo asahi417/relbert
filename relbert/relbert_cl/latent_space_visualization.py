@@ -30,7 +30,7 @@ def main():
     opt = parser.parse_args()
 
     # cache files
-    output_dir = f"{opt.output_dir}/{opt.model.replace('/', '_')}"
+    output_dir = opt.output_dir
     os.makedirs(output_dir, exist_ok=True)
     gensim_file = f"{output_dir}/{os.path.basename(opt.model)}"
     cluster_file = f"{output_dir}/{os.path.basename(opt.model)}.cluster.csv"
