@@ -300,8 +300,6 @@ class Trainer:
 
     def process_data(self, split):
         # raw data
-        print(self.config['data_name'], self.config['data'])
-        input()
         data = load_dataset(self.config['data'], self.config['data_name'], split=split)
         all_positive = {i['relation_type']: [tuple(_i) for _i in i['positives']] for i in data}
         all_negative = {i['relation_type']: [tuple(_i) for _i in i['negatives']] for i in data}
