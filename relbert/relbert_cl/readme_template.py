@@ -132,6 +132,17 @@ model-index:
       type: accuracy
       value: {metric_analogy['t_rex_relational_similarity/test'] if metric_analogy is not None else None}
   - task:
+      name: Analogy Questions (NELL-ONE Analogy)
+      type: multiple-choice-qa
+    dataset:
+      name: NELL-ONE Analogy
+      args: relbert/analogy_questions
+      type: analogy-questions
+    metrics:
+    - name: Accuracy
+      type: accuracy
+      value: {metric_analogy['nell_relational_similarity/test'] if metric_analogy is not None else None}
+  - task:
       name: Lexical Relation Classification (BLESS)
       type: classification
     dataset:
@@ -216,6 +227,7 @@ This model achieves the following results on the relation understanding tasks:
     - Accuracy on Google: {metric_analogy['google/test'] if metric_analogy is not None else None}
     - Accuracy on ConceptNet Analogy: {metric_analogy['conceptnet_relational_similarity/test'] if metric_analogy is not None else None}
     - Accuracy on T-Rex Analogy: {metric_analogy['t_rex_relational_similarity/test'] if metric_analogy is not None else None}
+    - Accuracy on NELL-ONE Analogy: {metric_analogy['nell_relational_similarity/test'] if metric_analogy is not None else None}
 - Lexical Relation Classification ([dataset](https://huggingface.co/datasets/relbert/lexical_relation_classification), [full result](https://huggingface.co/{model_name}/raw/main/classification.json)):
     - Micro F1 score on BLESS: {metric_classification["lexical_relation_classification/BLESS"]["test/f1_micro"] if metric_classification is not None else None}
     - Micro F1 score on CogALexV: {metric_classification["lexical_relation_classification/CogALexV"]["test/f1_micro"] if metric_classification is not None else None}
