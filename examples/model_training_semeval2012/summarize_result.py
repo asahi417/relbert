@@ -23,7 +23,7 @@ def download(filename, url):
 
 def get_result(language_model: str = 'roberta-large', data: str = 'semeval2012'):
     output = []
-    for loss in ['triplet']:  #, 'nce', "iloob"]:
+    for loss in ['triplet', 'nce']:  #, 'nce', "iloob"]:
         for prompt in ['a', 'b', 'c', 'd', 'e']:
             model = f'relbert-{language_model}-{loss}-{prompt}-{data}'
 

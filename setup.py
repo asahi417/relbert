@@ -30,7 +30,6 @@ setup(
     test_suite='tests',
     extras_require={
         "visualization": [
-            'umap-learn',
             'hdbscan',
             'seaborn',
             'gensim==3.8.1'
@@ -54,11 +53,11 @@ setup(
         'console_scripts': [
             'relbert-train = relbert.relbert_cl.train:main',
             'relbert-eval-analogy = relbert.relbert_cl.evaluate:main_analogy',
-            # 'relbert-eval-analogy-relation-data = relbert.relbert_cl.evaluate:main_analogy_relation_data',
             'relbert-eval-classification = relbert.relbert_cl.evaluate:main_classification',
             'relbert-eval-mapping = relbert.relbert_cl.evaluate:main_relation_mapping',
             'relbert-eval-loss = relbert.relbert_cl.evaluate:main_validation_loss',
-            'relbert-push-to-hub = relbert.relbert_cl.push_to_hub:main'
+            'relbert-push-to-hub = relbert.relbert_cl.push_to_hub:main',
+            'relbert-2d-plot = relbert.relbert_cl.latent_space_visualization:main'
         ]
     }
 )
