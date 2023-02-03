@@ -33,7 +33,7 @@ def get_result(language_model: str = 'roberta-large', data: str = 'semeval2012')
             result = {"template_id": prompt, "model": config['model'], 'loss_function': config['loss_function']}
 
             for _type in ['forward', 'reverse', 'bidirection']:
-                result.update({k: v for k, v in download(
+                result.update({f"{k}.{_type}": v for k, v in download(
                     f"analogy-{model}.json",
                     f"https://huggingface.co/relbert/{model}/raw/main/analogy.{_type}.json"
                 ).items()})
