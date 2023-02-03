@@ -24,6 +24,7 @@ def main():
     parser.add_argument('-b', '--batch', default=256, type=int)
     parser.add_argument('-c', '--chunk', default=512, type=int)
     parser.add_argument('-d', '--data', default="relbert/conceptnet_relational_similarity", type=str)
+    parser.add_argument('-n', '--name', default=None, type=str)
     parser.add_argument('-s', '--split', default="test", type=str)
     parser.add_argument('-o', '--output-dir', default="cluster_visualization_cache", type=str)
     parser.add_argument('--max-length', default=128, type=int)
@@ -37,7 +38,7 @@ def main():
     embedding_file = f"{output_dir}/{os.path.basename(opt.model)}.embedding"
     figure_file = f"{output_dir}/{os.path.basename(opt.model)}.figure.png"
 
-    data = load_dataset(opt.data, split=opt.split)
+    data = load_dataset(opt.data, opt.name, split=opt.split)
     vocab = {f'{a.replace(" ", "_")}__{b.replace(" ", "_")}': [a, b] for a, b in chain(*[i['positives'] for i in data])}
     #########################################
     # GET EMBEDDING AND SAVE AS GENSIM FILE #
