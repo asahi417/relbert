@@ -4,7 +4,7 @@ train_nce () {
   TEMPLATE=${2}
   MODEL_CKPT="relbert_output/ckpt/nce_conceptnet/template-${TEMPLATE_ID}"
   # train
-  relbert-train -p -a -o "${MODEL_CKPT}" -b 32 -e 10 --loss nce -r 0.000005 -t "${TEMPLATE}" -d 'relbert/conceptnet_relational_similarity'
+  relbert-train -p -a -o "${MODEL_CKPT}" -b 17 -e 10 --loss nce -r 0.000005 -t "${TEMPLATE}" -d 'relbert/conceptnet_relational_similarity'
   for E in 1 2 3 4 5 6 7 8 9
   do
     relbert-eval-analogy --overwrite -d 'conceptnet_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/epoch_${E}" -o "${MODEL_CKPT}/epoch_${E}/analogy.forward.json" -b 64
@@ -37,8 +37,8 @@ eval_nce() {
   relbert-push-to-hub -m "${MODEL_CKPT}" -a "${MODEL_ALIAS}"
 }
 
-eval_nce "a" "epoch_8" "relbert-roberta-large-nce-a-conceptnet"
-eval_nce "b" "epoch_9" "relbert-roberta-large-nce-b-conceptnet"
-eval_nce "c" "epoch_6" "relbert-roberta-large-nce-c-conceptnet"
-eval_nce "d" "epoch_9" "relbert-roberta-large-nce-d-conceptnet"
-eval_nce "e" "epoch_9" "relbert-roberta-large-nce-e-conceptnet"
+#eval_nce "a" "epoch_8" "relbert-roberta-large-nce-a-conceptnet"
+#eval_nce "b" "epoch_9" "relbert-roberta-large-nce-b-conceptnet"
+#eval_nce "c" "epoch_6" "relbert-roberta-large-nce-c-conceptnet"
+#eval_nce "d" "epoch_9" "relbert-roberta-large-nce-d-conceptnet"
+#eval_nce "e" "epoch_9" "relbert-roberta-large-nce-e-conceptnet"

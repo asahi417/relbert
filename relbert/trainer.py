@@ -331,5 +331,5 @@ class Trainer:
 
         positive_encode = _encode(all_positive)
         negative_encode = _encode(all_negative)
-        assert len(positive_encode) >= self.config['batch']
+        assert len(positive_encode) >= self.config['batch'], f"{len(positive_encode)}, {self.config['batch']}"
         return positive_encode, negative_encode, relation_structure
