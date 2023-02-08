@@ -13,11 +13,10 @@ train_nce () {
   relbert-eval-analogy -d 't_rex_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.forward.json" -b 64
 }
 
-train_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "filter_unified.min_entity_4_max_predicate_10"
-
 train_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "filter_unified.min_entity_4_max_predicate_10"
 train_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "filter_unified.min_entity_4_max_predicate_10"
 train_nce "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "filter_unified.min_entity_4_max_predicate_10"
+train_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "filter_unified.min_entity_4_max_predicate_10"
 train_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "filter_unified.min_entity_4_max_predicate_10"
 
 
