@@ -266,7 +266,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['inspire' 'inspiration'],2,"[['stocked', 'overstocked'], ['perspire', 'condense'], ['accuse', 'accusation'], ['visualize', 'improvize']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,0,False
 ['observe' 'observation'],2,"[['modernize', 'install'], ['civilize', 'specialize'], ['inspire', 'inspiration'], ['vary', 'variable']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,0,False
 ['occupy' 'occupation'],0,"[['admire', 'admiration'], ['declare', 'maximize'], ['regional', 'regionally'], ['compute', 'compile']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,0,True
-['examine' 'examination'],2,"[['prepare', 'install'], ['immediate', 'immediately'], ['specialize', 'specialization'], ['characterize', 'derive']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,2,True
+['examine' 'examination'],2,"[['prepare', 'install'], ['immediate', 'immediately'], ['specialize', 'specialization'], ['characterize', 'derive']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,0,False
 ['allege' 'allegation'],2,"[['deprive', 'observe'], ['accept', 'acceptable'], ['install', 'installation'], ['visualize', 'observe']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,0,False
 ['civilize' 'civilization'],2,"[['globalize', 'improvize'], ['engage', 'engagement'], ['declare', 'declaration'], ['consult', 'inspire']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,0,False
 ['uniting' 'united'],2,"[['learn', 'learning'], ['continuing', 'relating'], ['providing', 'provided'], ['establishing', 'receiving']]",./cache/BATS_3.0/1_Inflectional_morphology/I09 [verb_Ving - Ved].txt,0,False
@@ -811,7 +811,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['available' 'unavailable'],2,"[['locate', 'relocate'], ['predictable', 'pleasant'], ['interrupted', 'uninterrupted'], ['suitable', 'controlled']]",./cache/BATS_3.0/2_Derivational_morphology/D02 [un+adj_reg].txt,0,False
 ['used' 'unused'],2,"[['noticed', 'aware'], ['heated', 'overheated'], ['pleasant', 'unpleasant'], ['finished', 'forgettable']]",./cache/BATS_3.0/2_Derivational_morphology/D02 [un+adj_reg].txt,0,False
 ['usual' 'unusual'],1,"[['satisfactory', 'happy'], ['sustainable', 'unsustainable'], ['write', 'writeable'], ['employed', 'authorized']]",./cache/BATS_3.0/2_Derivational_morphology/D02 [un+adj_reg].txt,0,False
-['acceptable' 'unacceptable'],0,"[['reasonable', 'unreasonable'], ['paid', 'realistic'], ['veiled', 'intended'], ['renew', 'renewable']]",./cache/BATS_3.0/2_Derivational_morphology/D02 [un+adj_reg].txt,2,False
+['acceptable' 'unacceptable'],0,"[['reasonable', 'unreasonable'], ['paid', 'realistic'], ['veiled', 'intended'], ['renew', 'renewable']]",./cache/BATS_3.0/2_Derivational_morphology/D02 [un+adj_reg].txt,0,True
 ['affected' 'unaffected'],0,"[['published', 'unpublished'], ['known', 'aware'], ['biased', 'identified'], ['death', 'deathless']]",./cache/BATS_3.0/2_Derivational_morphology/D02 [un+adj_reg].txt,0,True
 ['fortunate' 'unfortunate'],0,"[['paid', 'unpaid'], ['lucky', 'expected'], ['resolved', 'aware'], ['unite', 'reunite']]",./cache/BATS_3.0/2_Derivational_morphology/D02 [un+adj_reg].txt,0,True
 ['predictable' 'unpredictable'],2,"[['noticed', 'interrupted'], ['modernize', 'modernization'], ['reliable', 'unreliable'], ['fortunate', 'realistic']]",./cache/BATS_3.0/2_Derivational_morphology/D02 [un+adj_reg].txt,0,False
@@ -869,7 +869,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['hairnet' 'net'],0,"[['computer', 'device'], ['tv', 'bracelet'], ['plum', 'photo'], ['dessert', 'cake']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,True
 ['shirt' 'clothes'],0,"[['photo', 'picture'], ['exit', 'entrance'], ['notepad', 'notebook'], ['denim', 'gasoline']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,True
 ['vase' 'jar'],2,"[['sincere', 'insincere'], ['plum', 'notebook'], ['dress', 'clothes'], ['hairnet', 'peach']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,False
-['skirt' 'clothes'],0,"[['tv', 'device'], ['in', 'out'], ['postcard', 'vase'], ['deodorant', 'brooch']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,True
+['skirt' 'clothes'],0,"[['tv', 'device'], ['in', 'out'], ['postcard', 'vase'], ['deodorant', 'brooch']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,1,False
 ['hairpin' 'pin'],0,"[['cup', 'tableware'], ['inverse', 'reverse'], ['perfume', 'notebook'], ['jacket', 'diary']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,True
 ['grapefruit' 'citrus'],3,"[['boring', 'tedious'], ['hairpin', 'sunscreen'], ['denim', 'peach'], ['armchair', 'chair']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,False
 ['juicer' 'utensil'],0,"[['necklace', 'jewelry'], ['postcard', 'skirt'], ['notepad', 'notebook'], ['white', 'black']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,True
@@ -1221,7 +1221,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['fish' 'fingerling'],3,"[['cat', 'cattle'], ['beaver', 'cockroach'], ['tolstoi', 'russian'], ['cricket', 'larva']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E06 [animal - young].txt,0,False
 ['goat' 'kid'],2,"[['wolf', 'cicada'], ['lion', 'cattle'], ['snake', 'hatchling'], ['tolstoi', 'russian']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E06 [animal - young].txt,0,False
 ['bear' 'cub'],3,"[['camel', 'cicada'], ['tchaikovsky', 'russian'], ['camel', 'trout'], ['beetle', 'larva']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E06 [animal - young].txt,0,False
-['goldfish' 'fingerling'],2,"[['panda', 'goat'], ['oslo', 'norway'], ['insect', 'larva'], ['bear', 'salmon']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E06 [animal - young].txt,0,False
+['goldfish' 'fingerling'],2,"[['panda', 'goat'], ['oslo', 'norway'], ['insect', 'larva'], ['bear', 'salmon']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E06 [animal - young].txt,2,True
 ['whale' 'calf'],3,"[['ferret', 'goat'], ['darwin', 'english'], ['panda', 'cockroach'], ['raccoon', 'kit']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E06 [animal - young].txt,0,False
 ['skunk' 'kit'],3,"[['snake', 'goat'], ['ox', 'butterfly'], ['edison', 'american'], ['salmon', 'smolt']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E06 [animal - young].txt,0,False
 ['mink' 'kit'],0,"[['cicada', 'nymph'], ['goldfish', 'fish'], ['cricket', 'seal'], ['reading', 'berkshire']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E06 [animal - young].txt,0,True
@@ -1380,7 +1380,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['manage' 'management'],1,"[['announce', 'achieve'], ['embarrass', 'embarrassment'], ['forgettable', 'unforgettable'], ['engage', 'align']]",./cache/BATS_3.0/2_Derivational_morphology/D10 [verb+ment_irreg].txt,0,False
 ['assign' 'assignment'],3,"[['engage', 'arrange'], ['successful', 'successfully'], ['enlighten', 'align'], ['commit', 'commitment']]",./cache/BATS_3.0/2_Derivational_morphology/D10 [verb+ment_irreg].txt,0,False
 ['establish' 'establishment'],1,"[['assign', 'achieve'], ['assess', 'assessment'], ['leg', 'legless'], ['replace', 'involve']]",./cache/BATS_3.0/2_Derivational_morphology/D10 [verb+ment_irreg].txt,0,False
-['announce' 'announcement'],2,"[['appear', 'reappear'], ['enforce', 'disagree'], ['develop', 'development'], ['harass', 'disappoint']]",./cache/BATS_3.0/2_Derivational_morphology/D10 [verb+ment_irreg].txt,0,False
+['announce' 'announcement'],2,"[['appear', 'reappear'], ['enforce', 'disagree'], ['develop', 'development'], ['harass', 'disappoint']]",./cache/BATS_3.0/2_Derivational_morphology/D10 [verb+ment_irreg].txt,1,False
 ['appoint' 'appointment'],3,"[['excite', 'enjoy'], ['encourage', 'amend'], ['recognize', 'recognizable'], ['enforce', 'enforcement']]",./cache/BATS_3.0/2_Derivational_morphology/D10 [verb+ment_irreg].txt,0,False
 ['reimburse' 'reimbursement'],0,"[['equip', 'equipment'], ['recommend', 'recommendable'], ['assign', 'advertise'], ['enlighten', 'accomplish']]",./cache/BATS_3.0/2_Derivational_morphology/D10 [verb+ment_irreg].txt,0,True
 ['enforce' 'enforcement'],0,"[['disagree', 'disagreement'], ['extensive', 'extensively'], ['displace', 'establish'], ['amuse', 'entertain']]",./cache/BATS_3.0/2_Derivational_morphology/D10 [verb+ment_irreg].txt,0,True
@@ -1437,7 +1437,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['fox' 'den'],3,"[['spider', 'crow'], ['pigeon', 'coo'], ['goldfish', 'insect'], ['woodchuck', 'hole']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E08 [animal - shelter].txt,0,False
 ['monkey' 'tree'],2,"[['fly', 'trout'], ['herring', 'fingerling'], ['horse', 'stable'], ['rat', 'bee']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E08 [animal - shelter].txt,0,False
 ['dog' 'doghouse'],1,"[['herring', 'ape'], ['tiger', 'den'], ['fish', 'fingerling'], ['locust', 'chinchilla']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E08 [animal - shelter].txt,0,False
-['scorpion' 'nest'],2,"[['hippopotamus', 'cattle'], ['ankara', 'turkey'], ['woodchuck', 'hole'], ['wolf', 'bat']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E08 [animal - shelter].txt,0,False
+['scorpion' 'nest'],2,"[['hippopotamus', 'cattle'], ['ankara', 'turkey'], ['woodchuck', 'hole'], ['wolf', 'bat']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E08 [animal - shelter].txt,2,True
 ['molest' 'molester'],2,"[['speak', 'defend'], ['faith', 'faithless'], ['contend', 'contender'], ['choreograph', 'publish']]",./cache/BATS_3.0/2_Derivational_morphology/D08 [verb+er_irreg].txt,0,False
 ['send' 'sender'],1,"[['speak', 'achieve'], ['bake', 'baker'], ['interpret', 'skydive'], ['used', 'overused']]",./cache/BATS_3.0/2_Derivational_morphology/D08 [verb+er_irreg].txt,0,False
 ['recommend' 'recommender'],0,"[['send', 'sender'], ['publish', 'preach'], ['speak', 'tell'], ['reorganize', 'reorganization']]",./cache/BATS_3.0/2_Derivational_morphology/D08 [verb+er_irreg].txt,0,True
@@ -1521,7 +1521,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['vienna' 'austria'],0,"[['sofia', 'bulgaria'], ['haiti', 'creole'], ['nairobi', 'tbilisi'], ['ankara', 'athens']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E01 [country - capital].txt,0,True
 ['tokyo' 'japan'],3,"[['ankara', 'kiev'], ['budapest', 'beijing'], ['sun', 'yellow'], ['tehran', 'iran']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E01 [country - capital].txt,0,False
 ['havana' 'cuba'],3,"[['paris', 'madrid'], ['snake', 'hiss'], ['bangkok', 'sofia'], ['berlin', 'germany']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E01 [country - capital].txt,0,False
-['tehran' 'iran'],1,"[['dhaka', 'brussels'], ['belgrade', 'serbia'], ['guadeloupe', 'french'], ['paris', 'copenhagen']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E01 [country - capital].txt,0,False
+['tehran' 'iran'],1,"[['dhaka', 'brussels'], ['belgrade', 'serbia'], ['guadeloupe', 'french'], ['paris', 'copenhagen']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E01 [country - capital].txt,1,True
 ['bern' 'switzerland'],0,"[['tehran', 'iran'], ['budapest', 'helsinki'], ['oslo', 'tbilisi'], ['yoghurt', 'white']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E01 [country - capital].txt,0,True
 ['berlin' 'germany'],2,"[['conakry', 'kiev'], ['oslo', 'warsaw'], ['amman', 'jordan'], ['inverness', 'highlands']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E01 [country - capital].txt,0,False
 ['kingston' 'jamaica'],2,"[['bahamas', 'english'], ['lisbon', 'berlin'], ['vienna', 'austria'], ['havana', 'berlin']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E01 [country - capital].txt,0,False
@@ -1733,7 +1733,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['newcastle' 'northumberland'],3,"[['chester', 'birmingham'], ['switzerland', 'german'], ['chichester', 'birmingham'], ['salford', 'manchester']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E03 [UK_city - county].txt,0,False
 ['belfast' 'antrim'],1,"[['inverness', 'wakefield'], ['stirling', 'stirlingshire'], ['lancaster', 'wolverhampton'], ['islamabad', 'pakistan']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E03 [UK_city - county].txt,0,False
 ['canterbury' 'kent'],1,"[['maxwell', 'scottish'], ['winchester', 'hampshire'], ['ely', 'stirling'], ['preston', 'brighton']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E03 [UK_city - county].txt,0,False
-['crawley' 'sussex'],3,"[['lincoln', 'wells'], ['dundee', 'cambridge'], ['grandson', 'granddaughter'], ['aberdeen', 'aberdeenshire']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E03 [UK_city - county].txt,0,False
+['crawley' 'sussex'],3,"[['lincoln', 'wells'], ['dundee', 'cambridge'], ['grandson', 'granddaughter'], ['aberdeen', 'aberdeenshire']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E03 [UK_city - county].txt,1,False
 ['newport' 'gwent'],1,"[['kant', 'german'], ['canterbury', 'kent'], ['coventry', 'derby'], ['worcester', 'birmingham']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E03 [UK_city - county].txt,0,False
 ['lincoln' 'lincolnshire'],0,"[['wells', 'somerset'], ['wolf', 'howl'], ['preston', 'salisbury'], ['sheffield', 'portsmouth']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E03 [UK_city - county].txt,0,True
 ['leicester' 'midlands'],1,"[['ape', 'grove'], ['chester', 'cheshire'], ['preston', 'leeds'], ['plymouth', 'portsmouth']]",./cache/BATS_3.0/3_Encyclopedic_semantics/E03 [UK_city - county].txt,0,False

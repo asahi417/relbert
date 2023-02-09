@@ -79,7 +79,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['island' 'archipelago'],3,"[['anchor', 'aircraft'], ['archive', 'album'], ['ocean', 'iceberg'], ['article', 'newspaper']]",high-intermediate,0,False
 ['star' 'constellation'],3,"[['crystal', 'jewel'], ['reservation', 'table'], ['bank', 'fortune'], ['wick', 'candle']]",high-intermediate,0,False
 ['professor' 'scholarly'],2,"[['friend', 'imaginary'], ['mystery', 'obvious'], ['sorcerer', 'magical'], ['father', 'maternal']]",high-intermediate,0,False
-['note' 'melody'],0,"[['bone', 'skeleton'], ['movie', 'film'], ['meal', 'restaurant'], ['career', 'job']]",high-intermediate,0,True
+['note' 'melody'],0,"[['bone', 'skeleton'], ['movie', 'film'], ['meal', 'restaurant'], ['career', 'job']]",high-intermediate,1,False
 ['antique' 'aged'],3,"[['technique', 'effective'], ['microphone', 'loud'], ['grandfather', 'deceased'], ['sphere', 'round']]",high-intermediate,0,False
 ['infinite' 'limited'],0,"[['valid', 'illegitimate'], ['restored', 'renewed'], ['destroyed', 'ruined'], ['beloved', 'admired']]",high-intermediate,0,True
 ['kiss' 'affection'],2,"[['smile', 'fear'], ['joke', 'importance'], ['message', 'information'], ['television', 'actors']]",high-intermediate,0,False
@@ -198,16 +198,16 @@ stem,answer,choice,prefix,prediction,accuracy
 ['grenadier' 'army'],3,"[['inkling', 'pen'], ['wheelchair', 'paraplegic'], ['couch', 'lethargy'], ['count', 'nobility'], ['insurrection', 'government']]",high-advanced,0,False
 ['mud' 'opaque'],2,"[['usury', 'interested'], ['jewelry', 'ostentatious'], ['socialism', 'destructive'], ['torture', 'cruel'], ['ham', 'kosher']]",high-advanced,0,False
 ['invective' 'blame'],4,"[['homage', 'copy'], ['grandeur', 'admire'], ['duplicity', 'increase'], ['depravity', 'corrupt'], ['masonry', 'construct']]",high-advanced,0,False
-['obdurate' 'stubborn'],4,"[['ironic', 'metallic'], ['happy', 'felicitous'], ['improbable', 'impossible'], ['aforementioned', 'appropriate'], ['lethargic', 'sluggish']]",high-advanced,2,False
+['obdurate' 'stubborn'],4,"[['ironic', 'metallic'], ['happy', 'felicitous'], ['improbable', 'impossible'], ['aforementioned', 'appropriate'], ['lethargic', 'sluggish']]",high-advanced,0,False
 ['assuage' 'mollify'],2,"[['abstain', 'indulge'], ['hypothesize', 'prove'], ['desiccate', 'dehydrate'], ['curse', 'ghostwrite'], ['condemn', 'neglect']]",high-advanced,0,False
 ['fake' 'authenticity'],0,"[['latent', 'manifestation'], ['impenetrable', 'defense'], ['lacteal', 'milk'], ['preponderant', 'thought'], ['retrograde', 'direction']]",high-advanced,0,True
-['inevitable' 'preventable'],2,"[['humorous', 'amusing'], ['unintelligible', 'illegible'], ['plausible', 'impossible'], ['declasse', 'rude'], ['racist', 'prejudiced']]",high-advanced,2,True
+['inevitable' 'preventable'],2,"[['humorous', 'amusing'], ['unintelligible', 'illegible'], ['plausible', 'impossible'], ['declasse', 'rude'], ['racist', 'prejudiced']]",high-advanced,0,False
 ['dilettante' 'dabble'],0,"[['heretic', 'blaspheme'], ['teetotaler', 'imbibe'], ['sycophant', 'dominate'], ['dowager', 'remarry'], ['charlatan', 'divulge']]",high-advanced,0,True
 ['renegade' 'allegiance'],0,"[['atheist', 'faith'], ['turncoat', 'clothing'], ['bigamist', 'wives'], ['monk', 'contemplation'], ['torpedo', 'explosion']]",high-advanced,0,True
 ['immune' 'susceptible'],0,"[['corpulent', 'thin'], ['audacious', 'bold'], ['loquacious', 'babbling'], ['laudable', 'praiseworthy'], ['oblivious', 'distracted']]",high-advanced,0,True
 ['martinet' 'discipline'],1,"[['libertine', 'freedom'], ['fundamentalist', 'religion'], ['ballerina', 'nutrition'], ['cynic', 'optimism'], ['sculptor', 'clay']]",high-advanced,0,False
 ['authenticity' 'fraudulent'],0,"[['simplicity', 'complex'], ['importance', 'instrumental'], ['worth', 'priceless'], ['thirst', 'parched'], ['meaning', 'purposeful']]",high-advanced,0,True
-['sect' 'religion'],1,"[['fresco', 'painting'], ['foreground', 'landscape'], ['benefactor', 'fortune'], ['mandate', 'ruler'], ['diet', 'nutrient']]",high-advanced,4,False
+['sect' 'religion'],1,"[['fresco', 'painting'], ['foreground', 'landscape'], ['benefactor', 'fortune'], ['mandate', 'ruler'], ['diet', 'nutrient']]",high-advanced,0,False
 ['decanter' 'pour'],0,"[['monument', 'venerate'], ['criminal', 'deviate'], ['nunnery', 'convert'], ['pharmacy', 'proscribe'], ['stiletto', 'walk']]",high-advanced,0,True
 ['uncommon' 'outlier'],3,"[['tentative', 'agenda'], ['literary', 'synopsis'], ['parsimonious', 'spendthrift'], ['lethal', 'overdose'], ['saccharine', 'diabetic']]",high-advanced,0,False
 ['antipathy' 'approval'],2,"[['asphyxiation', 'choking'], ['crochet', 'knitting'], ['incredulity', 'faith'], ['infection', 'contamination'], ['excrement', 'waste']]",high-advanced,0,False
@@ -217,7 +217,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['vitriol' 'spiteful'],1,"[['hindsight', 'perfect'], ['alabaster', 'white'], ['buoyancy', 'light'], ['equilibrium', 'just'], ['jubilation', 'biblical']]",high-advanced,0,False
 ['rivulet' 'small'],4,"[['dissertation', 'plagiarized'], ['bird', 'fledgling'], ['bankruptcy', 'indebted'], ['hooligan', 'athletic'], ['citadel', 'fortified']]",high-advanced,0,False
 ['stock' 'inventory'],4,"[['celebrity', 'questionnaire'], ['antique', 'appraisal'], ['negotiation', 'bazaar'], ['trial', 'interrogation'], ['population', 'census']]",high-advanced,0,False
-['level' 'hierarchy'],0,"[['installment', 'serial'], ['halo', 'messiah'], ['vinaigrette', 'salad'], ['courtroom', 'drama'], ['misnomer', 'definition']]",high-advanced,2,False
+['level' 'hierarchy'],0,"[['installment', 'serial'], ['halo', 'messiah'], ['vinaigrette', 'salad'], ['courtroom', 'drama'], ['misnomer', 'definition']]",high-advanced,0,True
 ['abominable' 'disagreeable'],4,"[['lovable', 'annoying'], ['dry', 'desiccated'], ['dismal', 'lugubrious'], ['penultimate', 'final'], ['precipitous', 'steep']]",high-advanced,0,False
 ['beseech' 'request'],3,"[['elucidate', 'clarify'], ['excite', 'pique'], ['search', 'discover'], ['scrutinize', 'observe'], ['truncate', 'shorten']]",high-advanced,0,False
 ['virulent' 'poisonous'],1,"[['autonomous', 'free'], ['disparate', 'distinct'], ['botanical', 'flowery'], ['dormant', 'tired'], ['unique', 'eccentric']]",high-advanced,0,False
@@ -233,7 +233,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['hallucinogen' 'drug'],1,"[['dance', 'polka'], ['nightmare', 'dream'], ['stocking', 'skirt'], ['banjo', 'guitar'], ['aircraft', 'helicopter']]",high-advanced,0,False
 ['castigate' 'criticize'],1,"[['dishevel', 'destroy'], ['brutalize', 'bully'], ['legalize', 'filibuster'], ['predict', 'forecast'], ['kill', 'massacre']]",high-advanced,0,False
 ['conceited' 'bumptious'],3,"[['rural', 'suburban'], ['tangible', 'corporeal'], ['dubious', 'suspicious'], ['devoted', 'zealous'], ['elementary', 'young']]",high-advanced,0,False
-['asphyxia' 'air'],2,"[['cancer', 'tumors'], ['obesity', 'fat'], ['anemia', 'iron'], ['anorexia', 'disorder'], ['depression', 'anxiety']]",high-advanced,2,True
+['asphyxia' 'air'],2,"[['cancer', 'tumors'], ['obesity', 'fat'], ['anemia', 'iron'], ['anorexia', 'disorder'], ['depression', 'anxiety']]",high-advanced,0,False
 ['control' 'irrepressible'],0,"[['penetrate', 'impermeable'], ['mend', 'replaceable'], ['sell', 'profitable'], ['damage', 'decimated'], ['see', 'visible']]",high-advanced,0,True
 ['lie' 'prevaricate'],2,"[['betray', 'trust'], ['philander', 'donate'], ['waver', 'falter'], ['deride', 'praise'], ['corroborate', 'doubt']]",high-advanced,0,False
 ['estimate' 'approximate'],0,"[['narcissist', 'egocentric'], ['canoe', 'rapid'], ['businessman', 'perspicacious'], ['child', 'legitimate'], ['heiress', 'coddled']]",high-advanced,0,True
@@ -267,7 +267,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['speakers' 'stereo'],2,"[['arms', 'legs'], ['feet', 'toes'], ['wings', 'airplane'], ['clouds', 'sky']]",high-beginning,0,False
 ['shield' 'protect'],1,"[['computer', 'talk'], ['vehicle', 'transport'], ['pencil', 'make'], ['song', 'sing']]",high-beginning,0,False
 ['razor' 'shave'],1,"[['hair', 'comb'], ['knife', 'cut'], ['boat', 'drive'], ['fork', 'drink']]",high-beginning,0,False
-['string' 'guitar'],1,"[['shoe', 'pants'], ['wheel', 'bicycle'], ['candle', 'table'], ['picture', 'wall']]",high-beginning,0,False
+['string' 'guitar'],1,"[['shoe', 'pants'], ['wheel', 'bicycle'], ['candle', 'table'], ['picture', 'wall']]",high-beginning,1,True
 ['sick' 'health'],2,"[['sad', 'emotion'], ['tall', 'intelligence'], ['scared', 'courage'], ['smart', 'energy']]",high-beginning,0,False
 ['artist' 'paintbrush'],3,"[['lawyer', 'computer'], ['dentist', 'teeth'], ['teacher', 'apple'], ['magician', 'wand']]",high-beginning,0,False
 ['war' 'peace'],2,"[['weather', 'clouds'], ['math', 'fun'], ['joy', 'sadness'], ['socks', 'warmth']]",high-beginning,0,False
@@ -325,7 +325,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['ring' 'finger'],0,"[['necklace', 'neck'], ['bracelet', 'diamond'], ['sock', 'hand'], ['glove', 'foot']]",high-beginning,0,True
 ['hilarious' 'funny'],3,"[['right', 'wrong'], ['hard', 'boring'], ['nice', 'crazy'], ['great', 'good']]",high-beginning,0,False
 ['dangerous' 'safe'],1,"[['hard', 'nice'], ['easy', 'difficult'], ['strong', 'thin'], ['organized', 'orderly']]",high-beginning,0,False
-['organized' 'neat'],3,"[['ugly', 'pretty'], ['fun', 'good'], ['disgusting', 'sour'], ['transparent', 'clear']]",high-beginning,2,False
+['organized' 'neat'],3,"[['ugly', 'pretty'], ['fun', 'good'], ['disgusting', 'sour'], ['transparent', 'clear']]",high-beginning,0,False
 ['puppy' 'dog'],0,"[['kitten', 'cat'], ['bear', 'cub'], ['fish', 'minnow'], ['cow', 'calf']]",high-beginning,0,True
 ['musician' 'music'],1,"[['shower', 'water'], ['chef', 'food'], ['machine', 'snow'], ['child', 'art']]",high-beginning,0,False
 ['near' 'far'],1,"[['gray', 'black'], ['right', 'wrong'], ['cold', 'freezing'], ['good', 'fun']]",high-beginning,0,False
@@ -333,7 +333,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['steak' 'meat'],3,"[['nature', 'wood'], ['water', 'food'], ['transportation', 'street'], ['anger', 'emotion']]",high-beginning,0,False
 ['joy' 'emotion'],2,"[['food', 'beverage'], ['air', 'water'], ['pain', 'feeling'], ['money', 'product']]",high-beginning,0,False
 ['correct' 'right'],3,"[['crazy', 'smart'], ['weak', 'fun'], ['strong', 'hard'], ['cheap', 'inexpensive']]",high-beginning,0,False
-['hockey' 'sport'],3,"[['bus', 'car'], ['rice', 'hunger'], ['fight', 'war'], ['chemistry', 'science']]",high-beginning,2,False
+['hockey' 'sport'],3,"[['bus', 'car'], ['rice', 'hunger'], ['fight', 'war'], ['chemistry', 'science']]",high-beginning,0,False
 ['hammer' 'hit'],0,"[['knife', 'cut'], ['table', 'eat'], ['pen', 'build'], ['wheel', 'race']]",high-beginning,0,True
 ['jazz' 'music'],0,"[['silver', 'metal'], ['window', 'glass'], ['water', 'pool'], ['juice', 'fruit']]",high-beginning,0,True
 ['rich' 'poor'],0,"[['young', 'old'], ['smart', 'tired'], ['tall', 'angry'], ['fun', 'nice']]",high-beginning,0,True
@@ -357,11 +357,11 @@ stem,answer,choice,prefix,prediction,accuracy
 ['huge' 'large'],1,"[['possible', 'easy'], ['critical', 'important'], ['likely', 'incredible'], ['upsetting', 'offensive']]",low-intermediate,0,False
 ['soda' 'beverage'],3,"[['fish', 'ocean'], ['dirt', 'ingredient'], ['cereal', 'pancake'], ['shrimp', 'seafood']]",low-intermediate,0,False
 ['spaghetti' 'pasta'],0,"[['ketchup', 'condiment'], ['lettuce', 'sauce'], ['bacon', 'fruit'], ['cereal', 'dairy']]",low-intermediate,0,True
-['deck' 'ship'],0,"[['sleeve', 'shirt'], ['player', 'game'], ['tail', 'human'], ['year', 'month']]",low-intermediate,2,False
-['nightmare' 'dream'],0,"[['wrench', 'tool'], ['want', 'need'], ['friend', 'enemy'], ['grade', 'school']]",low-intermediate,0,True
-['gallery' 'art'],0,"[['library', 'books'], ['kitchen', 'food'], ['butcher', 'meat'], ['mailbox', 'letters']]",low-intermediate,0,True
+['deck' 'ship'],0,"[['sleeve', 'shirt'], ['player', 'game'], ['tail', 'human'], ['year', 'month']]",low-intermediate,0,True
+['nightmare' 'dream'],0,"[['wrench', 'tool'], ['want', 'need'], ['friend', 'enemy'], ['grade', 'school']]",low-intermediate,2,False
+['gallery' 'art'],0,"[['library', 'books'], ['kitchen', 'food'], ['butcher', 'meat'], ['mailbox', 'letters']]",low-intermediate,2,False
 ['building' 'manmade'],3,"[['bracelet', 'stylish'], ['jacket', 'leather'], ['school', 'strict'], ['biography', 'nonfiction']]",low-intermediate,0,False
-['tattoo' 'permanent'],3,"[['necklace', 'silver'], ['boat', 'electric'], ['phone', 'broken'], ['marathon', 'long']]",low-intermediate,2,False
+['tattoo' 'permanent'],3,"[['necklace', 'silver'], ['boat', 'electric'], ['phone', 'broken'], ['marathon', 'long']]",low-intermediate,0,False
 ['sculpture' 'art'],3,"[['language', 'book'], ['justice', 'jail'], ['happiness', 'religion'], ['weightlifting', 'exercise']]",low-intermediate,0,False
 ['bread' 'bakery'],0,"[['coffee', 'cafe'], ['clothing', 'laundromat'], ['medicine', 'church'], ['money', 'supermarket']]",low-intermediate,0,True
 ['pebble' 'stone'],0,"[['minnow', 'fish'], ['car', 'truck'], ['tiger', 'lion'], ['dictionary', 'book']]",low-intermediate,0,True
@@ -369,15 +369,15 @@ stem,answer,choice,prefix,prediction,accuracy
 ['wedding' 'ceremony'],3,"[['animal', 'dog'], ['saint', 'nun'], ['mountain', 'volcano'], ['president', 'leader']]",low-intermediate,0,False
 ['coffee' 'bitter'],1,"[['meat', 'fried'], ['glass', 'fragile'], ['gas', 'cheap'], ['silk', 'rough']]",low-intermediate,0,False
 ['democracy' 'government'],1,"[['music', 'invention'], ['hammer', 'tool'], ['friendship', 'person'], ['wine', 'grape']]",low-intermediate,0,False
-['shell' 'nut'],1,"[['pill', 'doctor'], ['page', 'book'], ['song', 'music'], ['cat', 'house']]",low-intermediate,2,False
+['shell' 'nut'],1,"[['pill', 'doctor'], ['page', 'book'], ['song', 'music'], ['cat', 'house']]",low-intermediate,0,False
 ['train' 'railroad'],2,"[['boat', 'mountain'], ['helicopter', 'cloud'], ['truck', 'highway'], ['wagon', 'wheel']]",low-intermediate,0,False
 ['clock' 'time'],1,"[['guitar', 'music'], ['calendar', 'date'], ['ruler', 'speed'], ['mother', 'family']]",low-intermediate,0,False
 ['unique' 'uncommon'],3,"[['pleasant', 'enjoyable'], ['spicy', 'powerful'], ['bitter', 'delicious'], ['disgusting', 'unpleasant']]",low-intermediate,0,False
-['hilarious' 'funny'],1,"[['strange', 'weird'], ['famished', 'hungry'], ['uncomfortable', 'painful'], ['familiar', 'trustworthy']]",low-intermediate,2,False
+['hilarious' 'funny'],1,"[['strange', 'weird'], ['famished', 'hungry'], ['uncomfortable', 'painful'], ['familiar', 'trustworthy']]",low-intermediate,0,False
 ['brother' 'sibling'],3,"[['mother', 'daughter'], ['doctor', 'nurse'], ['uncle', 'aunt'], ['father', 'parent']]",low-intermediate,0,False
 ['newspaper' 'inform'],3,"[['television', 'watch'], ['book', 'communicate'], ['movie', 'persuade'], ['game', 'entertain']]",low-intermediate,0,False
 ['bus' 'automobile'],1,"[['building', 'house'], ['tiger', 'animal'], ['letter', 'alphabet'], ['bath', 'shower']]",low-intermediate,0,False
-['siren' 'alert'],2,"[['heart', 'love'], ['flag', 'wave'], ['truck', 'transport'], ['stereo', 'receive']]",low-intermediate,2,True
+['siren' 'alert'],2,"[['heart', 'love'], ['flag', 'wave'], ['truck', 'transport'], ['stereo', 'receive']]",low-intermediate,0,False
 ['criminal' 'innocence'],0,"[['novice', 'experience'], ['expert', 'humility'], ['worker', 'employment'], ['elegant', 'style']]",low-intermediate,0,True
 ['fork' 'utensil'],0,"[['jet', 'airplane'], ['fact', 'idea'], ['program', 'computer'], ['mountain', 'plastic']]",low-intermediate,0,True
 ['expert' 'skilled'],3,"[['athlete', 'thin'], ['student', 'intelligent'], ['spy', 'friendly'], ['fanatic', 'enthusiastic']]",low-intermediate,0,False
@@ -385,15 +385,15 @@ stem,answer,choice,prefix,prediction,accuracy
 ['mechanic' 'cars'],0,"[['dentist', 'teeth'], ['doctor', 'children'], ['chef', 'vegetables'], ['playwright', 'theaters']]",low-intermediate,0,True
 ['verse' 'song'],0,"[['core', 'apple'], ['mop', 'broom'], ['supermarket', 'office'], ['coat', 'jacket']]",low-intermediate,0,True
 ['helmet' 'protect'],0,"[['bomb', 'destroy'], ['storm', 'rain'], ['parade', 'walk'], ['dream', 'sleep']]",low-intermediate,0,True
-['cloth' 'threads'],2,"[['gun', 'bullets'], ['guitar', 'drums'], ['chain', 'links'], ['star', 'planets']]",low-intermediate,2,True
+['cloth' 'threads'],2,"[['gun', 'bullets'], ['guitar', 'drums'], ['chain', 'links'], ['star', 'planets']]",low-intermediate,0,False
 ['foot' 'inches'],2,"[['bathtub', 'gallons'], ['meter', 'miles'], ['pound', 'ounces'], ['fork', 'spoons']]",low-intermediate,0,False
 ['full' 'empty'],3,"[['piercing', 'sharp'], ['fancy', 'elegant'], ['traditional', 'old'], ['relaxing', 'stressful']]",low-intermediate,0,False
 ['alarm' 'warn'],0,"[['map', 'navigate'], ['dog', 'party'], ['cup', 'pour'], ['shirt', 'design']]",low-intermediate,0,True
-['trip' 'fall'],2,"[['spill', 'run'], ['play', 'cry'], ['exercise', 'sweat'], ['order', 'enjoy']]",low-intermediate,2,True
+['trip' 'fall'],2,"[['spill', 'run'], ['play', 'cry'], ['exercise', 'sweat'], ['order', 'enjoy']]",low-intermediate,0,False
 ['adorable' 'cute'],3,"[['obvious', 'mysterious'], ['unkind', 'happy'], ['polite', 'common'], ['tragic', 'sad']]",low-intermediate,0,False
 ['priceless' 'valuable'],0,"[['wonderful', 'good'], ['temporary', 'eternal'], ['distant', 'far'], ['new', 'original']]",low-intermediate,0,True
 ['loathe' 'dislike'],2,"[['praise', 'enjoy'], ['watch', 'observe'], ['worship', 'admire'], ['burn', 'scorch']]",low-intermediate,0,False
-['cotton' 'cloth'],1,"[['trust', 'pleasure'], ['joy', 'emotion'], ['rain', 'snow'], ['music', 'piano']]",low-intermediate,2,False
+['cotton' 'cloth'],1,"[['trust', 'pleasure'], ['joy', 'emotion'], ['rain', 'snow'], ['music', 'piano']]",low-intermediate,0,False
 ['policeman' 'enforce'],1,"[['politician', 'destroy'], ['judge', 'uphold'], ['mother', 'teach'], ['television', 'inform']]",low-intermediate,0,False
 ['mirror' 'reflect'],1,"[['preacher', 'cook'], ['telescope', 'magnify'], ['nurse', 'smoke'], ['lock', 'unlock']]",low-intermediate,0,False
 ['help' 'hinder'],0,"[['hurry', 'delay'], ['travel', 'fly'], ['steal', 'take'], ['smile', 'laugh']]",low-intermediate,0,True
@@ -401,7 +401,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['outdated' 'modern'],0,"[['beautiful', 'ugly'], ['happy', 'glad'], ['successful', 'rich'], ['curious', 'smart']]",low-intermediate,0,True
 ['butcher' 'meat'],3,"[['maid', 'chores'], ['teacher', 'knowledge'], ['librarian', 'books'], ['baker', 'bread']]",low-intermediate,0,False
 ['positive' 'negative'],0,"[['clean', 'filthy'], ['angry', 'upset'], ['friendly', 'popular'], ['challenging', 'interesting']]",low-intermediate,0,True
-['strange' 'familiar'],3,"[['easy', 'simple'], ['great', 'good'], ['pretty', 'sour'], ['sick', 'healthy']]",low-intermediate,2,False
+['strange' 'familiar'],3,"[['easy', 'simple'], ['great', 'good'], ['pretty', 'sour'], ['sick', 'healthy']]",low-intermediate,0,False
 ['comedy' 'funny'],2,"[['mystery', 'boring'], ['drama', 'romantic'], ['tragedy', 'sad'], ['newspaper', 'expensive']]",low-intermediate,0,False
 ['daffodil' 'plant'],2,"[['spider', 'insect'], ['fortune', 'money'], ['diamond', 'stone'], ['planet', 'star']]",low-intermediate,0,False
 ['root' 'plant'],0,"[['blade', 'knife'], ['pot', 'pan'], ['microphone', 'radio'], ['television', 'satellite']]",low-intermediate,0,True
@@ -409,7 +409,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['ingredient' 'recipe'],2,"[['moral', 'story'], ['chair', 'table'], ['roof', 'house'], ['map', 'plan']]",low-intermediate,0,False
 ['plant' 'garden'],2,"[['head', 'face'], ['motorcycle', 'wheel'], ['buckle', 'belt'], ['idea', 'plan']]",low-intermediate,0,False
 ['stage' 'theater'],1,"[['march', 'belief'], ['jacket', 'suit'], ['fruit', 'apple'], ['windmill', 'wind']]",low-intermediate,0,False
-['cigarette' 'unhealthy'],0,"[['sin', 'immoral'], ['baby', 'wise'], ['husband', 'rich'], ['nation', 'peaceful']]",low-intermediate,2,False
+['cigarette' 'unhealthy'],0,"[['sin', 'immoral'], ['baby', 'wise'], ['husband', 'rich'], ['nation', 'peaceful']]",low-intermediate,0,True
 ['wool' 'sheep'],0,"[['leather', 'cows'], ['metal', 'trees'], ['paper', 'rocks'], ['wood', 'mountains']]",low-intermediate,0,True
 ['optimism' 'pesimissm'],0,"[['success', 'failure'], ['food', 'hunger'], ['motivation', 'dedication'], ['maturity', 'youth']]",low-intermediate,0,True
 ['bright' 'dull'],3,"[['obvious', 'clear'], ['guilty', 'wrong'], ['secret', 'hidden'], ['ordinary', 'unusual']]",low-intermediate,0,False
@@ -417,7 +417,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['apple' 'tree'],2,"[['cow', 'field'], ['wish', 'dream'], ['pearl', 'clam'], ['tooth', 'sandwich']]",low-intermediate,0,False
 ['orphan' 'parents'],0,"[['prisoner', 'freedom'], ['doctor', 'patience'], ['man', 'feelings'], ['star', 'space']]",low-intermediate,0,True
 ['mansion' 'large'],1,"[['tree', 'free'], ['suit', 'formal'], ['car', 'safe'], ['ladder', 'low']]",low-intermediate,0,False
-['insecure' 'confidence'],1,"[['disabled', 'worth'], ['certain', 'doubt'], ['unemployed', 'hope'], ['elegant', 'sympathy']]",low-intermediate,2,False
+['insecure' 'confidence'],1,"[['disabled', 'worth'], ['certain', 'doubt'], ['unemployed', 'hope'], ['elegant', 'sympathy']]",low-intermediate,0,False
 ['house' 'shelter'],0,"[['fire', 'heat'], ['tire', 'wheels'], ['mother', 'children'], ['cow', 'meat']]",low-intermediate,0,True
 ['pain' 'discomfort'],0,"[['carelessness', 'mistakes'], ['ignorance', 'knowledge'], ['laughter', 'jokes'], ['food', 'nutrition']]",low-intermediate,0,True
 ['general' 'army'],1,"[['queen', 'fortress'], ['guide', 'expedition'], ['dad', 'business'], ['salesman', 'sail']]",low-intermediate,0,False
@@ -429,5 +429,5 @@ stem,answer,choice,prefix,prediction,accuracy
 ['liar' 'honesty'],2,"[['lawyer', 'mercy'], ['mother', 'children'], ['fool', 'wisdom'], ['soldier', 'power']]",low-intermediate,0,False
 ['room' 'house'],1,"[['beach', 'shore'], ['stem', 'flower'], ['school', 'classroom'], ['tree', 'leaf']]",low-intermediate,0,False
 ['ruby' 'gem'],3,"[['baseball', 'basketball'], ['concert', 'music'], ['party', 'house'], ['trophy', 'prize']]",low-intermediate,0,False
-['gigantic' 'large'],3,"[['new', 'strange'], ['little', 'small'], ['funny', 'important'], ['freezing', 'cold']]",low-intermediate,2,False
+['gigantic' 'large'],3,"[['new', 'strange'], ['little', 'small'], ['funny', 'important'], ['freezing', 'cold']]",low-intermediate,0,False
 ['almond' 'nut'],1,"[['hill', 'mountain'], ['helicopter', 'aircraft'], ['sport', 'football'], ['lamp', 'lightbulb']]",low-intermediate,0,False

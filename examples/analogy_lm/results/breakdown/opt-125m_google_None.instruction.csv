@@ -62,7 +62,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['responsible' 'irresponsible'],2,"[['possibly', 'fortunate'], ['uninformed', 'unaware'], ['sure', 'unsure'], ['decrease', 'decreases']]",gram2-opposite,0,False
 ['Beirut' 'Lebanon'],3,"[['Nigeria', 'naira'], ['China', 'Gabon'], ['Tegucigalpa', 'Paramaribo'], ['Belgrade', 'Serbia']]",capital-world,0,False
 ['Manama' 'Bahrain'],2,"[['Algeria', 'dinar'], ['Algeria', 'Kazakhstan'], ['Manila', 'Philippines'], ['Bamako', 'Caracas']]",capital-world,0,False
-['Paramaribo' 'Suriname'],2,"[['Bangkok', 'Amman'], ['Poland', 'zloty'], ['Paris', 'France'], ['Malawi', 'Honduras']]",capital-world,0,False
+['Paramaribo' 'Suriname'],2,"[['Bangkok', 'Amman'], ['Poland', 'zloty'], ['Paris', 'France'], ['Malawi', 'Honduras']]",capital-world,1,False
 ['Libreville' 'Gabon'],3,"[['Russia', 'ruble'], ['Dublin', 'Gaborone'], ['Tunisia', 'Vietnam'], ['Lilongwe', 'Malawi']]",capital-world,0,False
 ['Zagreb' 'Croatia'],3,"[['Kathmandu', 'Roseau'], ['Latvia', 'lats'], ['Romania', 'Sudan'], ['Abuja', 'Nigeria']]",capital-world,0,False
 ['Banjul' 'Gambia'],2,"[['Iran', 'rial'], ['Rabat', 'Kampala'], ['Beijing', 'China'], ['Ireland', 'Ghana']]",capital-world,0,False
