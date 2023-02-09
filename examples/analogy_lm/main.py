@@ -166,7 +166,7 @@ if __name__ == '__main__':
         for target_model in language_models.keys():
 
             if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv"):
-                _df = analogy_solver(target_model, target_data, batch_size=8, instruction_type="instruction-a")
+                _df = analogy_solver(target_model, target_data, batch_size=16, instruction_type="instruction-a")
                 _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv", index=False)
             else:
                 _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv")
@@ -176,7 +176,7 @@ if __name__ == '__main__':
             )
 
             if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv"):
-                _df = analogy_solver(target_model, target_data, batch_size=8)
+                _df = analogy_solver(target_model, target_data, batch_size=16)
                 _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv", index=False)
             else:
                 _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv")
