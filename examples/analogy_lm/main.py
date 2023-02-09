@@ -42,11 +42,11 @@ from datasets import load_dataset
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
 instructions = {
-    "instruction-A": ["Which one of the following is an analogy?", "The correct answer is"]
+    "instruction-a": ["Which one of the following is an analogy?", "The correct answer is"]
 }
 templates = {
-        'template-a': "`<subj-a>` is to `<obj-a>` what `<subj-b>` is to `<obj-b>`",
-        'template-b': "`<subj-a>` is to `<obj-a>` as `<subj-b>` is to `<obj-b>`",
+        'template-a': ["<subj-a> is to <obj-a> what", "<subj-b> is to <obj-b>"],
+        'template-b': ["<subj-a> is to <obj-a> as", "<subj-b> is to <obj-b>"],
     }
 
 
@@ -54,10 +54,10 @@ def get_input(query_pair: List,
               candidate_pairs: List,
               template_type: str = 'template-a',
               instruction_type: str = None):
-    template = templates[template_type].replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
+    template_header = templates[template_type][0].replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
     if instruction_type is None:
-        return [f"{template.replace('<subj-b>', a).replace('<obj-b>', b)}" for a, b in candidate_pairs]
-    candidate_prompted = "\n".join([f"{n+1}) {template.replace('<subj-b>', a).replace('<obj-b>', b)}" for n, (a, b) in enumerate(candidate_pairs)])
+        return [[template_header, templates[template_type][1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+    candidate_prompted = "\n".join([f"{n+1}) {template_header} {templates[template_type][1].replace('<subj-b>', a).replace('<obj-b>', b)}" for n, (a, b) in enumerate(candidate_pairs)])
     header, footer = instructions[instruction_type]
     return [[f"{header}\n{candidate_prompted}\n{footer}", f"{n + 1}"] for n in range(len(candidate_pairs))]
 
@@ -72,19 +72,19 @@ analogy_types = [
     ['u4', None],
     ['google', None],
     ['bats', None],
-    ['t_rex_relational_similarity', None],
-    ['conceptnet_relational_similarity', None],
-    ['nell_relational_similarity', None]
+    # ['t_rex_relational_similarity', None],
+    # ['conceptnet_relational_similarity', None],
+    # ['nell_relational_similarity', None]
 ]
 language_models = {
-    "roberta-base": lmppl.MaskedLM,  # 110M
-    "roberta-large": lmppl.MaskedLM,  # 355M
-    "microsoft/deberta-v3-xsmall": lmppl.MaskedLM,  # 70M
-    "microsoft/deberta-v3-small": lmppl.MaskedLM,  # 142M
-    "microsoft/deberta-v3-base": lmppl.MaskedLM,  # 184M
-    "microsoft/deberta-v3-large": lmppl.MaskedLM,  # 434M
-    "microsoft/deberta-v2-xlarge": lmppl.MaskedLM,  # 900M
-    "microsoft/deberta-v2-xxlarge": lmppl.MaskedLM,  # 1.5B
+    # "roberta-base": lmppl.MaskedLM,  # 110M
+    # "roberta-large": lmppl.MaskedLM,  # 355M
+    # "microsoft/deberta-v3-xsmall": lmppl.MaskedLM,  # 70M
+    # "microsoft/deberta-v3-small": lmppl.MaskedLM,  # 142M
+    # "microsoft/deberta-v3-base": lmppl.MaskedLM,  # 184M
+    # "microsoft/deberta-v3-large": lmppl.MaskedLM,  # 434M
+    # "microsoft/deberta-v2-xlarge": lmppl.MaskedLM,  # 900M
+    # "microsoft/deberta-v2-xxlarge": lmppl.MaskedLM,  # 1.5B
     "gpt2": lmppl.LM,  # 124M
     "gpt2-medium": lmppl.LM,  # 355M
     "gpt2-large": lmppl.LM,  # 774M
@@ -128,7 +128,10 @@ def analogy_solver(
 
     # model setup
     lm_class = language_models[model]
-    scorer = lm_class(model)
+    if lm_class is lmppl.MaskedLM:
+        scorer = lm_class(model, max_length=256)
+    else:
+        scorer = lm_class(model)
 
     # get scores
     if lm_class is lmppl.EncoderDecoderLM:
@@ -143,34 +146,43 @@ def analogy_solver(
             batch=batch_size
         )
     index_score = list(zip(dataset_index, scores))
-    scores_aligned = [(i, [b for a, b in index_score if a == i]) for i in set(dataset_index)]
-    prediction = [(i[0], i[1].index(min(i[1]))) for i in scores_aligned]
-    prediction = [i[1] for i in sorted(prediction, key=lambda x: x[0])]
+    scores_aligned = [(i, [b for a, b in index_score if a == i]) for i in sorted(list(set(dataset_index)))]
+    prediction = [i[1].index(min(i[1])) for i in scores_aligned]
 
     # compute accuracy
     df = dataset.to_pandas()
+    df['choice'] = [[_i.tolist() for _i in i] for i in df['choice']]
     df['prediction'] = prediction
     df['accuracy'] = df['prediction'] == df['answer']
     return df
 
 
 if __name__ == '__main__':
-    results = []
     os.makedirs('results/breakdown', exist_ok=True)
 
+    results = []
     for target_data, prefix in analogy_types:
 
         for target_model in language_models.keys():
 
-            _df = analogy_solver(target_model, target_data, batch_size=16, instruction_type="instruction-A")
-            _df.to_csv(f"results/breakdown/{target_model}_{target_data}_{prefix}.instruction.csv", index=False)
+            if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv"):
+                _df = analogy_solver(target_model, target_data, batch_size=8, instruction_type="instruction-a")
+                _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv", index=False)
+            else:
+                _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv")
             results.append(
-                {'accuracy': _df['accuracy'].mean(), 'model': target_model, 'approach': 'instruction', 'prefix': prefix}
+                {'accuracy': _df['accuracy'].mean(), 'model': target_model, 'approach': 'instruction', 'prefix': prefix,
+                 'data': target_data}
             )
 
-            _df = analogy_solver(target_model, target_data, batch_size=16)
-            _df.to_csv(f"results/breakdown/{target_model}_{target_data}_{prefix}.prompt.csv", index=False)
+            if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv"):
+                _df = analogy_solver(target_model, target_data, batch_size=8)
+                _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv", index=False)
+            else:
+                _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv")
+
             results.append(
-                {'accuracy': _df['accuracy'].mean(), 'model': target_model, 'approach': 'prompt', 'prefix': prefix}
+                {'accuracy': _df['accuracy'].mean(), 'model': target_model, 'approach': 'prompt', 'prefix': prefix, 'data': target_data}
             )
+
     pd.DataFrame(results).to_csv('results/full_result.csv', index=False)
