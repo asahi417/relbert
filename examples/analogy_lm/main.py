@@ -53,10 +53,15 @@ templates = {
 def get_input(query_pair: List,
               candidate_pairs: List,
               template_type: str = 'template-a',
-              instruction_type: str = None):
+              instruction_type: str = None,
+              encoder_decoder: bool = False):
     template_header = templates[template_type][0].replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
     if instruction_type is None:
-        return [[template_header, templates[template_type][1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+        if encoder_decoder:
+            template_header = ' '.join(template_header.split(' ')[:-1])  # remove the last word
+            return [[f"generate analogy: {template_header}", templates[template_type][1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+        else:
+            return [[template_header, templates[template_type][1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
     candidate_prompted = "\n".join([f"{n+1}) {template_header} {templates[template_type][1].replace('<subj-b>', a).replace('<obj-b>', b)}" for n, (a, b) in enumerate(candidate_pairs)])
     header, footer = instructions[instruction_type]
     return [[f"{header}\n{candidate_prompted}\n{footer}", f"{n + 1}"] for n in range(len(candidate_pairs))]
@@ -93,16 +98,20 @@ language_models = {
     "facebook/opt-125m": lmppl.LM,  # 125M
     "facebook/opt-350m": lmppl.LM,  # 350M
     "facebook/opt-1.3b": lmppl.LM,  # 1.3B
+    "facebook/opt-30b": lmppl.LM,  # 30B
     "facebook/opt-iml-1.3b": lmppl.LM,  # 1.3B
     "facebook/opt-iml-max-1.3b": lmppl.LM,  # 1.3B
+    "facebook/opt-iml-30b": lmppl.LM,  # 30B
     "t5-small": lmppl.EncoderDecoderLM,  # 60M
     "t5-base": lmppl.EncoderDecoderLM,  # 220M
     "t5-large": lmppl.EncoderDecoderLM,  # 770M
     "t5-3b": lmppl.EncoderDecoderLM,  # 3B
+    "t5-11b": lmppl.EncoderDecoderLM,  # 11B
     "google/flan-t5-small": lmppl.EncoderDecoderLM,  # 60M
     "google/flan-t5-base": lmppl.EncoderDecoderLM,  # 220M
     "google/flan-t5-large": lmppl.EncoderDecoderLM,  # 770M
     "google/flan-t5-xl": lmppl.EncoderDecoderLM,  # 3B
+    "google/flan-t5-xxl": lmppl.EncoderDecoderLM,  # 11B
 }
 
 
@@ -167,7 +176,7 @@ if __name__ == '__main__':
         for target_model in language_models.keys():
 
             if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv"):
-                _df = analogy_solver(target_model, target_data, batch_size=16, instruction_type="instruction-a")
+                _df = analogy_solver(target_model, target_data, data_prefix=prefix, batch_size=16, instruction_type="instruction-a")
                 _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv", index=False)
             else:
                 _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv")
@@ -182,7 +191,7 @@ if __name__ == '__main__':
             )
 
             if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv"):
-                _df = analogy_solver(target_model, target_data, batch_size=16)
+                _df = analogy_solver(target_model, target_data, data_prefix=prefix, batch_size=16)
                 _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv", index=False)
             else:
                 _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv")
