@@ -72,9 +72,9 @@ analogy_types = [
     ['u4', None],
     ['google', None],
     ['bats', None],
-    # ['t_rex_relational_similarity', None],
-    # ['conceptnet_relational_similarity', None],
-    # ['nell_relational_similarity', None]
+    ['t_rex_relational_similarity', None],
+    ['conceptnet_relational_similarity', None],
+    ['nell_relational_similarity', None]
 ]
 language_models = {
     # "roberta-base": lmppl.MaskedLM,  # 110M
