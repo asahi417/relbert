@@ -98,7 +98,7 @@ language_models = {
     "facebook/opt-125m": lmppl.LM,  # 125M
     "facebook/opt-350m": lmppl.LM,  # 350M
     "facebook/opt-1.3b": lmppl.LM,  # 1.3B
-    "facebook/opt-30b": lmppl.LM,  # 30B
+    # "facebook/opt-30b": lmppl.LM,  # 30B
     "facebook/opt-iml-1.3b": lmppl.LM,  # 1.3B
     "facebook/opt-iml-max-1.3b": lmppl.LM,  # 1.3B
     "facebook/opt-iml-30b": lmppl.LM,  # 30B
