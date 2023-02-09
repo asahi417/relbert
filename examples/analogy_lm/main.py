@@ -101,7 +101,7 @@ language_models = {
     # "facebook/opt-30b": lmppl.LM,  # 30B
     "facebook/opt-iml-1.3b": lmppl.LM,  # 1.3B
     "facebook/opt-iml-max-1.3b": lmppl.LM,  # 1.3B
-    "facebook/opt-iml-30b": lmppl.LM,  # 30B
+    # "facebook/opt-iml-30b": lmppl.LM,  # 30B
     "t5-small": lmppl.EncoderDecoderLM,  # 60M
     "t5-base": lmppl.EncoderDecoderLM,  # 220M
     "t5-large": lmppl.EncoderDecoderLM,  # 770M
