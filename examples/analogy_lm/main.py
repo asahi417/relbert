@@ -61,6 +61,7 @@ def get_input(query_pair: List,
     header, footer = instructions[instruction_type]
     return [[f"{header}\n{candidate_prompted}\n{footer}", f"{n + 1}"] for n in range(len(candidate_pairs))]
 
+
 analogy_types = [
     ['sat_metaphor', '0'],
     ['sat_metaphor', '1'],
@@ -171,8 +172,13 @@ if __name__ == '__main__':
             else:
                 _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv")
             results.append(
-                {'accuracy': _df['accuracy'].mean(), 'model': target_model, 'approach': 'instruction', 'prefix': prefix,
-                 'data': target_data}
+                {
+                    'accuracy': _df['accuracy'].mean(),
+                    'model': target_model,
+                    'approach': 'instruction',
+                    'prefix': prefix,
+                    'data': target_data
+                }
             )
 
             if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv"):
@@ -182,7 +188,13 @@ if __name__ == '__main__':
                 _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv")
 
             results.append(
-                {'accuracy': _df['accuracy'].mean(), 'model': target_model, 'approach': 'prompt', 'prefix': prefix, 'data': target_data}
+                {
+                    'accuracy': _df['accuracy'].mean(),
+                    'model': target_model,
+                    'approach': 'prompt',
+                    'prefix': prefix,
+                    'data': target_data
+                }
             )
 
     pd.DataFrame(results).to_csv('results/full_result.csv', index=False)
