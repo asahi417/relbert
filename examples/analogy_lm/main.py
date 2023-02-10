@@ -35,7 +35,7 @@ import logging
 import os
 from typing import List
 
-# import torch
+import torch
 import lmppl
 import pandas as pd
 from datasets import load_dataset
@@ -85,7 +85,7 @@ analogy_types = [
 ]
 
 language_models = {
-    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
+    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
     # "roberta-base": [lmppl.MaskedLM, None],  # 110M
     # "roberta-large": [lmppl.MaskedLM, None],  # 355M
     # "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, None],  # 70M
@@ -94,22 +94,24 @@ language_models = {
     # "microsoft/deberta-v3-large": [lmppl.MaskedLM, None, 32],  # 434M
     # "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, None, 32],  # 900M
     # "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, None, 32],  # 1.5B
+
     "gpt2": [lmppl.LM, None, 64],  # 124M
     "gpt2-medium": [lmppl.LM, None, 64],  # 355M
     "gpt2-large": [lmppl.LM, None, 32],  # 774M
     "gpt2-xl": [lmppl.LM, None, 16],  # 1.5B
+    "EleutherAI/gpt-j-6B": [lmppl.LM, None, 1],  # 6B
     "facebook/opt-125m": [lmppl.LM, None, 64],  # 125M
     "facebook/opt-350m": [lmppl.LM, None, 64],  # 350M
     "facebook/opt-1.3b": [lmppl.LM, None, 16],  # 1.3B
-    # "facebook/opt-30b": [lmppl.LM, torch.float16, 1],  # 30B
     "facebook/opt-iml-1.3b": [lmppl.LM, None, 16],  # 1.3B
     "facebook/opt-iml-max-1.3b": [lmppl.LM, None, 16],  # 1.3B
+    # "facebook/opt-30b": [lmppl.LM, torch.float16, 1],  # 30B
     # "facebook/opt-iml-30b": [lmppl.LM, torch.float16, 1],  # 30B
     "t5-small": [lmppl.EncoderDecoderLM, None, 64],  # 60M
     "t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
     "t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
     "t5-3b": [lmppl.EncoderDecoderLM, None, 16],  # 3B
-    "t5-11b": [lmppl.EncoderDecoderLM, None, 1],  # 11B
+    # "t5-11b": [lmppl.EncoderDecoderLM, None, 1],  # 11B
     "google/flan-t5-small": [lmppl.EncoderDecoderLM, None, 64],  # 60M
     "google/flan-t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
     "google/flan-t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
