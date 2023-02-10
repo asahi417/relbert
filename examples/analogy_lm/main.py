@@ -109,13 +109,11 @@ language_models = {
     "t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
     "t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
     "t5-3b": [lmppl.EncoderDecoderLM, None, 16],  # 3B
-    # "t5-11b": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
     "t5-11b": [lmppl.EncoderDecoderLM, None, 1],  # 11B
     "google/flan-t5-small": [lmppl.EncoderDecoderLM, None, 64],  # 60M
     "google/flan-t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
     "google/flan-t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, None, 16],  # 3B
-    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
     # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
 }
 
@@ -141,13 +139,6 @@ def analogy_solver(
         dataset_flat += i
         dataset_index += [n] * len(i)
 
-    # model setup
-    # lm_class, torch_type, batch = language_models[model]
-    # if lm_class is lmppl.MaskedLM:
-    #     scorer = lm_class(model, max_length=256, torch_dtype=torch_type)
-    # else:
-    #     scorer = lm_class(model, torch_dtype=torch_type)
-
     # get scores
     if scores_texts is None:
         if lm_class is lmppl.EncoderDecoderLM:
@@ -156,17 +147,16 @@ def analogy_solver(
                 output_texts=[x[1] for x in dataset_flat],
                 batch=batch
             )
-            input_text = [{"input": x[0], "output": x[1]} for x in dataset_flat]
+            scores_texts = [{"input": x[0], "output": x[1]} for x in dataset_flat]
         else:
             scores = scoring_model.get_perplexity(
                 input_texts=[f"{x[0]} {x[1]}" for x in dataset_flat],
                 batch=batch
             )
-            input_text = [{"input": f"{x[0]} {x[1]}", "output": ""} for x in dataset_flat]
-        for i, s in zip(input_text, scores):
+            scores_texts = [{"input": f"{x[0]} {x[1]}", "output": ""} for x in dataset_flat]
+        for i, s in zip(scores_texts, scores):
             i['score'] = float(s)
-    else:
-        scores = [x['score'] for x in scores_texts]
+    scores = [x['score'] for x in scores_texts]
 
     index_score = list(zip(dataset_index, scores))
     scores_aligned = [(i, [b for a, b in index_score if a == i]) for i in sorted(list(set(dataset_index)))]
@@ -186,8 +176,8 @@ if __name__ == '__main__':
     results = []
     for target_model in language_models.keys():
 
+        # model setup
         lm_class, torch_type, batch = language_models[target_model]
-
         if lm_class is lmppl.MaskedLM:
             scorer = lm_class(target_model, max_length=256, torch_dtype=torch_type)
         else:
