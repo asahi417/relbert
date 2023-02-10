@@ -164,7 +164,7 @@ def analogy_solver(
 
     index_score = list(zip(dataset_index, scores))
     scores_aligned = [(i, [b for a, b in index_score if a == i]) for i in sorted(list(set(dataset_index)))]
-    prediction = [i[1].index(min(i[1])) if len(set(i)) > 1 else None for i in scores_aligned]
+    prediction = [i[1].index(min(i[1])) if len(set(i[1])) > 1 else None for i in scores_aligned]
 
     # compute accuracy
     df = dataset.to_pandas()
