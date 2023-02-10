@@ -202,10 +202,10 @@ if __name__ == '__main__':
             if not os.path.exists(breakdown_file):
 
                 if os.path.dirname(breakdown_file) != '':
-                    os.makedirs(breakdown_file, exist_ok=True)
+                    os.makedirs(os.path.dirname(breakdown_file), exist_ok=True)
 
                 if os.path.dirname(score_file) != '':
-                    os.makedirs(score_file, exist_ok=True)
+                    os.makedirs(os.path.dirname(score_file), exist_ok=True)
 
                 _scores_texts = None
                 if os.path.exists(score_file):
