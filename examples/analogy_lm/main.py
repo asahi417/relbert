@@ -200,17 +200,27 @@ if __name__ == '__main__':
             score_file = f"results/scores/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.json"
             breakdown_file = f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv"
             if not os.path.exists(breakdown_file):
+
+                if os.path.dirname(breakdown_file) != '':
+                    os.makedirs(breakdown_file, exist_ok=True)
+
+                if os.path.dirname(score_file) != '':
+                    os.makedirs(score_file, exist_ok=True)
+
+                _scores_texts = None
                 if os.path.exists(score_file):
                     with open(score_file) as f:
                         _scores_texts = json.load(f)
-                else:
-                    _scores_texts = None
+
                 _df, _scores_texts = analogy_solver(target_model, target_data, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
+
                 with open(score_file, 'w') as f:
                     json.dump(_scores_texts, f)
+
             else:
                 _df = pd.read_csv(breakdown_file)
+
             print(target_data, prefix, target_model, _df['accuracy'].mean())
             results.append(
                 {
