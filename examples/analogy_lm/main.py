@@ -219,9 +219,9 @@ if __name__ == '__main__':
                 _df, _scores_texts = analogy_solver(target_model, target_data, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
 
-                with open(score_file, 'w') as f:
-                    json.dump(_scores_texts, f)
-
+                if scores_texts is not None:
+                    with open(score_file, 'w') as f:
+                        json.dump(_scores_texts, f)
             else:
                 _df = pd.read_csv(breakdown_file)
 
