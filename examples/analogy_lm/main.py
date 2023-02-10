@@ -30,11 +30,12 @@ Which one of the following is an analogy?
 5) ''story'' is to ''building'' what ''root'' is to ''plant''
 The correct answer is
 """
-
+import json
 import logging
 import os
 from typing import List
 
+import torch
 import lmppl
 import pandas as pd
 from datasets import load_dataset
@@ -82,44 +83,45 @@ analogy_types = [
     ['conceptnet_relational_similarity', None],
     ['nell_relational_similarity', None]
 ]
+
 language_models = {
-    # "roberta-base": lmppl.MaskedLM,  # 110M
-    # "roberta-large": lmppl.MaskedLM,  # 355M
-    # "microsoft/deberta-v3-xsmall": lmppl.MaskedLM,  # 70M
-    # "microsoft/deberta-v3-small": lmppl.MaskedLM,  # 142M
-    # "microsoft/deberta-v3-base": lmppl.MaskedLM,  # 184M
-    # "microsoft/deberta-v3-large": lmppl.MaskedLM,  # 434M
-    # "microsoft/deberta-v2-xlarge": lmppl.MaskedLM,  # 900M
-    # "microsoft/deberta-v2-xxlarge": lmppl.MaskedLM,  # 1.5B
-    "gpt2": lmppl.LM,  # 124M
-    "gpt2-medium": lmppl.LM,  # 355M
-    "gpt2-large": lmppl.LM,  # 774M
-    "gpt2-xl": lmppl.LM,  # 1.5B
-    "facebook/opt-125m": lmppl.LM,  # 125M
-    "facebook/opt-350m": lmppl.LM,  # 350M
-    "facebook/opt-1.3b": lmppl.LM,  # 1.3B
-    # "facebook/opt-30b": lmppl.LM,  # 30B
-    "facebook/opt-iml-1.3b": lmppl.LM,  # 1.3B
-    "facebook/opt-iml-max-1.3b": lmppl.LM,  # 1.3B
-    # "facebook/opt-iml-30b": lmppl.LM,  # 30B
-    "t5-small": lmppl.EncoderDecoderLM,  # 60M
-    "t5-base": lmppl.EncoderDecoderLM,  # 220M
-    "t5-large": lmppl.EncoderDecoderLM,  # 770M
-    "t5-3b": lmppl.EncoderDecoderLM,  # 3B
-    # "t5-11b": lmppl.EncoderDecoderLM,  # 11B
-    "google/flan-t5-small": lmppl.EncoderDecoderLM,  # 60M
-    "google/flan-t5-base": lmppl.EncoderDecoderLM,  # 220M
-    "google/flan-t5-large": lmppl.EncoderDecoderLM,  # 770M
-    "google/flan-t5-xl": lmppl.EncoderDecoderLM,  # 3B
-    # "google/flan-t5-xxl": lmppl.EncoderDecoderLM,  # 11B
+    # "roberta-base": [lmppl.MaskedLM, None],  # 110M
+    # "roberta-large": [lmppl.MaskedLM, None],  # 355M
+    # "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, None],  # 70M
+    # "microsoft/deberta-v3-small": [lmppl.MaskedLM, None, 128],  # 142M
+    # "microsoft/deberta-v3-base": [lmppl.MaskedLM, None, 128],  # 184M
+    # "microsoft/deberta-v3-large": [lmppl.MaskedLM, None, 64],  # 434M
+    # "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, None, 64],  # 900M
+    # "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, None, 32],  # 1.5B
+    "gpt2": [lmppl.LM, None, 128],  # 124M
+    "gpt2-medium": [lmppl.LM, None, 128],  # 355M
+    "gpt2-large": [lmppl.LM, None, 64],  # 774M
+    "gpt2-xl": [lmppl.LM, None, 16],  # 1.5B
+    "facebook/opt-125m": [lmppl.LM, None, 128],  # 125M
+    "facebook/opt-350m": [lmppl.LM, None, 128],  # 350M
+    "facebook/opt-1.3b": [lmppl.LM, None, 16],  # 1.3B
+    # "facebook/opt-30b": [lmppl.LM, torch.float16, 1],  # 30B
+    "facebook/opt-iml-1.3b": [lmppl.LM, None, 16],  # 1.3B
+    "facebook/opt-iml-max-1.3b": [lmppl.LM, None, 16],  # 1.3B
+    # "facebook/opt-iml-30b": [lmppl.LM, torch.float16, 1],  # 30B
+    "t5-small": [lmppl.EncoderDecoderLM, None, 128],  # 60M
+    "t5-base": [lmppl.EncoderDecoderLM, None, 128],  # 220M
+    "t5-large": [lmppl.EncoderDecoderLM, None, 64],  # 770M
+    "t5-3b": [lmppl.EncoderDecoderLM, None, 16],  # 3B
+    "t5-11b": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
+    "google/flan-t5-small": [lmppl.EncoderDecoderLM, None, 128],  # 60M
+    "google/flan-t5-base": [lmppl.EncoderDecoderLM, None, 128],  # 220M
+    "google/flan-t5-large": [lmppl.EncoderDecoderLM, None, 64],  # 770M
+    "google/flan-t5-xl": [lmppl.EncoderDecoderLM, None, 16],  # 3B
+    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
 }
 
 
 def analogy_solver(
         model,
         data_name,
+        scores_texts = None,
         data_prefix: str = None,
-        batch_size: int = 64,
         template_type: str = 'template-a',
         instruction_type: str = None):
 
@@ -137,34 +139,39 @@ def analogy_solver(
         dataset_index += [n] * len(i)
 
     # model setup
-    lm_class = language_models[model]
-    if lm_class is lmppl.MaskedLM:
-        scorer = lm_class(model, max_length=256)
-    else:
-        scorer = lm_class(model)
+    lm_class, torch_type, batch = language_models[model]
+    scorer = lm_class(model, max_length=256 if lm_class is lmppl.MaskedLM else None, torch_type=torch_type)
 
     # get scores
-    if lm_class is lmppl.EncoderDecoderLM:
-        scores = scorer.get_perplexity(
-            input_texts=[x[0] for x in dataset_flat],
-            output_texts=[x[1] for x in dataset_flat],
-            batch=batch_size
-        )
+    if scores_texts is None:
+        if lm_class is lmppl.EncoderDecoderLM:
+            scores = scorer.get_perplexity(
+                input_texts=[x[0] for x in dataset_flat],
+                output_texts=[x[1] for x in dataset_flat],
+                batch=batch
+            )
+            input_text = [{"input": x[0], "output": x[1]} for x in dataset_flat]
+        else:
+            scores = scorer.get_perplexity(
+                input_texts=[f"{x[0]} {x[1]}" for x in dataset_flat],
+                batch=batch
+            )
+            input_text = [{"input": f"{x[0]} {x[1]}", "output": ""} for x in dataset_flat]
+        for i, s in zip(input_text, scores):
+            i['score'] = float(s)
     else:
-        scores = scorer.get_perplexity(
-            input_texts=[f"{x[0]} {x[1]}" for x in dataset_flat],
-            batch=batch_size
-        )
+        scores = [x['score'] for x in scores_texts]
+
     index_score = list(zip(dataset_index, scores))
     scores_aligned = [(i, [b for a, b in index_score if a == i]) for i in sorted(list(set(dataset_index)))]
-    prediction = [i[1].index(min(i[1])) for i in scores_aligned]
+    prediction = [i[1].index(min(i[1])) if len(set(i)) > 1 else None for i in scores_aligned]
 
     # compute accuracy
     df = dataset.to_pandas()
     df['choice'] = [[_i.tolist() for _i in i] for i in df['choice']]
     df['prediction'] = prediction
     df['accuracy'] = df['prediction'] == df['answer']
-    return df
+    return df, scores_texts
 
 
 if __name__ == '__main__':
@@ -175,27 +182,36 @@ if __name__ == '__main__':
 
         for target_model in language_models.keys():
 
-            if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv"):
-                _df = analogy_solver(target_model, target_data, data_prefix=prefix, batch_size=16, instruction_type="instruction-a")
-                _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv", index=False)
-            else:
-                _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv")
-            results.append(
-                {
-                    'accuracy': _df['accuracy'].mean(),
-                    'model': target_model,
-                    'approach': 'instruction',
-                    'prefix': prefix,
-                    'data': target_data
-                }
-            )
+            # if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv"):
+            #     _df = analogy_solver(target_model, target_data, data_prefix=prefix, instruction_type="instruction-a")
+            #     _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv", index=False)
+            # else:
+            #     _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv")
+            # results.append(
+            #     {
+            #         'accuracy': _df['accuracy'].mean(),
+            #         'model': target_model,
+            #         'approach': 'instruction',
+            #         'prefix': prefix,
+            #         'data': target_data
+            #     }
+            # )
 
-            if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv"):
-                _df = analogy_solver(target_model, target_data, data_prefix=prefix, batch_size=16)
-                _df.to_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv", index=False)
+            score_file = f"results/scores/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.json"
+            breakdown_file = f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv"
+            if not os.path.exists(breakdown_file):
+                if os.path.exists(score_file):
+                    with open(score_file) as f:
+                        _scores_texts = json.load(f)
+                else:
+                    _scores_texts = None
+                _df, _scores_texts = analogy_solver(target_model, target_data, data_prefix=prefix, scores_texts=_scores_texts)
+                _df.to_csv(breakdown_file, index=False)
+                with open(score_file, 'w') as f:
+                    json.dump(_scores_texts, f)
             else:
-                _df = pd.read_csv(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv")
-
+                _df = pd.read_csv(breakdown_file)
+            print(target_data, prefix, target_model, _df['accuracy'].mean())
             results.append(
                 {
                     'accuracy': _df['accuracy'].mean(),
