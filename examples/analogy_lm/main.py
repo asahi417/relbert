@@ -88,30 +88,30 @@ language_models = {
     # "roberta-base": [lmppl.MaskedLM, None],  # 110M
     # "roberta-large": [lmppl.MaskedLM, None],  # 355M
     # "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, None],  # 70M
-    # "microsoft/deberta-v3-small": [lmppl.MaskedLM, None, 128],  # 142M
-    # "microsoft/deberta-v3-base": [lmppl.MaskedLM, None, 128],  # 184M
-    # "microsoft/deberta-v3-large": [lmppl.MaskedLM, None, 64],  # 434M
-    # "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, None, 64],  # 900M
+    # "microsoft/deberta-v3-small": [lmppl.MaskedLM, None, 64],  # 142M
+    # "microsoft/deberta-v3-base": [lmppl.MaskedLM, None, 64],  # 184M
+    # "microsoft/deberta-v3-large": [lmppl.MaskedLM, None, 32],  # 434M
+    # "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, None, 32],  # 900M
     # "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, None, 32],  # 1.5B
-    "gpt2": [lmppl.LM, None, 128],  # 124M
-    "gpt2-medium": [lmppl.LM, None, 128],  # 355M
-    "gpt2-large": [lmppl.LM, None, 64],  # 774M
+    "gpt2": [lmppl.LM, None, 64],  # 124M
+    "gpt2-medium": [lmppl.LM, None, 64],  # 355M
+    "gpt2-large": [lmppl.LM, None, 32],  # 774M
     "gpt2-xl": [lmppl.LM, None, 16],  # 1.5B
-    "facebook/opt-125m": [lmppl.LM, None, 128],  # 125M
-    "facebook/opt-350m": [lmppl.LM, None, 128],  # 350M
+    "facebook/opt-125m": [lmppl.LM, None, 64],  # 125M
+    "facebook/opt-350m": [lmppl.LM, None, 64],  # 350M
     "facebook/opt-1.3b": [lmppl.LM, None, 16],  # 1.3B
     # "facebook/opt-30b": [lmppl.LM, torch.float16, 1],  # 30B
     "facebook/opt-iml-1.3b": [lmppl.LM, None, 16],  # 1.3B
     "facebook/opt-iml-max-1.3b": [lmppl.LM, None, 16],  # 1.3B
     # "facebook/opt-iml-30b": [lmppl.LM, torch.float16, 1],  # 30B
-    "t5-small": [lmppl.EncoderDecoderLM, None, 128],  # 60M
-    "t5-base": [lmppl.EncoderDecoderLM, None, 128],  # 220M
-    "t5-large": [lmppl.EncoderDecoderLM, None, 64],  # 770M
+    "t5-small": [lmppl.EncoderDecoderLM, None, 64],  # 60M
+    "t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
+    "t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
     "t5-3b": [lmppl.EncoderDecoderLM, None, 16],  # 3B
     "t5-11b": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
-    "google/flan-t5-small": [lmppl.EncoderDecoderLM, None, 128],  # 60M
-    "google/flan-t5-base": [lmppl.EncoderDecoderLM, None, 128],  # 220M
-    "google/flan-t5-large": [lmppl.EncoderDecoderLM, None, 64],  # 770M
+    "google/flan-t5-small": [lmppl.EncoderDecoderLM, None, 64],  # 60M
+    "google/flan-t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
+    "google/flan-t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, None, 16],  # 3B
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
 }
