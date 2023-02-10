@@ -94,7 +94,6 @@ language_models = {
     # "microsoft/deberta-v3-large": [lmppl.MaskedLM, None, 32],  # 434M
     # "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, None, 32],  # 900M
     # "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, None, 32],  # 1.5B
-
     "gpt2": [lmppl.LM, None, 64],  # 124M
     "gpt2-medium": [lmppl.LM, None, 64],  # 355M
     "gpt2-large": [lmppl.LM, None, 32],  # 774M
@@ -181,12 +180,7 @@ if __name__ == '__main__':
     results = []
     for target_model in language_models.keys():
 
-        # model setup
-        lm_class, torch_type, batch = language_models[target_model]
-        if lm_class is lmppl.MaskedLM:
-            scorer = lm_class(target_model, max_length=256, torch_dtype=torch_type)
-        else:
-            scorer = lm_class(target_model, torch_dtype=torch_type)
+        scorer = None
 
         for target_data, prefix in analogy_types:
 
@@ -219,6 +213,14 @@ if __name__ == '__main__':
                 if os.path.exists(score_file):
                     with open(score_file) as f:
                         _scores_texts = json.load(f)
+
+                if scorer is None:
+                    # model setup
+                    lm_class, torch_type, batch = language_models[target_model]
+                    if lm_class is lmppl.MaskedLM:
+                        scorer = lm_class(target_model, max_length=256, torch_dtype=torch_type)
+                    else:
+                        scorer = lm_class(target_model, torch_dtype=torch_type)
 
                 _df, _scores_texts = analogy_solver(scorer, target_data, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
