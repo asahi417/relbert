@@ -120,7 +120,7 @@ language_models = {
 def analogy_solver(
         model,
         data_name,
-        scores_texts = None,
+        scores_texts=None,
         data_prefix: str = None,
         template_type: str = 'template-a',
         instruction_type: str = None):
@@ -140,7 +140,7 @@ def analogy_solver(
 
     # model setup
     lm_class, torch_type, batch = language_models[model]
-    scorer = lm_class(model, max_length=256 if lm_class is lmppl.MaskedLM else None, torch_type=torch_type)
+    scorer = lm_class(model, max_length=256 if lm_class is lmppl.MaskedLM else None, torch_dtype=torch_type)
 
     # get scores
     if scores_texts is None:
