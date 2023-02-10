@@ -121,7 +121,7 @@ language_models = {
 
 
 def analogy_solver(
-        model,
+        scoring_model,
         data_name,
         scores_texts=None,
         data_prefix: str = None,
@@ -142,23 +142,23 @@ def analogy_solver(
         dataset_index += [n] * len(i)
 
     # model setup
-    lm_class, torch_type, batch = language_models[model]
-    if lm_class is lmppl.MaskedLM:
-        scorer = lm_class(model, max_length=256, torch_dtype=torch_type)
-    else:
-        scorer = lm_class(model, torch_dtype=torch_type)
+    # lm_class, torch_type, batch = language_models[model]
+    # if lm_class is lmppl.MaskedLM:
+    #     scorer = lm_class(model, max_length=256, torch_dtype=torch_type)
+    # else:
+    #     scorer = lm_class(model, torch_dtype=torch_type)
 
     # get scores
     if scores_texts is None:
         if lm_class is lmppl.EncoderDecoderLM:
-            scores = scorer.get_perplexity(
+            scores = scoring_model.get_perplexity(
                 input_texts=[x[0] for x in dataset_flat],
                 output_texts=[x[1] for x in dataset_flat],
                 batch=batch
             )
             input_text = [{"input": x[0], "output": x[1]} for x in dataset_flat]
         else:
-            scores = scorer.get_perplexity(
+            scores = scoring_model.get_perplexity(
                 input_texts=[f"{x[0]} {x[1]}" for x in dataset_flat],
                 batch=batch
             )
@@ -185,6 +185,14 @@ if __name__ == '__main__':
 
     results = []
     for target_model in language_models.keys():
+
+        lm_class, torch_type, batch = language_models[target_model]
+
+        if lm_class is lmppl.MaskedLM:
+            scorer = lm_class(target_model, max_length=256, torch_dtype=torch_type)
+        else:
+            scorer = lm_class(target_model, torch_dtype=torch_type)
+
         for target_data, prefix in analogy_types:
 
             # if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv"):
@@ -217,7 +225,7 @@ if __name__ == '__main__':
                     with open(score_file) as f:
                         _scores_texts = json.load(f)
 
-                _df, _scores_texts = analogy_solver(target_model, target_data, data_prefix=prefix, scores_texts=_scores_texts)
+                _df, _scores_texts = analogy_solver(scorer, target_data, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
 
                 if _scores_texts is not None:
