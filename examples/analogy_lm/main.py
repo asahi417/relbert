@@ -85,6 +85,7 @@ analogy_types = [
 ]
 
 language_models = {
+    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
     # "roberta-base": [lmppl.MaskedLM, None],  # 110M
     # "roberta-large": [lmppl.MaskedLM, None],  # 355M
     # "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, None],  # 70M
@@ -115,7 +116,7 @@ language_models = {
     "google/flan-t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, None, 16],  # 3B
     # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
-    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
+    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
 }
 
 
@@ -219,7 +220,7 @@ if __name__ == '__main__':
                 _df, _scores_texts = analogy_solver(target_model, target_data, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
 
-                if scores_texts is not None:
+                if _scores_texts is not None:
                     with open(score_file, 'w') as f:
                         json.dump(_scores_texts, f)
             else:
