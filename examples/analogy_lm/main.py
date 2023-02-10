@@ -35,7 +35,7 @@ import logging
 import os
 from typing import List
 
-import torch
+# import torch
 import lmppl
 import pandas as pd
 from datasets import load_dataset
@@ -133,7 +133,10 @@ def analogy_solver(
         assert len(dataset) > 0
 
     # prompt data
-    dataset_prompt = [get_input(x['stem'], x['choice'], template_type, instruction_type) for x in dataset]
+
+    dataset_prompt = [
+        get_input(x['stem'], x['choice'], template_type, instruction_type,
+                  encoder_decoder=type(scoring_model) is lmppl.EncoderDecoderLM) for x in dataset]
     dataset_index, dataset_flat = [], []
     for n, i in enumerate(dataset_prompt):
         dataset_flat += i
