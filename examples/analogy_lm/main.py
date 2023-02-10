@@ -108,12 +108,14 @@ language_models = {
     "t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
     "t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
     "t5-3b": [lmppl.EncoderDecoderLM, None, 16],  # 3B
-    "t5-11b": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
+    # "t5-11b": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
+    "t5-11b": [lmppl.EncoderDecoderLM, None, 1],  # 11B
     "google/flan-t5-small": [lmppl.EncoderDecoderLM, None, 64],  # 60M
     "google/flan-t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
     "google/flan-t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, None, 16],  # 3B
-    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
+    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, torch.float16, 1],  # 11B
+    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
 }
 
 
@@ -140,7 +142,10 @@ def analogy_solver(
 
     # model setup
     lm_class, torch_type, batch = language_models[model]
-    scorer = lm_class(model, max_length=256 if lm_class is lmppl.MaskedLM else None, torch_dtype=torch_type)
+    if lm_class is lmppl.MaskedLM:
+        scorer = lm_class(model, max_length=256, torch_dtype=torch_type)
+    else:
+        scorer = lm_class(model, torch_dtype=torch_type)
 
     # get scores
     if scores_texts is None:
@@ -178,9 +183,8 @@ if __name__ == '__main__':
     os.makedirs('results/breakdown', exist_ok=True)
 
     results = []
-    for target_data, prefix in analogy_types:
-
-        for target_model in language_models.keys():
+    for target_model in language_models.keys():
+        for target_data, prefix in analogy_types:
 
             # if not os.path.exists(f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv"):
             #     _df = analogy_solver(target_model, target_data, data_prefix=prefix, instruction_type="instruction-a")
