@@ -30,27 +30,27 @@ analogy_types = [
 ]
 
 language_models = {
-    "gpt2": [lmppl.LM, 64],  # 124M
+    "gpt2": [lmppl.LM, 128],  # 124M
     "gpt2-medium": [lmppl.LM, 64],  # 355M
     "gpt2-large": [lmppl.LM, 32],  # 774M
-    "gpt2-xl": [lmppl.LM, 16],  # 1.5B
-    "EleutherAI/gpt-j-6B": [lmppl.LM, 1],  # 6B
-    "facebook/opt-125m": [lmppl.LM, 64],  # 125M
+    "gpt2-xl": [lmppl.LM, 32],  # 1.5B
+    "EleutherAI/gpt-j-6B": [lmppl.LM, 8],  # 6B
+    "facebook/opt-125m": [lmppl.LM, 128],  # 125M
     "facebook/opt-350m": [lmppl.LM, 64],  # 350M
-    "facebook/opt-1.3b": [lmppl.LM, 16],  # 1.3B
-    "facebook/opt-iml-1.3b": [lmppl.LM, 16],  # 1.3B
-    "facebook/opt-iml-max-1.3b": [lmppl.LM, 16],  # 1.3B
-    "t5-small": [lmppl.EncoderDecoderLM, 64],  # 60M
+    "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
+    "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
+    "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
+    "t5-small": [lmppl.EncoderDecoderLM, 128],  # 60M
     "t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
-    "t5-large": [lmppl.EncoderDecoderLM, 32],  # 770M
+    "t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
     "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "t5-11b": [lmppl.EncoderDecoderLM, 1],  # 11B
-    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 64],  # 60M
+    "t5-11b": [lmppl.EncoderDecoderLM, 4],  # 11B
+    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 128],  # 60M
     "google/flan-t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
     "google/flan-t5-large": [lmppl.EncoderDecoderLM, 32],  # 770M
-    "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 32],  # 3B
-    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 1],  # 11B
-    "google/switch-base-128": [lmppl.EncoderDecoderLM, 1],  # 220M
+    "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
+    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 4],  # 11B
+    "google/switch-base-128": [lmppl.EncoderDecoderLM, 4],  # 220M
 }
 # language_models.update({
 #     "roberta-base": [lmppl.MaskedLM],  # 110M
