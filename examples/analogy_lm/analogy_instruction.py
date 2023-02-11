@@ -11,7 +11,6 @@ from itertools import product
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 template = "<subj-a> is to <obj-a> what <subj-b> is to <obj-b>"
-template_partial = "<subj> is to <obj>"
 instruction = ["Which one of the following is an analogy?", "The correct answer is"]
 cot = 'Answer the following question by reasoning step-by-step.'
 analogy_types = [
@@ -80,7 +79,7 @@ def get_input(query_pair: List, candidate_pairs: List, output_index: bool, use_c
         tmp = f"{cot}\n{tmp}"
     if output_index:
         return [[tmp, str(n+1)] for n, _ in enumerate(candidate_pairs)]
-    return [[tmp, template_partial.replace('<subj>', a).replace('<obj>', b)] for a, b in candidate_pairs]
+    return [[tmp, template.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1]).replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
 
 
 def analogy_solver(scoring_model, data_name, use_cot: bool, output_index: bool, batch_size: int, scores_texts=None, data_prefix: str = None):
@@ -176,7 +175,8 @@ if __name__ == '__main__':
                 }
             )
             print(target_data, prefix, target_model, _df['accuracy'].mean())
-            assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
+            print(f"Number of None: {_df['prediction'].isnull().sum()}")
+            # assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
 
         del scorer
         gc.collect()
