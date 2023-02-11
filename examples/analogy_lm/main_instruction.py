@@ -45,8 +45,8 @@ language_models = {
     "google/flan-t5-small": 64,  # 60M
     "google/flan-t5-base": 64,  # 220M
     "google/flan-t5-large": 32,  # 770M
-    "google/flan-t5-xl": 16,  # 3B
-    "google/flan-t5-xxl": 1,  # 11B
+    "google/flan-t5-xl": 32,  # 3B
+    "google/flan-t5-xxl": 8  # 11B
 }
 # language_models.update({
 #     "EleutherAI/gpt-neox-20b": 1,  # 20B
