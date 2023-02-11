@@ -50,8 +50,8 @@ language_models = {
     "google/flan-t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
     "google/flan-t5-large": [lmppl.EncoderDecoderLM, 32],  # 770M
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 32],  # 3B
-    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 4],  # 11B
-    "google/switch-base-128": [lmppl.EncoderDecoderLM, 4],  # 220M
+    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 1],  # 11B
+    "google/switch-base-128": [lmppl.EncoderDecoderLM, 1],  # 220M
 }
 # language_models.update({
 #     "roberta-base": [lmppl.MaskedLM],  # 110M
