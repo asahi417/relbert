@@ -85,37 +85,40 @@ analogy_types = [
 ]
 
 language_models = {
-    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
-    # "roberta-base": [lmppl.MaskedLM, None],  # 110M
-    # "roberta-large": [lmppl.MaskedLM, None],  # 355M
-    # "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, None],  # 70M
-    # "microsoft/deberta-v3-small": [lmppl.MaskedLM, None, 64],  # 142M
-    # "microsoft/deberta-v3-base": [lmppl.MaskedLM, None, 64],  # 184M
-    # "microsoft/deberta-v3-large": [lmppl.MaskedLM, None, 32],  # 434M
-    # "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, None, 32],  # 900M
-    # "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, None, 32],  # 1.5B
-    "gpt2": [lmppl.LM, None, 64],  # 124M
-    "gpt2-medium": [lmppl.LM, None, 64],  # 355M
-    "gpt2-large": [lmppl.LM, None, 32],  # 774M
-    "gpt2-xl": [lmppl.LM, None, 16],  # 1.5B
-    "EleutherAI/gpt-j-6B": [lmppl.LM, None, 1],  # 6B
-    "facebook/opt-125m": [lmppl.LM, None, 64],  # 125M
-    "facebook/opt-350m": [lmppl.LM, None, 64],  # 350M
-    "facebook/opt-1.3b": [lmppl.LM, None, 16],  # 1.3B
-    "facebook/opt-iml-1.3b": [lmppl.LM, None, 16],  # 1.3B
-    "facebook/opt-iml-max-1.3b": [lmppl.LM, None, 16],  # 1.3B
-    # "facebook/opt-30b": [lmppl.LM, torch.float16, 1],  # 30B
-    # "facebook/opt-iml-30b": [lmppl.LM, torch.float16, 1],  # 30B
-    "t5-small": [lmppl.EncoderDecoderLM, None, 64],  # 60M
-    "t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
-    "t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
-    "t5-3b": [lmppl.EncoderDecoderLM, None, 16],  # 3B
-    # "t5-11b": [lmppl.EncoderDecoderLM, None, 1],  # 11B
-    "google/flan-t5-small": [lmppl.EncoderDecoderLM, None, 64],  # 60M
-    "google/flan-t5-base": [lmppl.EncoderDecoderLM, None, 64],  # 220M
-    "google/flan-t5-large": [lmppl.EncoderDecoderLM, None, 32],  # 770M
-    "google/flan-t5-xl": [lmppl.EncoderDecoderLM, None, 16],  # 3B
-    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, None, 1],  # 11B
+    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 1],  # 11B
+    # "roberta-base": [lmppl.MaskedLM],  # 110M
+    # "roberta-large": [lmppl.MaskedLM],  # 355M
+    # "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM],  # 70M
+    # "microsoft/deberta-v3-small": [lmppl.MaskedLM, 64],  # 142M
+    # "microsoft/deberta-v3-base": [lmppl.MaskedLM, 64],  # 184M
+    # "microsoft/deberta-v3-large": [lmppl.MaskedLM, 32],  # 434M
+    # "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 32],  # 900M
+    # "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 32],  # 1.5B
+    "gpt2": [lmppl.LM, 64],  # 124M
+    "gpt2-medium": [lmppl.LM, 64],  # 355M
+    "gpt2-large": [lmppl.LM, 32],  # 774M
+    "gpt2-xl": [lmppl.LM, 16],  # 1.5B
+    "EleutherAI/gpt-j-6B": [lmppl.LM, 1],  # 6B
+    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+    # "facebook/opt-125m": [lmppl.LM, 64],  # 125M
+    # "facebook/opt-350m": [lmppl.LM, 64],  # 350M
+    # "facebook/opt-1.3b": [lmppl.LM, 16],  # 1.3B
+    # "facebook/opt-iml-1.3b": [lmppl.LM, 16],  # 1.3B
+    # "facebook/opt-iml-max-1.3b": [lmppl.LM, 16],  # 1.3B
+    # "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+    # "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+    # "t5-small": [lmppl.EncoderDecoderLM, 64],  # 60M
+    # "t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
+    # "t5-large": [lmppl.EncoderDecoderLM, 32],  # 770M
+    # "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "t5-11b": [lmppl.EncoderDecoderLM, 1],  # 11B
+    # "google/flan-t5-small": [lmppl.EncoderDecoderLM, 64],  # 60M
+    # "google/flan-t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
+    # "google/flan-t5-large": [lmppl.EncoderDecoderLM, 32],  # 770M
+    # "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 1],  # 11B
+    "google/switch-base-128": [lmppl.EncoderDecoderLM, 4],  # 220M
+    "google/switch-large-128": [lmppl.EncoderDecoderLM, 8],  # 770M
 }
 
 
@@ -216,11 +219,11 @@ if __name__ == '__main__':
 
                 if scorer is None:
                     # model setup
-                    lm_class, torch_type, batch = language_models[target_model]
+                    lm_class, batch = language_models[target_model]
                     if lm_class is lmppl.MaskedLM:
-                        scorer = lm_class(target_model, max_length=256, torch_dtype=torch_type)
+                        scorer = lm_class(target_model, device_map='auto', max_length=256)
                     else:
-                        scorer = lm_class(target_model, torch_dtype=torch_type)
+                        scorer = lm_class(target_model, device_map='auto')
 
                 _df, _scores_texts = analogy_solver(scorer, target_data, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
