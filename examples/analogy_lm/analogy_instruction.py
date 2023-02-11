@@ -24,9 +24,9 @@ analogy_types = [
     ['u4', None],
     ['google', None],
     ['bats', None],
-    ['t_rex_relational_similarity', None],
-    ['conceptnet_relational_similarity', None],
-    ['nell_relational_similarity', None]
+    # ['t_rex_relational_similarity', None],
+    # ['conceptnet_relational_similarity', None],
+    # ['nell_relational_similarity', None]
 ]
 
 language_models = {
@@ -174,7 +174,7 @@ if __name__ == '__main__':
                     "output_index": _output_index
                 }
             )
-            print(target_data, prefix, target_model, _df['accuracy'].mean())
+            print(target_data, prefix, target_model, _use_cot, _output_index, _df['accuracy'].mean())
             print(f"Number of None: {_df['prediction'].isnull().sum()}")
             # assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
 
