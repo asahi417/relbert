@@ -1,20 +1,7 @@
-"""
-Which one of the following is an analogy?
-1) `shove` is to `nudge` what `vex` is to `mutter`
-2) `shove` is to `nudge` what `teach` is to `lecture`
-3) `shove` is to `nudge` what `push` is to `fight`
-4) `shove` is to `nudge` what `stare` is to `glance`
-The correct answer is
-
-python -c "from transformers import AutoModelForCausalLM; import torch; AutoModelForCausalLM.from_pretrained('facebook/opt-iml-30b', device_map='auto', low_cpu_mem_usage=True, offload_folder='./offload_folder', torch_dtype=torch.float16, offload_state_dict=True)"
-python -c "from transformers import AutoModelForCausalLM; AutoModelForCausalLM.from_pretrained('EleutherAI/gpt-neox-20b', device_map='auto', low_cpu_mem_usage=True, offload_folder='./offload_folder')"
-python -c "from lmppl import LM; LM('EleutherAI/gpt-neox-20b', low_cpu_mem_usage=True)"
-python -c "from lmppl import LM; LM('facebook/opt-30b')"
-python -c "from lmppl import LM; LM('facebook/opt-30b')"
-"""
 import json
 import logging
 import os
+import gc
 from typing import List
 import torch
 import lmppl
@@ -22,7 +9,7 @@ import pandas as pd
 from datasets import load_dataset
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
-templates = {'template-a': ["<subj-a> is to <obj-a> what", "<subj-b> is to <obj-b>"]}
+template = ["<subj-a> is to <obj-a> what", "<subj-b> is to <obj-b>"]
 analogy_types = [
     ['sat_metaphor', '0'],
     ['sat_metaphor', '1'],
@@ -62,34 +49,32 @@ language_models = {
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 1],  # 11B
     "google/switch-base-128": [lmppl.EncoderDecoderLM, 4],  # 220M
 }
-language_models.update({
-    "roberta-base": [lmppl.MaskedLM],  # 110M
-    "roberta-large": [lmppl.MaskedLM],  # 355M
-    "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM],  # 70M
-    "microsoft/deberta-v3-small": [lmppl.MaskedLM, 64],  # 142M
-    "microsoft/deberta-v3-base": [lmppl.MaskedLM, 64],  # 184M
-    "microsoft/deberta-v3-large": [lmppl.MaskedLM, 32],  # 434M
-    "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 8],  # 900M
-    "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
-})
-language_models.update({
-    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
-    "facebook/opt-30b": [lmppl.LM, 1],  # 30B
-    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
-    "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
-    "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
-})
+# language_models.update({
+#     "roberta-base": [lmppl.MaskedLM],  # 110M
+#     "roberta-large": [lmppl.MaskedLM],  # 355M
+#     "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM],  # 70M
+#     "microsoft/deberta-v3-small": [lmppl.MaskedLM, 64],  # 142M
+#     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 64],  # 184M
+#     "microsoft/deberta-v3-large": [lmppl.MaskedLM, 32],  # 434M
+#     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 8],  # 900M
+#     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
+# })
+# language_models.update({
+#     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+#     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+#     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+#     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
+#     "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
+# })
 
-def get_input(query_pair: List,
-              candidate_pairs: List,
-              template_type: str = 'template-a',
-              encoder_decoder: bool = False):
-    template_header = templates[template_type][0].replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
+
+def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):
+    template_header = template[0].replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
     if encoder_decoder:
         template_header = ' '.join(template_header.split(' ')[:-1])  # remove the last word
-        return [[f"generate analogy: {template_header}", templates[template_type][1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+        return [[f"generate analogy: {template_header}", template[1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
     else:
-        return [[template_header, templates[template_type][1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+        return [[template_header, template[1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
 
 
 def analogy_solver(
@@ -97,8 +82,7 @@ def analogy_solver(
         data_name,
         batch_size=None,
         scores_texts=None,
-        data_prefix: str = None,
-        template_type: str = 'template-a'):
+        data_prefix: str = None):
 
     # dataset setup
     dataset = load_dataset('relbert/analogy_questions', data_name, split='test')
@@ -107,8 +91,7 @@ def analogy_solver(
         assert len(dataset) > 0
 
     # prompt data
-    dataset_prompt = [
-        get_input(x['stem'], x['choice'], template_type, encoder_decoder=type(scoring_model) is lmppl.EncoderDecoderLM) for x in dataset]
+    dataset_prompt = [get_input(x['stem'], x['choice'], encoder_decoder=type(scoring_model) is lmppl.EncoderDecoderLM) for x in dataset]
     dataset_index, dataset_flat = [], []
     for n, i in enumerate(dataset_prompt):
         dataset_flat += i
@@ -147,42 +130,32 @@ def analogy_solver(
 
 if __name__ == '__main__':
     os.makedirs('results/breakdown', exist_ok=True)
+    os.makedirs('results/scores', exist_ok=True)
 
     results = []
     for target_model in language_models.keys():
 
         scorer = None
+        lm_class, batch = language_models[target_model]
 
         for target_data, prefix in analogy_types:
 
             score_file = f"results/scores/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.json"
             breakdown_file = f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.prompt.csv"
             if not os.path.exists(breakdown_file):
-
-                if os.path.dirname(breakdown_file) != '':
-                    os.makedirs(os.path.dirname(breakdown_file), exist_ok=True)
-
-                if os.path.dirname(score_file) != '':
-                    os.makedirs(os.path.dirname(score_file), exist_ok=True)
-
                 _scores_texts = None
                 if os.path.exists(score_file):
                     with open(score_file) as f:
                         _scores_texts = json.load(f)
 
-                batch = None
                 if scorer is None:
-
                     # model setup
-                    lm_class, batch = language_models[target_model]
                     if lm_class is lmppl.MaskedLM:
                         scorer = lm_class(target_model, max_length=256)
                     else:
                         scorer = lm_class(target_model, device_map='auto', low_cpu_mem_usage=True)
 
                 _df, _scores_texts = analogy_solver(scorer, target_data, batch_size=batch, data_prefix=prefix, scores_texts=_scores_texts)
-                torch.cuda.empty_cache()
-
                 _df.to_csv(breakdown_file, index=False)
 
                 if _scores_texts is not None:
@@ -201,5 +174,10 @@ if __name__ == '__main__':
                 }
             )
             print(target_data, prefix, target_model, _df['accuracy'].mean())
+            assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
 
-    pd.DataFrame(results).to_csv('results/full_result.csv', index=False)
+        del scorer
+        gc.collect()
+        torch.cuda.empty_cache()
+
+    pd.DataFrame(results).to_csv('results/full_result.prompt.csv', index=False)
