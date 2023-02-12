@@ -1,5 +1,7 @@
 """
-python finetune_t5_analogy.py -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy'
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch1'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3'
+python finetune_t5_analogy.py -e 5 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch5'
 """
 import argparse
 import os
@@ -96,6 +98,16 @@ if not opt.skip_train:
         data_collator=transformers.DataCollatorForSeq2Seq(tokenizer, model=model)
     )
     trainer.train()
+    trainer.model.config.update({'finetuing_config': {
+        "task_prefix": task_prefix,
+        "template_header": template_header,
+        "template_footer": template_footer,
+        "epoch": opt.epoch,
+        'learning_rate': opt.lr,
+        'batch_size': opt.batch_size,
+        'random_seed': opt.random_seed,
+        'data': opt.data,
+        'model': opt.model}})
     trainer.save_model(f"{opt.output_dir}/model")
     tokenizer.save_pretrained(f"{opt.output_dir}/model")
 assert os.path.exists(f"{opt.output_dir}/model")
@@ -136,13 +148,13 @@ if not opt.skip_validation:
     with open(f"{opt.output_dir}/model/validation_accuracy.json", "w") as f:
         json.dump({"accuracy": accuracy, 'datasaet': opt.data, 'split': opt.split_validation}, f)
 
-# if opt.push_to_hub:
-#     assert opt.hf_organization is not None, f'specify hf organization `--hf-organization`'
-#     assert opt.model_alias is not None, f'specify hf organization `--model-alias`'
-#     url = create_repo(opt.model_alias, organization=opt.hf_organization, exist_ok=True)
-#     # if not opt.skip_train:
-#     args = {"use_auth_token": opt.use_auth_token, "repo_url": url, "organization": opt.hf_organization}
-#     trainer.model.push_to_hub(opt.model_alias, **args)
-#     tokenizer.push_to_hub(opt.model_alias, **args)
-#     if os.path.exists(summary_file):
-#         shutil.copy2(summary_file, opt.model_alias)
+if opt.push_to_hub:
+    assert opt.hf_organization is not None, f'specify hf organization `--hf-organization`'
+    assert opt.model_alias is not None, f'specify hf organization `--model-alias`'
+    url = create_repo(opt.model_alias, organization=opt.hf_organization, exist_ok=True)
+    # if not opt.skip_train:
+    args = {"use_auth_token": opt.use_auth_token, "repo_url": url, "organization": opt.hf_organization}
+    trainer.model.push_to_hub(opt.model_alias, **args)
+    tokenizer.push_to_hub(opt.model_alias, **args)
+    if os.path.exists(summary_file):
+        shutil.copy2(summary_file, opt.model_alias)
