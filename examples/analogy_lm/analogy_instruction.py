@@ -1,3 +1,16 @@
+""" Solving Analogy via Instruction Prompting
+Given an analogy question, consisting of a query pair and a set of candidate pairs, we convert each candidate to a
+sentence by the following instruction.
+```
+Which one of the following is an analogy?
+1) A is to B what a_1 is to b_1
+2) A is to B what a_2 is to b_2
+3) A is to B what a_3 is to b_3
+```
+For recurrent LMs, we add `The correct answer is` at the end of the instruction. Output is the correct analogy
+statement. We test a few variations:
+- Output Index: output the index of the correct analogy statement instead of the statement itself.
+"""
 import json
 import logging
 import os
@@ -11,8 +24,8 @@ from itertools import product
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 template = "<subj-a> is to <obj-a> what <subj-b> is to <obj-b>"
-instruction = ["Which one of the following is an analogy?", "The correct answer is"]
-cot = 'Answer the following question by reasoning step-by-step.'
+instruction_header = "Which one of the following is an analogy?"
+instruction_footer = "The correct answer is"
 analogy_types = [
     ['sat_metaphor', '0'],
     ['sat_metaphor', '1'],
@@ -28,30 +41,54 @@ analogy_types = [
     # ['conceptnet_relational_similarity', None],
     # ['nell_relational_similarity', None]
 ]
-
 language_models = {
-    "gpt2": [lmppl.LM, 128],  # 124M
-    "gpt2-medium": [lmppl.LM, 64],  # 355M
-    "gpt2-large": [lmppl.LM, 32],  # 774M
-    "gpt2-xl": [lmppl.LM, 32],  # 1.5B
-    "EleutherAI/gpt-j-6B": [lmppl.LM, 8],  # 6B
-    "facebook/opt-125m": [lmppl.LM, 128],  # 125M
-    "facebook/opt-350m": [lmppl.LM, 64],  # 350M
-    "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
-    "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
+    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
     "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
-    "t5-small": [lmppl.EncoderDecoderLM, 128],  # 60M
-    "t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
+    "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
+    "t5-11b": [lmppl.EncoderDecoderLM, 8],  # 11B
+    "gpt2": [lmppl.LM, 256],  # 124M
+    "gpt2-medium": [lmppl.LM, 128],  # 355M
+    "gpt2-large": [lmppl.LM, 64],  # 774M
+    "gpt2-xl": [lmppl.LM, 32],  # 1.5B
+    "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
+    "facebook/opt-125m": [lmppl.LM, 256],  # 125M
+    "facebook/opt-350m": [lmppl.LM, 128],  # 350M
+    "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
+    "t5-small": [lmppl.EncoderDecoderLM, 256],  # 60M
+    "t5-base": [lmppl.EncoderDecoderLM, 256],  # 220M
     "t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
     "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "t5-11b": [lmppl.EncoderDecoderLM, 4],  # 11B
-    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 128],  # 60M
-    "google/flan-t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
-    "google/flan-t5-large": [lmppl.EncoderDecoderLM, 32],  # 770M
+    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 256],  # 60M
+    "google/flan-t5-base": [lmppl.EncoderDecoderLM, 256],  # 220M
+    "google/flan-t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 4],  # 11B
-    "google/switch-base-128": [lmppl.EncoderDecoderLM, 4],  # 220M
+    "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
 }
+# language_models = {
+#     "gpt2": [lmppl.LM, 256],  # 124M
+#     "gpt2-medium": [lmppl.LM, 128],  # 355M
+#     "gpt2-large": [lmppl.LM, 64],  # 774M
+#     "gpt2-xl": [lmppl.LM, 32],  # 1.5B
+#     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
+#     "facebook/opt-125m": [lmppl.LM, 256],  # 125M
+#     "facebook/opt-350m": [lmppl.LM, 128],  # 350M
+#     "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
+#     "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
+#     "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
+#     "t5-small": [lmppl.EncoderDecoderLM, 256],  # 60M
+#     "t5-base": [lmppl.EncoderDecoderLM, 256],  # 220M
+#     "t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
+#     "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
+#     "t5-11b": [lmppl.EncoderDecoderLM, 8],  # 11B
+#     "google/flan-t5-small": [lmppl.EncoderDecoderLM, 256],  # 60M
+#     "google/flan-t5-base": [lmppl.EncoderDecoderLM, 256],  # 220M
+#     "google/flan-t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
+#     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
+#     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
+#     "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
+# }
+
+# Add MLM
 # language_models.update({
 #     "roberta-base": [lmppl.MaskedLM],  # 110M
 #     "roberta-large": [lmppl.MaskedLM],  # 355M
@@ -62,6 +99,8 @@ language_models = {
 #     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 8],  # 900M
 #     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
 # })
+
+# Add Large Models
 # language_models.update({
 #     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
 #     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
@@ -71,18 +110,18 @@ language_models = {
 # })
 
 
-def get_input(query_pair: List, candidate_pairs: List, output_index: bool, use_cot: bool = False):
+def get_input(query_pair: List, candidate_pairs: List, output_index: bool, encoder_decoder: bool):
     tmp = template.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
     tmp = "\n".join([f"{n+1}) {tmp.replace('<subj-b>', a).replace('<obj-b>', b)}" for n, (a, b) in enumerate(candidate_pairs)])
-    tmp = f"{instruction[0]}\n{tmp}\n{instruction[1]}"
-    if use_cot:
-        tmp = f"{cot}\n{tmp}"
+    tmp = f"{instruction_header}\n{tmp}"
+    if not encoder_decoder:
+        tmp = f"{tmp}\n{instruction_footer}"
     if output_index:
         return [[tmp, str(n+1)] for n, _ in enumerate(candidate_pairs)]
     return [[tmp, template.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1]).replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
 
 
-def analogy_solver(scoring_model, data_name, use_cot: bool, output_index: bool, batch_size: int, scores_texts=None, data_prefix: str = None):
+def analogy_solver(scoring_model, data_name, output_index: bool, batch_size: int, scores_texts, data_prefix: str):
 
     # dataset setup
     dataset = load_dataset('relbert/analogy_questions', data_name, split='test')
@@ -91,7 +130,7 @@ def analogy_solver(scoring_model, data_name, use_cot: bool, output_index: bool, 
         assert len(dataset) > 0
 
     # prompt data
-    dataset_prompt = [get_input(x['stem'], x['choice'], use_cot=use_cot, output_index=output_index) for x in dataset]
+    dataset_prompt = [get_input(x['stem'], x['choice'], output_index=output_index, encoder_decoder=type(scoring_model) is lmppl.EncoderDecoderLM) for x in dataset]
     dataset_index, dataset_flat = [], []
     for n, i in enumerate(dataset_prompt):
         dataset_flat += i
@@ -135,10 +174,10 @@ if __name__ == '__main__':
         scorer = None
         lm_class, batch = language_models[target_model]
 
-        for (target_data, prefix), _use_cot, _output_index in product(analogy_types, [True, False], [True, False]):
+        for (target_data, prefix), _output_index in product(analogy_types, [True, False]):
 
-            score_file = f"results/scores/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.{_use_cot}.{_output_index}.json"
-            breakdown_file = f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.{_use_cot}.{_output_index}..csv"
+            score_file = f"results/scores/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.{_output_index}.json"
+            breakdown_file = f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.{_output_index}.csv"
             if not os.path.exists(breakdown_file):
 
                 _scores_texts = None
@@ -154,7 +193,7 @@ if __name__ == '__main__':
                         scorer = lm_class(target_model, device_map='auto', low_cpu_mem_usage=True)
 
                 _df, _scores_texts = analogy_solver(
-                    scorer, target_data, batch_size=batch, data_prefix=prefix, scores_texts=_scores_texts, use_cot=_use_cot, output_index=_output_index)
+                    scorer, target_data, batch_size=batch, data_prefix=prefix, scores_texts=_scores_texts, output_index=_output_index)
                 _df.to_csv(breakdown_file, index=False)
 
                 if _scores_texts is not None:
@@ -170,11 +209,10 @@ if __name__ == '__main__':
                     'approach': 'prompt',
                     'prefix': prefix,
                     'data': target_data,
-                    "cot": _use_cot,
                     "output_index": _output_index
                 }
             )
-            print(target_data, prefix, target_model, _use_cot, _output_index, _df['accuracy'].mean())
+            print(target_data, prefix, target_model, _output_index, _df['accuracy'].mean())
             print(f"Number of None: {_df['prediction'].isnull().sum()}")
             # assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
 

@@ -1,3 +1,10 @@
+""" Solving Analogy via Prompting
+Given an analogy question, consisting of a query pair and a set of candidate pairs, we convert each candidate to a
+sentence by the prompt `<subj-a> is to <obj-a> what <subj-b> is to <obj-b>`, where we compute perplexity and the one
+with the lowest perplexity is regarded as the model prediction. Note that encoder-decoder models such as T5 use
+slightly different prompts, where the input to the encoder is `<subj-a> is to <obj-a>` and the output to the decoder
+is `<subj-b> is to <obj-b>`.
+"""
 import json
 import logging
 import os
@@ -9,7 +16,9 @@ import pandas as pd
 from datasets import load_dataset
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
-template = ["<subj-a> is to <obj-a> what", "<subj-b> is to <obj-b>"]
+template_header = "<subj-a> is to <obj-a>"
+template_join = "what"
+template_footer = "<subj-b> is to <obj-b>"
 analogy_types = [
     ['sat_metaphor', '0'],
     ['sat_metaphor', '1'],
@@ -49,6 +58,8 @@ language_models = {
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 1],  # 11B
     "google/switch-base-128": [lmppl.EncoderDecoderLM, 4],  # 220M
 }
+
+# Add MLM
 # language_models.update({
 #     "roberta-base": [lmppl.MaskedLM],  # 110M
 #     "roberta-large": [lmppl.MaskedLM],  # 355M
@@ -59,6 +70,8 @@ language_models = {
 #     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 8],  # 900M
 #     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
 # })
+
+# Add Large Models
 # language_models.update({
 #     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
 #     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
@@ -69,20 +82,17 @@ language_models = {
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):
-    template_header = template[0].replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
+    _template_header = template_header.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
     if encoder_decoder:
-        template_header = ' '.join(template_header.split(' ')[:-1])  # remove the last word
-        return [[f"generate analogy: {template_header}", template[1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
-    else:
-        return [[template_header, template[1].replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+        return [[f"generate analogy: {_template_header}", template_footer.replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+    return [[template_header, template_footer.replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
 
 
-def analogy_solver(
-        scoring_model,
-        data_name,
-        batch_size=None,
-        scores_texts=None,
-        data_prefix: str = None):
+def analogy_solver(scoring_model,
+                   data_name,
+                   batch_size=None,
+                   scores_texts=None,
+                   data_prefix: str = None):
 
     # dataset setup
     dataset = load_dataset('relbert/analogy_questions', data_name, split='test')
@@ -108,7 +118,7 @@ def analogy_solver(
             scores_texts = [{"input": x[0], "output": x[1]} for x in dataset_flat]
         else:
             scores = scoring_model.get_perplexity(
-                input_texts=[f"{x[0]} {x[1]}" for x in dataset_flat],
+                input_texts=[f"{x[0]} {template_join} {x[1]}" for x in dataset_flat],
                 batch=batch_size
             )
             scores_texts = [{"input": f"{x[0]} {x[1]}", "output": ""} for x in dataset_flat]
