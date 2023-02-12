@@ -118,8 +118,8 @@ scorer = EncoderDecoderLM(f"{opt.output_dir}/model")
 # get score for gold answer
 gold_score = scorer.get_perplexity(input_texts=query, output_texts=gold, batch=opt.batch_size_eval)
 # get score for the other choices
+query_flat = list(chain(*[[q] * len(c) for c, q in zip(choice, query)]))
 choice_flat = list(chain(*choice))
-query_flat = list(chain(*[[q] * len(c) for q, c in zip(choice, query)]))
 choice_score = scorer.get_perplexity(
     input_texts=query_flat,
     output_texts=choice_flat,
