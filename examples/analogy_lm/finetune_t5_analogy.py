@@ -1,14 +1,33 @@
 """
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3'
-python finetune_t5_analogy.py -e 5 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch5'
+python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
+python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch9'
+
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3'
+python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch6'
+python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch9'
+
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch1'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3'
+python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch6'
+python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch9'
+
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch1'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3'
+python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch6'
+python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch9'
 """
 import argparse
 import os
 import json
 import logging
+import shutil
+from os.path import join as pj
 from itertools import permutations, chain
 from statistics import mean
+from distutils.dir_util import copy_tree
 
 import pandas as pd
 import torch
@@ -31,8 +50,9 @@ parser.add_argument('--split-train', default='train', type=str)
 parser.add_argument('--split-validation', default='validation', type=str)
 parser.add_argument('--skip-train', help='', action='store_true')
 parser.add_argument('--skip-validation', help='', action='store_true')
+parser.add_argument('--gradient-checkpointing', help='', action='store_true')
 parser.add_argument('--push-to-hub', help='', action='store_true')
-parser.add_argument('-a', '--model-alias', default=None, type=str)
+parser.add_argument('--repo-id', default=None, type=str)
 opt = parser.parse_args()
 
 ##########
@@ -80,12 +100,13 @@ if not opt.skip_train:
     ##################
     training_args = transformers.Seq2SeqTrainingArguments(
         per_device_train_batch_size=opt.batch_size,
+        gradient_checkpointing=opt.gradient_checkpointing,
         warmup_steps=0,
         weight_decay=0.01,
         learning_rate=opt.lr,
         num_train_epochs=opt.epoch,
-        output_dir=f'{opt.output_dir}/runs/',
-        logging_dir=f'{opt.output_dir}/logging/',
+        output_dir=pj(opt.output_dir, 'runs/'),
+        logging_dir=pj(opt.output_dir, 'logging/'),
         logging_steps=100,
         evaluation_strategy="no",
         save_strategy='no',
@@ -108,9 +129,9 @@ if not opt.skip_train:
         'random_seed': opt.random_seed,
         'data': opt.data,
         'model': opt.model}})
-    trainer.save_model(f"{opt.output_dir}/model")
-    tokenizer.save_pretrained(f"{opt.output_dir}/model")
-assert os.path.exists(f"{opt.output_dir}/model")
+    trainer.save_model(pj(opt.output_dir, "model"))
+    tokenizer.save_pretrained(pj(opt.output_dir, "model"))
+assert os.path.exists(pj(opt.output_dir, "model"))
 
 if not opt.skip_validation:
     #######################
@@ -145,16 +166,22 @@ if not opt.skip_validation:
     df = pd.DataFrame([{"index": i, "score": s} for i, s in zip(index, choice_score)])
     score_dict = {i: g['score'].values.tolist() for i, g in df.groupby("index")}
     accuracy = mean([all(_v > gold_score[k] for _v in v) for k, v in score_dict.items()])
-    with open(f"{opt.output_dir}/model/validation_accuracy.json", "w") as f:
+    with open(pj(opt.output_dir, "model", "validation_accuracy.json"), "w") as f:
         json.dump({"accuracy": accuracy, 'datasaet': opt.data, 'split': opt.split_validation}, f)
 
-if opt.push_to_hub:
-    assert opt.hf_organization is not None, f'specify hf organization `--hf-organization`'
-    assert opt.model_alias is not None, f'specify hf organization `--model-alias`'
-    url = create_repo(opt.model_alias, organization=opt.hf_organization, exist_ok=True)
-    # if not opt.skip_train:
-    args = {"use_auth_token": opt.use_auth_token, "repo_url": url, "organization": opt.hf_organization}
-    trainer.model.push_to_hub(opt.model_alias, **args)
-    tokenizer.push_to_hub(opt.model_alias, **args)
-    if os.path.exists(summary_file):
-        shutil.copy2(summary_file, opt.model_alias)
+if opt.repo_id is not None:
+    create_repo(repo_id=opt.repo_id, exist_ok=True, repo_type="model")
+    transformers.T5ForConditionalGeneration.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
+    transformers.AutoTokenizer.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
+
+    model_dir = os.path.basename(opt.repo_id)
+    if os.path.exists(model_dir):
+        shutil.rmtree(model_dir)
+    os.system(f"git clone https://huggingface.co/{opt.repo_id}")
+
+    # upload remaining files
+    copy_tree(opt.model_checkpoint, opt.model_alias)
+    with open(f"{opt.model_alias}/.gitattributes", 'w') as f:
+        f.write(gitattribute)
+    os.system(f"cd {model_dir} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
+    shutil.rmtree(opt.repo_id)
