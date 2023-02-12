@@ -43,7 +43,7 @@ language_models = {
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
     "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
     "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
-    "t5-11b": [lmppl.EncoderDecoderLM, 8],  # 11B
+    "t5-11b": [lmppl.EncoderDecoderLM, 4],  # 11B
     "gpt2": [lmppl.LM, 256],  # 124M
     "gpt2-medium": [lmppl.LM, 128],  # 355M
     "gpt2-large": [lmppl.LM, 64],  # 774M
