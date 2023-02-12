@@ -5,7 +5,6 @@ from itertools import permutations
 import torch
 import transformers
 from datasets import load_dataset
-from transformers import AutoTokenizer, AutoConfig, AutoModelWithLMHead
 
 
 template_header = "<subj-a> is to <obj-a>"
@@ -25,7 +24,7 @@ opt = parser.parse_args()
 logging.info('loading dataset')
 data = load_dataset(opt.data, split='train')
 df = data.to_pandas()
-model_config = AutoConfig.from_pretrained(opt.model)
+model_config = transformers.AutoConfig.from_pretrained(opt.model)
 
 
 def prompting(positives, negatives):
@@ -68,14 +67,14 @@ is_t5 = model_config.model_type == 't5'
 if is_t5:
     model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
 else:
-    model = AutoModelWithLMHead.from_pretrained(opt.model, config=model_config)
+    model = transformers.AutoModelWithLMHead.from_pretrained(opt.model, config=model_config)
 if torch.cuda.device_count() > 0:
     model = torch.nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
     model.to('cuda')
 logging.info(f'language model running on {model.device}')
 
 # load tokenizer & tokenization
-tokenizer = AutoTokenizer.from_pretrained(opt.model)
+tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
 
 
 def preprocess(examples):
@@ -86,29 +85,25 @@ def preprocess(examples):
         model_inputs['labels'] = tokenizer(examples[1], truncation=True)['input_ids']
     return model_inputs
 
+
 tokenized_dataset = [preprocess(i) for i in model_input_output]
-tokenized_dataset =
 corpus = load_dataset("eth_py150_open", split='train')
-
-
-training_args = transformers.Seq2SeqTrainingArguments( #general training arguments
-    per_device_train_batch_size = 8,
-    warmup_steps = 0,
-    weight_decay = 0.01,
-    learning_rate = 1e-4,
-    num_train_epochs = 12,
-    output_dir = './runs/run2/output/',
-    logging_dir = './runs/run2/logging/',
-    logging_steps = 50,
-    save_steps= 10000,
-    remove_unused_columns=False,
+training_args = transformers.Seq2SeqTrainingArguments(
+    per_device_train_batch_size=8,
+    warmup_steps=0,
+    weight_decay=0.01,
+    learning_rate=1e-4,
+    num_train_epochs=5,
+    output_dir='runs/',
+    logging_dir='runs/logging/',
+    logging_steps=50,
+    save_steps=10000,
 )
 
 data_collator = transformers.DataCollatorForSeq2Seq(tokenizer, model=model)
-
 trainer = transformers.Seq2SeqTrainer(
-    model = model,
-    args = training_args,
-    train_dataset = tokenized_dataset,
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset,
     data_collator=data_collator
 )
