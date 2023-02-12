@@ -57,7 +57,7 @@ language_models = {
     "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
     # "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
-    "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
+    # "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
     "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
     "gpt2-xl": [lmppl.LM, 32],  # 1.5B
     "gpt2-large": [lmppl.LM, 128],  # 774M
