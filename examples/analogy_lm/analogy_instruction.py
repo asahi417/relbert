@@ -8,8 +8,7 @@ Which one of the following is an analogy?
 3) A is to B what a_3 is to b_3
 ```
 For recurrent LMs, we add `The correct answer is` at the end of the instruction. Output is the correct analogy
-statement. We test a few variations:
-- Output Index: output the index of the correct analogy statement instead of the statement itself.
+statement.
 """
 import json
 import logging
@@ -20,7 +19,6 @@ import torch
 import lmppl
 import pandas as pd
 from datasets import load_dataset
-from itertools import product
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 template = "<subj-a> is to <obj-a> what <subj-b> is to <obj-b>"
@@ -110,19 +108,19 @@ language_models = {
 # })
 
 
-def get_input(query_pair: List, candidate_pairs: List, output_index: bool, encoder_decoder: bool):
+def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool):
     tmp = template.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
-    tmp = "\n".join([f"{n+1}) {tmp.replace('<subj-b>', a).replace('<obj-b>', b)}" for n, (a, b) in enumerate(candidate_pairs)])
-    tmp = f"{instruction_header}\n{tmp}"
+    candidate_tmp = [tmp.replace('<subj-b>', a).replace('<obj-b>', b) for a, b in candidate_pairs]
+    body = "\n".join([f"{n+1}) {t}" for n, t in enumerate(candidate_tmp)])
+    body = f"{instruction_header}\n{body}"
     if not encoder_decoder:
-        tmp = f"{tmp}\n{instruction_footer}"
-    if output_index:
-        return [[tmp, str(n+1)] for n, _ in enumerate(candidate_pairs)]
-    return [[tmp, template.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1]).replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+        body = f"{body}\n{instruction_footer}"
+    return [[body, t] for t in candidate_tmp]
 
 
-def analogy_solver(scoring_model, data_name, output_index: bool, batch_size: int, scores_texts, data_prefix: str):
+def analogy_solver(scoring_model, data_name, batch_size: int, scores_texts, data_prefix: str):
 
+    is_encdec = type(scoring_model) is lmppl.EncoderDecoderLM
     # dataset setup
     dataset = load_dataset('relbert/analogy_questions', data_name, split='test')
     if data_prefix is not None:
@@ -130,7 +128,7 @@ def analogy_solver(scoring_model, data_name, output_index: bool, batch_size: int
         assert len(dataset) > 0
 
     # prompt data
-    dataset_prompt = [get_input(x['stem'], x['choice'], output_index=output_index, encoder_decoder=type(scoring_model) is lmppl.EncoderDecoderLM) for x in dataset]
+    dataset_prompt = [get_input(x['stem'], x['choice'], encoder_decoder=is_encdec) for x in dataset]
     dataset_index, dataset_flat = [], []
     for n, i in enumerate(dataset_prompt):
         dataset_flat += i
@@ -138,7 +136,7 @@ def analogy_solver(scoring_model, data_name, output_index: bool, batch_size: int
 
     # get scores
     if scores_texts is None:
-        if type(scoring_model) is lmppl.EncoderDecoderLM:
+        if is_encdec:
             scores = scoring_model.get_perplexity(
                 input_texts=[x[0] for x in dataset_flat],
                 output_texts=[x[1] for x in dataset_flat],
@@ -151,7 +149,6 @@ def analogy_solver(scoring_model, data_name, output_index: bool, batch_size: int
             scores_texts = [{"input": f"{x[0]} {x[1]}", "output": ""} for x in dataset_flat]
         for i, s in zip(scores_texts, scores):
             i['score'] = float(s)
-
     scores = [x['score'] for x in scores_texts]
     index_score = list(zip(dataset_index, scores))
     scores_aligned = [(i, [b for a, b in index_score if a == i]) for i in sorted(list(set(dataset_index)))]
@@ -171,13 +168,14 @@ if __name__ == '__main__':
 
     results = []
     for target_model in language_models.keys():
+
         scorer = None
         lm_class, batch = language_models[target_model]
 
-        for (target_data, prefix), _output_index in product(analogy_types, [True, False]):
+        for target_data, prefix in analogy_types:
 
-            score_file = f"results/scores/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.{_output_index}.json"
-            breakdown_file = f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.{_output_index}.csv"
+            score_file = f"results/scores/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.json"
+            breakdown_file = f"results/breakdown/{os.path.basename(target_model)}_{target_data}_{prefix}.instruction.csv"
             if not os.path.exists(breakdown_file):
 
                 _scores_texts = None
@@ -186,14 +184,14 @@ if __name__ == '__main__':
                         _scores_texts = json.load(f)
 
                 if scorer is None:
+
                     # model setup
                     if lm_class is lmppl.MaskedLM:
                         scorer = lm_class(target_model, max_length=256)
                     else:
                         scorer = lm_class(target_model, device_map='auto', low_cpu_mem_usage=True)
 
-                _df, _scores_texts = analogy_solver(
-                    scorer, target_data, batch_size=batch, data_prefix=prefix, scores_texts=_scores_texts, output_index=_output_index)
+                _df, _scores_texts = analogy_solver(scorer, target_data, batch_size=batch, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
 
                 if _scores_texts is not None:
@@ -209,10 +207,9 @@ if __name__ == '__main__':
                     'approach': 'prompt',
                     'prefix': prefix,
                     'data': target_data,
-                    "output_index": _output_index
                 }
             )
-            print(target_data, prefix, target_model, _output_index, _df['accuracy'].mean())
+            print(target_data, prefix, target_model, _df['accuracy'].mean())
             print(f"Number of None: {_df['prediction'].isnull().sum()}")
             # assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
 

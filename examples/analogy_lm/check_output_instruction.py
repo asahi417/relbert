@@ -7,23 +7,22 @@ import torch
 from datasets import load_dataset
 from transformers import pipeline
 
-instruction = ["Which one of the following is an analogy?", "The correct answer is"]
-cot = 'Answer the following question by reasoning step-by-step.'
+instruction = "Which one of the following is an analogy?"
 template = "<subj-a> is to <obj-a> what <subj-b> is to <obj-b>"
 analogy_types = [
     ['sat_metaphor', '0'],
     ['sat_metaphor', '1'],
     ['sat_metaphor', '2'],
-    ['sat_metaphor', None],
-    ['sat', None],
-    ['sat_full', None],
-    ['u2', None],
-    ['u4', None],
-    ['google', None],
-    ['bats', None],
-    ['t_rex_relational_similarity', None],
-    ['conceptnet_relational_similarity', None],
-    ['nell_relational_similarity', None]
+    # ['sat_metaphor', None],
+    # ['sat', None],
+    # ['sat_full', None],
+    # ['u2', None],
+    # ['u4', None],
+    # ['google', None],
+    # ['bats', None],
+    # ['t_rex_relational_similarity', None],
+    # ['conceptnet_relational_similarity', None],
+    # ['nell_relational_similarity', None]
 ]
 
 language_models = {
@@ -60,10 +59,8 @@ language_models = {
 def get_input(query_pair: List, candidate_pairs: List, use_cot: bool = False):
     tmp = template.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
     tmp = "\n".join([f"{n+1}) {tmp.replace('<subj-b>', a).replace('<obj-b>', b)}" for n, (a, b) in enumerate(candidate_pairs)])
-    tmp = f"{instruction[0]}\n{tmp}\n{instruction[1]}"
-    if use_cot:
-        return f"{cot}\n{tmp}"
-    return tmp
+    return f"{instruction}\n{tmp}}"
+
 
 
 def get_generation(pipeline_generator, data_name, batch_size, data_prefix: str = None, use_cot: bool = False):
