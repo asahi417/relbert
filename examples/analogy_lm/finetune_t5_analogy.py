@@ -4,7 +4,7 @@ python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
 python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch9'
 
-python finetune_t5_analogy.py -e 9 -m --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch9'
+python finetune_t5_analogy.py --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3' --repo-id 'relbert/flan-t5-small-analogy'
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3'
@@ -68,7 +68,7 @@ template_footer = "<subj-b> is to <obj-b>"
 # Load Model #
 ##############
 model_config = transformers.AutoConfig.from_pretrained(opt.model)
-model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config, use_cache=not opt.gradient_checkpointing)
+model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
 tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
 if torch.cuda.device_count() > 0:
     model = torch.nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
