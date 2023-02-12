@@ -42,7 +42,7 @@ analogy_types = [
 language_models = {
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "google/flan-t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
+    "google/flan-t5-large": [lmppl.EncoderDecoderLM, 256],  # 770M
     "google/flan-t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
     "google/flan-t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
     "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
