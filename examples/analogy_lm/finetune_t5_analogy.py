@@ -7,7 +7,7 @@ from itertools import permutations
 import torch
 import transformers
 from datasets import load_dataset
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoConfig, AutoModelWithLMHead
 
 
 template_header = "<subj-a> is to <obj-a>"
@@ -27,9 +27,10 @@ opt = parser.parse_args()
 logging.info('loading dataset')
 data = load_dataset(opt.data, split='train')
 df = data.to_pandas()
+model_config = AutoConfig.from_pretrained(opt.model)
 
 
-def prompting(positives, negatives, is_encoder_decoder: bool):
+def prompting(positives, negatives):
     prompt_in_out = []
     if opt.instruction:
         seed(42)
@@ -42,12 +43,12 @@ def prompting(positives, negatives, is_encoder_decoder: bool):
             assert choice[answer_ind] == true_choice
             choice_string = "\n".join([f"{n+1}) {i}" for n, i in enumerate(choice)])
             prompt = f"{instruction_header}\n{choice_string}"
-            if not is_encoder_decoder:
+            if model_config.model_type != 't5':
                 prompt = f"{prompt}\n{instruction_footer}"
             prompt_in_out.append([prompt, true_choice])
         return prompt_in_out
     else:
-        if not is_encoder_decoder:
+        if model_config.model_type != 't5':
             return [[template_header.replace('<subj-a>', h_a).replace('<obj-a>', t_a) + f" {template_join}",
                      template_footer.replace('<subj-b>', h_b).replace('<obj-b>', t_b)] for
                     (h_a, t_a), (h_b, t_b) in permutations(positives, 2)]
@@ -56,26 +57,39 @@ def prompting(positives, negatives, is_encoder_decoder: bool):
                      template_footer.replace('<subj-b>', h_b).replace('<obj-b>', t_b)] for
                     (h_a, t_a), (h_b, t_b) in permutations(positives, 2)]
 
-# preprocess input
+
+# prompting input
 model_input_output = []
 for _, g in df.groupby("relation_type"):
     model_input_output += prompting(
         positives=[i.tolist() for i in g['positives'].values[0].tolist()],
-        negatives=[i.tolist() for i in g['negatives'].values[0].tolist()],
-        is_encoder_decoder=True)
+        negatives=[i.tolist() for i in g['negatives'].values[0].tolist()])
 
+# load model
+if model_config.model_type == 't5':
+    model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
+else:
+    model = AutoModelWithLMHead.from_pretrained(opt.model, config=model_config)
+device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
+parallel = False
+if torch.cuda.device_count() > 1:
+    parallel = True
+    model = torch.nn.DataParallel(model)
+model.to(device)
+logging.info(f'language model running on {torch.cuda.device_count()} GPU')
 
-corpus = load_dataset("eth_py150_open", split='train')
+# load tokenizer & tokenization
+tokenizer = AutoTokenizer.from_pretrained(opt.model)
 
-model = transformers.T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-small').cuda()
-tokenizer = transformers.AutoTokenizer.from_pretrained('Salesforce/codet5-small')
 
 def preprocess(examples):
-    model_inputs = tokenizer(examples['filepath'], truncation=True)
-    with tokenizer.as_target_tokenizer():
-        labels = tokenizer(examples['license'], truncation=True)
+    model_inputs = tokenizer(examples[0], truncation=True)
+    labels = tokenizer(text_target=examples[1], truncation=True)
     model_inputs['labels'] = labels['input_ids']
     return model_inputs
+
+tokenized_dataset =
+corpus = load_dataset("eth_py150_open", split='train')
 
 tokenized_dataset = corpus.map(preprocess_function, batched=True)
 

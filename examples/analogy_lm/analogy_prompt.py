@@ -36,27 +36,27 @@ analogy_types = [
 ]
 
 language_models = {
-    "gpt2": [lmppl.LM, 64],  # 124M
-    "gpt2-medium": [lmppl.LM, 64],  # 355M
-    "gpt2-large": [lmppl.LM, 32],  # 774M
-    "gpt2-xl": [lmppl.LM, 16],  # 1.5B
-    "EleutherAI/gpt-j-6B": [lmppl.LM, 1],  # 6B
-    "facebook/opt-125m": [lmppl.LM, 64],  # 125M
-    "facebook/opt-350m": [lmppl.LM, 64],  # 350M
-    "facebook/opt-1.3b": [lmppl.LM, 16],  # 1.3B
-    "facebook/opt-iml-1.3b": [lmppl.LM, 16],  # 1.3B
-    "facebook/opt-iml-max-1.3b": [lmppl.LM, 16],  # 1.3B
-    "t5-small": [lmppl.EncoderDecoderLM, 64],  # 60M
-    "t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
-    "t5-large": [lmppl.EncoderDecoderLM, 32],  # 770M
+    "gpt2": [lmppl.LM, 256],  # 124M
+    "gpt2-medium": [lmppl.LM, 128],  # 355M
+    "gpt2-large": [lmppl.LM, 64],  # 774M
+    "gpt2-xl": [lmppl.LM, 32],  # 1.5B
+    "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
+    "facebook/opt-125m": [lmppl.LM, 256],  # 125M
+    "facebook/opt-350m": [lmppl.LM, 128],  # 350M
+    "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
+    "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
+    "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
+    "t5-small": [lmppl.EncoderDecoderLM, 256],  # 60M
+    "t5-base": [lmppl.EncoderDecoderLM, 256],  # 220M
+    "t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
     "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "t5-11b": [lmppl.EncoderDecoderLM, 1],  # 11B
-    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 64],  # 60M
-    "google/flan-t5-base": [lmppl.EncoderDecoderLM, 64],  # 220M
-    "google/flan-t5-large": [lmppl.EncoderDecoderLM, 32],  # 770M
+    "t5-11b": [lmppl.EncoderDecoderLM, 8],  # 11B
+    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 256],  # 60M
+    "google/flan-t5-base": [lmppl.EncoderDecoderLM, 256],  # 220M
+    "google/flan-t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 1],  # 11B
-    "google/switch-base-128": [lmppl.EncoderDecoderLM, 4],  # 220M
+    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
+    "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
 }
 
 # Add MLM
@@ -88,11 +88,7 @@ def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = F
     return [[template_header, template_footer.replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
 
 
-def analogy_solver(scoring_model,
-                   data_name,
-                   batch_size=None,
-                   scores_texts=None,
-                   data_prefix: str = None):
+def analogy_solver(scoring_model, data_name, batch_size, scores_texts, data_prefix):
 
     # dataset setup
     dataset = load_dataset('relbert/analogy_questions', data_name, split='test')
@@ -167,7 +163,6 @@ if __name__ == '__main__':
 
                 _df, _scores_texts = analogy_solver(scorer, target_data, batch_size=batch, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
-
                 if _scores_texts is not None:
                     with open(score_file, 'w') as f:
                         json.dump(_scores_texts, f)
