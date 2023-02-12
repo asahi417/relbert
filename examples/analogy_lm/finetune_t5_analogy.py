@@ -4,7 +4,7 @@ python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
 python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch9'
 
-python finetune_t5_analogy.py -e 9 -m --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch9' 
+python finetune_t5_analogy.py -e 9 -m --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch9'
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3'
@@ -19,7 +19,7 @@ python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-large' -o 'analogy_models/
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch6'
-python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch9'
+python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch9' --gradient-checkpointing
 """
 import argparse
 import os
@@ -68,12 +68,11 @@ template_footer = "<subj-b> is to <obj-b>"
 # Load Model #
 ##############
 model_config = transformers.AutoConfig.from_pretrained(opt.model)
-model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
+model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config, use_cache=not opt.gradient_checkpointing)
 tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
 if torch.cuda.device_count() > 0:
     model = torch.nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
     model.to('cuda')
-logging.info(f'language model ({opt.model}) running on {model.device}')
 
 
 #######################
