@@ -6,6 +6,7 @@ import os
 import json
 import logging
 from itertools import permutations, chain
+from statistics import mean
 
 import pandas as pd
 import torch
@@ -24,7 +25,10 @@ parser.add_argument('-l', '--lr', default=1e-4, type=float)
 parser.add_argument('-b', '--batch-size', default=32, type=int)
 parser.add_argument('--batch-size-eval', default=32, type=int)
 parser.add_argument('-d', '--data', default='relbert/semeval2012_relational_similarity', type=str)
+parser.add_argument('--split-train', default='train', type=str)
+parser.add_argument('--split-validation', default='validation', type=str)
 parser.add_argument('--skip-train', help='', action='store_true')
+parser.add_argument('--skip-validation', help='', action='store_true')
 parser.add_argument('--push-to-hub', help='', action='store_true')
 parser.add_argument('-a', '--model-alias', default=None, type=str)
 opt = parser.parse_args()
@@ -59,7 +63,7 @@ def encode(x, y):
 
 # prompting input
 dataset = load_dataset(opt.data)
-df = dataset['train'].to_pandas()
+df = dataset[opt.split_train].to_pandas()
 tokenized_dataset = []
 for _, g in df.groupby("relation_type"):
     positives = [i.tolist() for i in g['positives'].values[0].tolist()]
@@ -96,11 +100,11 @@ if not opt.skip_train:
     tokenizer.save_pretrained(f"{opt.output_dir}/model")
 assert os.path.exists(f"{opt.output_dir}/model")
 
-if 'validation' in dataset:
+if not opt.skip_validation:
     #######################
     # Qualitative Example #
     #######################
-    data_valid = dataset['validation']
+    data_valid = dataset[opt.validation]
     pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
     logging.info("Generate examples...")
     for i in data_valid['positives']:
@@ -108,24 +112,30 @@ if 'validation' in dataset:
         output = pipe(model_input)[0]['generated_text']
         logging.info(f"[input] {model_input} \n\t>>> {output}")
 
-####################
-# Model Validation #
-####################
-query = [f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}" for i in data_valid['positives']]
-gold = [template_footer.replace('<subj-b>', i[1][0]).replace('<obj-b>', i[1][1]) for i in data_valid['positives']]
-choice = [[template_footer.replace('<subj-b>', i[0]).replace('<obj-b>', i[1]) for i in l] for l in data_valid['negatives']]
-scorer = EncoderDecoderLM(f"{opt.output_dir}/model")
-# get score for gold answer
-gold_score = scorer.get_perplexity(input_texts=query, output_texts=gold, batch=opt.batch_size_eval)
-# get score for the other choices
-query_flat = list(chain(*[[q] * len(c) for c, q in zip(choice, query)]))
-choice_flat = list(chain(*choice))
-choice_score = scorer.get_perplexity(
-    input_texts=query_flat,
-    output_texts=choice_flat,
-    batch=opt.batch_size_eval)
-index = list(chain(*[[n] * len(c) for n, c in enumerate(choice)]))
-df = pd.DataFrame([{i: s} for i, s in zip(index, choice_score)])
+    ####################
+    # Model Validation #
+    ####################
+    query = [f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}" for i in data_valid['positives']]
+    gold = [template_footer.replace('<subj-b>', i[1][0]).replace('<obj-b>', i[1][1]) for i in data_valid['positives']]
+    choice = [[template_footer.replace('<subj-b>', i[0]).replace('<obj-b>', i[1]) for i in l] for l in data_valid['negatives']]
+    scorer = EncoderDecoderLM(f"{opt.output_dir}/model")
+    # get score for gold answer
+    gold_score = scorer.get_perplexity(input_texts=query, output_texts=gold, batch=opt.batch_size_eval)
+    # get score for the other choices
+    query_flat = list(chain(*[[q] * len(c) for c, q in zip(choice, query)]))
+    choice_flat = list(chain(*choice))
+    choice_score = scorer.get_perplexity(
+        input_texts=query_flat,
+        output_texts=choice_flat,
+        batch=opt.batch_size_eval)
+    # compute accuracy
+    index = list(chain(*[[n] * len(c) for n, c in enumerate(choice)]))
+    df = pd.DataFrame([{"index": i, "score": s} for i, s in zip(index, choice_score)])
+    score_dict = {i: g['score'].values.tolist() for i, g in df.groupby("index")}
+    accuracy = mean([all(_v > gold_score[k] for _v in v) for k, v in score_dict.items()])
+    with open(f"{opt.output_dir}/model/validation_accuracy.json", "w") as f:
+        json.dump({"accuracy": accuracy, 'datasaet': opt.data, 'split': opt.validation}, f)
+
 # if opt.push_to_hub:
 #     assert opt.hf_organization is not None, f'specify hf organization `--hf-organization`'
 #     assert opt.model_alias is not None, f'specify hf organization `--model-alias`'
