@@ -1,3 +1,6 @@
+"""
+python finetune_t5_analogy.py -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy'
+"""
 import argparse
 import os
 import json
@@ -55,7 +58,8 @@ def encode(x, y):
 
 
 # prompting input
-df = load_dataset(opt.data, split='train').to_pandas()
+dataset = load_dataset(opt.data)
+df = dataset['train'].to_pandas()
 tokenized_dataset = []
 for _, g in df.groupby("relation_type"):
     positives = [i.tolist() for i in g['positives'].values[0].tolist()]
@@ -78,6 +82,7 @@ if not opt.skip_train:
         logging_dir=f'{opt.output_dir}/logging/',
         logging_steps=100,
         evaluation_strategy="no",
+        save_strategy='no',
         seed=opt.random_seed
     )
     trainer = transformers.Seq2SeqTrainer(
@@ -91,10 +96,20 @@ if not opt.skip_train:
     tokenizer.save_pretrained(f"{opt.output_dir}/model")
 assert os.path.exists(f"{opt.output_dir}/model")
 
+#######################
+# Qualitative Example #
+#######################
+if 'validation' in dataset:
+    pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
+    logging.info("Generate examples...")
+    for i in dataset['validation']['positives']:
+        model_input = f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}"
+        output = pipe(model_input)[0]['generated_text']
+        logging.info(f"[input] {model_input}, \n\t>>> {output}")
+
 ####################
 # Model Validation #
 ####################
-data_valid = load_dataset(opt.data, split='validation')
 query = [f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}" for i in data_valid['positives']]
 gold = [template_footer.replace('<subj-b>', i[1][0]).replace('<obj-b>', i[1][1]) for i in data_valid['positives']]
 choice = [[template_footer.replace('<subj-b>', i[0]).replace('<obj-b>', i[1]) for i in l] for l in data_valid['negatives']]
