@@ -43,8 +43,8 @@ language_models = {
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
     "google/flan-t5-large": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "google/flan-t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
-    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
+    "google/flan-t5-base": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 1024],  # 60M
     "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
     "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
     "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
@@ -64,29 +64,6 @@ language_models = {
     "gpt2-medium": [lmppl.LM, 256],  # 355M
     "gpt2": [lmppl.LM, 512],  # 124M
 }
-# language_models = {
-#     "gpt2": [lmppl.LM, 256],  # 124M
-#     "gpt2-medium": [lmppl.LM, 128],  # 355M
-#     "gpt2-large": [lmppl.LM, 64],  # 774M
-#     "gpt2-xl": [lmppl.LM, 32],  # 1.5B
-#     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
-#     "facebook/opt-125m": [lmppl.LM, 256],  # 125M
-#     "facebook/opt-350m": [lmppl.LM, 128],  # 350M
-#     "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
-#     "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
-#     "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
-#     "t5-small": [lmppl.EncoderDecoderLM, 256],  # 60M
-#     "t5-base": [lmppl.EncoderDecoderLM, 256],  # 220M
-#     "t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
-#     "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
-#     "t5-11b": [lmppl.EncoderDecoderLM, 8],  # 11B
-#     "google/flan-t5-small": [lmppl.EncoderDecoderLM, 256],  # 60M
-#     "google/flan-t5-base": [lmppl.EncoderDecoderLM, 256],  # 220M
-#     "google/flan-t5-large": [lmppl.EncoderDecoderLM, 64],  # 770M
-#     "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
-#     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
-#     "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
-# }
 
 # Add MLM
 # language_models.update({
