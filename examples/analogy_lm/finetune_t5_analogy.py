@@ -104,7 +104,7 @@ if not opt.skip_validation:
     #######################
     # Qualitative Example #
     #######################
-    data_valid = dataset[opt.validation]
+    data_valid = dataset[opt.split_validation]
     pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
     logging.info("Generate examples...")
     for i in data_valid['positives']:
@@ -134,7 +134,7 @@ if not opt.skip_validation:
     score_dict = {i: g['score'].values.tolist() for i, g in df.groupby("index")}
     accuracy = mean([all(_v > gold_score[k] for _v in v) for k, v in score_dict.items()])
     with open(f"{opt.output_dir}/model/validation_accuracy.json", "w") as f:
-        json.dump({"accuracy": accuracy, 'datasaet': opt.data, 'split': opt.validation}, f)
+        json.dump({"accuracy": accuracy, 'datasaet': opt.data, 'split': opt.split_validation}, f)
 
 # if opt.push_to_hub:
 #     assert opt.hf_organization is not None, f'specify hf organization `--hf-organization`'
