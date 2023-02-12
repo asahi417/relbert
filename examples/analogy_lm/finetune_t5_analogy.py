@@ -4,6 +4,8 @@ python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
 python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch9'
 
+python finetune_t5_analogy.py -e 9 -m --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch9' 
+
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch6'
@@ -180,8 +182,8 @@ if opt.repo_id is not None:
     os.system(f"git clone https://huggingface.co/{opt.repo_id}")
 
     # upload remaining files
-    copy_tree(opt.model_checkpoint, opt.model_alias)
-    with open(f"{opt.model_alias}/.gitattributes", 'w') as f:
-        f.write(gitattribute)
+    copy_tree(f"{opt.output_dir}/model", model_dir)
+    # with open(f"{opt.model_alias}/.gitattributes", 'w') as f:
+    #     f.write(gitattribute)
     os.system(f"cd {model_dir} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
-    shutil.rmtree(opt.repo_id)
+    shutil.rmtree(model_dir)
