@@ -35,8 +35,8 @@ instruction_footer = "The correct answer is"
 ##############
 # Load Model #
 ##############
-model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
 model_config = transformers.AutoConfig.from_pretrained(opt.model)
+model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
 tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
 if torch.cuda.device_count() > 0:
     model = torch.nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
