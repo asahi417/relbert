@@ -55,7 +55,7 @@ language_models = {
     "t5-large": [lmppl.EncoderDecoderLM, 128],  # 770M
     "t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
     "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
-    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+    # "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
     "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
     "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
@@ -79,7 +79,6 @@ language_models = {
 
 # Add Large Models
 # language_models.update({
-#
 #     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
 #     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
 #     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B

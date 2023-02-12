@@ -36,22 +36,22 @@ analogy_types = [
 ]
 
 language_models = {
-    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
-    # "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
-    # "google/flan-t5-large": [lmppl.EncoderDecoderLM, 256],  # 770M
-    # "google/flan-t5-base": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    # "google/flan-t5-small": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    # "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
-    # "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
-    # "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
-    # "facebook/opt-350m": [lmppl.LM, 128],  # 350M
-    # "facebook/opt-125m": [lmppl.LM, 256],  # 125M
-    # "t5-11b": [lmppl.EncoderDecoderLM, 4],  # 11B
-    # "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
-    # "t5-large": [lmppl.EncoderDecoderLM, 128],  # 770M
-    # "t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
-    # "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
-    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
+    "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
+    "google/flan-t5-large": [lmppl.EncoderDecoderLM, 256],  # 770M
+    "google/flan-t5-base": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
+    "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
+    "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
+    "facebook/opt-350m": [lmppl.LM, 128],  # 350M
+    "facebook/opt-125m": [lmppl.LM, 256],  # 125M
+    "t5-11b": [lmppl.EncoderDecoderLM, 4],  # 11B
+    "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
+    "t5-large": [lmppl.EncoderDecoderLM, 128],  # 770M
+    "t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
+    "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
+    # "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
     "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
     "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
