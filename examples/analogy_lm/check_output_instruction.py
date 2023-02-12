@@ -11,11 +11,11 @@ instruction = "Which one of the following is an analogy?"
 template = "<subj-a> is to <obj-a> what <subj-b> is to <obj-b>"
 analogy_types = [['sat_metaphor', '0'], ['sat_metaphor', '1'], ['sat_metaphor', '2']]
 language_models = {
-    "google/flan-t5-small": 64,  # 60M
-    "google/flan-t5-base": 64,  # 220M
-    "google/flan-t5-large": 32,  # 770M
-    "google/flan-t5-xl": 32,  # 3B
-    "google/flan-t5-xxl": 8  # 11B
+    "google/flan-t5-xxl": 8,  # 11B
+    "google/flan-t5-xl": 16,  # 3B
+    "google/flan-t5-large": 256,  # 770M
+    "google/flan-t5-base": 512,  # 220M
+    "google/flan-t5-small": 1024  # 60M
 }
 
 
