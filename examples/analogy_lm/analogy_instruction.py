@@ -182,14 +182,13 @@ if __name__ == '__main__':
                 {
                     'accuracy': _df['accuracy'].mean(),
                     'model': target_model,
-                    'approach': 'prompt',
                     'prefix': prefix,
                     'data': target_data,
                 }
             )
             print(target_data, prefix, target_model, _df['accuracy'].mean())
             print(f"Number of None: {_df['prediction'].isnull().sum()}")
-            # assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
+            assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
 
         del scorer
         gc.collect()

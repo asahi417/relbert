@@ -1,8 +1,6 @@
-import os
-import json
 import argparse
 import logging
-from random import shuffle, seed, randint
+from random import seed, randint
 from itertools import permutations
 import torch
 import transformers
@@ -66,17 +64,15 @@ for _, g in df.groupby("relation_type"):
         negatives=[i.tolist() for i in g['negatives'].values[0].tolist()])
 
 # load model
-if model_config.model_type == 't5':
+is_t5 = model_config.model_type == 't5'
+if is_t5:
     model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
 else:
     model = AutoModelWithLMHead.from_pretrained(opt.model, config=model_config)
-device = 'cuda' if torch.cuda.device_count() > 0 else 'cpu'
-parallel = False
-if torch.cuda.device_count() > 1:
-    parallel = True
-    model = torch.nn.DataParallel(model)
-model.to(device)
-logging.info(f'language model running on {torch.cuda.device_count()} GPU')
+if torch.cuda.device_count() > 0:
+    model = torch.nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
+    model.to('cuda')
+logging.info(f'language model running on {model.device}')
 
 # load tokenizer & tokenization
 tokenizer = AutoTokenizer.from_pretrained(opt.model)
@@ -84,14 +80,16 @@ tokenizer = AutoTokenizer.from_pretrained(opt.model)
 
 def preprocess(examples):
     model_inputs = tokenizer(examples[0], truncation=True)
-    labels = tokenizer(text_target=examples[1], truncation=True)
-    model_inputs['labels'] = labels['input_ids']
+    if is_t5:
+        model_inputs['labels'] = tokenizer(text_target=examples[1], truncation=True)['input_ids']
+    else:
+        model_inputs['labels'] = tokenizer(examples[1], truncation=True)['input_ids']
     return model_inputs
 
+tokenized_dataset = [preprocess(i) for i in model_input_output]
 tokenized_dataset =
 corpus = load_dataset("eth_py150_open", split='train')
 
-tokenized_dataset = corpus.map(preprocess_function, batched=True)
 
 training_args = transformers.Seq2SeqTrainingArguments( #general training arguments
     per_device_train_batch_size = 8,
