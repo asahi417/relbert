@@ -5,6 +5,7 @@ from itertools import permutations
 import torch
 import transformers
 from datasets import load_dataset
+from huggingface_hub import create_repo
 
 
 template_header = "<subj-a> is to <obj-a>"
@@ -16,8 +17,10 @@ instruction_footer = "The correct answer is"
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 parser = argparse.ArgumentParser(description='Fine-tuning T5 on analogy generation.')
 parser.add_argument('-m', '--model', default='google/flan-t5-small', type=str)
+parser.add_argument('-s', '--random-seed', default=42, type=int)
 parser.add_argument('-d', '--data', default='relbert/semeval2012_relational_similarity', type=str)
 parser.add_argument('--instruction', help='', action='store_true')
+parser.add_argument('--push-to-hub', help='', action='store_true')
 opt = parser.parse_args()
 
 
@@ -87,7 +90,6 @@ def preprocess(examples):
 
 
 tokenized_dataset = [preprocess(i) for i in model_input_output]
-corpus = load_dataset("eth_py150_open", split='train')
 training_args = transformers.Seq2SeqTrainingArguments(
     per_device_train_batch_size=8,
     warmup_steps=0,
@@ -97,6 +99,8 @@ training_args = transformers.Seq2SeqTrainingArguments(
     output_dir='runs/',
     logging_dir='runs/logging/',
     logging_steps=50,
+    evaluation_strategy="no",
+    seed=opt.random_seed,
     save_steps=10000,
 )
 
@@ -107,3 +111,27 @@ trainer = transformers.Seq2SeqTrainer(
     train_dataset=tokenized_dataset,
     data_collator=data_collator
 )
+
+if opt.push_to_hub:
+    assert opt.hf_organization is not None, f'specify hf organization `--hf-organization`'
+    assert opt.model_alias is not None, f'specify hf organization `--model-alias`'
+    url = create_repo(opt.model_alias, organization=opt.hf_organization, exist_ok=True)
+    # if not opt.skip_train:
+    args = {"use_auth_token": opt.use_auth_token, "repo_url": url, "organization": opt.hf_organization}
+    trainer.model.push_to_hub(opt.model_alias, **args)
+    tokenizer.push_to_hub(opt.model_alias, **args)
+    if os.path.exists(summary_file):
+        shutil.copy2(summary_file, opt.model_alias)
+    extra_desc = f"This model is fine-tuned on `{opt.split_train}` split and validated on `{opt.split_test}` split of tweet_topic."
+    readme = get_readme(
+        model_name=f"{opt.hf_organization}/{opt.model_alias}",
+        metric=summary_file,
+        language_model=opt.model,
+        extra_desc=extra_desc
+    )
+    with open(f"{opt.model_alias}/README.md", "w") as f:
+        f.write(readme)
+    os.system(
+        f"cd {opt.model_alias} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
+    shutil.rmtree(f"{opt.model_alias}")  # clean up the cloned repo
+
