@@ -17,7 +17,7 @@ parser.add_argument('-e', '--epoch', default=5, type=int)
 parser.add_argument('-l', '--lr', default=1e-4, type=float)
 parser.add_argument('-b', '--batch-size', default=32, type=int)
 parser.add_argument('-d', '--data', default='relbert/semeval2012_relational_similarity', type=str)
-parser.add_argument('--instruction', help='', action='store_true')
+parser.add_argument('--skip-train', help='', action='store_true')
 parser.add_argument('--push-to-hub', help='', action='store_true')
 parser.add_argument('-a', '--model-alias', default=None, type=str)
 opt = parser.parse_args()
@@ -25,6 +25,7 @@ opt = parser.parse_args()
 ##########
 # Config #
 ##########
+task_prefix = 'generate analogy: '
 template_header = "<subj-a> is to <obj-a>"
 template_join = "what"
 template_footer = "<subj-b> is to <obj-b>"
@@ -47,45 +48,21 @@ logging.info(f'language model ({opt.model}) running on {model.device}')
 #######################
 # Dataset Preparation #
 #######################
-logging.info('loading dataset')
-data = load_dataset(opt.data, split='train')
-df = data.to_pandas()
-
-
 def encode(x, y):
     model_inputs = tokenizer(x, truncation=True)
     model_inputs['labels'] = tokenizer(text_target=y, truncation=True)['input_ids']
     return model_inputs
 
 
-def prompting(positives, negatives):
-    if opt.instruction:
-        seed(42)
-        encoded_feature = []
-        for a, p in permutations(positives, 2):
-            header = f"{template_header.replace('<subj-a>', a[0]).replace('<obj-a>', a[1])}"
-            false_choices = [f"{header} {template_join} {template_footer.replace('<subj-b>', h).replace('<obj-b>', t)}" for h, t in negatives]
-            true_choice = f"{header} {template_join} {template_footer.replace('<subj-b>', p[0]).replace('<obj-b>', p[1])}"
-            answer_ind = randint(0, len(false_choices))
-            choice = false_choices[:answer_ind] + [true_choice] + false_choices[answer_ind:]
-            assert choice[answer_ind] == true_choice
-            choice_string = "\n".join([f"{n+1}) {i}" for n, i in enumerate(choice)])
-            prompt = f"{instruction_header}\n{choice_string}"
-            encoded_feature.append(encode(prompt, true_choice))
-        return encoded_feature
-    else:
-        return [encode(
-            template_header.replace('<subj-a>', h_a).replace('<obj-a>', t_a),
-            template_footer.replace('<subj-b>', h_b).replace('<obj-b>', t_b)) for
-            (h_a, t_a), (h_b, t_b) in permutations(positives, 2)]
-
-
 # prompting input
+df = load_dataset(opt.data, split='train').to_pandas()
 tokenized_dataset = []
 for _, g in df.groupby("relation_type"):
-    tokenized_dataset += prompting(
-        positives=[i.tolist() for i in g['positives'].values[0].tolist()],
-        negatives=[i.tolist() for i in g['negatives'].values[0].tolist()])
+    positives = [i.tolist() for i in g['positives'].values[0].tolist()]
+    tokenized_dataset += [encode(
+        task_prefix + template_header.replace('<subj-a>', h_a).replace('<obj-a>', t_a),
+        template_footer.replace('<subj-b>', h_b).replace('<obj-b>', t_b)) for
+        (h_a, t_a), (h_b, t_b) in permutations(positives, 2)]
 
 
 ##################
@@ -111,6 +88,7 @@ trainer = transformers.Seq2SeqTrainer(
 )
 trainer.train()
 trainer.save_model(f"{opt.output_dir}/model")
+tokenizer.save_pretrained(f"{opt.output_dir}/model")
 
 # if opt.push_to_hub:
 #     assert opt.hf_organization is not None, f'specify hf organization `--hf-organization`'
