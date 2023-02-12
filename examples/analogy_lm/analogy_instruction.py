@@ -55,35 +55,13 @@ language_models = {
     "t5-large": [lmppl.EncoderDecoderLM, 128],  # 770M
     "t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
     "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
-    # "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
-    # "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
     "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
     "gpt2-xl": [lmppl.LM, 32],  # 1.5B
     "gpt2-large": [lmppl.LM, 128],  # 774M
     "gpt2-medium": [lmppl.LM, 256],  # 355M
     "gpt2": [lmppl.LM, 512],  # 124M
 }
-
-# Add MLM
-# language_models.update({
-#     "roberta-base": [lmppl.MaskedLM],  # 110M
-#     "roberta-large": [lmppl.MaskedLM],  # 355M
-#     "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM],  # 70M
-#     "microsoft/deberta-v3-small": [lmppl.MaskedLM, 64],  # 142M
-#     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 64],  # 184M
-#     "microsoft/deberta-v3-large": [lmppl.MaskedLM, 32],  # 434M
-#     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 8],  # 900M
-#     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
-# })
-
-# Add Large Models
-# language_models.update({
-#     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
-#     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
-#     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
-#     "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
-# })
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool):
