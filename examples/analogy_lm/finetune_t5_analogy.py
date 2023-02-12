@@ -96,16 +96,17 @@ if not opt.skip_train:
     tokenizer.save_pretrained(f"{opt.output_dir}/model")
 assert os.path.exists(f"{opt.output_dir}/model")
 
-#######################
-# Qualitative Example #
-#######################
 if 'validation' in dataset:
+    #######################
+    # Qualitative Example #
+    #######################
+    data_valid = dataset['validation']
     pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
     logging.info("Generate examples...")
-    for i in dataset['validation']['positives']:
+    for i in ['positives']:
         model_input = f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}"
         output = pipe(model_input)[0]['generated_text']
-        logging.info(f"[input] {model_input}, \n\t>>> {output}")
+        logging.info(f"[input] {model_input} \n\t>>> {output}")
 
 ####################
 # Model Validation #
