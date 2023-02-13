@@ -1,4 +1,7 @@
 """
+
+python -c "from transformers import T5ForConditionalGeneration; T5ForConditionalGeneration.from_pretrained('google/flan-t5-xxl', device_map='auto', low_cpu_mem_usage=True, offload_folder='./offload_folder')"
+
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
@@ -19,7 +22,7 @@ python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/fla
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing --batch-size-eval 8
 python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validation -o 'analogy_models/flan-t5-xl-analogy-epoch6' --repo-id 'relbert/flan-t5-xl-analogy'
 
-python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch1' --gradient-checkpointing --batch-size-eval 8 -b 4
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch1' --gradient-checkpointing --batch-size-eval 8
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8 -b 4
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing --batch-size-eval 8 -b 4
 
@@ -50,6 +53,7 @@ parser.add_argument('-e', '--epoch', default=5, type=int)
 parser.add_argument('-l', '--lr', default=1e-4, type=float)
 parser.add_argument('-b', '--batch-size', default=32, type=int)
 parser.add_argument('--batch-size-eval', default=32, type=int)
+parser.add_argument('--gradient-accumulation-steps', default=1, type=int)
 parser.add_argument('-d', '--data', default='relbert/semeval2012_relational_similarity', type=str)
 parser.add_argument('--split-train', default='train', type=str)
 parser.add_argument('--split-validation', default='validation', type=str)
@@ -102,6 +106,7 @@ if not opt.skip_train:
     training_args = transformers.Seq2SeqTrainingArguments(
         per_device_train_batch_size=opt.batch_size,
         gradient_checkpointing=opt.gradient_checkpointing,
+        gradient_accumulation_steps=opt.gradient_accumulation_steps,
         warmup_steps=0,
         weight_decay=0.01,
         learning_rate=opt.lr,
@@ -129,7 +134,8 @@ if not opt.skip_train:
         'batch_size': opt.batch_size,
         'random_seed': opt.random_seed,
         'data': opt.data,
-        'model': opt.model}})
+        'model': opt.model,
+        'gradient_accumulation_steps': opt.gradient_accumulation_steps}})
     trainer.save_model(pj(opt.output_dir, "model"))
     tokenizer.save_pretrained(pj(opt.output_dir, "model"))
 assert os.path.exists(pj(opt.output_dir, "model"))
@@ -169,7 +175,7 @@ if not opt.skip_validation:
     score_dict = {i: g['score'].values.tolist() for i, g in df.groupby("index")}
     accuracy = mean([all(_v > gold_score[k] for _v in v) for k, v in score_dict.items()])
     with open(pj(opt.output_dir, "model", "validation_accuracy.json"), "w") as f:
-        json.dump({"accuracy": accuracy, 'datasaet': opt.data, 'split': opt.split_validation}, f)
+        json.dump({"accuracy": accuracy, 'dataset': opt.data, 'split': opt.split_validation}, f)
 
 if opt.repo_id is not None:
     #####################
