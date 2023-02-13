@@ -43,7 +43,7 @@ import transformers
 from datasets import load_dataset
 from lmppl import EncoderDecoderLM
 from huggingface_hub import create_repo
-from parallelformers import parallelize
+
 
 #############
 # Arguments #
@@ -85,12 +85,10 @@ if not opt.skip_train:
     model_config = transformers.AutoConfig.from_pretrained(opt.model)
     model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
     tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
+    if torch.cuda.device_count() > 1:
+        model = torch.nn.DataParallel(model)
     if torch.cuda.device_count() == 1:
         model.to('cuda')
-    elif torch.cuda.device_count() > 1:
-        parallelize(model, num_gpus=torch.cuda.device_count(), fp16=opt.fp16, verbose='detail')
-        # model = torch.nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
-
     #######################
     # Dataset Preparation #
     #######################
@@ -128,7 +126,7 @@ if not opt.skip_train:
         seed=opt.random_seed,
         fp16=opt.fp16)
     if opt.adafactor:
-        training_args.optim = 'adafactor'
+        training_args.optim = 'sgd'
     trainer = transformers.Seq2SeqTrainer(
         model=model,
         args=training_args,
