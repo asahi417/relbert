@@ -180,9 +180,9 @@ if opt.repo_id is not None:
     transformers.AutoTokenizer.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
 
     model_dir = os.path.basename(opt.repo_id)
-    if os.path.exists(model_dir):
-        shutil.rmtree(model_dir)
-    os.system(f"git clone https://huggingface.co/{opt.repo_id}")
+    # if os.path.exists(model_dir):
+    #     shutil.rmtree(model_dir)
+    # os.system(f"git clone https://huggingface.co/{opt.repo_id}")
     # upload remaining files
     copy_tree(f"{opt.output_dir}/model", model_dir)
     readme = f"""
