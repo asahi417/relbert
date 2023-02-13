@@ -33,6 +33,8 @@ python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xl' -o 'analogy_models/fla
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3-p' --gradient-checkpointing --batch-size-eval 8 --add-permutation
 python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validation -o 'analogy_models/flan-t5-xl-analogy-epoch1-p' --repo-id 'relbert/flan-t5-xl-analogy-permutation'
 
+
+
 # WIP
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xxl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 1 -b 1 --gradient-accumulation-steps 32 --fp16
 """
@@ -250,4 +252,4 @@ print(output)
     with open(f"{model_dir}/README.md", 'w') as f:
         f.write(readme)
     os.system(f"cd {model_dir} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
-    shutil.rmtree(model_dir)
+    # shutil.rmtree(model_dir)
