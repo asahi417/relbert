@@ -24,7 +24,7 @@ python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validat
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch1' --gradient-checkpointing --batch-size-eval 8
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8 -b 4
-python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing --batch-size-eval 8 -b 4
+python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing --batch-size-eval 8 -b 1 --gradient-accumulation-steps 32
 
 """
 import argparse
@@ -44,6 +44,9 @@ from datasets import load_dataset
 from lmppl import EncoderDecoderLM
 from huggingface_hub import create_repo
 
+#############
+# Arguments #
+#############
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 parser = argparse.ArgumentParser(description='Fine-tuning T5 on analogy generation.')
 parser.add_argument('-m', '--model', default='google/flan-t5-small', type=str)
@@ -61,6 +64,8 @@ parser.add_argument('--skip-train', help='', action='store_true')
 parser.add_argument('--skip-validation', help='', action='store_true')
 parser.add_argument('--gradient-checkpointing', help='', action='store_true')
 parser.add_argument('--push-to-hub', help='', action='store_true')
+parser.add_argument('--display-prediction', help='', action='store_true')
+parser.add_argument('--fp16', help='', action='store_true')
 parser.add_argument('--repo-id', default=None, type=str)
 opt = parser.parse_args()
 
@@ -116,8 +121,8 @@ if not opt.skip_train:
         logging_steps=100,
         evaluation_strategy="no",
         save_strategy='no',
-        seed=opt.random_seed
-    )
+        seed=opt.random_seed,
+        fp16=opt.fp16)
     trainer = transformers.Seq2SeqTrainer(
         model=model,
         args=training_args,
@@ -142,16 +147,16 @@ assert os.path.exists(pj(opt.output_dir, "model"))
 
 if not opt.skip_validation:
     data_valid = load_dataset(opt.data, split=opt.split_validation)
-
-    #######################
-    # Qualitative Example #
-    #######################
-    # pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
-    # logging.info("Generate examples...")
-    # for i in data_valid['positives']:
-    #     model_input = f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}"
-    #     output = pipe(model_input)[0]['generated_text']
-    #     logging.info(f"[input] {model_input} \n\t>>> {output}")
+    if opt.display_prediction:
+        #######################
+        # Qualitative Example #
+        #######################
+        pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
+        logging.info("Generate examples...")
+        for i in data_valid['positives']:
+            model_input = f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}"
+            output = pipe(model_input)[0]['generated_text']
+            logging.info(f"[input] {model_input} \n\t>>> {output}")
 
     ####################
     # Model Validation #
