@@ -40,8 +40,10 @@ setup(
         "tqdm",
         "pandas",
         "numpy==1.23.5",  # https://stackoverflow.com/questions/74947992/how-to-remove-the-error-systemerror-initialization-of-internal-failed-without
-        "transformers<=4.21.2",  # push-to-model is not working for latest version
-        "huggingface-hub<=0.9.1",
+        # "transformers<=4.21.2",  # push-to-model is not working for latest version
+        # "huggingface-hub<=0.9.1",
+        "transformers",  # push-to-model is not working for latest version
+        "huggingface-hub",
         "sentencepiece",
         "scikit-learn",
         "datasets",

@@ -59,7 +59,6 @@ language_models = {
 }
 # Add fine-tuned models
 language_models.update({
-    # "relbert/flan-t5-xxl-analogy": [lmppl.EncoderDecoderLM, 8],  # 11B
     "relbert/flan-t5-xl-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
     "relbert/flan-t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
@@ -71,16 +70,16 @@ language_models.update({
 })
 
 # Add MLM
-language_models.update({
-    "roberta-base": [lmppl.MaskedLM, 256],  # 110M
-    "roberta-large": [lmppl.MaskedLM, 128],  # 355M
-    "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 128],  # 70M
-    "microsoft/deberta-v3-small": [lmppl.MaskedLM, 128],  # 142M
-    "microsoft/deberta-v3-base": [lmppl.MaskedLM, 128],  # 184M
-    "microsoft/deberta-v3-large": [lmppl.MaskedLM, 64],  # 434M
-    "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 32],  # 900M
-    "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
-})
+# language_models.update({
+#     "roberta-base": [lmppl.MaskedLM, 256],  # 110M
+#     "roberta-large": [lmppl.MaskedLM, 128],  # 355M
+#     "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 128],  # 70M
+#     "microsoft/deberta-v3-small": [lmppl.MaskedLM, 128],  # 142M
+#     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 128],  # 184M
+#     "microsoft/deberta-v3-large": [lmppl.MaskedLM, 64],  # 434M
+#     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 32],  # 900M
+#     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
+# })
 
 # Add Large Models
 # language_models.update({
@@ -89,14 +88,6 @@ language_models.update({
 #     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
 #     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
 # })
-
-# language_models = {
-#     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
-#     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
-#     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
-#     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
-#     "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
-# }
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):
