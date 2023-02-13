@@ -24,7 +24,7 @@ python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validat
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch1' --gradient-checkpointing --batch-size-eval 8
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8 -b 4
-python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing --batch-size-eval 8 -b 1 --gradient-accumulation-steps 32
+python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing --batch-size-eval 8 -b 1 --gradient-accumulation-steps 32 --fp16
 
 """
 import argparse
@@ -66,6 +66,7 @@ parser.add_argument('--gradient-checkpointing', help='', action='store_true')
 parser.add_argument('--push-to-hub', help='', action='store_true')
 parser.add_argument('--display-prediction', help='', action='store_true')
 parser.add_argument('--fp16', help='', action='store_true')
+parser.add_argument('--adafactor', help='', action='store_true')
 parser.add_argument('--repo-id', default=None, type=str)
 opt = parser.parse_args()
 
@@ -122,7 +123,8 @@ if not opt.skip_train:
         evaluation_strategy="no",
         save_strategy='no',
         seed=opt.random_seed,
-        fp16=opt.fp16)
+        fp16=opt.fp16,
+        optim='adafactor' if opt.adafactor else 'adamw')
     trainer = transformers.Seq2SeqTrainer(
         model=model,
         args=training_args,
