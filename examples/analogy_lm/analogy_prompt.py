@@ -65,7 +65,7 @@ language_models.update({
     "relbert/flan-t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
     "relbert/flan-t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    # "relbert/flan-t5-xl-analogy-permutation": [lmppl.EncoderDecoderLM, 16],  # 3B
+    "relbert/flan-t5-xl-analogy-permutation": [lmppl.EncoderDecoderLM, 16],  # 3B
     "relbert/flan-t5-large-analogy-permutation": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 220M
     "relbert/flan-t5-small-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 60M
@@ -91,6 +91,14 @@ language_models.update({
 #     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
 #     "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
 # })
+
+# language_models = {
+#     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+#     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+#     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+#     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
+#     "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
+# }
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):

@@ -34,7 +34,7 @@ python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/fla
 python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validation -o 'analogy_models/flan-t5-xl-analogy-epoch1-p' --repo-id 'relbert/flan-t5-xl-analogy-permutation'
 
 # WIP
-python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing --batch-size-eval 8 -b 1 --gradient-accumulation-steps 32 --fp16
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xxl' -o 'analogy_models/flan-t5-xxl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 1 -b 1 --gradient-accumulation-steps 32 --fp16
 """
 import argparse
 import os
@@ -86,7 +86,7 @@ opt = parser.parse_args()
 task_prefix = 'generate analogy:'
 template_header = "<subj-a> is to <obj-a>"
 template_footer = "<subj-b> is to <obj-b>"
-
+is_parallel = False
 if not opt.skip_train:
     ##############
     # Load Model #
@@ -96,6 +96,7 @@ if not opt.skip_train:
     tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
     if torch.cuda.device_count() > 1:
         model = torch.nn.DataParallel(model)
+        is_parallel = True
     if torch.cuda.device_count() == 1:
         model.to('cuda')
 
@@ -148,7 +149,7 @@ if not opt.skip_train:
         data_collator=transformers.DataCollatorForSeq2Seq(tokenizer, model=model)
     )
     trainer.train()
-    trainer.model.config.update({'finetuing_config': {
+    finetuing_config = {'finetuing_config': {
         "task_prefix": task_prefix,
         "template_header": template_header,
         "template_footer": template_footer,
@@ -158,7 +159,11 @@ if not opt.skip_train:
         'random_seed': opt.random_seed,
         'data': opt.data,
         'model': opt.model,
-        'gradient_accumulation_steps': opt.gradient_accumulation_steps}})
+        'gradient_accumulation_steps': opt.gradient_accumulation_steps}}
+    if is_parallel:
+        trainer.model.module.update(finetuing_config)
+    else:
+        trainer.model.config.update(finetuing_config)
     trainer.save_model(pj(opt.output_dir, "model"))
     tokenizer.save_pretrained(pj(opt.output_dir, "model"))
 assert os.path.exists(pj(opt.output_dir, "model"))
