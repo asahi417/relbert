@@ -71,14 +71,14 @@ language_models.update({
 
 # Add MLM
 language_models.update({
-    "roberta-large": [lmppl.MaskedLM, 256],  # 355M
-    "roberta-base": [lmppl.MaskedLM, 256],  # 110M
     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 8],  # 1.5B
     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 32],  # 900M
     "microsoft/deberta-v3-large": [lmppl.MaskedLM, 128],  # 434M
     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
     "microsoft/deberta-v3-small": [lmppl.MaskedLM, 256],  # 142M
     "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 256],  # 70M
+    "roberta-large": [lmppl.MaskedLM, 256],  # 355M
+    "roberta-base": [lmppl.MaskedLM, 256],  # 110M
 })
 
 # Add Large Models
