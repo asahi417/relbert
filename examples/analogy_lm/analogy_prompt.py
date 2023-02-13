@@ -58,18 +58,26 @@ language_models = {
     "gpt2-medium": [lmppl.LM, 256],  # 355M
     "gpt2": [lmppl.LM, 512],  # 124M
 }
+# Add fine-tuned models
+language_models.update({
+    # "relbert/flan-t5-xxl-analogy": [lmppl.EncoderDecoderLM, 8],  # 11B
+    "relbert/flan-t5-xl-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
+    "relbert/flan-t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
+    "relbert/flan-t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    "relbert/flan-t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
+})
 
 # Add MLM
-language_models.update({
-    "roberta-base": [lmppl.MaskedLM, 256],  # 110M
-    "roberta-large": [lmppl.MaskedLM, 128],  # 355M
-    "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 512],  # 70M
-    "microsoft/deberta-v3-small": [lmppl.MaskedLM, 256],  # 142M
-    "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
-    "microsoft/deberta-v3-large": [lmppl.MaskedLM, 64],  # 434M
-    "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 16],  # 900M
-    "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 1],  # 1.5B
-})
+# language_models.update({
+#     "roberta-base": [lmppl.MaskedLM, 256],  # 110M
+#     "roberta-large": [lmppl.MaskedLM, 128],  # 355M
+#     "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 512],  # 70M
+#     "microsoft/deberta-v3-small": [lmppl.MaskedLM, 256],  # 142M
+#     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
+#     "microsoft/deberta-v3-large": [lmppl.MaskedLM, 64],  # 434M
+#     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 16],  # 900M
+#     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 1],  # 1.5B
+# })
 
 # Add Large Models
 # language_models.update({
