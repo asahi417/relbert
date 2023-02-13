@@ -52,7 +52,6 @@ language_models = {
     "t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
     "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
-    "google/switch-base-128": [lmppl.EncoderDecoderLM, 8],  # 220M
     "gpt2-xl": [lmppl.LM, 32],  # 1.5B
     "gpt2-large": [lmppl.LM, 128],  # 774M
     "gpt2-medium": [lmppl.LM, 256],  # 355M
@@ -89,7 +88,6 @@ language_models.update({
 #     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
 #     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
 #     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
-#     "google/switch-large-128": [lmppl.EncoderDecoderLM, 2],  # 770M
 # })
 
 # language_models = {
@@ -105,7 +103,7 @@ def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = F
     _template_header = template_header.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
     if encoder_decoder:
         return [[f"generate analogy: {_template_header}", template_footer.replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
-    return [[template_header, template_footer.replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
+    return [[_template_header, template_footer.replace('<subj-b>', a).replace('<obj-b>', b)] for a, b in candidate_pairs]
 
 
 def analogy_solver(scoring_model, data_name, batch_size, scores_texts, data_prefix):
