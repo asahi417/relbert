@@ -3,22 +3,23 @@ python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
 python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch9'
-
 python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3' --repo-id 'relbert/flan-t5-small-analogy'
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch6'
 python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch9'
+python finetune_t5_analogy.py -m 'google/flan-t5-base' --skip-train --skip-validation -o 'analogy_models/flan-t5-base-analogy-epoch3' --repo-id 'relbert/flan-t5-base-analogy'
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch6'
 python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch9'
+python finetune_t5_analogy.py -m 'google/flan-t5-large' --skip-train --skip-validation -o 'analogy_models/flan-t5-large-analogy-epoch3' --repo-id 'relbert/flan-t5-large-analogy'
 
-python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch1'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3'
-python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch6'
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch1' --gradient-checkpointing
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing
+python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing
 python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch9' --gradient-checkpointing
 """
 import argparse
@@ -135,13 +136,13 @@ if not opt.skip_validation:
     #######################
     # Qualitative Example #
     #######################
-    data_valid = load_dataset(opt.data, split=opt.split_validation)
-    pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
-    logging.info("Generate examples...")
-    for i in data_valid['positives']:
-        model_input = f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}"
-        output = pipe(model_input)[0]['generated_text']
-        logging.info(f"[input] {model_input} \n\t>>> {output}")
+    # data_valid = load_dataset(opt.data, split=opt.split_validation)
+    # pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
+    # logging.info("Generate examples...")
+    # for i in data_valid['positives']:
+    #     model_input = f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}"
+    #     output = pipe(model_input)[0]['generated_text']
+    #     logging.info(f"[input] {model_input} \n\t>>> {output}")
 
     ####################
     # Model Validation #
