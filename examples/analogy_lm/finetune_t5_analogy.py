@@ -64,38 +64,35 @@ task_prefix = 'generate analogy:'
 template_header = "<subj-a> is to <obj-a>"
 template_footer = "<subj-b> is to <obj-b>"
 
-##############
-# Load Model #
-##############
-model_config = transformers.AutoConfig.from_pretrained(opt.model)
-model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
-tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
-if torch.cuda.device_count() > 0:
-    model = torch.nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
-    model.to('cuda')
-
-
-#######################
-# Dataset Preparation #
-#######################
-def encode(x, y):
-    model_inputs = tokenizer(f"{task_prefix} {x}", truncation=True)
-    model_inputs['labels'] = tokenizer(text_target=y, truncation=True)['input_ids']
-    return model_inputs
-
-
-# prompting input
-dataset = load_dataset(opt.data)
-df = dataset[opt.split_train].to_pandas()
-tokenized_dataset = []
-for _, g in df.groupby("relation_type"):
-    positives = [i.tolist() for i in g['positives'].values[0].tolist()]
-    tokenized_dataset += [encode(
-        template_header.replace('<subj-a>', h_a).replace('<obj-a>', t_a),
-        template_footer.replace('<subj-b>', h_b).replace('<obj-b>', t_b)) for
-        (h_a, t_a), (h_b, t_b) in permutations(positives, 2)]
-
 if not opt.skip_train:
+    ##############
+    # Load Model #
+    ##############
+    model_config = transformers.AutoConfig.from_pretrained(opt.model)
+    model = transformers.T5ForConditionalGeneration.from_pretrained(opt.model, config=model_config)
+    tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
+    if torch.cuda.device_count() > 0:
+        model = torch.nn.DataParallel(model) if torch.cuda.device_count() > 1 else model
+        model.to('cuda')
+
+    #######################
+    # Dataset Preparation #
+    #######################
+    def encode(x, y):
+        model_inputs = tokenizer(f"{task_prefix} {x}", truncation=True)
+        model_inputs['labels'] = tokenizer(text_target=y, truncation=True)['input_ids']
+        return model_inputs
+
+    # prompting input
+    df = load_dataset(opt.data, split=opt.split_train).to_pandas()
+    tokenized_dataset = []
+    for _, g in df.groupby("relation_type"):
+        positives = [i.tolist() for i in g['positives'].values[0].tolist()]
+        tokenized_dataset += [encode(
+            template_header.replace('<subj-a>', h_a).replace('<obj-a>', t_a),
+            template_footer.replace('<subj-b>', h_b).replace('<obj-b>', t_b)) for
+            (h_a, t_a), (h_b, t_b) in permutations(positives, 2)]
+
     ##################
     # Model Training #
     ##################
@@ -138,7 +135,7 @@ if not opt.skip_validation:
     #######################
     # Qualitative Example #
     #######################
-    data_valid = dataset[opt.split_validation]
+    data_valid = load_dataset(opt.data, split=opt.split_validation)
     pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
     logging.info("Generate examples...")
     for i in data_valid['positives']:
@@ -171,6 +168,9 @@ if not opt.skip_validation:
         json.dump({"accuracy": accuracy, 'datasaet': opt.data, 'split': opt.split_validation}, f)
 
 if opt.repo_id is not None:
+    #####################
+    # Push to Model hub #
+    #####################
     create_repo(repo_id=opt.repo_id, exist_ok=True, repo_type="model")
     transformers.T5ForConditionalGeneration.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
     transformers.AutoTokenizer.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
@@ -179,10 +179,42 @@ if opt.repo_id is not None:
     if os.path.exists(model_dir):
         shutil.rmtree(model_dir)
     os.system(f"git clone https://huggingface.co/{opt.repo_id}")
-
     # upload remaining files
     copy_tree(f"{opt.output_dir}/model", model_dir)
-    # with open(f"{opt.model_alias}/.gitattributes", 'w') as f:
-    #     f.write(gitattribute)
+    readme = f"""
+---
+widget:
+- text: "{task_prefix} mammal is to whale"
+  example_title: "Analogy Example 1 (semantic relation)"
+- text: "{task_prefix} wedding is to marriage"
+  example_title: "Analogy Example 1 (semantic relation, metaphor)"
+- text: "{task_prefix} London is to U.K."
+  example_title: "Analogy Example 2 (entity)"
+- text: "{task_prefix} actual is to actually"
+  example_title: "Analogy Example 3 (morphological)"
+---
+# {opt.repo_id}
+
+This is [{opt.model}](https://huggingface.co/{opt.model}) fine-tuned on [{opt.data}](https://huggingface.co/datasets/{opt.data}) 
+for analogy generation, which is to generate a word pair (eg. `bird is to crow`) given a query (eg. `mammal is to whale`) 
+so that the query and the generated word pair form an analogy statement.  
+
+### Usage
+
+```python
+from transformers import pipeline
+
+pipe = pipeline('text2text-generation', model="{opt.repo_id}")
+template_header = "{template_header}"
+sample_head = "mammal"
+sample_tail = "whale"
+model_input = "{task_prefix} {template_header.replace('<subj-a>', 'mammal').replace('<obj-a>', 'whale')}"
+output = pipe(model_input)
+print(output)
+>>> [{{'generated_text': 'bird is to crow'}}]
+```
+"""
+    with open(f"{opt.model_alias}/README.md", 'w') as f:
+        f.write(readme)
     os.system(f"cd {model_dir} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
     shutil.rmtree(model_dir)
