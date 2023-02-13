@@ -175,9 +175,9 @@ if opt.repo_id is not None:
     #####################
     # Push to Model hub #
     #####################
-    create_repo(repo_id=opt.repo_id, exist_ok=True, repo_type="model")
-    transformers.T5ForConditionalGeneration.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
-    transformers.AutoTokenizer.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
+    # create_repo(repo_id=opt.repo_id, exist_ok=True, repo_type="model")
+    # transformers.T5ForConditionalGeneration.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
+    # transformers.AutoTokenizer.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
 
     model_dir = os.path.basename(opt.repo_id)
     # if os.path.exists(model_dir):
