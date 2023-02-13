@@ -133,10 +133,11 @@ if not opt.skip_train:
 assert os.path.exists(pj(opt.output_dir, "model"))
 
 if not opt.skip_validation:
+    data_valid = load_dataset(opt.data, split=opt.split_validation)
+
     #######################
     # Qualitative Example #
     #######################
-    # data_valid = load_dataset(opt.data, split=opt.split_validation)
     # pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
     # logging.info("Generate examples...")
     # for i in data_valid['positives']:
