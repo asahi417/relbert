@@ -206,8 +206,7 @@ so that the query and the generated word pair form an analogy statement.
 from transformers import pipeline
 
 pipe = pipeline('text2text-generation', model="{opt.repo_id}")
-model_input = "{task_prefix} {template_header.replace('<subj-a>', 'mammal').replace('<obj-a>', 'whale')}"
-output = pipe(model_input)
+output = pipe("{task_prefix} {template_header.replace('<subj-a>', 'mammal').replace('<obj-a>', 'whale')}")
 print(output)
 >>> [{{'generated_text': 'bird is to crow'}}]
 ```
