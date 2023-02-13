@@ -1,9 +1,12 @@
 """ Fine-tune T5 on analogy generation.
 
-python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
 python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3' --repo-id 'relbert/flan-t5-small-analogy'
+
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3' --add-permutation
+python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6' --add-permutation
+
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3'
@@ -90,7 +93,8 @@ if not opt.skip_train:
     #######################
 
     def permute(a, b, c, d):
-        return [(a, b, c, d), (a, c, b, d), (b, a, d, c), (b, d, a, c), (c, d, a, b), (c, a, d, b), (d, c, b, a), (d, b, c, a)]
+        return [[a, b, c, d], [a, c, b, d], [b, a, d, c], [b, d, a, c],
+                [c, d, a, b], [c, a, d, b], [d, c, b, a], [d, b, c, a]]
 
     def encode(x, y):
         model_inputs = tokenizer(f"{task_prefix} {x}", truncation=True)
@@ -101,13 +105,12 @@ if not opt.skip_train:
     df = load_dataset(opt.data, split=opt.split_train).to_pandas()
     tokenized_dataset = []
     for _, g in df.groupby("relation_type"):
-        positives = [i.tolist() for i in g['positives'].values[0].tolist()]
+        positives = [[a, b, c, d] for (a, b), (c, d) in permutations([i.tolist() for i in g['positives'].values[0].tolist()], 2)]
         if opt.add_permutation:
             positives = list(chain(*[permute(*i) for i in positives]))
         tokenized_dataset += [encode(
-            template_header.replace('<subj-a>', h_a).replace('<obj-a>', t_a),
-            template_footer.replace('<subj-b>', h_b).replace('<obj-b>', t_b)) for
-            (h_a, t_a), (h_b, t_b) in permutations(positives, 2)]
+            template_header.replace('<subj-a>', a).replace('<obj-a>', b),
+            template_footer.replace('<subj-b>', c).replace('<obj-b>', d)) for a, b, c, d in positives]
 
     ##################
     # Model Training #
