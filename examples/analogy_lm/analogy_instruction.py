@@ -62,6 +62,14 @@ language_models = {
     "gpt2": [lmppl.LM, 512],  # 124M
 }
 
+# Add Large Models
+# language_models.update({
+#     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+#     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+#     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+#     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
+# })
+
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool):
     tmp = template.replace('<subj-a>', query_pair[0]).replace('<obj-a>', query_pair[1])
