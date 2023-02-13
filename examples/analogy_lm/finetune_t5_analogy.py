@@ -4,7 +4,7 @@ python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
 python finetune_t5_analogy.py -e 9 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch9'
 
-python finetune_t5_analogy.py --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3' --repo-id 'relbert/flan-t5-small-analogy'
+python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3' --repo-id 'relbert/flan-t5-small-analogy'
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3'
@@ -214,7 +214,7 @@ print(output)
 >>> [{{'generated_text': 'bird is to crow'}}]
 ```
 """
-    with open(f"{opt.model_alias}/README.md", 'w') as f:
+    with open(f"{model_dir}/README.md", 'w') as f:
         f.write(readme)
     os.system(f"cd {model_dir} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
     shutil.rmtree(model_dir)
