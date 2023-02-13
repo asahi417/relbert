@@ -217,4 +217,4 @@ print(output)
     with open(f"{model_dir}/README.md", 'w') as f:
         f.write(readme)
     os.system(f"cd {model_dir} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
-    shutil.rmtree(model_dir)
+    # shutil.rmtree(model_dir)
