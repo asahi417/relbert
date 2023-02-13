@@ -175,14 +175,13 @@ if opt.repo_id is not None:
     #####################
     # Push to Model hub #
     #####################
-    # create_repo(repo_id=opt.repo_id, exist_ok=True, repo_type="model")
-    # transformers.T5ForConditionalGeneration.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
-    # transformers.AutoTokenizer.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
+    create_repo(repo_id=opt.repo_id, exist_ok=True, repo_type="model")
+    transformers.T5ForConditionalGeneration.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
+    transformers.AutoTokenizer.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
 
     model_dir = os.path.basename(opt.repo_id)
-    # if os.path.exists(model_dir):
-    #     shutil.rmtree(model_dir)
-    # os.system(f"git clone https://huggingface.co/{opt.repo_id}")
+    if not os.path.exists(model_dir):
+        os.system(f"git clone https://huggingface.co/{opt.repo_id}")
     # upload remaining files
     copy_tree(f"{opt.output_dir}/model", model_dir)
     readme = f"""
@@ -217,4 +216,4 @@ print(output)
     with open(f"{model_dir}/README.md", 'w') as f:
         f.write(readme)
     os.system(f"cd {model_dir} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
-    # shutil.rmtree(model_dir)
+    shutil.rmtree(model_dir)
