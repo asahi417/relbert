@@ -70,16 +70,16 @@ language_models.update({
 })
 
 # Add MLM
-# language_models.update({
-#     "roberta-base": [lmppl.MaskedLM, 256],  # 110M
-#     "roberta-large": [lmppl.MaskedLM, 128],  # 355M
-#     "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 128],  # 70M
-#     "microsoft/deberta-v3-small": [lmppl.MaskedLM, 128],  # 142M
-#     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 128],  # 184M
-#     "microsoft/deberta-v3-large": [lmppl.MaskedLM, 64],  # 434M
-#     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 32],  # 900M
-#     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
-# })
+language_models.update({
+    "roberta-base": [lmppl.MaskedLM, 256],  # 110M
+    "roberta-large": [lmppl.MaskedLM, 128],  # 355M
+    "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 128],  # 70M
+    "microsoft/deberta-v3-small": [lmppl.MaskedLM, 128],  # 142M
+    "microsoft/deberta-v3-base": [lmppl.MaskedLM, 128],  # 184M
+    "microsoft/deberta-v3-large": [lmppl.MaskedLM, 64],  # 434M
+    "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 32],  # 900M
+    "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 4],  # 1.5B
+})
 
 # Add Large Models
 # language_models.update({
@@ -126,7 +126,7 @@ def analogy_solver(scoring_model, data_name, batch_size, scores_texts, data_pref
                 input_texts=[f"{x[0]} {template_join} {x[1]}" for x in dataset_flat],
                 batch=batch_size
             )
-            scores_texts = [{"input": f"{x[0]} {x[1]}", "output": ""} for x in dataset_flat]
+            scores_texts = [{"input": f"{x[0]} {template_join} {x[1]}", "output": ""} for x in dataset_flat]
         for i, s in zip(scores_texts, scores):
             i['score'] = float(s)
     scores = [x['score'] for x in scores_texts]
