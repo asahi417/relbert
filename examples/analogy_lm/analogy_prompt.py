@@ -71,7 +71,7 @@ language_models.update({
 
 # Add MLM
 language_models.update({
-    "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 8],  # 1.5B
+    "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 32],  # 1.5B
     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 32],  # 900M
     "microsoft/deberta-v3-large": [lmppl.MaskedLM, 128],  # 434M
     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
