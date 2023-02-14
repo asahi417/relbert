@@ -73,7 +73,7 @@ language_models.update({
 language_models.update({
     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 64],  # 1.5B
     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 128],  # 900M
-    "microsoft/deberta-v3-large": [lmppl.MaskedLM, 256],  # 434M
+    "microsoft/deberta-v3-large": [lmppl.MaskedLM, 128],  # 434M
     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
     "microsoft/deberta-v3-small": [lmppl.MaskedLM, 256],  # 142M
     "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 256],  # 70M
@@ -85,6 +85,7 @@ language_models.update({
 # language_models.update({
 #     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
 #     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+#     "facebook/opt-66b": [lmppl.LM, 1],  # 66B
 #     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
 #     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
 # })
