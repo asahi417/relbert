@@ -5,14 +5,14 @@
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
 python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3' --repo-id 'relbert/flan-t5-small-analogy'
+
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch1-p' --add-permutation
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3-p' --add-permutation
 python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3-p' --repo-id 'relbert/flan-t5-small-analogy-permutation'
 
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch1-pd' --add-permutation-domain
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3-pd' --add-permutation-domain
-python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3-pd' --repo-id 'relbert/flan-t5-small-analogy-permutation-domain'
-
+python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch1-pd' --repo-id 'relbert/flan-t5-small-analogy-permutation-domain'
 ```
 
 - Base Models
@@ -20,9 +20,14 @@ python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-vali
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch6'
 python finetune_t5_analogy.py -m 'google/flan-t5-base' --skip-train --skip-validation -o 'analogy_models/flan-t5-base-analogy-epoch3' --repo-id 'relbert/flan-t5-base-analogy'
+
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1-p' --add-permutation
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3-p' --add-permutation
 python finetune_t5_analogy.py -m 'google/flan-t5-base' --skip-train --skip-validation -o 'analogy_models/flan-t5-base-analogy-epoch1-p' --repo-id 'relbert/flan-t5-base-analogy-permutation'
+
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch1-pd' --add-permutation-domain
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3-pd' --add-permutation-domain
+python finetune_t5_analogy.py -m 'google/flan-t5-base' --skip-train --skip-validation -o 'analogy_models/flan-t5-base-analogy-epoch3-pd' --repo-id 'relbert/flan-t5-base-analogy-permutation-domain'
 ```
 
 - Large Models
@@ -30,9 +35,14 @@ python finetune_t5_analogy.py -m 'google/flan-t5-base' --skip-train --skip-valid
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3'
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch6'
 python finetune_t5_analogy.py -m 'google/flan-t5-large' --skip-train --skip-validation -o 'analogy_models/flan-t5-large-analogy-epoch3' --repo-id 'relbert/flan-t5-large-analogy'
+
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch1-p' --add-permutation
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3-p' --add-permutation
 python finetune_t5_analogy.py -m 'google/flan-t5-large' --skip-train --skip-validation -o 'analogy_models/flan-t5-large-analogy-epoch1-p' --repo-id 'relbert/flan-t5-large-analogy-permutation'
+
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch1-pd' --add-permutation-domain
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3-pd' --add-permutation-domain
+
 ```
 
 - XL Models
@@ -43,6 +53,10 @@ python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validat
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch1-p' --gradient-checkpointing --batch-size-eval 8 --add-permutation
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3-p' --gradient-checkpointing --batch-size-eval 8 --add-permutation
 python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validation -o 'analogy_models/flan-t5-xl-analogy-epoch1-p' --repo-id 'relbert/flan-t5-xl-analogy-permutation'
+
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch1-pd' --add-permutation-domain
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3-pd' --add-permutation-domain
+
 ```
 """
 import argparse
@@ -115,14 +129,13 @@ if not opt.skip_train:
     #######################
 
     def permute_same_domain(a, b, c, d):
-        return [[a, b, c, d], [b, a, d, c], [c, d, a, b], [d, c, b, a]]
-
-    # def permute_diff_domain(a, b, c, d):
-    #     return [[a, c, b, d], [b, d, a, c], [c, a, d, b], [d, b, c, a]]
+        # return [[a, b, c, d], [b, a, d, c], [c, d, a, b], [d, c, b, a]]
+        return [[a, b, c, d], [b, a, d, c]]
 
     def permute(a, b, c, d):
-        return [[a, b, c, d], [a, c, b, d], [b, a, d, c], [b, d, a, c],
-                [c, d, a, b], [c, a, d, b], [d, c, b, a], [d, b, c, a]]
+        return [[a, b, c, d], [b, a, d, c], [a, c, b, d], [d, b, c, a]]
+        # return [[a, b, c, d], [a, c, b, d], [b, a, d, c], [b, d, a, c],
+        #         [c, d, a, b], [c, a, d, b], [d, c, b, a], [d, b, c, a]]
 
     def encode(x, y):
         model_inputs = tokenizer(f"{task_prefix} {x}", truncation=True)
