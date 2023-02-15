@@ -6,8 +6,13 @@ python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/
 python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch6'
 python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3' --repo-id 'relbert/flan-t5-small-analogy'
 python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch1-p' --add-permutation
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3-p' --add-permutation --skip-train --display-prediction
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3-p' --add-permutation
 python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3-p' --repo-id 'relbert/flan-t5-small-analogy-permutation'
+
+python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch1-pd' --add-permutation-domain
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3-pd' --add-permutation-domain
+python finetune_t5_analogy.py -m 'google/flan-t5-small' --skip-train --skip-validation -o 'analogy_models/flan-t5-small-analogy-epoch3-pd' --repo-id 'relbert/flan-t5-small-analogy-permutation-domain'
+
 ```
 
 - Base Models
@@ -81,6 +86,7 @@ parser.add_argument('--push-to-hub', help='', action='store_true')
 parser.add_argument('--display-prediction', help='', action='store_true')
 parser.add_argument('--fp16', help='', action='store_true')
 parser.add_argument('--add-permutation', help='', action='store_true')
+parser.add_argument('--add-permutation-domain', help='', action='store_true')
 parser.add_argument('--repo-id', default=None, type=str)
 opt = parser.parse_args()
 
@@ -108,6 +114,12 @@ if not opt.skip_train:
     # Dataset Preparation #
     #######################
 
+    def permute_same_domain(a, b, c, d):
+        return [[a, b, c, d], [b, a, d, c], [c, d, a, b], [d, c, b, a]]
+
+    # def permute_diff_domain(a, b, c, d):
+    #     return [[a, c, b, d], [b, d, a, c], [c, a, d, b], [d, b, c, a]]
+
     def permute(a, b, c, d):
         return [[a, b, c, d], [a, c, b, d], [b, a, d, c], [b, d, a, c],
                 [c, d, a, b], [c, a, d, b], [d, c, b, a], [d, b, c, a]]
@@ -124,6 +136,8 @@ if not opt.skip_train:
         positives = [[a, b, c, d] for (a, b), (c, d) in permutations([i.tolist() for i in g['positives'].values[0].tolist()], 2)]
         if opt.add_permutation:
             positives = list(chain(*[permute(*i) for i in positives]))
+        if opt.add_permutation_domain:
+            positives = list(chain(*[permute_same_domain(*i) for i in positives]))
         tokenized_dataset += [encode(
             template_header.replace('<subj-a>', a).replace('<obj-a>', b),
             template_footer.replace('<subj-b>', c).replace('<obj-b>', d)) for a, b, c, d in positives]
