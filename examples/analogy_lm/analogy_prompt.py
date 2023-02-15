@@ -63,7 +63,7 @@ language_models.update({
     "relbert/flan-t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
     "relbert/flan-t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/flan-t5-xl-analogy-permutation": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "relbert/flan-t5-xl-analogy-permutation": [lmppl.EncoderDecoderLM, 16],  # 3B
     "relbert/flan-t5-large-analogy-permutation": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 220M
     "relbert/flan-t5-small-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 60M
@@ -74,16 +74,16 @@ language_models.update({
 })
 
 # Add MLM
-language_models.update({
-    "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 64],  # 1.5B
-    "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 64],  # 900M
-    # "microsoft/deberta-v3-large": [lmppl.MaskedLM, 128],  # 434M
-    # "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
-    # "microsoft/deberta-v3-small": [lmppl.MaskedLM, 256],  # 142M
-    # "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 512],  # 70M
-    "roberta-large": [lmppl.MaskedLM, 256],  # 355M
-    "roberta-base": [lmppl.MaskedLM, 256],  # 110M
-})
+# language_models.update({
+#     "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 64],  # 1.5B
+#     "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 64],  # 900M
+#     "microsoft/deberta-v3-large": [lmppl.MaskedLM, 128],  # 434M
+#     "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
+#     "microsoft/deberta-v3-small": [lmppl.MaskedLM, 256],  # 142M
+#     "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 512],  # 70M
+#     "roberta-large": [lmppl.MaskedLM, 256],  # 355M
+#     "roberta-base": [lmppl.MaskedLM, 256],  # 110M
+# })
 
 # Add Large Models
 # language_models.update({
