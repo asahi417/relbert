@@ -5,7 +5,7 @@ train_nce () {
   NAME=${3}
   MODEL_CKPT="relbert_output/ckpt/nce_combined.${NAME}/template-${TEMPLATE_ID}"
   # train
-#  relbert-train -p -o "${MODEL_CKPT}" -b 64 -e 20 --loss nce -r 0.000005 -t "${TEMPLATE}" -d 'relbert/relational_similarity' -n "${NAME}" --num-negative 300
+  relbert-train -p -o "${MODEL_CKPT}" -b 64 -e 20 --loss nce -r 0.000005 -t "${TEMPLATE}" -d 'relbert/relational_similarity' -n "${NAME}" --num-negative 300
   for E in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
   do
     relbert-eval-analogy -d 'sat_full' 'sat' 'u2' 'u4' 'google' 'bats' 't_rex_relational_similarity' 'conceptnet_relational_similarity' 'nell_relational_similarity' -s 'test' -m "${MODEL_CKPT}/epoch_${E}" -o "${MODEL_CKPT}/epoch_${E}/analogy.forward.json" -b 64
@@ -24,6 +24,10 @@ do
   train_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${N}"
 #  train_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${N}"
 done
+
+N="nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity"
+train_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${N}"
+train_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${N}"
 
 
 eval_nce() {

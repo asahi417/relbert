@@ -198,4 +198,9 @@ if __name__ == '__main__':
         gc.collect()
         torch.cuda.empty_cache()
 
-    pd.DataFrame(results).to_csv('results/full_result.prompt.csv', index=False)
+    df = pd.DataFrame(results)
+    df.to_csv('results/full_result.prompt.csv', index=False)
+    df = df[[i != "sat_metaphor" for i in df['data']]]
+    df = df[[i != "sat" for i in df['data']]]
+    df.groupby("model")['accuracy'].mean().to_csv('results/full_result.prompt.average.csv')
+
