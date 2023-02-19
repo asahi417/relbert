@@ -2,31 +2,32 @@
 
 - Small Models
 ```
-python finetune_opt_analogy.py -e 3 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch3'
-python finetune_opt_analogy.py -e 6 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch6'
-python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch3' --repo-id 'relbert/opt-125m-analogy'
+python finetune_opt_analogy.py -e 10 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch10'
+python finetune_opt_analogy.py -e 15 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch15'
 
-python finetune_opt_analogy.py -e 1 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch1-p' --add-permutation
-python finetune_opt_analogy.py -e 3 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch3-p' --add-permutation
-python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch3-p' --repo-id 'relbert/opt-125m-analogy-permutation'
+python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch10' --repo-id 'relbert/opt-125m-analogy'
 
-python finetune_opt_analogy.py -e 1 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch1-pd' --add-permutation-domain
-python finetune_opt_analogy.py -e 3 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch3-pd' --add-permutation-domain
-python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch3-pd' --repo-id 'relbert/opt-125m-analogy-permutation-domain'
+python finetune_opt_analogy.py -e 10 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch10-p' --add-permutation
+python finetune_opt_analogy.py -e 15 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch15-p' --add-permutation
+python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch10-p' --repo-id 'relbert/opt-125m-analogy-permutation'
+
+python finetune_opt_analogy.py -e 10 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch10-pd' --add-permutation-domain
+python finetune_opt_analogy.py -e 15 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch15-pd' --add-permutation-domain
+python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch15-pd' --repo-id 'relbert/opt-125m-analogy-permutation-domain'
 ```
 
 - Base Models
 ```
-python finetune_opt_analogy.py -e 3 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch3'
-python finetune_opt_analogy.py -e 6 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch6'
-python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch3' --repo-id 'relbert/opt-350m-analogy'
+python finetune_opt_analogy.py -e 10 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch10'
+python finetune_opt_analogy.py -e 15 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch15'
+python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch15' --repo-id 'relbert/opt-350m-analogy'
 
-python finetune_opt_analogy.py -e 1 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch1-p' --add-permutation
-python finetune_opt_analogy.py -e 3 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch3-p' --add-permutation
+python finetune_opt_analogy.py -e 10 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch10-p' --add-permutation
+python finetune_opt_analogy.py -e 15 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch15-p' --add-permutation
 python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch3-p' --repo-id 'relbert/opt-350m-analogy-permutation'
 
-python finetune_opt_analogy.py -e 1 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch1-pd' --add-permutation-domain
-python finetune_opt_analogy.py -e 3 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch3-pd' --add-permutation-domain
+python finetune_opt_analogy.py -e 10 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch10-pd' --add-permutation-domain
+python finetune_opt_analogy.py -e 15 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch15-pd' --add-permutation-domain
 python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch3-pd' --repo-id 'relbert/opt-350m-analogy-permutation-domain'
 ```
 
@@ -172,7 +173,6 @@ if not opt.skip_validation:
         pipe = transformers.pipeline('text-generation', model=f"{opt.output_dir}/model")
         logging.info("Generate examples...")
         for i in data_valid['positives']:
-            template.split()
             model_input = template_input.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])
             output = pipe(model_input)[0]['generated_text']
             logging.info(f"[input] {model_input} \n\t>>> {output}")
@@ -202,7 +202,7 @@ if opt.repo_id is not None:
     # Push to Model hub #
     #####################
     create_repo(repo_id=opt.repo_id, exist_ok=True, repo_type="model")
-    transformers.T5ForConditionalGeneration.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
+    transformers.AutoModelForCausalLM.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
     transformers.AutoTokenizer.from_pretrained(f"{opt.output_dir}/model").push_to_hub(opt.repo_id)
 
     model_dir = os.path.basename(opt.repo_id)
@@ -233,10 +233,8 @@ so that the query and the generated word pair form an analogy statement.
 ```python
 from transformers import pipeline
 
-pipe = pipeline('text2text-generation', model="{opt.repo_id}")
+pipe = pipeline('text-generation', model="{opt.repo_id}")
 output = pipe("{template_input.replace('<subj-a>', 'mammal').replace('<obj-a>', 'whale')}")
-print(output)
->>> [{{'generated_text': 'bird is to crow'}}]
 ```
 """
     with open(f"{model_dir}/README.md", 'w') as f:

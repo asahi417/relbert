@@ -71,6 +71,11 @@ language_models.update({
     "relbert/flan-t5-large-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 220M
     "relbert/flan-t5-small-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    "relert/opt-iml-max-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
+    "relert/opt-iml-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
+    "relert/opt-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
+    "relert/opt-350m-analogy": [lmppl.LM, 128],  # 350M
+    "relert/opt-125m-analogy": [lmppl.LM, 256],  # 125M
 })
 
 # Add MLM
