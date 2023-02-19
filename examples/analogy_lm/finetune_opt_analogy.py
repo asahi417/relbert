@@ -2,8 +2,7 @@
 
 - Small Models
 ```
-python finetune_opt_analogy.py -e 1 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch1' --display-prediction
-python finetune_opt_analogy.py -e 3 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch3' --display-prediction
+python finetune_opt_analogy.py -e 3 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch3'
 python finetune_opt_analogy.py -e 6 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch6'
 python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch3' --repo-id 'relbert/opt-125m-analogy'
 
@@ -15,7 +14,22 @@ python finetune_opt_analogy.py -e 1 -m 'facebook/opt-125m' -o 'analogy_models/op
 python finetune_opt_analogy.py -e 3 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch3-pd' --add-permutation-domain
 python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch3-pd' --repo-id 'relbert/opt-125m-analogy-permutation-domain'
 ```
-facebook/opt-350m
+
+- Base Models
+```
+python finetune_opt_analogy.py -e 3 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch3'
+python finetune_opt_analogy.py -e 6 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch6'
+python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch3' --repo-id 'relbert/opt-350m-analogy'
+
+python finetune_opt_analogy.py -e 1 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch1-p' --add-permutation
+python finetune_opt_analogy.py -e 3 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch3-p' --add-permutation
+python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch3-p' --repo-id 'relbert/opt-350m-analogy-permutation'
+
+python finetune_opt_analogy.py -e 1 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch1-pd' --add-permutation-domain
+python finetune_opt_analogy.py -e 3 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch3-pd' --add-permutation-domain
+python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch3-pd' --repo-id 'relbert/opt-350m-analogy-permutation-domain'
+```
+
 facebook/opt-1.3b
 facebook/opt-iml-1.3b
 facebook/opt-iml-max-1.3b
@@ -142,7 +156,7 @@ if not opt.skip_train:
         'model': opt.model,
         'gradient_accumulation_steps': opt.gradient_accumulation_steps}}
     if is_parallel:
-        trainer.model.module.update(finetuing_config)
+        trainer.model.module.config.update(finetuing_config)
     else:
         trainer.model.config.update(finetuing_config)
     trainer.save_model(pj(opt.output_dir, "model"))

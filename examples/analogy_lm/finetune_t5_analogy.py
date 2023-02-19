@@ -193,7 +193,7 @@ if not opt.skip_train:
         'model': opt.model,
         'gradient_accumulation_steps': opt.gradient_accumulation_steps}}
     if is_parallel:
-        trainer.model.module.update(finetuing_config)
+        trainer.model.module.config.update(finetuing_config)
     else:
         trainer.model.config.update(finetuing_config)
     trainer.save_model(pj(opt.output_dir, "model"))
