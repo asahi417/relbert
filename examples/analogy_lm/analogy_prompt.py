@@ -76,7 +76,7 @@ language_models.update({
     # "relbert/opt-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
     "relbert/opt-350m-analogy": [lmppl.LM, 128],  # 350M
     # "relbert/opt-350m-analogy-permutation": [lmppl.LM, 128],  # 350M
-    "relbert/opt-350m-analogy-permutation-domain": [lmppl.LM, 128],  # 350M
+    # "relbert/opt-350m-analogy-permutation-domain": [lmppl.LM, 128],  # 350M
     "relbert/opt-125m-analogy": [lmppl.LM, 256],  # 125M
     "relbert/opt-125m-analogy-permutation": [lmppl.LM, 256],  # 125M
     "relbert/opt-125m-analogy-permutation-domain": [lmppl.LM, 256],  # 125M
