@@ -1,4 +1,4 @@
-""" Fine-tune OPT on analogy generation.
+""" Fine-tune T5 on analogy generation.
 
 - Small Models
 ```
@@ -56,8 +56,8 @@ import transformers
 # Arguments #
 #############
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
-parser = argparse.ArgumentParser(description='Fine-tuning GPT on analogy generation.')
-parser.add_argument('-m', '--model', default='facebook/opt-125m', type=str)
+parser = argparse.ArgumentParser(description='Fine-tuning MLM on analogy generation.')
+parser.add_argument('-m', '--model', default='roberta-base', type=str)
 parser.add_argument('-o', '--output-dir', default='runs', type=str)
 parser.add_argument('-s', '--random-seed', default=42, type=int)
 parser.add_argument('-e', '--epoch', default=5, type=int)
@@ -90,7 +90,7 @@ if not opt.skip_train:
     # Load Model #
     ##############
     model_config = transformers.AutoConfig.from_pretrained(opt.model)
-    model = transformers.AutoModelForCausalLM.from_pretrained(opt.model, config=model_config)
+    model = transformers.AutoModelForMaskedLM.from_pretrained(opt.model, config=model_config)
     tokenizer = transformers.AutoTokenizer.from_pretrained(opt.model)
     if torch.cuda.device_count() > 1:
         model = torch.nn.DataParallel(model)
@@ -143,7 +143,7 @@ if not opt.skip_train:
         model=model,
         args=training_args,
         train_dataset=tokenized_dataset,
-        data_collator=transformers.DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+        data_collator=transformers.DataCollatorForLanguageModeling(tokenizer=tokenizer)
     )
     trainer.train()
     finetuing_config = {'finetuing_config': {
@@ -169,7 +169,7 @@ if not opt.skip_validation:
         #######################
         # Qualitative Example #
         #######################
-        pipe = transformers.pipeline('text-generation', model=f"{opt.output_dir}/model")
+        pipe = transformers.pipeline('text2text-generation', model=f"{opt.output_dir}/model")
         logging.info("Generate examples...")
         for i in data_valid['positives']:
             template.split()
