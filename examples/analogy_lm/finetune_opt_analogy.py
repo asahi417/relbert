@@ -4,7 +4,6 @@
 ```
 python finetune_opt_analogy.py -e 10 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch10'
 python finetune_opt_analogy.py -e 15 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch15'
-
 python finetune_opt_analogy.py -m 'facebook/opt-125m' --skip-train --skip-validation -o 'analogy_models/opt-125m-analogy-epoch10' --repo-id 'relbert/opt-125m-analogy'
 
 python finetune_opt_analogy.py -e 10 -m 'facebook/opt-125m' -o 'analogy_models/opt-125m-analogy-epoch10-p' --add-permutation
@@ -24,14 +23,19 @@ python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-valida
 
 python finetune_opt_analogy.py -e 10 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch10-p' --add-permutation
 python finetune_opt_analogy.py -e 15 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch15-p' --add-permutation
-python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch3-p' --repo-id 'relbert/opt-350m-analogy-permutation'
+python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch15-p' --repo-id 'relbert/opt-350m-analogy-permutation'
 
 python finetune_opt_analogy.py -e 10 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch10-pd' --add-permutation-domain
 python finetune_opt_analogy.py -e 15 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch15-pd' --add-permutation-domain
-python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch3-pd' --repo-id 'relbert/opt-350m-analogy-permutation-domain'
+python finetune_opt_analogy.py -m 'facebook/opt-350m' --skip-train --skip-validation -o 'analogy_models/opt-350m-analogy-epoch15-pd' --repo-id 'relbert/opt-350m-analogy-permutation-domain'
 ```
 
-facebook/opt-1.3b
+- Large Models
+```
+python finetune_opt_analogy.py -e 10 -m 'facebook/opt-1.3b' -o 'analogy_models/opt-1.3b-analogy-epoch10' -b 1 --gradient-accumulation-steps 32 --gradient-checkpointing
+python finetune_opt_analogy.py -e 15 -m 'facebook/opt-350m' -o 'analogy_models/opt-350m-analogy-epoch15'
+```
+
 facebook/opt-iml-1.3b
 facebook/opt-iml-max-1.3b
 """

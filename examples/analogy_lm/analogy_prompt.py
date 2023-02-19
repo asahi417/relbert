@@ -36,66 +36,70 @@ analogy_types = [
 ]
 
 language_models = {
-    "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
-    "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "google/flan-t5-large": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "google/flan-t5-base": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "google/flan-t5-small": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
-    "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
-    "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
-    "facebook/opt-350m": [lmppl.LM, 128],  # 350M
-    "facebook/opt-125m": [lmppl.LM, 256],  # 125M
-    "t5-11b": [lmppl.EncoderDecoderLM, 4],  # 11B
-    "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "t5-large": [lmppl.EncoderDecoderLM, 128],  # 770M
-    "t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
-    "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
-    "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
-    "gpt2-xl": [lmppl.LM, 32],  # 1.5B
-    "gpt2-large": [lmppl.LM, 128],  # 774M
-    "gpt2-medium": [lmppl.LM, 256],  # 355M
-    "gpt2": [lmppl.LM, 512],  # 124M
+    # "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
+    # "google/flan-t5-xl": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "google/flan-t5-large": [lmppl.EncoderDecoderLM, 256],  # 770M
+    # "google/flan-t5-base": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    # "google/flan-t5-small": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    # "facebook/opt-iml-max-1.3b": [lmppl.LM, 32],  # 1.3B
+    # "facebook/opt-iml-1.3b": [lmppl.LM, 32],  # 1.3B
+    # "facebook/opt-1.3b": [lmppl.LM, 32],  # 1.3B
+    # "facebook/opt-350m": [lmppl.LM, 128],  # 350M
+    # "facebook/opt-125m": [lmppl.LM, 256],  # 125M
+    # "t5-11b": [lmppl.EncoderDecoderLM, 4],  # 11B
+    # "t5-3b": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "t5-large": [lmppl.EncoderDecoderLM, 128],  # 770M
+    # "t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
+    # "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
+    # "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
+    # "gpt2-xl": [lmppl.LM, 32],  # 1.5B
+    # "gpt2-large": [lmppl.LM, 128],  # 774M
+    # "gpt2-medium": [lmppl.LM, 256],  # 355M
+    # "gpt2": [lmppl.LM, 512],  # 124M
 }
 # Add fine-tuned models
 language_models.update({
-    "relbert/flan-t5-xl-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/flan-t5-xl-analogy-permutation": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy-permutation": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/flan-t5-xl-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relert/opt-iml-max-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
-    "relert/opt-iml-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
-    "relert/opt-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
+    # "relbert/flan-t5-xl-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "relbert/flan-t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
+    # "relbert/flan-t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    # "relbert/flan-t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    # "relbert/flan-t5-xl-analogy-permutation": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "relbert/flan-t5-large-analogy-permutation": [lmppl.EncoderDecoderLM, 256],  # 770M
+    # "relbert/flan-t5-base-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    # "relbert/flan-t5-small-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    # "relbert/flan-t5-xl-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "relbert/flan-t5-large-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 256],  # 770M
+    # "relbert/flan-t5-base-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    # "relbert/flan-t5-small-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    # "relert/opt-iml-max-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
+    # "relert/opt-iml-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
+    # "relert/opt-1.3b-analogy": [lmppl.LM, 32],  # 1.3B
     "relert/opt-350m-analogy": [lmppl.LM, 128],  # 350M
+    "relert/opt-350m-analogy-p": [lmppl.LM, 128],  # 350M
+    "relert/opt-350m-analogy-pd": [lmppl.LM, 128],  # 350M
     "relert/opt-125m-analogy": [lmppl.LM, 256],  # 125M
+    "relert/opt-125m-analogy-p": [lmppl.LM, 256],  # 125M
+    "relert/opt-125m-analogy-pd": [lmppl.LM, 256],  # 125M
 })
 
 # Add MLM
 language_models.update({
-    "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 64],  # 1.5B
-    "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 64],  # 900M
-    "microsoft/deberta-v3-large": [lmppl.MaskedLM, 128],  # 434M
-    "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
-    "microsoft/deberta-v3-small": [lmppl.MaskedLM, 256],  # 142M
-    "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 512],  # 70M
-    "roberta-large": [lmppl.MaskedLM, 256],  # 355M
-    "roberta-base": [lmppl.MaskedLM, 256],  # 110M
+    # "microsoft/deberta-v2-xxlarge": [lmppl.MaskedLM, 64],  # 1.5B
+    # "microsoft/deberta-v2-xlarge": [lmppl.MaskedLM, 64],  # 900M
+    # "microsoft/deberta-v3-large": [lmppl.MaskedLM, 128],  # 434M
+    # "microsoft/deberta-v3-base": [lmppl.MaskedLM, 256],  # 184M
+    # "microsoft/deberta-v3-small": [lmppl.MaskedLM, 256],  # 142M
+    # "microsoft/deberta-v3-xsmall": [lmppl.MaskedLM, 512],  # 70M
+    # "roberta-large": [lmppl.MaskedLM, 256],  # 355M
+    # "roberta-base": [lmppl.MaskedLM, 256],  # 110M
 })
 
 # Add Large Models
 language_models.update({
-    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
-    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
-    "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
-    "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+    # "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+    # "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+    # "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
+    # "facebook/opt-30b": [lmppl.LM, 1],  # 30B
     # "facebook/opt-66b": [lmppl.LM, 1],  # 66B
 })
 
