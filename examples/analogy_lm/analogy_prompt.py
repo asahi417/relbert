@@ -88,10 +88,10 @@ language_models.update({
 # Add Large Models
 language_models.update({
     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+    "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
     # "facebook/opt-66b": [lmppl.LM, 1],  # 66B
-    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
-    # "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
 })
 
 

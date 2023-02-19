@@ -8,6 +8,7 @@ facebook/opt-350m,0.38136752486435754
 facebook/opt-iml-1.3b,0.4236757202070199
 facebook/opt-iml-30b,0.49770996291045944
 facebook/opt-iml-max-1.3b,0.4307786510353733
+facebook/opt-iml-max-30b,0.48318520600902104
 google/flan-t5-base,0.37090484482758823
 google/flan-t5-large,0.38359943610202113
 google/flan-t5-small,0.3215547334216862
