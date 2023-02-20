@@ -1,6 +1,10 @@
 import os
+from glob import glob
+
 import matplotlib.pyplot as plt
 import pandas as pd
+from datasets import load_dataset
+
 
 os.makedirs('results/figures', exist_ok=True)
 model_size = {
@@ -39,31 +43,27 @@ model_size = {
     "relbert/flan-t5-xl-analogy": [3000, "Flan-T5 (FT)"]
 }
 
-df = pd.read_csv('results/full_result.prompt.csv')
-df['Accuracy'] = df.pop('accuracy')  # * 100
-df = df[[i not in ['sat_metaphor', 'sat'] for i in df['data']]]
-df = df[[i in model_size for i in df['model']]]
-df.pop('prefix')
-for data, g in df.groupby('data'):
-    output = {}
-    g['lm'] = [model_size[i][1] for i in g['model']]
-    # g['Model Size (log)'] = [log(model_size[i][0]) for i in g['model']]
-    g['Model Size'] = [model_size[i][0] * 1000000 for i in g['model']]
-    out = g.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
-    out.columns = [i[1] for i in out.columns]
-    out = out.reset_index()
-    lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'Flan-T5', 'Flan-T5 (FT)']
-    colors = ['red', 'blue', 'green', 'orange', 'purple', 'gray', 'black']
-    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:']
 
-    tmp = out[['Model Size', lms[0]]].dropna().reset_index()
-    tmp['Accuracy'] = tmp[lms[0]]
-    ax = tmp.plot.line(y='Accuracy', x='Model Size', color=colors[0], style=styles[0], label=lms[0], logx=True)
-    for n, c in enumerate(lms[1:]):
-        tmp = out[['Model Size', c]].dropna().reset_index()
-        tmp['Accuracy'] = tmp[c]
-        tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n+1], style=styles[n+1], label=c, logx=True)
-    plt.grid()
-    plt.tight_layout()
-    plt.savefig(f"results/figures/curve.{data}.png", bbox_inches="tight", dpi=600)
+output = []
+for m in model_size:
+    m = os.path.basename(m)
+    for i in glob(f"results/breakdown/{m}*.csv"):
+        df = pd.read_csv(i)
 
+        data = '_'.join(i.split("_None")[0].split("_")[1:])
+        if data == 'bats':
+            df['prefix'] = df['prefix'].apply(lambda x: os.path.dirname(x.replace("./cache/BATS_3.0/", "")))
+        elif data == 'google':
+            df['prefix'] = df['prefix'].apply(lambda x: 'Morphological' if 'gram' in x else "Semantic")
+        elif 'sat' in data:
+            continue
+        elif data == 'nell_relational_similarity':
+            df['prefix'] = df['prefix'].apply(lambda x: x.replace("concept:", ""))
+
+        for prefix, g in df.groupby("prefix"):
+            output.append({'model': m, "data": data, 'accuracy': g['accuracy'].mean(), 'prefix': prefix})
+df = pd.DataFrame(output)
+for (data, prefix), g in df.groupby(["data", 'prefix']):
+    g
+    g = g.sort_values("accuracy", ascending=False)
+    print(g['model'].values[0], g['accuracy'].values[0])
