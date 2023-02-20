@@ -249,17 +249,13 @@ if not opt.skip_validation:
     # get score for the other choices
     query_flat = list(chain(*[[q] * len(c) for c, q in zip(choice, query)]))
     choice_flat = list(chain(*choice))
-    print(query_flat)
     choice_score = scorer.get_perplexity(
         input_texts=query_flat,
         output_texts=choice_flat,
         batch=opt.batch_size_eval)
-    print(choice_score)
     # compute accuracy
     index = list(chain(*[[n] * len(c) for n, c in enumerate(choice)]))
-    print(index)
     df = pd.DataFrame([{"index": i, "score": s} for i, s in zip(index, choice_score)])
-    print(df)
     score_dict = {i: g['score'].values.tolist() for i, g in df.groupby("index")}
     accuracy = mean([all(_v > gold_score[k] for _v in v) for k, v in score_dict.items()])
     with open(pj(opt.output_dir, "model", "validation_accuracy.json"), "w") as f:
