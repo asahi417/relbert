@@ -221,6 +221,7 @@ assert os.path.exists(pj(opt.output_dir, "model"))
 
 if not opt.skip_validation:
     data_valid = load_dataset(opt.data, opt.data_name, split=opt.split_validation)
+    print(data_valid)
     if opt.display_prediction:
         #######################
         # Qualitative Example #
