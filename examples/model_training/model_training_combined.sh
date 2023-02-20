@@ -18,9 +18,9 @@ train_nce () {
 for N in 'nell_relational_similarity.semeval2012_relational_similarity' 'semeval2012_relational_similarity.t_rex_relational_similarity' 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity'
 do
   train_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${N}"
-#  train_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${N}"
+  train_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${N}"
   train_nce "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${N}"
-#  train_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${N}"
+  train_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "${N}"
   train_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "${N}"
 done
 
@@ -46,20 +46,20 @@ eval_nce() {
   relbert-push-to-hub -m "${MODEL_CKPT}" -a "${MODEL_ALIAS}"
 }
 
-#eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'a' 'epoch_11' 'relbert-roberta-large-nce-a-semeval2012-nell'
-#eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'b' 'epoch_14' 'relbert-roberta-large-nce-b-semeval2012-nell'
-#eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'c' 'epoch_8' 'relbert-roberta-large-nce-c-semeval2012-nell'
-#eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'd' 'epoch_7' 'relbert-roberta-large-nce-d-semeval2012-nell'
-#eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'e' 'epoch_8' 'relbert-roberta-large-nce-e-semeval2012-nell'
+eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'a' 'epoch_11' 'relbert-roberta-large-nce-a-semeval2012-nell'
+eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'b' 'epoch_14' 'relbert-roberta-large-nce-b-semeval2012-nell'
+eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'c' 'epoch_8' 'relbert-roberta-large-nce-c-semeval2012-nell'
+eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'd' 'epoch_7' 'relbert-roberta-large-nce-d-semeval2012-nell'
+eval_nce 'nell_relational_similarity.semeval2012_relational_similarity' 'e' 'epoch_8' 'relbert-roberta-large-nce-e-semeval2012-nell'
 
 eval_nce 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity' 'a' 'model' 'relbert-roberta-large-nce-a-semeval2012-nell-t-rex'
-#eval_nce 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity' 'b' 'epoch_9' 'relbert-roberta-large-nce-b-semeval2012-nell-t-rex'
+eval_nce 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity' 'b' 'epoch_9' 'relbert-roberta-large-nce-b-semeval2012-nell-t-rex'
 eval_nce 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity' 'c' 'epoch_17' 'relbert-roberta-large-nce-c-semeval2012-nell-t-rex'
-#eval_nce 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity' 'd' 'epoch_5' 'relbert-roberta-large-nce-d-semeval2012-nell-t-rex'
-eval_nce 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity' 'e' '' 'relbert-roberta-large-nce-e-semeval2012-nell-t-rex'
+eval_nce 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity' 'd' 'epoch_5' 'relbert-roberta-large-nce-d-semeval2012-nell-t-rex'
+eval_nce 'nell_relational_similarity.semeval2012_relational_similarity.t_rex_relational_similarity' 'e' 'epoch_17' 'relbert-roberta-large-nce-e-semeval2012-nell-t-rex'
 
-#eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'a' 'epoch_16' 'relbert-roberta-large-nce-a-semeval2012-t-rex'
-#eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'b' 'epoch_12' 'relbert-roberta-large-nce-b-semeval2012-t-rex'
-#eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'c' 'epoch_9' 'relbert-roberta-large-nce-c-semeval2012-t-rex'
-#eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'd' 'epoch_15' 'relbert-roberta-large-nce-d-semeval2012-t-rex'
+eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'a' 'epoch_16' 'relbert-roberta-large-nce-a-semeval2012-t-rex'
+eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'b' 'epoch_12' 'relbert-roberta-large-nce-b-semeval2012-t-rex'
+eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'c' 'epoch_9' 'relbert-roberta-large-nce-c-semeval2012-t-rex'
+eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'd' 'epoch_15' 'relbert-roberta-large-nce-d-semeval2012-t-rex'
 eval_nce 'semeval2012_relational_similarity.t_rex_relational_similarity' 'e' 'epoch_13' 'relbert-roberta-large-nce-e-semeval2012-t-rex'

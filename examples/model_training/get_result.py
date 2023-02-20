@@ -60,6 +60,9 @@ if __name__ == '__main__':
     full_output += get_result(data='t-rex')
     full_output += get_result(data='conceptnet')
     full_output += get_result(data='nell')
+    full_output += get_result(data='semeval2012-nell')
+    full_output += get_result(data='semeval2012-t-rex')
+    full_output += get_result(data='semeval2012-nell-t-rex')
 
     df = pd.DataFrame(full_output)
     df.to_csv('result.csv', index=False)

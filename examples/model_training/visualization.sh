@@ -22,8 +22,7 @@ vis "relbert-roberta-large-iloob-a-semeval2012"
 vis "relbert-roberta-large-iloob-b-semeval2012"
 vis "relbert-roberta-large-iloob-c-semeval2012"
 vis "relbert-roberta-large-iloob-d-semeval2012"
-
-[TODO] vis "relbert-roberta-large-iloob-e-semeval2012"
+vis "relbert-roberta-large-iloob-e-semeval2012"
 
 
 vis "relbert-roberta-large-nce-a-semeval2012"

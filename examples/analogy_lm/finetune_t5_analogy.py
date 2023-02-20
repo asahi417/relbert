@@ -59,6 +59,24 @@ python finetune_t5_analogy.py -e 1 -m 'google/flan-t5-xl' -o 'analogy_models/fla
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3-pd' --gradient-checkpointing --add-permutation-domain
 python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validation -o 'analogy_models/flan-t5-xl-analogy-epoch3-pd' --repo-id 'relbert/flan-t5-xl-analogy-permutation-domain'
 ```
+
+- Other Datasets
+```
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3' -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3' -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3' -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
+
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3' -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-conceptnet'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3' -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-conceptnet'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3' -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-conceptnet'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-conceptnet'
+
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3' -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-nell'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3' -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-nell'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3' -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-nell'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-nell'
+```
 """
 import argparse
 import os
@@ -92,6 +110,7 @@ parser.add_argument('-b', '--batch-size', default=32, type=int)
 parser.add_argument('--batch-size-eval', default=32, type=int)
 parser.add_argument('--gradient-accumulation-steps', default=1, type=int)
 parser.add_argument('-d', '--data', default='relbert/semeval2012_relational_similarity', type=str)
+parser.add_argument('--data-name', default=None, type=str)
 parser.add_argument('--split-train', default='train', type=str)
 parser.add_argument('--split-validation', default='validation', type=str)
 parser.add_argument('--skip-train', help='', action='store_true')
@@ -144,7 +163,7 @@ if not opt.skip_train:
         return model_inputs
 
     # prompting input
-    df = load_dataset(opt.data, split=opt.split_train).to_pandas()
+    df = load_dataset(opt.data, opt.data_name, split=opt.split_train).to_pandas()
     tokenized_dataset = []
     for _, g in df.groupby("relation_type"):
         positives = [[a, b, c, d] for (a, b), (c, d) in permutations([i.tolist() for i in g['positives'].values[0].tolist()], 2)]
@@ -201,7 +220,7 @@ if not opt.skip_train:
 assert os.path.exists(pj(opt.output_dir, "model"))
 
 if not opt.skip_validation:
-    data_valid = load_dataset(opt.data, split=opt.split_validation)
+    data_valid = load_dataset(opt.data, opt.data_name, split=opt.split_validation)
     if opt.display_prediction:
         #######################
         # Qualitative Example #

@@ -36,6 +36,12 @@ relbert/flan-t5-small-analogy-permutation-domain,0.37094328541199023
 relbert/flan-t5-xl-analogy,0.5070469317104027
 relbert/flan-t5-xl-analogy-permutation,0.4534870135763359
 relbert/flan-t5-xl-analogy-permutation-domain,0.514409730299557
+relbert/opt-125m-analogy,0.16019973216827138
+relbert/opt-125m-analogy-permutation,0.1612188774971891
+relbert/opt-125m-analogy-permutation-domain,0.17316737394415094
+relbert/opt-350m-analogy,0.16652131176113574
+relbert/opt-350m-analogy-permutation,0.15557477048398605
+relbert/opt-350m-analogy-permutation-domain,0.16846589966474362
 roberta-base,0.40609663072574287
 roberta-large,0.488059810930554
 t5-11b,0.4281473196783716
