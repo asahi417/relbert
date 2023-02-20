@@ -62,6 +62,18 @@ language_models = {
 }
 # Add fine-tuned models
 language_models.update({
+    "relbert/flan-t5-xl-analogy-conceptnet": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "relbert/flan-t5-large-analogy-conceptnet": [lmppl.EncoderDecoderLM, 256],  # 770M
+    # "relbert/flan-t5-base-analogy-conceptnet": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    "relbert/flan-t5-small-analogy-conceptnet": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    "relbert/flan-t5-xl-analogy-t-rex": [lmppl.EncoderDecoderLM, 16],  # 3B
+    "relbert/flan-t5-large-analogy-t-rex": [lmppl.EncoderDecoderLM, 256],  # 770M
+    "relbert/flan-t5-base-analogy-t-rex": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    "relbert/flan-t5-small-analogy-t-rex": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    # "relbert/flan-t5-xl-analogy-nell": [lmppl.EncoderDecoderLM, 16],  # 3B
+    # "relbert/flan-t5-large-analogy-nell": [lmppl.EncoderDecoderLM, 256],  # 770M
+    # "relbert/flan-t5-base-analogy-nell": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    # "relbert/flan-t5-small-analogy-nell": [lmppl.EncoderDecoderLM, 1024],  # 60M
     "relbert/flan-t5-xl-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
     "relbert/flan-t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M

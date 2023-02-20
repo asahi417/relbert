@@ -62,20 +62,20 @@ python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validat
 
 - Other Datasets
 ```
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3' -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3' -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3' -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-t-rex-epoch3' -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-t-rex-epoch3' -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-t-rex-epoch3' --gradient-checkpointing -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-t-rex-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/t_rex_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-t-rex' --data-name 'filter_unified.min_entity_4_max_predicate_10'
 
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3' -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-conceptnet'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3' -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-conceptnet'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3' -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-conceptnet'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-conceptnet'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-cn-epoch3' -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-conceptnet'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-cn-epoch3' -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-conceptnet'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-cn-epoch3' --gradient-checkpointing -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-conceptnet'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-cn-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/conceptnet_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-conceptnet'
 
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3' -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-nell'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-epoch3' -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-nell'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-epoch3' -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-nell'
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-nell'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-nell-epoch3' -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-small-analogy-nell'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-base' -o 'analogy_models/flan-t5-base-analogy-nell-epoch3' -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-base-analogy-nell'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/flan-t5-large-analogy-nell-epoch3' --gradient-checkpointing -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-large-analogy-nell'
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-nell-epoch3' --gradient-checkpointing --batch-size-eval 8  -d 'relbert/nell_relational_similarity' --repo-id 'relbert/flan-t5-xl-analogy-nell'
 ```
 """
 import argparse
