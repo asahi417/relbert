@@ -235,9 +235,14 @@ if not opt.skip_validation:
     ####################
     # Model Validation #
     ####################
+    if sum([len(i) for i in data_valid['negatives']]) == 0:
+        negatives = [list(chain(*[i for m, i in enumerate(data_valid['positives']) if n != m])) for n in range(len(data_valid))]
+    else:
+        negatives = data_valid['negatives']
+
     query = [f"{task_prefix} {template_header.replace('<subj-a>', i[0][0]).replace('<obj-a>', i[0][1])}" for i in data_valid['positives']]
     gold = [template_footer.replace('<subj-b>', i[1][0]).replace('<obj-b>', i[1][1]) for i in data_valid['positives']]
-    choice = [[template_footer.replace('<subj-b>', i[0]).replace('<obj-b>', i[1]) for i in l] for l in data_valid['negatives']]
+    choice = [[template_footer.replace('<subj-b>', i[0]).replace('<obj-b>', i[1]) for i in l] for l in negatives]
     scorer = EncoderDecoderLM(f"{opt.output_dir}/model")
     # get score for gold answer
     gold_score = scorer.get_perplexity(input_texts=query, output_texts=gold, batch=opt.batch_size_eval)
@@ -253,7 +258,6 @@ if not opt.skip_validation:
     # compute accuracy
     index = list(chain(*[[n] * len(c) for n, c in enumerate(choice)]))
     print(index)
-    input()
     df = pd.DataFrame([{"index": i, "score": s} for i, s in zip(index, choice_score)])
     print(df)
     score_dict = {i: g['score'].values.tolist() for i, g in df.groupby("index")}
