@@ -251,6 +251,7 @@ if not opt.skip_validation:
     # compute accuracy
     index = list(chain(*[[n] * len(c) for n, c in enumerate(choice)]))
     df = pd.DataFrame([{"index": i, "score": s} for i, s in zip(index, choice_score)])
+    print(df)
     score_dict = {i: g['score'].values.tolist() for i, g in df.groupby("index")}
     accuracy = mean([all(_v > gold_score[k] for _v in v) for k, v in score_dict.items()])
     with open(pj(opt.output_dir, "model", "validation_accuracy.json"), "w") as f:

@@ -3,10 +3,9 @@ from glob import glob
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from datasets import load_dataset
 
 
-os.makedirs('results/figures', exist_ok=True)
+os.makedirs('results/figures/detail', exist_ok=True)
 model_size = {
     # "roberta-base": [110, "RoBERTa"],
     # "roberta-large": [355, "RoBERTa"],
@@ -45,14 +44,14 @@ model_size = {
 
 
 output = []
-for m in model_size:
-    m = os.path.basename(m)
+for m_full in model_size:
+    m = os.path.basename(m_full)
     for i in glob(f"results/breakdown/{m}*.csv"):
         df = pd.read_csv(i)
 
         data = '_'.join(i.split("_None")[0].split("_")[1:])
         if data == 'bats':
-            df['prefix'] = df['prefix'].apply(lambda x: os.path.dirname(x.replace("./cache/BATS_3.0/", "")))
+            df['prefix'] = df['prefix'].apply(lambda x: os.path.dirname(x.replace("./cache/BATS_3.0/", "")).split("_")[-1])
         elif data == 'google':
             df['prefix'] = df['prefix'].apply(lambda x: 'Morphological' if 'gram' in x else "Semantic")
         elif 'sat' in data:
@@ -61,9 +60,31 @@ for m in model_size:
             df['prefix'] = df['prefix'].apply(lambda x: x.replace("concept:", ""))
 
         for prefix, g in df.groupby("prefix"):
-            output.append({'model': m, "data": data, 'accuracy': g['accuracy'].mean(), 'prefix': prefix})
+            if len(g) < 10:
+                continue
+
+            output.append({'model': m_full, "data": data, 'accuracy': g['accuracy'].mean(), 'prefix': prefix})
+
 df = pd.DataFrame(output)
 for (data, prefix), g in df.groupby(["data", 'prefix']):
-    g
-    g = g.sort_values("accuracy", ascending=False)
-    print(g['model'].values[0], g['accuracy'].values[0])
+    figure_path = f"results/figures/detail/{data}.{prefix.replace(' ', '_').replace('/', '_').replace(':', '_')}.png"
+    g['lm'] = [model_size[i][1] for i in g['model']]
+    g['Model Size'] = [model_size[i][0] * 1000000 for i in g['model']]
+
+    out = g.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
+    out.columns = [i[1] for i in out.columns]
+    out = out.reset_index()
+    lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'Flan-T5', 'Flan-T5 (FT)']
+    colors = ['red', 'blue', 'green', 'orange', 'purple', 'gray', 'black']
+    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:']
+
+    tmp = out[['Model Size', lms[0]]].dropna().reset_index()
+    tmp['Accuracy'] = tmp[lms[0]]
+    ax = tmp.plot.line(y='Accuracy', x='Model Size', color=colors[0], style=styles[0], label=lms[0], logx=True)
+    for n, c in enumerate(lms[1:]):
+        tmp = out[['Model Size', c]].dropna().reset_index()
+        tmp['Accuracy'] = tmp[c]
+        tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n + 1], style=styles[n + 1], label=c, logx=True)
+    plt.grid()
+    plt.tight_layout()
+    plt.savefig(figure_path, bbox_inches="tight", dpi=600)

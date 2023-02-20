@@ -47,7 +47,6 @@ df.pop('prefix')
 for data, g in df.groupby('data'):
     output = {}
     g['lm'] = [model_size[i][1] for i in g['model']]
-    # g['Model Size (log)'] = [log(model_size[i][0]) for i in g['model']]
     g['Model Size'] = [model_size[i][0] * 1000000 for i in g['model']]
     out = g.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
     out.columns = [i[1] for i in out.columns]
