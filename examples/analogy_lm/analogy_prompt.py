@@ -62,6 +62,10 @@ language_models = {
 }
 # Add fine-tuned models
 language_models.update({
+    "relbert/t5-3b-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
+    "relbert/t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
+    "relbert/t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    "relbert/t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
     "relbert/flan-t5-xl-analogy-conceptnet": [lmppl.EncoderDecoderLM, 16],  # 3B
     "relbert/flan-t5-large-analogy-conceptnet": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy-conceptnet": [lmppl.EncoderDecoderLM, 1024],  # 220M

@@ -43,10 +43,18 @@ model_size = {
     "facebook/opt-30b": [30000, "OPT"],
     "facebook/opt-iml-30b": [30000, "OPT-IML"],
     "facebook/opt-iml-max-30b": [30000, "OPT-IML"],
-    "relbert/flan-t5-small-analogy": [60, "Flan-T5 (FT)"],
-    "relbert/flan-t5-base-analogy": [220, "Flan-T5 (FT)"],
-    "relbert/flan-t5-large-analogy": [770, "Flan-T5 (FT)"],
-    "relbert/flan-t5-xl-analogy": [3000, "Flan-T5 (FT)"]
+# "relbert/flan-t5-small-analogy": [60, "Flan-T5 (FT)"],
+#     "relbert/flan-t5-base-analogy": [220, "Flan-T5 (FT)"],
+#     "relbert/flan-t5-large-analogy": [770, "Flan-T5 (FT)"],
+#     "relbert/flan-t5-xl-analogy": [3000, "Flan-T5 (FT)"],
+    "relbert/flan-t5-small-analogy": [60, "Flan-T5 (SemEval)"],
+    "relbert/flan-t5-base-analogy": [220, "Flan-T5 (SemEval)"],
+    "relbert/flan-t5-large-analogy": [770, "Flan-T5 (SemEval)"],
+    "relbert/flan-t5-xl-analogy": [3000, "Flan-T5 (SemEval)"],
+    "relbert/flan-t5-small-analogy-t-rex": [60, "Flan-T5 (T-REX)"],
+    "relbert/flan-t5-base-analogy-t-rex": [220, "Flan-T5 (T-REX)"],
+    "relbert/flan-t5-large-analogy-t-rex": [770, "Flan-T5 (T-REX)"],
+    "relbert/flan-t5-xl-analogy-t-rex": [3000, "Flan-T5 (T-REX)"]
 }
 
 df = pd.read_csv('results/full_result.prompt.csv')
@@ -57,8 +65,9 @@ df = df[[i in model_size for i in df['model']]]
 df.pop('prefix')
 df['lm'] = [model_size[i][1] for i in df['model']]
 df['Model Size'] = [model_size[i][0] * 1000000 for i in df['model']]
-lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'Flan-T5', 'Flan-T5 (FT)']
-colors = ['red', 'blue', 'green', 'orange', 'purple', 'gray', 'black']
+# lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'Flan-T5', 'Flan-T5 (FT)']
+lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'Flan-T5', "Flan-T5 (T-REX)", 'Flan-T5 (SemEval)']
+colors = ['red', 'blue', 'green', 'orange', 'purple', 'gray', 'pink', 'black']
 styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:']
 
 # OVERALL RESULT
