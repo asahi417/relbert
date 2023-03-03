@@ -58,7 +58,7 @@ language_models = {
     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
     "EleutherAI/gpt-neo-2.7B": [lmppl.LM, 8],  # 2.7B
     "EleutherAI/gpt-neo-1.3B": [lmppl.LM, 32],  # 1.3B
-    "EleutherAI/gpt-neo-125M": [lmppl.LM, 256],  # 125M
+    "EleutherAI/gpt-neo-125M": [lmppl.LM, 64],  # 125M
     "gpt2-xl": [lmppl.LM, 32],  # 1.5B
     "gpt2-large": [lmppl.LM, 128],  # 774M
     "gpt2-medium": [lmppl.LM, 256],  # 355M

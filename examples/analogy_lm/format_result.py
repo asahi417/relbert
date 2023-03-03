@@ -14,8 +14,6 @@ random_guess = {
     'conceptnet_relational_similarity': 0.058823529411764705
 }
 model_size = {
-    # "roberta-base": [110, "RoBERTa"],
-    # "roberta-large": [355, "RoBERTa"],
     "google/flan-t5-small": [60, "Flan-T5"],
     "t5-small": [60, "T5"],
     "gpt2": [124, "GPT-2"],
@@ -50,20 +48,42 @@ model_size = {
     "relbert/flan-t5-small-analogy": [60, "Flan-T5 (FT)"],
     "relbert/flan-t5-base-analogy": [220, "Flan-T5 (FT)"],
     "relbert/flan-t5-large-analogy": [770, "Flan-T5 (FT)"],
-    "relbert/flan-t5-xl-analogy": [3000, "Flan-T5 (FT)"],
-    # "relbert/t5-small-analogy": [60, "T5 (SemEval)"],
-#     "relbert/t5-base-analogy": [220, "T5 (SemEval)"],
-#     "relbert/t5-large-analogy": [770, "T5 (SemEval)"],
-#     "relbert/t5-3b-analogy": [3000, "T5 (SemEval)"],
-#     "relbert/flan-t5-small-analogy": [60, "Flan-T5 (SemEval)"],
-#     "relbert/flan-t5-base-analogy": [220, "Flan-T5 (SemEval)"],
-#     "relbert/flan-t5-large-analogy": [770, "Flan-T5 (SemEval)"],
-#     "relbert/flan-t5-xl-analogy": [3000, "Flan-T5 (SemEval)"],
-#     "relbert/flan-t5-small-analogy-t-rex": [60, "Flan-T5 (T-REX)"],
-#     "relbert/flan-t5-base-analogy-t-rex": [220, "Flan-T5 (T-REX)"],
-#     "relbert/flan-t5-large-analogy-t-rex": [770, "Flan-T5 (T-REX)"],
-#     "relbert/flan-t5-xl-analogy-t-rex": [3000, "Flan-T5 (T-REX)"]
+    "relbert/flan-t5-xl-analogy": [3000, "Flan-T5 (FT)"]
 }
+model_size_ft_data = {
+    "relbert/flan-t5-small-analogy": [60, "SemEval"],
+    "relbert/flan-t5-base-analogy": [220, "SemEval"],
+    "relbert/flan-t5-large-analogy": [770, "SemEval"],
+    "relbert/flan-t5-xl-analogy": [3000, "SemEval"],
+    "relbert/flan-t5-small-analogy-t-rex": [60, "T-REX"],
+    "relbert/flan-t5-base-analogy-t-rex": [220, "T-REX"],
+    "relbert/flan-t5-large-analogy-t-rex": [770, "T-REX"],
+    "relbert/flan-t5-xl-analogy-t-rex": [3000, "T-REX"],
+    "relbert/flan-t5-small-analogy-nell": [60, "NELL"],
+    "relbert/flan-t5-base-analogy-nell": [220, "NELL"],
+    "relbert/flan-t5-large-analogy-nell": [770, "NELL"],
+    "relbert/flan-t5-xl-analogy-nell": [3000, "NELL"],
+    "relbert/flan-t5-small-analogy-conceptnet": [60, "ConceptNet"],
+    "relbert/flan-t5-base-analogy-conceptnet": [220, "ConceptNet"],
+    "relbert/flan-t5-large-analogy-conceptnet": [770, "ConceptNet"],
+    "relbert/flan-t5-xl-analogy-conceptnet": [3000, "ConceptNet"],
+}
+model_size_ft_perm = {
+    "relbert/flan-t5-small-analogy": [60, "Permutation (reverse)"],
+    "relbert/flan-t5-base-analogy": [220, "Permutation (reverse)"],
+    "relbert/flan-t5-large-analogy": [770, "Permutation (reverse)"],
+    "relbert/flan-t5-xl-analogy": [3000, "Permutation (reverse)"],
+    "relbert/flan-t5-small-analogy-permutation-domain": [60, "Permutation (in-domain)"],
+    "relbert/flan-t5-base-analogy-permutation-domain": [220, "Permutation (in-domain)"],
+    "relbert/flan-t5-large-analogy-permutation-domain": [770, "Permutation (in-domain)"],
+    "relbert/flan-t5-xl-analogy-permutation-domain": [3000, "Permutation (in-domain)"],
+    "relbert/flan-t5-small-analogy-permutation": [60, "Permutation (all)"],
+    "relbert/flan-t5-base-analogy-permutation": [220, "Permutation (all)"],
+    "relbert/flan-t5-large-analogy-permutation": [770, "Permutation (all)"],
+    "relbert/flan-t5-xl-analogy-permutation": [3000, "Permutation (all)"],
+}
+
+
 
 df = pd.read_csv('results/full_result.prompt.csv')
 df['Accuracy'] = df.pop('accuracy')  # * 100

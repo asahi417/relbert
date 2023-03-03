@@ -21,12 +21,6 @@ gpt2,0.31403221724103464
 gpt2-large,0.4008586590184524
 gpt2-medium,0.3923631763820924
 gpt2-xl,0.4130839745223923
-microsoft/deberta-v2-xlarge,0.1992750764174058
-microsoft/deberta-v2-xxlarge,0.2206962879614204
-microsoft/deberta-v3-base,0.22833206097445732
-microsoft/deberta-v3-large,0.3284556242901272
-microsoft/deberta-v3-small,0.19208627238542914
-microsoft/deberta-v3-xsmall,0.19132911311016532
 relbert/flan-t5-base-analogy,0.4267297552439836
 relbert/flan-t5-base-analogy-conceptnet,0.27882447129079396
 relbert/flan-t5-base-analogy-nell,0.24725395823255075

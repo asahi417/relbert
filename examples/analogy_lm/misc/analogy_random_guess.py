@@ -1,3 +1,4 @@
+import json
 from statistics import mean
 from datasets import load_dataset
 
@@ -6,4 +7,4 @@ output = {}
 for t in types:
     data = load_dataset("relbert/analogy_questions", t, split="test")
     output[t] = mean([1/len(i) for i in data['choice']])
-print(output)
+print(json.dumps(output, indent=4))
