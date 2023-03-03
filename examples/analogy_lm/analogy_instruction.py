@@ -9,6 +9,9 @@ Which one of the following is an analogy?
 ```
 For recurrent LMs, we add `The correct answer is` at the end of the instruction. Output is the correct analogy
 statement (eg. `A is to B what a_2 is to b_2`).
+
+We won't run the instruction approach on the new analogy questions (trex/conceptnet/nell) as they can be
+too long for some models.
 """
 import json
 import logging
@@ -35,9 +38,6 @@ analogy_types = [
     ['u4', None],
     ['google', None],
     ['bats', None],
-    # ['t_rex_relational_similarity', None],
-    # ['conceptnet_relational_similarity', None],
-    # ['nell_relational_similarity', None]
 ]
 language_models = {
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
@@ -56,6 +56,9 @@ language_models = {
     "t5-base": [lmppl.EncoderDecoderLM, 512],  # 220M
     "t5-small": [lmppl.EncoderDecoderLM, 512],  # 60M
     "EleutherAI/gpt-j-6B": [lmppl.LM, 16],  # 6B
+    "EleutherAI/gpt-neo-2.7B": [lmppl.LM, 8],  # 2.7B
+    "EleutherAI/gpt-neo-1.3B": [lmppl.LM, 32],  # 1.3B
+    "EleutherAI/gpt-neo-125M": [lmppl.LM, 256],  # 125M
     "gpt2-xl": [lmppl.LM, 32],  # 1.5B
     "gpt2-large": [lmppl.LM, 128],  # 774M
     "gpt2-medium": [lmppl.LM, 256],  # 355M
@@ -63,12 +66,12 @@ language_models = {
 }
 
 # Add Large Models
-# language_models.update({
-#     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
-#     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
-#     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
-#     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
-# })
+language_models.update({
+    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+    "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
+    "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+})
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool):
@@ -118,11 +121,11 @@ def analogy_solver(scoring_model, data_name, batch_size: int, scores_texts, data
     prediction = [i[1].index(min(i[1])) if len(set(i[1])) > 1 else None for i in scores_aligned]
 
     # compute accuracy
-    df = dataset.to_pandas()
-    df['choice'] = [[_i.tolist() for _i in i] for i in df['choice']]
-    df['prediction'] = prediction
-    df['accuracy'] = df['prediction'] == df['answer']
-    return df, scores_texts
+    df_tmp = dataset.to_pandas()
+    df_tmp['choice'] = [[_i.tolist() for _i in i] for i in df_tmp['choice']]
+    df_tmp['prediction'] = prediction
+    df_tmp['accuracy'] = df_tmp['prediction'] == df_tmp['answer']
+    return df_tmp, scores_texts
 
 
 if __name__ == '__main__':
@@ -172,11 +175,15 @@ if __name__ == '__main__':
                 }
             )
             print(target_data, prefix, target_model, _df['accuracy'].mean())
-            print(f"Number of None: {_df['prediction'].isnull().sum()}")
             assert _df['prediction'].isnull().sum() == 0, _df['prediction'].isnull().sum()
 
         del scorer
         gc.collect()
         torch.cuda.empty_cache()
 
-    pd.DataFrame(results).to_csv('results/full_result.instruction.csv', index=False)
+    df = pd.DataFrame(results)
+    df.to_csv('results/full_result.instruction.csv', index=False)
+    df = df[[i != "sat_metaphor" for i in df['data']]]
+    df = df[[i != "sat" for i in df['data']]]
+    df.groupby("model")['accuracy'].mean().to_csv('results/full_result.instruction.average.csv')
+

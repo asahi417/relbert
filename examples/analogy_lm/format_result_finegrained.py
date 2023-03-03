@@ -36,6 +36,10 @@ model_size = {
     "facebook/opt-30b": [30000, "OPT"],
     "facebook/opt-iml-30b": [30000, "OPT-IML"],
     "facebook/opt-iml-max-30b": [30000, "OPT-IML"],
+    "relbert/t5-small-analogy": [60, "T5 (FT)"],
+    "relbert/t5-base-analogy": [220, "T5 (FT)"],
+    "relbert/t5-large-analogy": [770, "T5 (FT)"],
+    "relbert/t5-3b-analogy": [3000, "T5 (FT)"],
     "relbert/flan-t5-small-analogy": [60, "Flan-T5 (FT)"],
     "relbert/flan-t5-base-analogy": [220, "Flan-T5 (FT)"],
     "relbert/flan-t5-large-analogy": [770, "Flan-T5 (FT)"],
@@ -74,8 +78,8 @@ for (data, prefix), g in df.groupby(["data", 'prefix']):
     out = g.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
     out.columns = [i[1] for i in out.columns]
     out = out.reset_index()
-    lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'Flan-T5', 'Flan-T5 (FT)']
-    colors = ['red', 'blue', 'green', 'orange', 'purple', 'gray', 'black']
+    lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', "Flan-T5 (FT)"]
+    colors = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'gray', 'pink', 'black']
     styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:']
 
     tmp = out[['Model Size', lms[0]]].dropna().reset_index()

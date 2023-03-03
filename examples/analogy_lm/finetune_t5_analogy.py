@@ -3,7 +3,6 @@
 - Small Models
 ```
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3' --repo-id 'relbert/flan-t5-small-analogy'
-
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3-p' --add-permutation --repo-id 'relbert/flan-t5-small-analogy-permutation'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-small' -o 'analogy_models/flan-t5-small-analogy-epoch3-pd' --add-permutation-domain --repo-id 'relbert/flan-t5-small-analogy-permutation-domain'
 ```
@@ -24,11 +23,7 @@ python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-large' -o 'analogy_models/
 
 - XL Models
 ```
-python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8 --repo-id 'relbert/flan-t5-xl-analogy' --skip-train --skip-validation
-
-python finetune_t5_analogy.py -e 6 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch6' --gradient-checkpointing --batch-size-eval 8
-python finetune_t5_analogy.py -m 'google/flan-t5-xl' --skip-train --skip-validation -o 'analogy_models/flan-t5-xl-analogy-epoch6' --repo-id 'relbert/flan-t5-xl-analogy'
-
+python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3' --gradient-checkpointing --batch-size-eval 8 --repo-id 'relbert/flan-t5-xl-analogy'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3-p' --gradient-checkpointing --batch-size-eval 8 --add-permutation --repo-id 'relbert/flan-t5-xl-analogy-permutation'
 python finetune_t5_analogy.py -e 3 -m 'google/flan-t5-xl' -o 'analogy_models/flan-t5-xl-analogy-epoch3-pd' --gradient-checkpointing --add-permutation-domain --repo-id 'relbert/flan-t5-xl-analogy-permutation-domain'
 ```
