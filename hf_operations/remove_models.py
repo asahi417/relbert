@@ -1,4 +1,3 @@
-import os
 from huggingface_hub import ModelFilter, HfApi
 
 api = HfApi()
