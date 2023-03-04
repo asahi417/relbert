@@ -1,8 +1,16 @@
 import os
+from typing import List
+from statistics import mean
 import matplotlib.pyplot as plt
 import pandas as pd
 
 os.makedirs('results/figures', exist_ok=True)
+df_full = pd.read_csv('results/full_result.prompt.csv')
+df_full.pop('prefix')
+df_full['Accuracy'] = df_full.pop('accuracy')  # * 100
+df_full = df_full[[i not in ['sat', 'sat_metaphor'] for i in df_full['data']]]
+# df_full['data'] = [f"{d}_{p}" if d == 'sat_metaphor' else d for d, p in zip(df_full['data'], df_full['prefix'])]
+
 random_guess = {
     'sat_full': 0.2,
     'u2': 0.23589181286549707,
@@ -11,8 +19,29 @@ random_guess = {
     'google': 0.25,
     't_rex_relational_similarity': 0.020833333333333332,
     'nell_relational_similarity': 0.14285714285714285,
-    'conceptnet_relational_similarity': 0.058823529411764705
+    'conceptnet_relational_similarity': 0.058823529411764705,
 }
+relbert_accuracy = {
+    'sat_full': 0.732620320855615,
+    'u2': 0.6754385964912281,
+    'u4': 0.6296296296296297,
+    'google': 0.952,
+    'bats': 0.8093385214007782,
+    't_rex_relational_similarity': 0.644808743169399,
+    'conceptnet_relational_similarity': 0.4748322147651007,
+    'nell_relational_similarity': 0.6583333333333333
+}
+# relbert_accuracy_triplet = {
+#     'sat_full': 0.6818181818181818,
+#     'sat': 0.6884272997032641,
+#     'u2': 0.6798245614035088,
+#     'u4': 0.6481481481481481,
+#     'google': 0.922,
+#     'bats': 0.7837687604224569,
+#     't_rex_relational_similarity': 0.5300546448087432,
+#     'conceptnet_relational_similarity': 0.3154362416107382,
+#     'nell_relational_similarity': 0.6383333333333333
+# }
 model_size = {
     "google/flan-t5-small": [60, "Flan-T5"],
     "t5-small": [60, "T5"],
@@ -69,99 +98,71 @@ model_size_ft_data = {
     "relbert/flan-t5-xl-analogy-conceptnet": [3000, "ConceptNet"],
 }
 model_size_ft_perm = {
-    "relbert/flan-t5-small-analogy": [60, "Permutation (reverse)"],
-    "relbert/flan-t5-base-analogy": [220, "Permutation (reverse)"],
-    "relbert/flan-t5-large-analogy": [770, "Permutation (reverse)"],
-    "relbert/flan-t5-xl-analogy": [3000, "Permutation (reverse)"],
-    "relbert/flan-t5-small-analogy-permutation-domain": [60, "Permutation (in-domain)"],
-    "relbert/flan-t5-base-analogy-permutation-domain": [220, "Permutation (in-domain)"],
-    "relbert/flan-t5-large-analogy-permutation-domain": [770, "Permutation (in-domain)"],
-    "relbert/flan-t5-xl-analogy-permutation-domain": [3000, "Permutation (in-domain)"],
-    "relbert/flan-t5-small-analogy-permutation": [60, "Permutation (all)"],
-    "relbert/flan-t5-base-analogy-permutation": [220, "Permutation (all)"],
-    "relbert/flan-t5-large-analogy-permutation": [770, "Permutation (all)"],
-    "relbert/flan-t5-xl-analogy-permutation": [3000, "Permutation (all)"],
+    "relbert/flan-t5-small-analogy": [60, "Reverse Permutation"],
+    "relbert/flan-t5-base-analogy": [220, "Reverse Permutation"],
+    "relbert/flan-t5-large-analogy": [770, "Reverse Permutation"],
+    "relbert/flan-t5-xl-analogy": [3000, "Reverse Permutation"],
+    "relbert/flan-t5-small-analogy-permutation-domain": [60, "In-domain Permutation"],
+    "relbert/flan-t5-base-analogy-permutation-domain": [220, "In-domain Permutation"],
+    "relbert/flan-t5-large-analogy-permutation-domain": [770, "In-domain Permutation"],
+    "relbert/flan-t5-xl-analogy-permutation-domain": [3000, "In-domain Permutation"],
+    "relbert/flan-t5-small-analogy-permutation": [60, "Full Permutation"],
+    "relbert/flan-t5-base-analogy-permutation": [220, "Full Permutation"],
+    "relbert/flan-t5-large-analogy-permutation": [770, "Full Permutation"],
+    "relbert/flan-t5-xl-analogy-permutation": [3000, "Full Permutation"],
 }
 
 
-
-df = pd.read_csv('results/full_result.prompt.csv')
-df['Accuracy'] = df.pop('accuracy')  # * 100
-df = df[[i not in ['sat'] for i in df['data']]]
-df['data'] = [f"{d}_{p}" if d == 'sat_metaphor' else d for d, p in zip(df['data'], df['prefix'])]
-df = df[[i in model_size for i in df['model']]]
-df.pop('prefix')
-df['lm'] = [model_size[i][1] for i in df['model']]
-df['Model Size'] = [model_size[i][0] * 1000000 for i in df['model']]
-# lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'Flan-T5', 'Flan-T5 (FT)']
-# lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (SemEval)', 'Flan-T5', "Flan-T5 (T-REX)", 'Flan-T5 (SemEval)']
-lms = ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', "Flan-T5 (FT)"]
-colors = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'gray', 'pink', 'black']
-styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:']
-
-# OVERALL RESULT
-out = df.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
-out.columns = [i[1] for i in out.columns]
-out = out.reset_index()
-tmp = out[['Model Size', lms[0]]].dropna().reset_index()
-tmp['Accuracy'] = tmp[lms[0]]
-ax = tmp.plot.line(y='Accuracy', x='Model Size', color=colors[0], style=styles[0], label=lms[0], logx=True)
-for n, c in enumerate(lms[1:]):
-    tmp = out[['Model Size', c]].dropna().reset_index()
-    tmp['Accuracy'] = tmp[c]
-    tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n+1], style=styles[n+1], label=c, logx=True)
-plt.grid()
-plt.tight_layout()
-plt.savefig(f"results/figures/curve.average.png", bbox_inches="tight", dpi=600)
-
-
-# RESULT ON 5 ANALOGIES
-_df = df[[i in ['sat_full', 'u2', 'u4', 'bats', 'google'] for i in df['data']]]
-out = _df.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
-out.columns = [i[1] for i in out.columns]
-out = out.reset_index()
-tmp = out[['Model Size', lms[0]]].dropna().reset_index()
-tmp['Accuracy'] = tmp[lms[0]]
-ax = tmp.plot.line(y='Accuracy', x='Model Size', color=colors[0], style=styles[0], label=lms[0], logx=True)
-for n, c in enumerate(lms[1:]):
-    tmp = out[['Model Size', c]].dropna().reset_index()
-    tmp['Accuracy'] = tmp[c]
-    tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n+1], style=styles[n+1], label=c, logx=True)
-plt.grid()
-plt.tight_layout()
-plt.savefig(f"results/figures/curve.average_5.png", bbox_inches="tight", dpi=600)
-
-
-# RESULT ON ENTITY ANALOGIES (NELL and TREX)
-_df = df[[i in ['nell_relational_similarity', 't_rex_relational_similarity'] for i in df['data']]]
-out = _df.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
-out.columns = [i[1] for i in out.columns]
-out = out.reset_index()
-tmp = out[['Model Size', lms[0]]].dropna().reset_index()
-tmp['Accuracy'] = tmp[lms[0]]
-ax = tmp.plot.line(y='Accuracy', x='Model Size', color=colors[0], style=styles[0], label=lms[0], logx=True)
-for n, c in enumerate(lms[1:]):
-    tmp = out[['Model Size', c]].dropna().reset_index()
-    tmp['Accuracy'] = tmp[c]
-    tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n+1], style=styles[n+1], label=c, logx=True)
-plt.grid()
-plt.tight_layout()
-plt.savefig(f"results/figures/curve.average_entity.png", bbox_inches="tight", dpi=600)
-
-
-# RESULT ON INDIVIDUAL ANALOGIES
-for data, g in df.groupby('data'):
-    out = g.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
+def plot(df_target, path_to_save: str, lm_target: List, no_relbert: bool = False):
+    colors = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'gray', 'pink']
+    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:']
+    out = df_target.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
     out.columns = [i[1] for i in out.columns]
     out = out.reset_index()
-    tmp = out[['Model Size', lms[0]]].dropna().reset_index()
-    tmp['Accuracy'] = tmp[lms[0]]
-    ax = tmp.plot.line(y='Accuracy', x='Model Size', color=colors[0], style=styles[0], label=lms[0], logx=True)
-    for n, c in enumerate(lms[1:]):
+    tmp = out[['Model Size', lm_target[0]]].dropna().reset_index()
+    tmp['Accuracy'] = tmp[lm_target[0]]
+
+    # random guess
+    r = mean([v for k, v in random_guess.items() if k in df_target['data'].unique()])
+    df_rand = pd.DataFrame([{"Model Size": df_target['Model Size'].min(), "Accuracy": r}, {"Model Size": df_target['Model Size'].max(), "Accuracy": r}])
+    ax = df_rand.plot.line(y='Accuracy', x='Model Size', color='black', style='--', label="Random", logx=True)
+
+    if not no_relbert:
+        # relbert result
+        df_relbert = pd.DataFrame([{"Model Size": 340 * 1000000, "Accuracy": mean([v for k, v in relbert_accuracy.items() if k in df_target['data'].unique()])}])
+        df_relbert.plot.line(y='Accuracy', x='Model Size', ax=ax, color='cyan', style="*", label="RelBERT", logx=True)
+
+    for n, c in enumerate(lm_target):
         tmp = out[['Model Size', c]].dropna().reset_index()
         tmp['Accuracy'] = tmp[c]
-        tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n+1], style=styles[n+1], label=c, logx=True)
+        tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n], style=styles[n], label=c, logx=True)
     plt.grid()
     plt.tight_layout()
-    plt.savefig(f"results/figures/curve.{data}.png", bbox_inches="tight", dpi=600)
+    plt.savefig(path_to_save, bbox_inches="tight", dpi=600)
 
+
+def main(model_dict, lm_target, prefix):
+    df = df_full[[i in model_dict for i in df_full['model']]]
+    df['lm'] = [model_dict[i][1] for i in df['model']]
+    df['Model Size'] = [model_dict[i][0] * 1000000 for i in df['model']]
+    # average result
+    plot(df, f"results/figures/{prefix}.curve.average.png", lm_target)
+    # average over 5 analogies
+    plot(
+        df[[i in ['sat_full', 'u2', 'u4', 'bats', 'google'] for i in df['data']]],
+        f"results/figures/{prefix}.curve.average_5.png",
+        lm_target)
+    # average over entities analogies
+    plot(
+        df[[i in ['nell_relational_similarity', 't_rex_relational_similarity'] for i in df['data']]],
+        f"results/figures/{prefix}.curve.average_entity.png",
+        lm_target)
+    # single analogy
+    for data, g in df.groupby('data'):
+        plot(g, f"results/figures/{prefix}.curve.{data}.png", lm_target)
+
+
+if __name__ == '__main__':
+    main(model_size, ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', 'Flan-T5 (FT)'], "main")
+    main(model_size_ft_data, ['SemEval', 'T-REX', 'NELL', 'ConceptNet'], "data")
+    main(model_size_ft_perm, ['Reverse Permutation', 'In-domain Permutation', 'Full Permutation'], "perm")

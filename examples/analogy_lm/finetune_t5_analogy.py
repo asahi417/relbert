@@ -125,13 +125,10 @@ if not opt.skip_train:
     #######################
 
     def permute_same_domain(a, b, c, d):
-        # return [[a, b, c, d], [b, a, d, c], [c, d, a, b], [d, c, b, a]]
         return [[a, b, c, d], [b, a, d, c]]
 
     def permute(a, b, c, d):
         return [[a, b, c, d], [b, a, d, c], [a, c, b, d], [d, b, c, a]]
-        # return [[a, b, c, d], [a, c, b, d], [b, a, d, c], [b, d, a, c],
-        #         [c, d, a, b], [c, a, d, b], [d, c, b, a], [d, b, c, a]]
 
     def encode(x, y):
         model_inputs = tokenizer(f"{task_prefix} {x}", truncation=True)
@@ -282,4 +279,3 @@ print(output)
     with open(f"{model_dir}/README.md", 'w') as f:
         f.write(readme)
     os.system(f"cd {model_dir} && git lfs install && git add . && git commit -m 'model update' && git push && cd ../")
-    # shutil.rmtree(model_dir)

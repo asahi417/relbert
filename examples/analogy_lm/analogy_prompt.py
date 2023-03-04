@@ -106,6 +106,7 @@ language_models.update({
 
 # Add Large Models
 language_models.update({
+    "google/flan-ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
