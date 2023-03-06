@@ -30,5 +30,5 @@ if __name__ == '__main__':
         g['lm'] = [model_size[i][1] for i in g['model']]
         g['Model Size'] = [model_size[i][0] * 1000000 for i in g['model']]
         plot(g, f"results/figures/detail/{data}.{prefix.replace(' ', '_').replace('/', '_').replace(':', '_')}.png",
-             ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', "Flan-T5 (FT)"], True)
+             ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', "Flan-T5 (FT)", "Flan-UL2"], True)
 

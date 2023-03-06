@@ -71,6 +71,7 @@ language_models.update({
     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+    "google/flan-ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
 })
 
 

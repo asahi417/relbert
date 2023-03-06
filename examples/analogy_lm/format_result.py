@@ -6,13 +6,16 @@ import pandas as pd
 
 os.makedirs('results/figures', exist_ok=True)
 df_full = pd.read_csv('results/full_result.prompt.csv')
-df_full.pop('prefix')
 df_full['Accuracy'] = df_full.pop('accuracy')  # * 100
 df_full = df_full[[i not in ['sat', 'sat_metaphor'] for i in df_full['data']]]
 # df_full['data'] = [f"{d}_{p}" if d == 'sat_metaphor' else d for d, p in zip(df_full['data'], df_full['prefix'])]
+# df_full = df_full[[i not in ['sat', 'sat_metaphor_1.0', 'sat_metaphor_nan'] for i in df_full['data']]]
+df_full.pop('prefix')
 
 random_guess = {
     'sat_full': 0.2,
+    'sat_metaphor_0.0': 0.2,
+    'sat_metaphor_2.0': 0.2,
     'u2': 0.23589181286549707,
     'u4': 0.24205246913580247,
     'bats': 0.25,
@@ -22,6 +25,8 @@ random_guess = {
     'conceptnet_relational_similarity': 0.058823529411764705,
 }
 relbert_accuracy = {
+    'sat_metaphor_0.0': 0,
+    'sat_metaphor_2.0': 0,
     'sat_full': 0.732620320855615,
     'u2': 0.6754385964912281,
     'u4': 0.6296296296296297,
@@ -62,6 +67,7 @@ model_size = {
     "t5-3b": [3000, "T5"],
     "google/flan-t5-xxl": [11000, "Flan-T5"],
     "t5-11b": [11000, "T5"],
+    "google/flan-ul2": [20000, "Flan-UL2"],
     "EleutherAI/gpt-neo-125M": [125, "GPT-J"],
     "EleutherAI/gpt-neo-1.3B": [1300, "GPT-J"],
     "EleutherAI/gpt-neo-2.7B": [2700, "GPT-J"],
@@ -114,8 +120,8 @@ model_size_ft_perm = {
 
 
 def plot(df_target, path_to_save: str, lm_target: List, no_relbert: bool = False):
-    colors = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'gray', 'pink']
-    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:']
+    colors = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'gray', 'pink', 'olive']
+    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', "P", "+--", "+:"]
     out = df_target.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
     out.columns = [i[1] for i in out.columns]
     out = out.reset_index()
@@ -163,6 +169,6 @@ def main(model_dict, lm_target, prefix):
 
 
 if __name__ == '__main__':
-    main(model_size, ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', 'Flan-T5 (FT)'], "main")
-    main(model_size_ft_data, ['SemEval', 'T-REX', 'NELL', 'ConceptNet'], "data")
-    main(model_size_ft_perm, ['Reverse Permutation', 'In-domain Permutation', 'Full Permutation'], "perm")
+    main(model_size, ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', 'Flan-T5 (FT)', "Flan-UL2"], "main")
+    # main(model_size_ft_data, ['SemEval', 'T-REX', 'NELL', 'ConceptNet'], "data")
+    # main(model_size_ft_perm, ['Reverse Permutation', 'In-domain Permutation', 'Full Permutation'], "perm")
