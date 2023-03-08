@@ -28,16 +28,13 @@ template = "<subj-a> is to <obj-a> what <subj-b> is to <obj-b>"
 instruction_header = "Which one of the following is an analogy?"
 instruction_footer = "The correct answer is"
 analogy_types = [
-    ['sat_metaphor', '0'],
-    ['sat_metaphor', '1'],
-    ['sat_metaphor', '2'],
-    ['sat_metaphor', None],
     ['sat', None],
     ['sat_full', None],
     ['u2', None],
     ['u4', None],
     ['google', None],
     ['bats', None],
+    ['scan', None]
 ]
 language_models = {
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
@@ -184,7 +181,6 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(results)
     df.to_csv('results/full_result.instruction.csv', index=False)
-    df = df[[i != "sat_metaphor" for i in df['data']]]
     df = df[[i != "sat" for i in df['data']]]
     df.groupby("model")['accuracy'].mean().to_csv('results/full_result.instruction.average.csv')
 

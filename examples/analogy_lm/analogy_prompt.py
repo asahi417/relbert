@@ -20,10 +20,6 @@ template_header = "<subj-a> is to <obj-a>"
 template_join = "what"
 template_footer = "<subj-b> is to <obj-b>"
 analogy_types = [
-    ['sat_metaphor', '0'],
-    ['sat_metaphor', '1'],
-    ['sat_metaphor', '2'],
-    ['sat_metaphor', None],
     ['sat', None],
     ['sat_full', None],
     ['u2', None],
@@ -32,7 +28,8 @@ analogy_types = [
     ['bats', None],
     ['t_rex_relational_similarity', None],
     ['conceptnet_relational_similarity', None],
-    ['nell_relational_similarity', None]
+    ['nell_relational_similarity', None],
+    ['scan', None]
 ]
 
 language_models = {
@@ -218,7 +215,6 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(results)
     df.to_csv('results/full_result.prompt.csv', index=False)
-    df = df[[i != "sat_metaphor" for i in df['data']]]
     df = df[[i != "sat" for i in df['data']]]
     df.groupby("model")['accuracy'].mean().to_csv('results/full_result.prompt.average.csv')
 
