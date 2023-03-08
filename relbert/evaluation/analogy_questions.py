@@ -29,12 +29,14 @@ def evaluate_analogy(target_analogy: List or str,
                      bi_direction_pair: bool = False,
                      target_analogy_split: str = "test",
                      aggregation_mode: str = None,
-                     template: str = None):
+                     template: str = None,
+                     aggregation: bool = True):
     model = RelBERT(relbert_ckpt, max_length=max_length, template=template, aggregation_mode=aggregation_mode)
     model.eval()
     target = [target_analogy] if type(target_analogy) is str else target_analogy
     target_data = [(t, load_dataset('relbert/analogy_questions', t, split=target_analogy_split)) for t in target]
     result = {}
+    pred = {}
     with torch.no_grad():
 
         # Analogy test
@@ -75,12 +77,14 @@ def evaluate_analogy(target_analogy: List or str,
                     if sims[pred] == -100:
                         raise ValueError('failed to compute similarity')
                     accuracy.append(single_data['answer'] == pred)
-                return sum(accuracy) / len(accuracy)
+                return accuracy
 
             # get prediction
             result[f'{d}/{target_analogy_split}'] = prediction(test)
-    logging.info(str(result))
     del model
+    if aggregation:
+        result = {k: sum(v) / len(v) for k, v in result.items()}
+        logging.info(str(result))
     return result
 
 

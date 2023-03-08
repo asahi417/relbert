@@ -1,32 +1,25 @@
 import os
 from typing import List
 from statistics import mean
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
+from random import shuffle, seed
+from datasets import load_dataset
+
 
 os.makedirs('results/figures', exist_ok=True)
 df_full = pd.read_csv('results/full_result.prompt.csv')
 df_full['Accuracy'] = df_full.pop('accuracy')  # * 100
 df_full = df_full[[i not in ['sat', 'sat_metaphor'] for i in df_full['data']]]
-# df_full['data'] = [f"{d}_{p}" if d == 'sat_metaphor' else d for d, p in zip(df_full['data'], df_full['prefix'])]
-# df_full = df_full[[i not in ['sat', 'sat_metaphor_1.0', 'sat_metaphor_nan'] for i in df_full['data']]]
 df_full.pop('prefix')
 
-random_guess = {
-    'sat_full': 0.2,
-    'sat_metaphor_0.0': 0.2,
-    'sat_metaphor_2.0': 0.2,
-    'u2': 0.23589181286549707,
-    'u4': 0.24205246913580247,
-    'bats': 0.25,
-    'google': 0.25,
-    't_rex_relational_similarity': 0.020833333333333332,
-    'nell_relational_similarity': 0.14285714285714285,
-    'conceptnet_relational_similarity': 0.058823529411764705,
-}
+random_guess = {}
+for t in ["scan", "sat_full", "u2", "u4", "bats", "google", "t_rex_relational_similarity", "nell_relational_similarity", "conceptnet_relational_similarity"]:
+    data = load_dataset("relbert/analogy_questions", t, split="test")
+    random_guess[t] = mean([1/len(i['choice']) for i in data])
+
 relbert_accuracy = {
-    'sat_metaphor_0.0': 0,
-    'sat_metaphor_2.0': 0,
     'sat_full': 0.732620320855615,
     'u2': 0.6754385964912281,
     'u4': 0.6296296296296297,
@@ -34,7 +27,8 @@ relbert_accuracy = {
     'bats': 0.8093385214007782,
     't_rex_relational_similarity': 0.644808743169399,
     'conceptnet_relational_similarity': 0.4748322147651007,
-    'nell_relational_similarity': 0.6583333333333333
+    'nell_relational_similarity': 0.6583333333333333,
+    # "scan": 0.2469059405940594
 }
 # relbert_accuracy_triplet = {
 #     'sat_full': 0.6818181818181818,
@@ -48,6 +42,8 @@ relbert_accuracy = {
 #     'nell_relational_similarity': 0.6383333333333333
 # }
 model_size = {
+    "roberta-large": [335, "RoBERTa"],
+    "roberta-base": [110, "RoBERTa"],
     "google/flan-t5-small": [60, "Flan-T5"],
     "t5-small": [60, "T5"],
     "gpt2": [124, "GPT-2"],
@@ -119,9 +115,9 @@ model_size_ft_perm = {
 }
 
 
-def plot(df_target, path_to_save: str, lm_target: List, no_relbert: bool = False):
-    colors = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'gray', 'pink', 'olive']
-    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', "P", "+--", "+:"]
+def plot(df_target, path_to_save: str, lm_target: List, no_relbert: bool = False, legend_out: bool = False, r: float = None):
+
+    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:', "P-", "P--", "P:"]
     out = df_target.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
     out.columns = [i[1] for i in out.columns]
     out = out.reset_index()
@@ -129,46 +125,61 @@ def plot(df_target, path_to_save: str, lm_target: List, no_relbert: bool = False
     tmp['Accuracy'] = tmp[lm_target[0]]
 
     # random guess
-    r = mean([v for k, v in random_guess.items() if k in df_target['data'].unique()])
+    if r is None:
+        r = mean([v for k, v in random_guess.items() if k in df_target['data'].unique()])
     df_rand = pd.DataFrame([{"Model Size": df_target['Model Size'].min(), "Accuracy": r}, {"Model Size": df_target['Model Size'].max(), "Accuracy": r}])
     ax = df_rand.plot.line(y='Accuracy', x='Model Size', color='black', style='--', label="Random", logx=True)
 
+    # colors = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'gray', 'pink', 'olive', 'darkgreen']
+    colors = list(mpl.colormaps['tab20b'].colors)
+    seed(1)
+    shuffle(colors)
+    c = colors.pop(0)
     if not no_relbert:
         # relbert result
         df_relbert = pd.DataFrame([{"Model Size": 340 * 1000000, "Accuracy": mean([v for k, v in relbert_accuracy.items() if k in df_target['data'].unique()])}])
-        df_relbert.plot.line(y='Accuracy', x='Model Size', ax=ax, color='cyan', style="*", label="RelBERT", logx=True)
+        df_relbert.plot.line(y='Accuracy', x='Model Size', ax=ax, color=c, style="*", label="RelBERT", logx=True)
 
     for n, c in enumerate(lm_target):
         tmp = out[['Model Size', c]].dropna().reset_index()
         tmp['Accuracy'] = tmp[c]
-        tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n], style=styles[n], label=c, logx=True)
+        if len(tmp) == 1:
+            tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n], style=styles[n][0], label=c, logx=True)
+        else:
+            tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n], style=styles[n], label=c, logx=True)
     plt.grid()
+
+    if legend_out:
+        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
     plt.tight_layout()
     plt.savefig(path_to_save, bbox_inches="tight", dpi=600)
 
 
-def main(model_dict, lm_target, prefix):
+def main(model_dict, lm_target, prefix, legend_out=False):
     df = df_full[[i in model_dict for i in df_full['model']]]
     df['lm'] = [model_dict[i][1] for i in df['model']]
     df['Model Size'] = [model_dict[i][0] * 1000000 for i in df['model']]
     # average result
-    plot(df, f"results/figures/{prefix}.curve.average.png", lm_target)
+    plot(df, f"results/figures/{prefix}.curve.average.png", lm_target, legend_out=legend_out)
     # average over 5 analogies
     plot(
         df[[i in ['sat_full', 'u2', 'u4', 'bats', 'google'] for i in df['data']]],
         f"results/figures/{prefix}.curve.average_5.png",
-        lm_target)
+        lm_target,
+        legend_out=legend_out)
     # average over entities analogies
     plot(
         df[[i in ['nell_relational_similarity', 't_rex_relational_similarity'] for i in df['data']]],
         f"results/figures/{prefix}.curve.average_entity.png",
-        lm_target)
+        lm_target,
+        legend_out=legend_out)
     # single analogy
     for data, g in df.groupby('data'):
-        plot(g, f"results/figures/{prefix}.curve.{data}.png", lm_target)
+        plot(g, f"results/figures/{prefix}.curve.{data}.png", lm_target, legend_out=legend_out)
 
 
 if __name__ == '__main__':
-    main(model_size, ['GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', 'Flan-T5 (FT)', "Flan-UL2"], "main")
-    # main(model_size_ft_data, ['SemEval', 'T-REX', 'NELL', 'ConceptNet'], "data")
-    # main(model_size_ft_perm, ['Reverse Permutation', 'In-domain Permutation', 'Full Permutation'], "perm")
+    main(model_size, ["RoBERTa", 'GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', 'Flan-T5 (FT)', "Flan-UL2"], "main", legend_out=True)
+    main(model_size_ft_data, ['SemEval', 'T-REX', 'NELL', 'ConceptNet'], "data")
+    main(model_size_ft_perm, ['Reverse Permutation', 'In-domain Permutation', 'Full Permutation'], "perm")

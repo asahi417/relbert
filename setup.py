@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
-VERSION = '2.0.2'
+VERSION = '2.0.3'
 
 with open('README.md', 'r') as f:
     readme = f.read()
 
 setup(
     name='relbert',
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests', "examples", "hf_operations"]),
     version=VERSION,
     license='MIT',
     description='RelBERT: the state-of-the-art lexical relation embedding model.',

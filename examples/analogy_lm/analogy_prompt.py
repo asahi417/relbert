@@ -29,7 +29,7 @@ analogy_types = [
     ['t_rex_relational_similarity', None],
     ['conceptnet_relational_similarity', None],
     ['nell_relational_similarity', None],
-    ['scan', None]
+    # ['scan', None]
 ]
 
 language_models = {
@@ -97,6 +97,8 @@ language_models.update({
 
 # Add MLM
 language_models.update({
+    "bert-large-cased": [lmppl.MaskedLM, 256],  # 355M
+    "bert-base-cased": [lmppl.MaskedLM, 256],  # 110M
     "roberta-large": [lmppl.MaskedLM, 256],  # 355M
     "roberta-base": [lmppl.MaskedLM, 256],  # 110M
 })

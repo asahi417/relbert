@@ -10,45 +10,28 @@ vis () {
   rm -rf "${MODEL}"
 }
 
-
-vis "relbert-roberta-large-triplet-a-semeval2012"
-vis "relbert-roberta-large-triplet-b-semeval2012"
-vis "relbert-roberta-large-triplet-c-semeval2012"
-vis "relbert-roberta-large-triplet-d-semeval2012"
-vis "relbert-roberta-large-triplet-e-semeval2012"
-
-
-vis "relbert-roberta-large-iloob-a-semeval2012"
-vis "relbert-roberta-large-iloob-b-semeval2012"
-vis "relbert-roberta-large-iloob-c-semeval2012"
-vis "relbert-roberta-large-iloob-d-semeval2012"
-vis "relbert-roberta-large-iloob-e-semeval2012"
+for loss in "triplet" "iloob"
+do
+  for prompt in "a" "b" "c" "d" "e"
+  do
+    vis "relbert-roberta-large-${loss}-${prompt}-semeval2012"
+  done
+done
 
 
-vis "relbert-roberta-large-nce-a-semeval2012"
-vis "relbert-roberta-large-nce-b-semeval2012"
-vis "relbert-roberta-large-nce-c-semeval2012"
-vis "relbert-roberta-large-nce-d-semeval2012"
-vis "relbert-roberta-large-nce-e-semeval2012"
+for data in "semeval2012" "conceptnet" "nell" "t-rex" "semeval2012-nell" "semeval2012-t-rex" "semeval2012-nell-t-rex"
+do
+  for prompt in "a" "b" "c" "d" "e"
+  do
+    vis "relbert-roberta-large-nce-${prompt}-${data}"
+  done
+done
 
 
-vis "relbert-roberta-large-nce-a-t-rex"
-vis "relbert-roberta-large-nce-b-t-rex"
-vis "relbert-roberta-large-nce-c-t-rex"
-vis "relbert-roberta-large-nce-d-t-rex"
-vis "relbert-roberta-large-nce-e-t-rex"
-
-
-vis "relbert-roberta-large-nce-a-conceptnet"
-vis "relbert-roberta-large-nce-b-conceptnet"
-vis "relbert-roberta-large-nce-c-conceptnet"
-vis "relbert-roberta-large-nce-d-conceptnet"
-vis "relbert-roberta-large-nce-e-conceptnet"
-
-
-vis "relbert-roberta-large-nce-a-nell"
-vis "relbert-roberta-large-nce-b-nell"
-vis "relbert-roberta-large-nce-c-nell"
-vis "relbert-roberta-large-nce-d-nell"
-vis "relbert-roberta-large-nce-e-nell"
-
+for data in "semeval2012-nell" "semeval2012-t-rex" "semeval2012-nell-t-rex"
+do
+  for prompt in "a" "b" "c" "d" "e"
+  do
+    vis "relbert-roberta-large-nce-${prompt}-${data}"
+  done
+done
