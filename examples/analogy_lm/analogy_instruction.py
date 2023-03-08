@@ -33,8 +33,7 @@ analogy_types = [
     ['u2', None],
     ['u4', None],
     ['google', None],
-    ['bats', None],
-    ['scan', None]
+    ['bats', None]
 ]
 language_models = {
     "google/flan-t5-xxl": [lmppl.EncoderDecoderLM, 8],  # 11B
