@@ -1,0 +1,375 @@
+stem,answer,choice,prefix,prediction,accuracy
+['beauty' 'aesthete'],0,"[['pleasure', 'hedonist'], ['emotion', 'demagogue'], ['opinion', 'sympathizer'], ['seance', 'medium'], ['luxury', 'ascetic']]",190 FROM REAL SATs,2,False
+['shove' 'nudge'],4,"[['vex', 'mutter'], ['calm', 'quell'], ['teach', 'lecture'], ['push', 'fight'], ['stare', 'glance']]",190 FROM REAL SATs,0,False
+['reprehensible' 'condemn'],3,"[['torpid', 'rule'], ['innocent', 'judge'], ['depraved', 'admire'], ['estimable', 'praise'], ['worthy', 'parody']]",KS type: 16,1,False
+['contemporaries' 'age'],0,"[['housemates', 'residence'], ['faculty', 'scholarship'], ['idols', 'worship'], ['kin', 'reunion'], ['authors', 'anthology']]",190 FROM REAL SATs,3,False
+['disingenuous' 'craftiness'],4,"[['ecstatic', 'contentment'], ['idolatrous', 'doubt'], ['narcissistic', 'appearance'], ['penitent', 'wrongdoing'], ['surreptitious', 'stealth']]",190 FROM REAL SATs,2,False
+['calculator' 'compute'],1,"[['plug', 'insert'], ['clamp', 'grip'], ['saddle', 'straddle'], ['bridge', 'suspend'], ['incinerator', 'warm']]",190 FROM REAL SATs,1,True
+['lens' 'glass'],2,"[['well', 'water'], ['saw', 'wood'], ['sweater', 'wool'], ['fuel', 'fire'], ['ink', 'paper']]",190 FROM REAL SATs,4,False
+['flowers' 'florist'],0,"[['rings', 'jeweler'], ['pharmacy', 'pharmacist'], ['roses', 'arrangement'], ['wedding', 'caterer'], ['stethoscope', 'doctor']]",KS type: 18,4,False
+['puppeteer' 'marionette'],2,"[['teacher', 'textbook'], ['ballerina', 'leotard'], ['hypnotist', 'subject'], ['lawyer', 'criminal'], ['manager', 'baseball']]",ML: _One-on-one with the SATs_ (11) HARD,3,False
+['berate' 'criticize'],0,"[['goad', 'urge'], ['accuse', 'apologize'], ['regret', 'remember'], ['betray', 'follow'], ['evaluate', 'praise']]",190 FROM REAL SATs,1,False
+['abbreviation' 'word'],4,"[['laminate', 'layer'], ['inhibit', 'idea'], ['expedite', 'mail'], ['invoke', 'deity'], ['abridge', 'book']]",KS type: 52,4,True
+['dodo' 'bird'],1,"[['horse', 'mule'], ['dinosaur', 'reptile'], ['venom', 'snake'], ['rooster', 'hen'], ['dog', 'puppy']]",190 FROM REAL SATs,3,False
+['cooperation' 'collusion'],3,"[['evidence', 'proof'], ['achievement', 'reward'], ['damage', 'compensation'], ['imitation', 'forgery'], ['emotion', 'ecstasy']]",190 FROM REAL SATs,4,False
+['decibel' 'sound'],3,"[['ingredient', 'food'], ['ruler', 'length'], ['calories', 'menu'], ['degree', 'temperature'], ['headphones', 'music']]",190 FROM REAL SATs,0,False
+['insubordination' 'punishment'],3,"[['evening', 'night'], ['earthquake', 'tornado'], ['candor', 'falsehood'], ['heroism', 'praise'], ['fine', 'penalty']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (2),0,False
+['tunnel' 'mine'],4,"[['conduit', 'fluid'], ['corner', 'intersection'], ['sign', 'detour'], ['aisle', 'seat'], ['corridor', 'building']]",190 FROM REAL SATs,3,False
+['antibiotic' 'infection'],4,"[['thermometer', 'fever'], ['anesthesia', 'surgery'], ['vaccine', 'inoculation'], ['antiseptic', 'alcohol'], ['antidote', 'poisoning']]",190 FROM REAL SATs,4,True
+['asteroid' 'planet'],0,"[['quibble', 'objection'], ['gravel', 'sand'], ['mountain', 'hill'], ['wood', 'splinter'], ['radio', 'television']]",KS type: 58,4,False
+['constellation' 'stars'],4,"[['construction', 'houses'], ['honey', 'bees'], ['map', 'boundaries'], ['train', 'passengers'], ['range', 'mountains']]",190 FROM REAL SATs,1,False
+['incorrigible' 'reformed'],4,"[['unnerving', 'irritated'], ['innocuous', 'harmed'], ['irrelevant', 'verified'], ['insolvent', 'dissolved'], ['indelible', 'erased']]",KS type: 32,0,False
+['banana' 'peel'],4,"[['egg', 'crack'], ['carrot', 'uproot'], ['apple', 'core'], ['bread', 'slice'], ['corn', 'husk']]","ML: Kaplan, adjustment sample",2,False
+['shallow' 'depth'],4,"[['salty', 'ocean'], ['cloudy', 'height'], ['lurid', 'shock'], ['pious', 'faith'], ['apathetic', 'caring']]",KS type: 10,4,True
+['hoard' 'save'],1,"[['economize', 'spend'], ['revere', 'admire'], ['sulk', 'roar'], ['flirt', 'giggle'], ['ignore', 'notice']]",KS type: 19,2,False
+['pariah' 'ostracism'],0,"[['idol', 'adulation'], ['gourmand', 'food'], ['scapegoat', 'symbol'], ['collector', 'ownership'], ['protagonist', 'narrative']]",190 FROM REAL SATs,1,False
+['journal' 'article'],3,"[['dance', 'ballet'], ['magazine', 'cover'], ['set', 'scenery'], ['anthology', 'poem'], ['concert', 'orchestra']]",190 FROM REAL SATs,4,False
+['philanthropist' 'largesse'],3,"[['acrobat', 'net'], ['doctor', 'nurse'], ['mercenary', 'money'], ['professor', 'knowledge'], ['opportunist', 'advantage']]",KS type: 68,2,False
+['prudent' 'indiscretion'],0,"[['frugal', 'wastefulness'], ['proud', 'accomplishment'], ['generous', 'wealth'], ['disqualified', 'competition'], ['disgruntled', 'cynicism']]",190 FROM REAL SATs,4,False
+['floral' 'flowers'],2,"[['perennial', 'plants'], ['morbid', 'cemeteries'], ['emotional', 'feelings'], ['moral', 'stories'], ['maniacal', 'men']]","ML: Kaplan, practice set 1 (4)",4,False
+['livid' 'anger'],2,"[['querulous', 'reconciliation'], ['forlorn', 'hope'], ['radiant', 'happiness'], ['graceful', 'posture'], ['marvelous', 'wonder']]",190 FROM REAL SATs,4,False
+['haiku' 'poem'],1,"[['song', 'musician'], ['novel', 'book'], ['artist', 'painting'], ['page', 'typeface'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (3),1,True
+['birds' 'wings'],2,"[['moose', 'antlers'], ['camel', 'hump'], ['spider', 'legs'], ['alligator', 'tail'], ['cat', 'whiskers']]",KS type: 3,4,False
+['amorphous' 'shape'],1,"[['morbid', 'death'], ['intrepid', 'fear'], ['fundamental', 'basics'], ['prominent', 'sight'], ['hopeless', 'pessimism']]",KS type: 12,0,False
+['emulate' 'person'],3,"[['admire', 'reputation'], ['obey', 'leader'], ['cooperate', 'partner'], ['mimic', 'gesture'], ['mock', 'sarcasm']]",190 FROM REAL SATs,4,False
+['defend' 'untenable'],2,"[['escape', 'unfettered'], ['judge', 'punitive'], ['modify', 'invariable'], ['flourish', 'vigorous'], ['protect', 'dangerous']]",190 FROM REAL SATs,4,False
+['wedding' 'marriage'],1,"[['birthday', 'cake'], ['coronation', 'reign'], ['graduation', 'diploma'], ['promotion', 'job'], ['decoration', 'bravery']]",190 FROM REAL SATs,3,False
+['bus' 'passengers'],2,"[['train', 'caboose'], ['car', 'tires'], ['freighter', 'cargo'], ['plane', 'pilot'], ['yacht', 'owner']]",KS type: 37,1,False
+['emigrate' 'country'],0,"[['retreat', 'position'], ['retire', 'pension'], ['voyage', 'suitcase'], ['swindle', 'property'], ['novel', 'old']]",KS type: 27,3,False
+['squall' 'wind'],3,"[['blizzard', 'winter'], ['spark', 'flame'], ['desert', 'sand'], ['cloudburst', 'rain'], ['snow', 'drift']]",ML: _One-on-one with the SATs_ (9) HARD,0,False
+['ethos' 'values'],1,"[['accord', 'nations'], ['code', 'principles'], ['policy', 'officials'], ['debate', 'opinions'], ['offense', 'criminals']]",190 FROM REAL SATs,4,False
+['immature' 'develop'],1,"[['tempestuous', 'explode'], ['unready', 'prepare'], ['superstitious', 'believe'], ['unfeasible', 'originate'], ['fortuitous', 'plan']]","ML: Kaplan, practice set 1 (9)",2,False
+['caricature' 'drawing'],2,"[['eagle', 'bird'], ['impersonation', 'flattery'], ['limerick', 'poem'], ['ballad', 'song'], ['license', 'hunter']]",KS type: 31,0,False
+['terrestrial' 'land'],4,"[['vegetarian', 'plants'], ['predatory', 'animal'], ['nocturnal', 'day'], ['arid', 'desert'], ['aquatic', 'water']]",190 FROM REAL SATs,3,False
+['cloying' 'sweetness'],4,"[['shiny', 'polish'], ['pale', 'hue'], ['raspy', 'softness'], ['enchanting', 'desire'], ['garish', 'brightness']]",190 FROM REAL SATs,3,False
+['corroded' 'alloy'],4,"[['broken', 'contract'], ['written', 'rule'], ['outdated', 'book'], ['adjusted', 'clock'], ['corrupted', 'morality']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (8),4,True
+['forensics' 'argumentation'],2,"[['autopsy', 'death'], ['syntax', 'grammar'], ['jurisprudence', 'law'], ['archaeology', 'site'], ['etymology', 'dictionary']]",190 FROM REAL SATs,2,True
+['lame' 'mobility'],2,"[['lively', 'energy'], ['hostile', 'enemy'], ['hoarse', 'speech'], ['fractured', 'cast'], ['walk', 'transportation']]",KS type: 56,1,False
+['inquisitorial' 'curiosity'],2,"[['morose', 'behavior'], ['injurious', 'prying'], ['ingenuous', 'innocence'], ['pernicious', 'damage'], ['laconic', 'speech']]",KS type: 49,1,False
+['devour' 'consume'],0,"[['abhor', 'dislike'], ['reject', 'despise'], ['praise', 'lavish'], ['ingest', 'reject'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (6),3,False
+['arena' 'conflict'],1,"[['mirage', 'reality'], ['forum', 'discussion'], ['asylum', 'pursuit'], ['utopia', 'place'], ['amphitheater', 'stage']]",190 FROM REAL SATs,3,False
+['rent' 'property'],1,"[['sue', 'lawyer'], ['hire', 'employee'], ['pose', 'painter'], ['pay', 'debtor'], ['purchase', 'buyer']]",190 FROM REAL SATs,1,True
+['catnap' 'sleep'],2,"[['exhaustion', 'slumber'], ['blink', 'eye'], ['snack', 'meal'], ['swallow', 'bite'], ['feast', 'banquet']]",190 FROM REAL SATs,0,False
+['hostile' 'bellicose'],1,"[['indifferent', 'averse'], ['stubborn', 'obdurate'], ['morose', 'slothful'], ['unequivocal', 'skeptical'], ['angry', 'passive']]",KS type: 36,3,False
+['petal' 'flower'],3,"[['oak', 'tree'], ['staple', 'paper'], ['sprout', 'seed'], ['tooth', 'comb'], ['tide', 'beach']]",190 FROM REAL SATs,0,False
+['troubled' 'distraught'],2,"[['annoyed', 'disillusioned'], ['disturbed', 'interrupted'], ['covetous', 'rapacious'], ['outmoded', 'ostentatious'], ['tranquil', 'placid']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (12),0,False
+['seedy' 'elegant'],1,"[['posh', 'sumptuous'], ['luxurious', 'spare'], ['moneyed', 'frugal'], ['rich', 'poor'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (5),0,False
+['tentacle' 'octopus'],1,"[['oak', 'tree'], ['tendril', 'vine'], ['rat', 'vermin'], ['meow', 'cat'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (7),0,False
+['avenge' 'wrong'],0,"[['reciprocate', 'favor'], ['compete', 'contest'], ['ponder', 'decision'], ['relegate', 'position'], ['decree', 'religion']]",ML: _One-on-one with the SATs_ (6) HARD,1,False
+['crowbar' 'pry'],1,"[['rod', 'trout'], ['pencil', 'draw'], ['nail', 'hammer'], ['telescope', 'star'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (8) (fishing rod->rod),2,False
+['chat' 'converse'],4,"[['allege', 'deny'], ['halt', 'traverse'], ['purchase', 'rent'], ['study', 'learn'], ['browse', 'read']]",190 FROM REAL SATs,3,False
+['refurbish' 'worn'],0,"[['revive', 'exhausted'], ['reward', 'outstanding'], ['resume', 'interrupted'], ['replace', 'stolen'], ['repaint', 'glossy']]",190 FROM REAL SATs,4,False
+['drought' 'rain'],4,"[['desert', 'sun'], ['hurricane', 'wind'], ['epidemic', 'disease'], ['volcano', 'lava'], ['famine', 'nourishment']]",190 FROM REAL SATs,1,False
+['custom' 'society'],3,"[['hypothesis', 'evidence'], ['testimony', 'trial'], ['ballot', 'election'], ['rule', 'game'], ['contest', 'debate']]",190 FROM REAL SATs,2,False
+['condolence' 'mourner'],3,"[['secret', 'stranger'], ['loan', 'borrower'], ['rescue', 'knight'], ['congratulation', 'victor'], ['record', 'athlete']]",190 FROM REAL SATs,3,True
+['unfetter' 'pinioned'],2,"[['recite', 'practiced'], ['sully', 'impure'], ['enlighten', 'ignorant'], ['revere', 'unrecognized'], ['adore', 'cordial']]",190 FROM REAL SATs,1,False
+['opaque' 'transparent'],0,"[['gaunt', 'rotund'], ['wary', 'angry'], ['thin', 'elongated'], ['proud', 'arrogant'], ['libel', 'free']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (9),2,False
+['atlas' 'maps'],0,"[['manual', 'instructions'], ['directory', 'pages'], ['almanac', 'years'], ['dictionary', 'writers'], ['tome', 'books']]",190 FROM REAL SATs,1,False
+['camera' 'photographer'],4,"[['house', 'architect'], ['sink', 'plumber'], ['studio', 'painter'], ['meat', 'butcher'], ['drill', 'dentist']]",190 FROM REAL SATs,3,False
+['freight' 'truck'],4,"[['goods', 'warehouse'], ['customers', 'store'], ['stevedores', 'ship'], ['engine', 'train'], ['passengers', 'bus']]",190 FROM REAL SATs,1,False
+['audible' 'blaring'],1,"[['silent', 'loud'], ['annoying', 'obnoxious'], ['clear', 'ostentatious'], ['legible', 'published'], ['edible', 'poisonous']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (1),1,True
+['raucous' 'sound'],3,"[['dim', 'light'], ['noisy', 'uproar'], ['tanned', 'leather'], ['rough', 'texture'], ['hard', 'granite']]",190 FROM REAL SATs,0,False
+['abash' 'embarrassment'],2,"[['dislike', 'hypocrisy'], ['pretend', 'imagination'], ['annoy', 'irritation'], ['suspect', 'illegality'], ['demolish', 'renovation']]",190 FROM REAL SATs,1,False
+['elastic' 'flexible'],0,"[['diamond', 'hard'], ['ocean', 'nautical'], ['iron', 'rusty'], ['sandpaper', 'smooth'], ['water', 'irrigated']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&11&q,0,True
+['corpulence' 'obesity'],1,"[['ability', 'question'], ['enigma', 'puzzle'], ['intelligence', 'capability'], ['strong', 'weak'], ['pleasure', 'blessing']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (5),1,True
+['heckler' 'disconcert'],4,"[['outcast', 'exclude'], ['firebrand', 'soothe'], ['performer', 'applaud'], ['monarch', 'depose'], ['lobbyist', 'persuade']]",190 FROM REAL SATs,2,False
+['ruthless' 'compassion'],1,"[['theatrical', 'emotion'], ['naive', 'sophistication'], ['scrupulous', 'propriety'], ['self-righteous', 'indignation'], ['formidable', 'awe']]",190 FROM REAL SATs,3,False
+['actor' 'cast'],0,"[['musician', 'orchestra'], ['singer', 'song'], ['lecturer', 'class'], ['congregation', 'church'], ['proofreader', 'text']]",190 FROM REAL SATs,2,False
+['paleontologist' 'tyrannosaurus'],0,"[['botanist', 'capsicum'], ['professor', 'student'], ['agriculturist', 'dairy'], ['priest', 'religion'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (6) (corrected tyrannosaurus),1,False
+['swarm' 'bee'],0,"[['school', 'fish'], ['venison', 'deer'], ['oxen', 'cow'], ['peak', 'mountain'], ['skin', 'lion']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (1),3,False
+['bequest' 'heir'],0,"[['gift', 'recipient'], ['huge', 'weight'], ['painting', 'artist'], ['payment', 'donor'], ['measure', 'gauge']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (6),4,False
+['gauche' 'adroit'],0,"[['weak', 'strong'], ['formidable', 'strong'], ['round', 'square'], ['sharp', 'pointed'], ['stately', 'grand']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (10),2,False
+['testimony' 'witness'],2,"[['leadership', 'follower'], ['proof', 'theorist'], ['expertise', 'authority'], ['contradiction', 'investigator'], ['confiscation', 'official']]",190 FROM REAL SATs,4,False
+['corroborate' 'claim'],0,"[['document', 'assertion'], ['disprove', 'evidence'], ['sentence', 'punishment'], ['promise', 'advancement'], ['disseminate', 'information']]",190 FROM REAL SATs,4,False
+['propagandize' 'principles'],4,"[['plagiarize', 'writing'], ['indemnify', 'damages'], ['indoctrinate', 'institutions'], ['pacify', 'aggression'], ['proselytize', 'religion']]",KS type: 33,0,False
+['vertigo' 'dizzy'],1,"[['temperature', 'virus'], ['influenza', 'feverish'], ['fear', 'heights'], ['illness', 'germs'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (1),4,False
+['pedestrian' 'walks'],4,"[['soldier', 'obeys'], ['runner', 'stretches'], ['dentist', 'drills'], ['bicyclist', 'brakes'], ['motorist', 'drives']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&2&q,3,False
+['ornament' 'embellish'],2,"[['radio', 'repair'], ['antidote', 'poison'], ['detergent', 'clean'], ['carpenter', 'build'], ['rocket', 'launch']]",KS type: 15,1,False
+['manager' 'store'],2,"[['technician', 'laboratory'], ['student', 'school'], ['administrator', 'hospital'], ['spectator', 'arena'], ['president', 'electorate']]",190 FROM REAL SATs,1,False
+['seed' 'plant'],4,"[['pouch', 'kangaroo'], ['root', 'soil'], ['drop', 'water'], ['bark', 'tree'], ['egg', 'bird']]",190 FROM REAL SATs,3,False
+['exculpate' 'blame'],0,"[['extricate', 'difficulty'], ['exemplify', 'illustration'], ['expedite', 'process'], ['divulge', 'secret'], ['bewilder', 'confusion']]",190 FROM REAL SATs,2,False
+['amplifier' 'ear'],1,"[['computer', 'brain'], ['telescope', 'eye'], ['book', 'library'], ['clock', 'time'], ['keyboard', 'finger']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (8),2,False
+['malinger' 'work'],2,"[['escape', 'flight'], ['accuse', 'crime'], ['hide', 'discovery'], ['shun', 'ridicule'], ['guess', 'answer']]",190 FROM REAL SATs,4,False
+['oxygen' 'gas'],2,"[['cobra', 'venom'], ['doctor', 'hospital'], ['aluminum', 'metal'], ['gymnasium', 'track'], ['airplane', 'cloud']]",KS type: 9,1,False
+['viscous' 'flow'],3,"[['transparent', 'see'], ['stationary', 'stop'], ['arid', 'rain'], ['stiff', 'bend'], ['damp', 'soak']]",190 FROM REAL SATs,2,False
+['glaze' 'pottery'],2,"[['scuff', 'furniture'], ['donate', 'tree'], ['ice', 'cake'], ['injure', 'gun'], ['chortle', 'laugh']]",KS type: 38,0,False
+['quack' 'doctor'],1,"[['charlatan', 'impostor'], ['pretender', 'monarch'], ['defendant', 'prosecutor'], ['arbitrator', 'judge'], ['professional', 'amateur']]",ML: http://www.collegeboard.org/sat/center/q1000/113q.html (hard),3,False
+['lethargic' 'energy'],1,"[['contrived', 'plot'], ['desultory', 'direction'], ['durable', 'structure'], ['frenetic', 'activity'], ['dejected', 'sympathy']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&12&q,0,False
+['lynch' 'execute'],4,"[['interrogate', 'prosecute'], ['deface', 'kill'], ['testify', 'subpoena'], ['good', 'bad'], ['steal', 'confiscate']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (10),0,False
+['magnify' 'appearance'],3,"[['rectify', 'error'], ['augment', 'reduction'], ['probe', 'feeling'], ['amplify', 'volume'], ['distort', 'image']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&3&q,3,True
+['flap' 'wing'],1,"[['speak', 'sound'], ['wave', 'hand'], ['whisper', 'word'], ['stub', 'toe'], ['sing', 'bird']]",190 FROM REAL SATs,0,False
+['barley' 'grain'],1,"[['yeast', 'bread'], ['pine', 'tree'], ['vine', 'fruit'], ['knot', 'rope'], ['twig', 'nest']]",190 FROM REAL SATs,2,False
+['amalgam' 'metals'],2,"[['fracture', 'bones'], ['divorce', 'marriages'], ['coalition', 'factions'], ['car', 'payments'], ['convention', 'speeches']]",KS type: 41,3,False
+['smile' 'happiness'],3,"[['boredom', 'apathy'], ['cook', 'food'], ['comedy', 'laughter'], ['frown', 'anger'], ['resentment', 'mutiny']]",KS type: 17,1,False
+['congeal' 'solid'],3,"[['heat', 'fire'], ['breathe', 'air'], ['immunize', 'disease'], ['melt', 'liquid'], ['push', 'resistance']]",190 FROM REAL SATs,1,False
+['alligator' 'reptile'],1,"[['fish', 'school'], ['lion', 'cat'], ['wolf', 'sheep'], ['cub', 'bear'], ['dog', 'bone']]",KS type: 7,4,False
+['mundane' 'novel'],0,"[['rate', 'prevalent'], ['essential', 'imperative'], ['sealed', 'hermetic'], ['spontaneous', 'combustive'], ['judicious', 'minimal']]",KS type: 54,4,False
+['epilogue' 'play'],2,"[['aria', 'opera'], ['trailer', 'movie'], ['afterword', 'book'], ['act', 'scene'], ['comedy', 'drama']]",KS type: 46,1,False
+['incumbent' 'office'],1,"[['politician', 'campaign'], ['tenant', 'dwelling'], ['jailer', 'cell'], ['secretary', 'desk'], ['retiree', 'service']]",190 FROM REAL SATs,3,False
+['courier' 'message'],2,"[['soldier', 'battle'], ['student', 'knowledge'], ['prophet', 'revelation'], ['judge', 'law'], ['athlete', 'prowess']]",ML: not sure...,0,False
+['mentor' 'guide'],0,"[['prophet', 'predict'], ['instructor', 'discipline'], ['tyrant', 'relentless'], ['citizen', 'unique'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (2),3,False
+['iconoclast' 'orthodoxy'],2,"[['scientist', 'theory'], ['impostor', 'identity'], ['libertarian', 'tyranny'], ['conformist', 'expectation'], ['soldier', 'combat']]",190 FROM REAL SATs,2,True
+['mendicant' 'beg'],1,"[['sycophant', 'demean'], ['braggart', 'boast'], ['parasite', 'contribute'], ['hero', 'worship'], ['dissembler', 'believe']]",190 FROM REAL SATs,3,False
+['border' 'country'],4,"[['current', 'river'], ['water', 'lake'], ['waves', 'sea'], ['horizon', 'sunset'], ['shore', 'ocean']]",190 FROM REAL SATs,4,True
+['sandal' 'footwear'],3,"[['monarch', 'castle'], ['child', 'parent'], ['volume', 'bookcase'], ['watch', 'timepiece'], ['wax', 'candle']]",190 FROM REAL SATs,1,False
+['prosaic' 'epic'],2,"[['normal', 'mean'], ['powerful', 'omnipotent'], ['ephemeral', 'eternal'], ['octagon', 'eight'], ['beneficent', 'strong']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (7) (spell corrected prosaic),2,True
+['accomplice' 'crime'],4,"[['inmate', 'prison'], ['detective', 'clue'], ['employer', 'work'], ['salesperson', 'store'], ['partner', 'business']]",190 FROM REAL SATs,4,True
+['arable' 'cultivation'],4,"[['exploited', 'protection'], ['healthy', 'medication'], ['insular', 'discovery'], ['productive', 'surplus'], ['navigable', 'sailing']]",190 FROM REAL SATs,0,False
+['depose' 'king'],3,"[['eulogize', 'hero'], ['inaugurate', 'mayor'], ['promote', 'general'], ['unfrock', 'minister'], ['elect', 'leader']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (9),0,False
+['tutor' 'pupil'],1,"[['patron', 'client'], ['coach', 'athlete'], ['waiter', 'diner'], ['driver', 'passenger'], ['novelist', 'writer']]",190 FROM REAL SATs,4,False
+['burnish' 'metal'],3,"[['cut', 'scissors'], ['deliver', 'box'], ['polish', 'wax'], ['sand', 'wood'], ['tarnish', 'silver']]",KS type: 39,3,True
+['fickle' 'inconsistency'],3,"[['cloudy', 'warmth'], ['innate', 'capability'], ['worthy', 'heroism'], ['placid', 'calmness'], ['solid', 'order']]","ML: Kaplan, practice set 1 (8)",3,True
+['talisman' 'charm'],3,"[['omen', 'evil'], ['garb', 'rank'], ['signal', 'warning'], ['visage', 'countenance'], ['hate', 'love']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (5),4,False
+['stay' 'depart'],1,"[['take', 'move'], ['stagnate', 'flow'], ['run', 'walk'], ['sleep', 'rest'], ['create', 'design']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (3),2,False
+['neighbor' 'proximity'],2,"[['supervisor', 'obedience'], ['comrade', 'victory'], ['adversary', 'opposition'], ['traitor', 'loyalty'], ['teammate', 'competitiveness']]",190 FROM REAL SATs,2,True
+['catalog' 'shopper'],2,"[['contract', 'lawyer'], ['schedule', 'worker'], ['menu', 'diner'], ['article', 'author'], ['bank', 'teller']]",190 FROM REAL SATs,4,False
+['bungalow' 'domicile'],2,"[['castle', 'turret'], ['bathroom', 'sink'], ['chair', 'furniture'], ['apartment', 'rent'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (6),2,True
+['canal' 'waterway'],4,"[['skyline', 'city'], ['bank', 'stream'], ['hub', 'wheel'], ['dam', 'river'], ['reservoir', 'lake']]",190 FROM REAL SATs,4,True
+['mystify' 'understanding'],0,"[['nip', 'maturation'], ['insure', 'disaster'], ['rearrange', 'order'], ['intensify', 'endurance'], ['reciprocate', 'interchange']]",190 FROM REAL SATs,4,False
+['emissary' 'represent'],3,"[['draftee', 'enroll'], ['novice', 'train'], ['president', 'elect'], ['guard', 'protect'], ['comedian', 'laugh']]",190 FROM REAL SATs,4,False
+['odometer' 'distance'],4,"[['microscope', 'size'], ['decibel', 'loudness'], ['orchestra', 'instrument'], ['computer', 'data'], ['scale', 'weight']]",190 FROM REAL SATs,4,True
+['eagle' 'bird'],3,"[['halibut', 'salmon'], ['beak', 'feather'], ['deer', 'fawn'], ['beagle', 'dog'], ['egg', 'chick']]",KS type: 1,3,True
+['overcoat' 'warmth'],4,"[['glove', 'hand'], ['jewelry', 'wealth'], ['slicker', 'moisture'], ['disguise', 'identification'], ['helmet', 'protection']]",ML: _One-on-one with the SATs_ (1) EASY,4,True
+['mansion' 'residence'],0,"[['limousine', 'automobile'], ['chandelier', 'candle'], ['tuxedo', 'wardrobe'], ['diamond', 'rhinestone'], ['yacht', 'harbor']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (2),3,False
+['stimulant' 'activity'],2,"[['symptom', 'disease'], ['food', 'hunger'], ['fertilizer', 'growth'], ['diagnosis', 'treatment'], ['gravity', 'force']]",190 FROM REAL SATs,0,False
+['pallid' 'color'],1,"[['vital', 'energy'], ['parched', 'moisture'], ['restrained', 'limit'], ['measured', 'quantity'], ['deliberate', 'intention']]",190 FROM REAL SATs,0,False
+['scapegoat' 'blame'],4,"[['ingrate', 'gratitude'], ['apprentice', 'skill'], ['trickster', 'honesty'], ['truant', 'education'], ['effigy', 'hatred']]",ML: _One-on-one with the SATs_ (12) HARD,4,True
+['yearn' 'longing'],2,"[['beware', 'danger'], ['rush', 'patience'], ['enjoy', 'pleasure'], ['suppress', 'rage'], ['sleep', 'insomnia']]",190 FROM REAL SATs,4,False
+['apprehensive' 'petrified'],4,"[['happy', 'hostile'], ['elated', 'deaden'], ['sincere', 'satisfied'], ['emotional', 'accord'], ['cheerful', 'hilarious']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (2),1,False
+['pebble' 'rock'],3,"[['mountain', 'peak'], ['gravel', 'driveway'], ['sand', 'desert'], ['minnow', 'fish'], ['melon', 'fruit']]",KS type: 4,4,False
+['archeology' 'science'],3,"[['ridge', 'mountain'], ['pride', 'lion'], ['oxen', 'cow'], ['chair', 'furniture'], ['mammal', 'horse']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (1),0,False
+['potentate' 'power'],1,"[['broadcaster', 'news'], ['virtuoso', 'skill'], ['protege', 'sponsorship'], ['maverick', 'group'], ['colleague', 'camaraderie']]",190 FROM REAL SATs,1,True
+['tentacles' 'octopus'],2,"[['petals', 'flower'], ['tadpoles', 'frog'], ['claws', 'crab'], ['algae', 'seaweed'], ['quills', 'porcupine']]",190 FROM REAL SATs,0,False
+['livid' 'angry'],1,"[['vital', 'wary'], ['effusive', 'emotional'], ['vain', 'beautiful'], ['resolute', 'weak'], ['old', 'modern']]",KS type: 5,3,False
+['loathsome' 'contempt'],4,"[['strident', 'loneliness'], ['unwitting', 'awareness'], ['impudent', 'regret'], ['omniscient', 'understanding'], ['meritorious', 'esteem']]",KS type: 34,3,False
+['sequester' 'juror'],0,"[['quarantine', 'patient'], ['cloister', 'convent'], ['parole', 'prisoner'], ['graduate', 'pupil'], ['elect', 'mayor']]","ML: Kaplan, practice set 1 (5)",1,False
+['proficiency' 'expert'],2,"[['recognition', 'winner'], ['victory', 'athlete'], ['passion', 'enthusiast'], ['appointment', 'official'], ['medicine', 'doctor']]",190 FROM REAL SATs,4,False
+['abrasive' 'skin'],3,"[['flammable', 'fire'], ['resilient', 'shock'], ['soluble', 'water'], ['corrosive', 'iron'], ['responsive', 'stimulus']]",190 FROM REAL SATs,3,True
+['mercenary' 'money'],0,"[['vindictive', 'revenge'], ['scholarly', 'library'], ['immaculate', 'cleanliness'], ['thirsty', 'water'], ['belligerent', 'invasion']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (8)  (PDT: _reverence_ --> _revenge_),2,False
+['epilogue' 'book'],4,"[['sequel', 'movie'], ['conclusion', 'title'], ['tiff', 'quarrel'], ['intermission', 'play'], ['finale', 'symphony']]",190 FROM REAL SATs,4,True
+['parsimony' 'philanthropy'],1,"[['carnal', 'active'], ['prejudice', 'tolerance'], ['generosity', 'kindness'], ['rivalry', 'noise'], ['liveliness', 'patience']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (4),4,False
+['decorate' 'plain'],2,"[['create', 'talented'], ['mend', 'repaired'], ['cook', 'raw'], ['sing', 'vocal'], ['narrate', 'fictitious']]",190 FROM REAL SATs,4,False
+['treason' 'country'],1,"[['settlement', 'lawyer'], ['embezzlement', 'employer'], ['justice', 'honor'], ['hospitality', 'generosity'], ['chagrin', 'mistake']]",KS type: 47,1,True
+['overdose' 'prescription'],1,"[['deprivation', 'materialism'], ['indiscretion', 'convention'], ['affliction', 'sympathy'], ['adventure', 'expedition'], ['drug', 'medicine']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (5),4,False
+['vulnerable' 'hurt'],0,"[['fluid', 'changed'], ['vague', 'truncated'], ['virtuous', 'bribed'], ['witty', 'amused'], ['divergent', 'exploited']]",KS type: 50,3,False
+['fathom' 'depth'],2,"[['amplify', 'volume'], ['overflow', 'capacity'], ['appraise', 'value'], ['stump', 'answer'], ['weigh', 'scale']]",190 FROM REAL SATs,0,False
+['jubilation' 'joy'],1,"[['exaggeration', 'truth'], ['compassion', 'sympathy'], ['security', 'instability'], ['fortitude', 'danger'], ['emotion', 'anger']]",190 FROM REAL SATs,0,False
+['vivid' 'lurid'],1,"[['effectual', 'able'], ['expensive', 'exorbitant'], ['ghastly', 'gruesome'], ['conspicuous', 'sullied'], ['bold', 'tremulous']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (9) (spell corrected _conspiculous_),2,False
+['drapery' 'fabric'],4,"[['fireplace', 'wood'], ['curtain', 'stage'], ['shutter', 'light'], ['sieve', 'liquid'], ['window', 'glass']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&6&q,0,False
+['flake' 'snow'],1,"[['storm', 'hail'], ['drop', 'rain'], ['field', 'wheat'], ['stack', 'hay'], ['cloud', 'sky']]","ML: Kaplan, sample",4,False
+['stomp' 'walk'],1,"[['devour', 'starve'], ['shout', 'speak'], ['run', 'scamper'], ['prepare', 'finish'], ['deliberate', 'conclude']]",190 FROM REAL SATs,1,True
+['overexertion' 'fatigue'],1,"[['exemption', 'participation'], ['injury', 'pain'], ['labor', 'recreation'], ['immunity', 'disease'], ['transformation', 'deterioration']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&9&q,1,True
+['salve' 'wound'],2,"[['utter', 'apology'], ['exploit', 'weakness'], ['mollify', 'anger'], ['squander', 'opportunity'], ['emulate', 'achievement']]",190 FROM REAL SATs,3,False
+['intransigent' 'compromise'],1,"[['permanent', 'stability'], ['dogged', 'surrender'], ['disorganized', 'chaos'], ['lonesome', 'friendship'], ['strenuous', 'exercise']]",190 FROM REAL SATs,4,False
+['incantation' 'words'],2,"[['malediction', 'harm'], ['oration', 'formality'], ['talisman', 'object'], ['enchantment', 'happiness'], ['divination', 'future']]",190 FROM REAL SATs,2,True
+['cosmetics' 'embellish'],1,"[['calculation', 'assess'], ['ornament', 'adorn'], ['painting', 'hang'], ['posture', 'improve'], ['dish', 'garnish']]",190 FROM REAL SATs,1,True
+['simian' 'ape'],2,"[['feathered', 'vulture'], ['bovine', 'pasture'], ['infantile', 'child'], ['carnivorous', 'plant'], ['wizened', 'wisdom']]",KS type: 65,3,False
+['dynamic' 'static'],1,"[['movement', 'fluidity'], ['inherent', 'extrinsic'], ['border', 'threshold'], ['permission', 'allowance'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (4),4,False
+['library' 'book'],1,"[['scholar', 'knowledge'], ['stable', 'horse'], ['factory', 'outlet'], ['laboratory', 'radiation'], ['laser', 'energy']]",KS type: 24,0,False
+['sketch' 'artist'],3,"[['secret', 'confidant'], ['palette', 'painter'], ['cell', 'prisoner'], ['draft', 'writer'], ['chisel', 'sculptor']]",190 FROM REAL SATs,4,False
+['goggles' 'eyes'],4,"[['belt', 'waist'], ['earrings', 'ears'], ['razor', 'hair'], ['gloves', 'cold'], ['helmet', 'head']]",190 FROM REAL SATs,0,False
+['querulous' 'complain'],3,"[['silent', 'talk'], ['humorous', 'laugh'], ['dangerous', 'risk'], ['deceitful', 'cheat'], ['gracious', 'accept']]",190 FROM REAL SATs,0,False
+['purgation' 'impurities'],3,"[['catharsis', 'epiphanies'], ['sterilization', 'ailments'], ['salvation', 'prayers'], ['disinfection', 'bacteria'], ['inattention', 'details']]",KS type: 67,3,True
+['precarious' 'stability'],4,"[['mean', 'gauge'], ['huge', 'weight'], ['exact', 'measure'], ['exotic', 'accord'], ['anomalous', 'model']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (6),1,False
+['crass' 'refinement'],4,"[['inefficient', 'time'], ['prudent', 'discretion'], ['clairvoyant', 'perception'], ['inept', 'mistake'], ['pretentious', 'modesty']]",190 FROM REAL SATs,4,True
+['thicket' 'shrubs'],0,"[['grove', 'trees'], ['orchard', 'apples'], ['pasture', 'cows'], ['reef', 'waves'], ['crop', 'plants']]",190 FROM REAL SATs,0,True
+['sap' 'tree'],2,"[['syrup', 'candy'], ['lint', 'clothes'], ['blood', 'mammal'], ['mold', 'bread'], ['fertilizer', 'plant']]",KS type: 44,4,False
+['omnipotent' 'power'],1,"[['impudent', 'control'], ['daring', 'audacity'], ['parochial', 'scope'], ['objective', 'rage'], ['beguiling', 'disgust']]",KS type: 29,0,False
+['frighten' 'skittish'],1,"[['despise', 'pleasant'], ['swindle', 'gullible'], ['parole', 'guilty'], ['caution', 'watchful'], ['shock', 'abrupt']]",ML: _One-on-one with the SATs_ (10) HARD,1,True
+['evaporate' 'vapor'],0,"[['petrify', 'stone'], ['centrifuge', 'liquid'], ['saturate', 'fluid'], ['corrode', 'acid'], ['incinerate', 'fire']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (6),3,False
+['volatile' 'vaporize'],4,"[['translucent', 'illuminate'], ['brittle', 'bend'], ['frigid', 'chill'], ['ponderous', 'lift'], ['soluble', 'dissolve']]",190 FROM REAL SATs,2,False
+['recuperate' 'surgery'],3,"[['restore', 'furniture'], ['cleanse', 'alcohol'], ['cure', 'illness'], ['revive', 'faint'], ['hospitalize', 'patient']]",190 FROM REAL SATs,0,False
+['poison' 'toxic'],1,"[['mixture', 'soluble'], ['sugar', 'sweet'], ['medicine', 'prescribed'], ['milk', 'bottled'], ['solid', 'liquid']]",190 FROM REAL SATs,1,True
+['evade' 'straightforward'],3,"[['leave', 'inviting'], ['enliven', 'animated'], ['flatten', 'smooth'], ['boast', 'modest'], ['assist', 'helpful']]","ML: Kaplan, practice set 1 (7)",1,False
+['inadvertent' 'thought'],3,"[['ironic', 'wrath'], ['proud', 'prize'], ['artistic', 'work'], ['ungainly', 'skill'], ['prolific', 'design']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (3),0,False
+['condense' 'short'],3,"[['shrink', 'wet'], ['measure', 'equal'], ['magnify', 'invisible'], ['deflate', 'flat'], ['increase', 'boundless']]",190 FROM REAL SATs,3,True
+['locomotive' 'train'],1,"[['horse', 'saddle'], ['tractor', 'plow'], ['rudder', 'rowboat'], ['camel', 'desert'], ['gasoline', 'automobile']]",190 FROM REAL SATs,0,False
+['best' 'seller'],4,"[['anthology', 'poem'], ['rave', 'critic'], ['collector', 'painting'], ['performance', 'play'], ['hit', 'song']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&5&q,3,False
+['audience' 'theater'],3,"[['crew', 'ship'], ['scholars', 'library'], ['group', 'society'], ['spectators', 'arena'], ['actors', 'stage']]",190 FROM REAL SATs,0,False
+['bungler' 'finesse'],2,"[['athlete', 'prowess'], ['thief', 'felony'], ['gossip', 'reserve'], ['preacher', 'oratory'], ['gourmet', 'cuisine']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&7&q,1,False
+['affectation' 'behavior'],2,"[['speech', 'topic'], ['tension', 'violence'], ['facade', 'appearance'], ['buffoonery', 'action'], ['pretense', 'honesty']]",190 FROM REAL SATs,2,True
+['diversion' 'boredom'],0,"[['assurance', 'uncertainty'], ['enmity', 'hatred'], ['secrecy', 'curiosity'], ['reward', 'deed'], ['sluggishness', 'fatigue']]",190 FROM REAL SATs,4,False
+['embargo' 'trade'],4,"[['umbrella', 'clouds'], ['engine', 'automobile'], ['license', 'fishing'], ['alarm', 'valuable'], ['helmet', 'injury']]",KS type: 59,1,False
+['move' 'scurry'],2,"[['scream', 'shout'], ['labor', 'rest'], ['breathe', 'pant'], ['arrest', 'indict'], ['jeer', 'mock']]",KS type: 25,0,False
+['dearth' 'abundance'],2,"[['retribution', 'infamy'], ['death', 'funeral'], ['poverty', 'wealth'], ['contempt', 'anger'], ['ruse', 'plan']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (7),0,False
+['abridge' 'novel'],4,"[['interrupt', 'conversation'], ['rehearse', 'play'], ['terminate', 'ending'], ['punctuate', 'sentence'], ['abbreviate', 'word']]",190 FROM REAL SATs,4,True
+['preamble' 'statute'],2,"[['interlude', 'musical'], ['conclusion', 'argument'], ['foreword', 'novel'], ['epilogue', 'address'], ['premiere', 'performance']]",190 FROM REAL SATs,4,False
+['worry' 'panic'],1,"[['brain', 'intelligence'], ['happiness', 'bliss'], ['smile', 'anger'], ['agenda', 'list'], ['clock', 'time']]",KS type: 2,4,False
+['regale' 'entertain'],0,"[['extol', 'praise'], ['educate', 'learn'], ['beautify', 'refresh'], ['tempt', 'repel'], ['hide', 'secrete']]",190 FROM REAL SATs,2,False
+['story' 'building'],3,"[['crust', 'sandwich'], ['shingle', 'roof'], ['data', 'file'], ['layer', 'cake'], ['root', 'plant']]",190 FROM REAL SATs,1,False
+['coop' 'poultry'],0,"[['aquarium', 'fish'], ['forest', 'wildlife'], ['crib', 'nursery'], ['fence', 'yard'], ['barn', 'tool']]",190 FROM REAL SATs,3,False
+['lobbyist' 'cause'],2,"[['legislator', 'voter'], ['clergy', 'congregation'], ['advertiser', 'product'], ['defendant', 'verdict'], ['consumer', 'goods']]",190 FROM REAL SATs,3,False
+['levee' 'flood'],2,"[['snow', 'avalanche'], ['rain', 'deluge'], ['immunization', 'disease'], ['zenith', 'view'], ['buttress', 'building']]",KS type: 66,2,True
+['callow' 'experience'],2,"[['painting', 'artist'], ['heavy', 'weight'], ['barren', 'fruit'], ['gift', 'donor'], ['measure', 'ounce']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (6),4,False
+['arid' 'dry'],0,"[['glacial', 'cold'], ['coastal', 'tidal'], ['damp', 'muddy'], ['snowbound', 'polar'], ['shallow', 'deep']]",190 FROM REAL SATs,1,False
+['quart' 'volume'],1,"[['day', 'night'], ['mile', 'distance'], ['decade', 'century'], ['friction', 'heat'], ['part', 'whole']]",190 FROM REAL SATs,4,False
+['inaudible' 'amplifier'],1,"[['incomprehensible', 'story'], ['imperceptible', 'microscope'], ['inadvertent', 'telescope'], ['heat', 'radiator'], ['unknown', 'mystery']]",KS type: 62,3,False
+['buttress' 'support'],1,"[['encore', 'applause'], ['ornament', 'decoration'], ['choreography', 'dance'], ['prayer', 'religion'], ['thesis', 'evidence']]",190 FROM REAL SATs,1,True
+['condescending' 'respect'],3,"[['bashful', 'attention'], ['obliging', 'thanks'], ['insecure', 'doubt'], ['merciless', 'compassion'], ['pathetic', 'pity']]",190 FROM REAL SATs,4,False
+['territory' 'delegate'],0,"[['whole', 'sample'], ['agent', 'manager'], ['lobbyist', 'senator'], ['pitch', 'salesman'], ['minority', 'majority']]",KS type: 48,4,False
+['fame' 'celebrity'],2,"[['diploma', 'graduation'], ['vacation', 'employee'], ['value', 'treasure'], ['actor', 'theater'], ['laughter', 'joke']]",ML: _One-on-one with the SATs_ (8) HARD,0,False
+['sprout' 'seed'],3,"[['pollinate', 'bee'], ['cure', 'disease'], ['stimulate', 'growth'], ['hatch', 'egg'], ['filter', 'impurity']]",190 FROM REAL SATs,3,True
+['hapless' 'lucky'],1,"[['focused', 'attentive'], ['rash', 'prudent'], ['considerate', 'angry'], ['controversial', 'argumentative'], ['fortunate', 'complacent']]",ML: http://www.collegeboard.org/sat/center/q0501/v_a_1q.html (hard),2,False
+['tactile' 'touch'],4,"[['musical', 'hearing'], ['audible', 'volume'], ['nasal', 'smell'], ['sensitive', 'feeling'], ['visible', 'sight']]",190 FROM REAL SATs,2,False
+['emollient' 'soften'],0,"[['oil', 'lubricate'], ['disinfectant', 'contaminate'], ['concrete', 'harden'], ['storm', 'thunder'], ['steam', 'evaporate']]",190 FROM REAL SATs,0,True
+['atrophy' 'withered'],0,"[['contamination', 'impure'], ['putrefaction', 'preserved'], ['replication', 'completed'], ['inflation', 'reduced'], ['destruction', 'violent']]",ML: _One-on-one with the SATs_ (13) HARD,3,False
+['pastiche' 'writing'],0,"[['collage', 'art'], ['melody', 'music'], ['bandage', 'medicine'], ['school', 'philosophy'], ['sequel', 'film']]",KS type: 64,0,True
+['doormat' 'shoes'],1,"[['placemat', 'table'], ['napkin', 'mouth'], ['fork', 'plate'], ['lace', 'boot'], ['curtain', 'window']]",190 FROM REAL SATs  (PDT: _place mat_ --> _placemat_),4,False
+['envelope' 'letter'],2,"[['scarf', 'hat'], ['box', 'bag'], ['crate', 'produce'], ['neck', 'head'], ['blood', 'heart']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (3),4,False
+['current' 'electricity'],2,"[['gauge', 'measurement'], ['forge', 'metal'], ['beam', 'light'], ['ripple', 'lake'], ['curve', 'circle']]",190 FROM REAL SATs,2,True
+['gaze' 'observer'],0,"[['hear', 'listener'], ['banish', 'exile'], ['separate', 'joint'], ['operate', 'doctor'], ['sprain', 'ankle']]",190 FROM REAL SATs,0,True
+['crumb' 'bread'],1,"[['ounce', 'unit'], ['splinter', 'wood'], ['water', 'bucket'], ['twine', 'rope'], ['cream', 'butter']]",ML: standard ETS example http://www.collegeboard.org/sat/center/tutor/anyl005.html,1,True
+['cartographer' 'maps'],0,"[['architect', 'blueprints'], ['bibliographer', 'books'], ['curator', 'artworks'], ['traveler', 'countries'], ['surveyor', 'instruments']]",190 FROM REAL SATs,3,False
+['promontory' 'view'],0,"[['haven', 'refuge'], ['waterfall', 'revelation'], ['prison', 'interrogation'], ['church', 'diversity'], ['memorial', 'architecture']]",KS type: 40,0,True
+['procrastinate' 'action'],1,"[['reverse', 'direction'], ['postpone', 'event'], ['assign', 'choice'], ['endure', 'patience'], ['embezzle', 'fraud']]",190 FROM REAL SATs,4,False
+['word' 'language'],2,"[['paint', 'portrait'], ['poetry', 'rhythm'], ['note', 'music'], ['tale', 'story'], ['week', 'year']]",190 FROM REAL SATs,3,False
+['numb' 'insensible'],1,"[['reflect', 'luminous'], ['burnish', 'lustrous'], ['heckle', 'raucous'], ['repulse', 'odious'], ['braid', 'sinuous']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (10),3,False
+['avaricious' 'greed'],1,"[['proud', 'winner'], ['choleric', 'anger'], ['artistic', 'work'], ['ironic', 'wrath'], ['prolific', 'author']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (3),3,False
+['palatable' 'toothsome'],2,"[['rancid', 'fragrant'], ['chewy', 'textured'], ['coarse', 'rough'], ['solitude', 'company'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (3),1,False
+['judicious' 'prudence'],4,"[['deferential', 'scorn'], ['malevolent', 'influence'], ['indomitable', 'defeat'], ['stoic', 'hardship'], ['frivolous', 'giddiness']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va,4,True
+['criterion' 'judgment'],4,"[['height', 'statue'], ['depth', 'bottom'], ['song', 'voice'], ['edge', 'sharpness'], ['standard', 'selection']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (1) (fix judgment),3,False
+['encourage' 'coerce'],1,"[['implement', 'accomplish'], ['suggest', 'command'], ['hinder', 'facilitate'], ['filter', 'separate'], ['oppose', 'disagree']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&8&q,4,False
+['rangers' 'forest'],3,"[['panel', 'contest'], ['corps', 'army'], ['members', 'board'], ['police', 'precinct'], ['climbers', 'mountain']]",190 FROM REAL SATs,3,True
+['index' 'topics'],2,"[['agenda', 'meeting'], ['diary', 'secrets'], ['roster', 'names'], ['manual', 'equipment'], ['ledger', 'numbers']]",190 FROM REAL SATs,0,False
+['neophyte' 'experienced'],0,"[['invalid', 'healthy'], ['pugilist', 'stubborn'], ['defendant', 'guilty'], ['scholar', 'erudite'], ['sentinel', 'guarded']]",KS type: 35,2,False
+['bankruptcy' 'money'],3,"[['discrepancy', 'account'], ['empathy', 'feeling'], ['plan', 'organization'], ['apathy', 'caring'], ['homely', 'household']]",KS type: 57,3,True
+['building' 'blueprint'],0,"[['report', 'outline'], ['chicken', 'egg'], ['brick', 'wall'], ['soup', 'ladle'], ['conduit', 'cement']]",KS type: 21,1,False
+['sword' 'sheath'],3,"[['knife', 'stone'], ['tool', 'garage'], ['pistol', 'holster'], ['gun', 'bullet'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (5) (wet stone->stone),4,False
+['adult' 'child'],1,"[['horse', 'mare'], ['cat', 'kitten'], ['swine', 'sow'], ['human', 'animal'], ['cow', 'herd']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (1),3,False
+['cherry' 'fruit'],1,"[['flour', 'bread'], ['knife', 'utensil'], ['grass', 'water'], ['sail', 'ship'], ['leaf', 'tree']]",KS type: 8,1,True
+['emend' 'faulty'],3,"[['recruit', 'competent'], ['fracture', 'separable'], ['renovate', 'habitable'], ['purify', 'contaminated'], ['reproduce', 'copied']]",190 FROM REAL SATs,2,False
+['acquit' 'charge'],4,"[['accuse', 'offense'], ['punish', 'reward'], ['extricate', 'freedom'], ['camouflage', 'identity'], ['rescue', 'danger']]",ML: http://www.collegeboard.org/sat/center/q0501/v_a_2q.html (hard),0,False
+['embroidery' 'cloth'],1,"[['bracelet', 'jewelry'], ['mural', 'wall'], ['tattoo', 'design'], ['paint', 'color'], ['flower', 'vase']]",190 FROM REAL SATs,3,False
+['food' 'hunger'],0,"[['love', 'loneliness'], ['ginseng', 'energy'], ['antiseptic', 'wound'], ['anodyne', 'pain'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (7),3,False
+['mare' 'horse'],4,"[['cat', 'dog'], ['shark', 'fish'], ['worm', 'snake'], ['lion', 'tiger'], ['ewe', 'sheep']]","ML: Kaplan, practice set 1 (2)",1,False
+['flippancy' 'jollity'],3,"[['recognition', 'achievement'], ['practice', 'expertise'], ['camaraderie', 'combativeness'], ['insolence', 'pride'], ['politeness', 'behavior']]",190 FROM REAL SATs,0,False
+['mason' 'stone'],1,"[['teacher', 'chalk'], ['carpenter', 'wood'], ['soldier', 'gun'], ['photograph', 'camera'], ['book', 'word']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (5),4,False
+['mortar' 'brick'],2,"[['sap', 'tree'], ['siding', 'house'], ['glue', 'paper'], ['core', 'apple'], ['oil', 'engine']]",ML: _One-on-one with the SATs_ (5) MEDIUM,2,True
+['barricade' 'access'],2,"[['heal', 'illness'], ['demand', 'due'], ['bind', 'movement'], ['complete', 'task'], ['chat', 'conversation']]",190 FROM REAL SATs,4,False
+['extravagant' 'spend'],0,"[['belligerent', 'fight'], ['remarkable', 'surprise'], ['charitable', 'receive'], ['antagonistic', 'agree'], ['persuasive', 'believe']]",190 FROM REAL SATs,0,True
+['audacious' 'boldness'],4,"[['anonymous', 'identity'], ['remorseful', 'misdeed'], ['deleterious', 'result'], ['impressionable', 'temptation'], ['sanctimonious', 'hypocrisy']]",190 FROM REAL SATs,1,False
+['lubricant' 'slide'],1,"[['battery', 'discharge'], ['glue', 'adhere'], ['stain', 'cleanse'], ['poison', 'ingest'], ['water', 'drink']]",190 FROM REAL SATs,3,False
+['immaculate' 'clean'],0,"[['enormous', 'large'], ['superficial', 'careful'], ['tiresome', 'bored'], ['precious', 'greedy'], ['obvious', 'deceptive']]",ML: _One-on-one with the SATs_ (2) EASY,0,True
+['beagle' 'dog'],0,"[['africa', 'continent'], ['meow', 'cat'], ['barnyard', 'farm'], ['picnic', 'basket'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (9),0,True
+['glutton' 'moderation'],2,"[['thief', 'larceny'], ['peer', 'nobility'], ['scoundrel', 'virtue'], ['gambler', 'luck'], ['benefactor', 'gift']]",190 FROM REAL SATs,0,False
+['alteration' 'suit'],1,"[['digestion', 'snack'], ['revision', 'story'], ['irrigation', 'crop'], ['cooking', 'apron'], ['detection', 'gun']]",KS type: 60,3,False
+['criticize' 'censorious'],3,"[['explain', 'enigmatic'], ['discard', 'useless'], ['exude', 'flamboyant'], ['concur', 'sycophantic'], ['tremble', 'jocular']]",KS type: 55,2,False
+['ensemble' 'dancer'],1,"[['clique', 'outsider'], ['band', 'musician'], ['gymnasium', 'athlete'], ['museum', 'curator'], ['audience', 'performer']]",190 FROM REAL SATs,1,True
+['feign' 'deceive'],0,"[['flee', 'elude'], ['dangle', 'drop'], ['send', 'receive'], ['contract', 'lengthen'], ['publish', 'write']]",190 FROM REAL SATs,1,False
+['exhortation' 'urge'],2,"[['division', 'unite'], ['agreement', 'dissent'], ['eulogy', 'praise'], ['travesty', 'reproduce'], ['charity', 'donate']]",190 FROM REAL SATs,0,False
+['architect' 'blueprint'],4,"[['instructor', 'blackboard'], ['graduate', 'diploma'], ['musician', 'note'], ['painter', 'brush'], ['composer', 'score']]",190 FROM REAL SATs,1,False
+['billboard' 'advertisement'],3,"[['sculpture', 'museum'], ['store', 'window'], ['library', 'book'], ['canvas', 'painting'], ['theater', 'intermission']]",190 FROM REAL SATs,2,False
+['patent' 'obvious'],2,"[['contrite', 'happy'], ['curt', 'expansive'], ['voracious', 'hungry'], ['dissonant', 'emotive'], ['ephemeral', 'exorbitant']]",KS type: 53,4,False
+['fission' 'energy'],4,"[['reaction', 'response'], ['distortion', 'image'], ['nutrient', 'growth'], ['evaporation', 'liquid'], ['combustion', 'heat']]",190 FROM REAL SATs,3,False
+['hedonistic' 'pleasure'],1,"[['promising', 'achievement'], ['vindictive', 'vengeance'], ['precocious', 'youth'], ['concerned', 'empathy'], ['cruel', 'mercy']]",190 FROM REAL SATs,1,True
+['glue' 'fasten'],4,"[['laundry', 'fold'], ['bleach', 'color'], ['computer', 'repair'], ['steel', 'forge'], ['elevator', 'lift']]",KS type: 14,1,False
+['copyright' 'book'],2,"[['franchise', 'license'], ['lease', 'owner'], ['patent', 'design'], ['trademark', 'registration'], ['brand', 'manufacturer']]",190 FROM REAL SATs,4,False
+['obtain' 'steal'],2,"[['quest', 'search'], ['ask', 'interrogate'], ['testify', 'perjure'], ['buy', 'sell'], ['ask', 'donate']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (2),1,False
+['deduction' 'rational'],0,"[['hunch', 'intuitive'], ['ploy', 'spontaneous'], ['maxim', 'hackneyed'], ['hypothesis', 'tested'], ['daydream', 'bored']]",190 FROM REAL SATs,1,False
+['armistice' 'hostilities'],4,"[['reckoning', 'probabilities'], ['truce', 'belligerents'], ['artillery', 'tanks'], ['campaign', 'strategies'], ['adjournment', 'proceedings']]","ML: Kaplan, practice set 1 (3)  (PDT: _cease-fire_ --> _armistice_)",4,True
+['caprice' 'predictable'],1,"[['indifference', 'callous'], ['caution', 'reckless'], ['concern', 'affectionate'], ['friendliness', 'congenial'], ['spontaneity', 'whimsical']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (10) (spell corrected _spontaneity_),4,False
+['map' 'navigate'],3,"[['manuscript', 'submit'], ['license', 'revoke'], ['writing', 'erase'], ['blueprint', 'build'], ['receipt', 'pay']]",190 FROM REAL SATs,3,True
+['paint' 'canvas'],1,"[['brush', 'bucket'], ['peanut', 'butter'], ['clock', 'time'], ['art', 'life'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (4),0,False
+['lull' 'trust'],2,"[['balk', 'fortitude'], ['betray', 'loyalty'], ['cajole', 'compliance'], ['hinder', 'destination'], ['soothe', 'passion']]",190 FROM REAL SATs,1,False
+['ruler' 'line'],3,"[['stamp', 'letter'], ['period', 'dot'], ['key', 'door'], ['compass', 'circle'], ['thermometer', 'degree']]",190 FROM REAL SATs,3,True
+['sluggish' 'energy'],4,"[['sheer', 'cliff'], ['reticent', 'tack'], ['inebriated', 'memory'], ['trite', 'speech'], ['satiated', 'hunger']]",KS type: 23,1,False
+['playwright' 'actor'],1,"[['architect', 'custodian'], ['composer', 'musician'], ['biographer', 'celebrity'], ['soldier', 'colonel'], ['lawyer', 'judge']]",KS type: 20,4,False
+['indigenous' 'native'],1,"[['new', 'used'], ['alien', 'foreign'], ['aged', 'wrinkled'], ['immigrate', 'exodus'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (2),4,False
+['lummox' 'clumsy'],1,"[['boon', 'beneficial'], ['egotist', 'conceited'], ['rascal', 'predictable'], ['maxim', 'hackneyed'], ['toady', 'important']]",190 FROM REAL SATs,1,True
+['excitement' 'frenzy'],2,"[['communication', 'signal'], ['strength', 'resistance'], ['surprise', 'astonishment'], ['reform', 'corruption'], ['fondness', 'hatred']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&4&q,2,True
+['enthusiast' 'fervor'],2,"[['soldier', 'strength'], ['prisoner', 'remorse'], ['expert', 'skill'], ['servant', 'obedience'], ['parent', 'wisdom']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (3),1,False
+['paramount' 'importance'],4,"[['debatable', 'quality'], ['inaccurate', 'correction'], ['modulated', 'pitch'], ['unheralded', 'publicity'], ['precious', 'value']]",190 FROM REAL SATs,0,False
+['reclusive' 'companionship'],0,"[['frugal', 'extravagance'], ['organized', 'structure'], ['pitiful', 'compassion'], ['provocative', 'anger'], ['moody', 'unhappiness']]",190 FROM REAL SATs,0,True
+['prevarication' 'statement'],4,"[['conflagration', 'fire'], ['preamble', 'introduction'], ['indifferent', 'interest'], ['colt', 'horse'], ['pseudonym', 'name']]",KS type: 51,4,True
+['legend' 'map'],3,"[['subtitle', 'translation'], ['bar', 'graph'], ['figure', 'blueprint'], ['key', 'chart'], ['footnote', 'information']]",190 FROM REAL SATs,4,False
+['exorbitant' 'moderation'],2,"[['dispassionate', 'equanimity'], ['macabre', 'interest'], ['perfidious', 'loyalty'], ['brilliant', 'gullibility'], ['lavish', 'extravagance']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (11),0,False
+['impious' 'reverence'],3,"[['profane', 'behavior'], ['paranoid', 'persecution'], ['contrite', 'offense'], ['superficial', 'depth'], ['contemptuous', 'scorn']]",190 FROM REAL SATs,0,False
+['collage' 'images'],0,"[['medley', 'songs'], ['book', 'volumes'], ['survey', 'lands'], ['collection', 'lists'], ['assembly', 'bills']]",190 FROM REAL SATs,2,False
+['vacillate' 'indecision'],0,"[['lament', 'woe'], ['hibernate', 'winter'], ['extricate', 'entanglements'], ['digress', 'angst'], ['emulate', 'egotism']]",KS type: 63,1,False
+['shear' 'wool'],0,"[['reap', 'wheat'], ['whittle', 'wood'], ['sweep', 'broom'], ['prune', 'tree'], ['rake', 'leaves']]",190 FROM REAL SATs,3,False
+['scene' 'act'],1,"[['outline', 'book'], ['line', 'stanza'], ['accent', 'stress'], ['rhyme', 'sound'], ['palette', 'painting']]",ML: _One-on-one with the SATs_ (3) EASY,1,True
+['antiseptic' 'germs'],2,"[['sneezing', 'allergies'], ['earthquake', 'destruction'], ['water', 'thirst'], ['illness', 'fever'], ['executive', 'agenda']]",KS type: 22,1,False
+['chief' 'hierarchy'],4,"[['office', 'rank'], ['platoon', 'army'], ['president', 'term'], ['lawyer', 'court'], ['summit', 'mountain']]",190 FROM REAL SATs,3,False
+['carping' 'criticize'],1,"[['vain', 'admire'], ['obliging', 'help'], ['retiring', 'boast'], ['jealous', 'possess'], ['wary', 'surprise']]",190 FROM REAL SATs,1,True
+['injurious' 'harm'],3,"[['criminal', 'restitution'], ['insincere', 'dismay'], ['sacred', 'relic'], ['soporific', 'sleep'], ['unethical', 'principles']]",KS type: 28,1,False
+['traffic' 'street'],4,"[['ship', 'gangplank'], ['crop', 'harvest'], ['car', 'garage'], ['pedestrians', 'feet'], ['water', 'riverbed']]",ML: _One-on-one with the SATs_ (4) MEDIUM,2,False
+['song' 'repertoire'],4,"[['score', 'melody'], ['instrument', 'artist'], ['solo', 'chorus'], ['benediction', 'church'], ['suit', 'wardrobe']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&1&q,1,False
+['hammer' 'anvil'],3,"[['knocker', 'door'], ['stick', 'gong'], ['hand', 'drum'], ['pestle', 'mortar'], ['gavel', 'lectern']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (9),0,False
+['nightmare' 'dream'],1,"[['semaphore', 'signal'], ['dread', 'expectation'], ['lure', 'trap'], ['fear', 'victim'], ['frustration', 'confusion']]",190 FROM REAL SATs,2,False
+['irrational' 'logic'],1,"[['unrealistic', 'understanding'], ['unethical', 'morality'], ['illegible', 'erasure'], ['infinite', 'expansion'], ['factual', 'verification']]",190 FROM REAL SATs,1,True
+['perfidious' 'treachery'],1,"[['philanthropic', 'destitution'], ['servile', 'submissiveness'], ['truculent', 'temperament'], ['bereft', 'consolation'], ['resplendent', 'drabness']]",190 FROM REAL SATs,4,False
+['progenitor' 'descendant'],4,"[['stem', 'leaves'], ['teacher', 'student'], ['mother', 'aunt'], ['cloud', 'rain'], ['parent', 'offspring']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (6),1,False
+['resolute' 'determination'],1,"[['pristine', 'grace'], ['skeptical', 'doubt'], ['tainted', 'honor'], ['stringent', 'suggestions'], ['wary', 'risks']]",KS type: 61,1,True
+['unnerve' 'composure'],1,"[['deviate', 'individuality'], ['corrupt', 'purity'], ['judge', 'verdict'], ['shock', 'amazement'], ['threaten', 'attack']]",ML: http://www.collegeboard.org/psat/student/bin/practice.cgi?va&10&q,2,False
+['throng' 'people'],2,"[['game', 'players'], ['picnic', 'woods'], ['swarm', 'insects'], ['cat', 'kittens'], ['vase', 'flowers']]",190 FROM REAL SATs,2,True
+['virtuoso' 'music'],0,"[['bard', 'poetry'], ['crescendo', 'scale'], ['lyricist', 'melody'], ['portrait', 'photography'], ['critic', 'performance']]",190 FROM REAL SATs,4,False
+['rehearsal' 'impromptu'],4,"[['selection', 'decisive'], ['food', 'alive'], ['promotion', 'public'], ['comment', 'eulogize'], ['congregation', 'alone']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (9),1,False
+['arboretum' 'botanical'],3,"[['farm', 'domesticated'], ['planetarium', 'artificial'], ['university', 'academic'], ['aquarium', 'marine'], ['gymnasium', 'athletic']]",ML: _One-on-one with the SATs_ (7) HARD,4,False
+['topic' 'discourse'],3,"[['title', 'play'], ['subject', 'digression'], ['guideline', 'policy'], ['theme', 'essay'], ['footnote', 'text']]",190 FROM REAL SATs,0,False
+['conundrum' 'perplex'],3,"[['theory', 'refute'], ['explanation', 'suffice'], ['blueprint', 'construct'], ['entertainment', 'divert'], ['expedition', 'discover']]",190 FROM REAL SATs,4,False
+['torpid' 'sluggish'],2,"[['wrong', 'apologetic'], ['refracted', 'direct'], ['comic', 'funny'], ['sad', 'empathetic'], ['merry', 'morose']]",190 FROM REAL SATs,3,False
+['bruise' 'skin'],4,"[['muscle', 'bone'], ['smudge', 'blemish'], ['rash', 'allergy'], ['layer', 'veneer'], ['stain', 'fabric']]",190 FROM REAL SATs,1,False
+['bird' 'avian'],3,"[['plant', 'tropical'], ['meat', 'carnivorous'], ['snake', 'slippery'], ['dog', 'canine'], ['lung', 'amphibian']]",190 FROM REAL SATs,3,True
+['format' 'newspaper'],1,"[['binding', 'book'], ['design', 'building'], ['direction', 'sign'], ['market', 'commodity'], ['catalogue', 'library']]",190 FROM REAL SATs,3,False
+['reveler' 'merrymaking'],3,"[['hedonist', 'restraint'], ['demagogue', 'emotion'], ['anarchist', 'authority'], ['disputant', 'argument'], ['litigant', 'settlement']]",190 FROM REAL SATs,2,False
+['tourniquet' 'bleeding'],3,"[['relapse', 'condition'], ['lotion', 'skin'], ['hoist', 'elevating'], ['splint', 'movement'], ['inflation', 'expanding']]",190 FROM REAL SATs,3,True
+['refugee' 'asylum'],3,"[['astronaut', 'capsule'], ['perfectionist', 'frustration'], ['consumer', 'impulse'], ['opportunist', 'advantage'], ['director', 'stage']]",190 FROM REAL SATs,3,True
+['consider' 'contemplate'],3,"[['smile', 'greet'], ['write', 'compose'], ['complain', 'bicker'], ['examine', 'scrutinize'], ['ignore', 'notice']]",190 FROM REAL SATs,1,False
+['strident' 'sound'],1,"[['fragrant', 'flower'], ['acrid', 'taste'], ['outdated', 'book'], ['adjusted', 'clock'], ['broken', 'glass']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (8),1,True
+['temper' 'extreme'],2,"[['deliver', 'speedy'], ['provoke', 'angry'], ['mitigate', 'severe'], ['slander', 'dishonest'], ['assuage', 'commodious']]",KS type: 30,1,False
+['binomial' 'name'],3,"[['octagon', 'eight'], ['entreat', 'gift'], ['normal', 'mean'], ['centennial', 'year'], ['benediction', 'church']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (7),3,True
+['repeal' 'law'],0,"[['withdraw', 'offer'], ['amend', 'agreement'], ['reconcile', 'amends'], ['demote', 'employee'], ['renovate', 'house']]",KS type: 45,4,False
+['postscript' 'letter'],2,"[['preamble', 'document'], ['footnote', 'reference'], ['epilogue', 'play'], ['signature', 'name'], ['index', 'page']]",190 FROM REAL SATs,3,False
+['siren' 'warning'],4,"[['shovel', 'dirt'], ['alarm', 'clock'], ['barrier', 'intrusion'], ['signal', 'reception'], ['light', 'illumination']]",190 FROM REAL SATs,1,False
+['brazen' 'shame'],3,"[['comprehensive', 'total'], ['inquisitive', 'curiosity'], ['moral', 'integrity'], ['oblivious', 'awareness'], ['witty', 'levity']]",KS type: 11,1,False
+['eminence' 'infamy'],3,"[['power', 'fame'], ['east', 'west'], ['indifference', 'nonchalance'], ['pride', 'shame'], ['royalty', 'nobility']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (8),1,False
+['humidifier' 'moisture'],3,"[['iron', 'wrinkle'], ['candle', 'wax'], ['tub', 'liquid'], ['furnace', 'heat'], ['chimney', 'smoke']]",190 FROM REAL SATs,2,False
+['caption' 'cartoon'],2,"[['byline', 'newspaper'], ['laughter', 'comedy'], ['subtitle', 'film'], ['translation', 'paraphrase'], ['billboard', 'road']]",190 FROM REAL SATs,0,False
+['walk' 'scurry'],4,"[['march', 'follow'], ['carouse', 'revel'], ['nap', 'sleep'], ['impress', 'notice'], ['jog', 'sprint']]",190 FROM REAL SATs,2,False
+['dingy' 'building'],0,"[['shabby', 'clothes'], ['discolored', 'bruise'], ['devastated', 'city'], ['vacant', 'apartment'], ['chapped', 'lips']]",190 FROM REAL SATs,2,False
+['indigence' 'opulence'],3,"[['isolation', 'solitude'], ['inflated', 'exaggerated'], ['willful', 'oblivious'], ['infirmity', 'strength'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (1),1,False
+['saunter' 'walk'],1,"[['snore', 'sleep'], ['drawl', 'speak'], ['throw', 'toss'], ['ladle', 'brush'], ['finish', 'end']]",KS type: 6,0,False
+['veer' 'course'],4,"[['swerve', 'obstacle'], ['blaze', 'paint'], ['bar', 'door'], ['emigrate', 'travel'], ['digress', 'subject']]",190 FROM REAL SATs,1,False
+['abbreviation' 'word'],4,"[['outline', 'story'], ['plot', 'fiction'], ['page', 'paper'], ['paragraph', 'book'], ['abstract', 'report']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (2),3,False
+['iron' 'metal'],3,"[['hydrogen', 'water'], ['rock', 'quarry'], ['wheel', 'bicycle'], ['emerald', 'gem'], ['coral', 'ocean']]",KS type: 26,3,True
+['scissors' 'cut'],1,"[['window', 'close'], ['spice', 'season'], ['cloth', 'weave'], ['mask', 'frighten'], ['country', 'vote']]",KS type: 13,0,False
+['cogent' 'persuasiveness'],4,"[['pardoned', 'blame'], ['staid', 'manner'], ['tactful', 'awkwardness'], ['conceited', 'reputation'], ['lucid', 'clarity']]",190 FROM REAL SATs,4,True
+['indolent' 'sloth'],0,"[['fertile', 'fecundity'], ['presumptuous', 'deviation'], ['miserable', 'tragedy'], ['appealing', 'delineation'], ['destructive', 'progress']]","ML: Kaplan, practice set 1 (10)",0,True
+['devotion' 'obsession'],1,"[['ability', 'skill'], ['confidence', 'conceit'], ['intelligence', 'capability'], ['surprise', 'horror'], ['pleasure', 'blessing']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (5),1,True
+['choreography' 'dance'],4,"[['ceremony', 'sermon'], ['agenda', 'advertisement'], ['poetry', 'recitation'], ['instrumentation', 'conductor'], ['plot', 'story']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (4),4,True
+['rife' 'singular'],3,"[['sharp', 'pointed'], ['one', 'unit'], ['round', 'square'], ['strong', 'weak'], ['smell', 'good']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (10),4,False
+['weave' 'fabric'],4,"[['illustrate', 'manual'], ['hang', 'picture'], ['sew', 'thread'], ['bake', 'oven'], ['write', 'text']]",190 FROM REAL SATs,1,False
+['verification' 'confirm'],2,"[['synopsis', 'avoid'], ['application', 'file'], ['obscenity', 'censor'], ['conciliation', 'appease'], ['reiteration', 'say']]",KS type: 42,2,True
+['drift' 'move'],2,"[['sprint', 'run'], ['boil', 'heat'], ['ramble', 'walk'], ['evade', 'elude'], ['crawl', 'creep']]",190 FROM REAL SATs,0,False
+['recycle' 'waste'],3,"[['salvage', 'rescuer'], ['restate', 'emphasis'], ['recall', 'product'], ['reclaim', 'land'], ['irrigate', 'earth']]",190 FROM REAL SATs,3,True
+['ostrich' 'bird'],0,"[['lion', 'cat'], ['goose', 'flock'], ['ewe', 'sheep'], ['cub', 'bear'], ['primate', 'monkey']]",190 FROM REAL SATs,0,True
+['stammer' 'speech'],1,"[['ovation', 'adulation'], ['hobble', 'movement'], ['generosity', 'kindness'], ['fighting', 'noise'], ['brightness', 'sight']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (4),0,False
+['perceptive' 'discern'],2,"[['determined', 'hesitate'], ['authoritarian', 'heed'], ['persistent', 'persevere'], ['abandoned', 'neglect'], ['restrained', 'rebel']]",190 FROM REAL SATs,1,False
+['museum' 'exhibit'],2,"[['studio', 'painter'], ['library', 'research'], ['theater', 'performance'], ['picture', 'frame'], ['orchestra', 'conductor']]",190 FROM REAL SATs,2,True
+['portfolio' 'documents'],0,"[['album', 'photographs'], ['government', 'policies'], ['drama', 'acts'], ['excavation', 'artifacts'], ['rhythm', 'drums']]",190 FROM REAL SATs,1,False
+['florid' 'prose'],4,"[['detailed', 'sketch'], ['melodious', 'music'], ['colorful', 'cliche'], ['tragic', 'play'], ['ornate', 'building']]",190 FROM REAL SATs,4,True
+['wallet' 'money'],1,"[['safe', 'lock'], ['suitcase', 'clothing'], ['camera', 'film'], ['setting', 'jewel'], ['car', 'engine']]",190 FROM REAL SATs,4,False
+['animosity' 'hatred'],1,"[['carnal', 'active'], ['genial', 'amiable'], ['insomnia', 'sleepy'], ['pacify', 'peace'], ['liveliness', 'careful']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (4),2,False
+['ticket' 'admission'],1,"[['letter', 'salutation'], ['coupon', 'discount'], ['receipt', 'payment'], ['license', 'travel'], ['application', 'interview']]",190 FROM REAL SATs,3,False
+['void' 'empty'],1,"[['glut', 'prosperous'], ['system', 'organized'], ['answer', 'questioning'], ['ration', 'scarce'], ['intent', 'clear']]","ML: Kaplan, practice set 1 (6)",1,True
+['precarious' 'stability'],2,"[['cantankerous', 'testiness'], ['ornamental', 'flourishes'], ['susceptible', 'resistance'], ['flexible', 'strength'], ['conclusive', 'results']]",ML: http://www.collegeboard.org/sat/center/q0101/113q.html (medium),4,False
+['wing' 'air'],2,"[['arm', 'hand'], ['lung', 'breath'], ['flipper', 'water'], ['cloud', 'sky'], ['engine', 'jet']]",190 FROM REAL SATs,0,False
+['carpenter' 'woodwork'],3,"[['guitarist', 'pick'], ['cook', 'heat'], ['sculptor', 'studio'], ['weaver', 'cloth'], ['potter', 'shape']]",190 FROM REAL SATs,2,False
+['indolent' 'assiduous'],2,"[['normal', 'mean'], ['powerful', 'omnipotent'], ['abstemious', 'overindulgent'], ['rife', 'vogue'], ['beneficial', 'strong']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (7),3,False
+['shard' 'pottery'],3,"[['flint', 'stone'], ['flange', 'wheel'], ['cinder', 'coal'], ['fragment', 'bone'], ['tare', 'grain']]",ML: http://www.gre.org/pprepdwnld.html GRE questions (7),0,False
+['tree' 'forest'],2,"[['bird', 'sky'], ['fish', 'sea'], ['star', 'galaxy'], ['mammal', 'land'], ['lake', 'river']]","ML: Kaplan, practice set 1 (1)",3,False
+['orator' 'speech'],3,"[['protagonist', 'story'], ['chronicler', 'events'], ['playwright', 'stage'], ['comedian', 'jokes'], ['vocalist', 'voice']]",190 FROM REAL SATs,0,False
+['lubricate' 'smoothly'],3,"[['weigh', 'heavily'], ['assist', 'grudgingly'], ['speak', 'softly'], ['muffle', 'quietly'], ['absorb', 'quickly']]",190 FROM REAL SATs,0,False
+['sort' 'criterion'],2,"[['shuffle', 'order'], ['train', 'competence'], ['rank', 'value'], ['divide', 'quantity'], ['poll', 'opinion']]",190 FROM REAL SATs,0,False
+['waiter' 'diner'],1,"[['ballerina', 'dancer'], ['clerk', 'customer'], ['nurse', 'orderly'], ['juror', 'judge'], ['captain', 'teammate']]",190 FROM REAL SATs,3,False
+['fond' 'doting'],2,"[['polite', 'servile'], ['whisper', 'scream'], ['grasping', 'needy'], ['abstinent', 'indulgent'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (10),3,False
+['remuneration' 'labor'],3,"[['gratuity', 'bonus'], ['apology', 'regret'], ['pledge', 'donation'], ['trophy', 'victory'], ['debt', 'loan']]",190 FROM REAL SATs,4,False
+['submit' 'subordinate'],2,"[['loud', 'cacophony'], ['rebel', 'solitude'], ['secede', 'autonomous'], ['inferior', 'dominant'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_a_1.html (8),0,False
+['novice' 'experience'],0,"[['pauper', 'wealth'], ['vehicle', 'wheels'], ['drop', 'out'], ['weather', 'mutability'], ['nurse', 'information']]",ML: http://www.appliedpractice.com/pdfs/Anal.%20and%20Sent.%20Comp.%20for%20S.%20L.pdf (4),4,False
+['eraser' 'page'],0,"[['mop', 'floor'], ['sponge', 'soap'], ['pen', 'ink'], ['nail', 'wall'], ['bleach', 'stain']]",190 FROM REAL SATs,0,True
+['mechanical' 'garage'],4,"[['artist', 'canvas'], ['administrator', 'personnel'], ['teller', 'window'], ['teacher', 'information'], ['nurse', 'hospital']]",KS type: 43,4,True
+['foolhardy' 'recklessness'],1,"[['defiant', 'complacency'], ['serene', 'tranquillity'], ['precious', 'worthlessness'], ['sociable', 'antagonism'], ['lucky', 'persistence']]",190 FROM REAL SATs,0,False
+['kernel' 'nut'],0,"[['yolk', 'egg'], ['grape', 'raisin'], ['flour', 'bread'], ['soil', 'seed'], ['thorn', 'stem']]",190 FROM REAL SATs,2,False
+['skull' 'head'],2,"[['heart', 'organ'], ['finger', 'hand'], ['skeleton', 'body'], ['elbow', 'joint'], ['scalp', 'hair']]",190 FROM REAL SATs,2,True
+['ream' 'paper'],1,"[['stack', 'brick'], ['cord', 'wood'], ['barrel', 'oil'], ['bushel', 'apple'], ['no', 'choice']]",ML: http://www.queendom.com/tests/iq/verbal_iq_b_1.html (9),1,True
+['trial' 'jury'],0,"[['dispute', 'arbiter'], ['poll', 'contestant'], ['championship', 'spectator'], ['conference', 'speaker'], ['match', 'competitor']]",190 FROM REAL SATs,0,True

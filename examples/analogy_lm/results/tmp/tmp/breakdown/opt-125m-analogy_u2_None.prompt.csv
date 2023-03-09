@@ -1,0 +1,229 @@
+stem,answer,choice,prefix,prediction,accuracy
+['lie' 'prevaricate'],2,"[['betray', 'trust'], ['philander', 'donate'], ['waver', 'falter'], ['deride', 'praise'], ['corroborate', 'doubt']]",grade12,0,False
+['laconic' 'concise'],1,"[['obdurate', 'cooperative'], ['ephemeral', 'fleeting'], ['malleable', 'unchanging'], ['vindictive', 'forgiving'], ['equivocal', 'certain']]",grade12,1,True
+['pragmatism' 'philosophy'],1,"[['elevation', 'pinnacle'], ['cancer', 'malady'], ['electricity', 'outlet'], ['cacophony', 'opera'], ['chemistry', 'element']]",grade12,4,False
+['blandishment' 'coax'],3,"[['directory', 'telephone'], ['pavilion', 'promenade'], ['surplus', 'squander'], ['eulogy', 'praise'], ['controversy', 'placate']]",grade12,4,False
+['powerless' 'efficacy'],4,"[['turbulent', 'violence'], ['anomalous', 'irregularity'], ['homogenous', 'similarity'], ['effluent', 'water'], ['explicit', 'ambiguity']]",grade12,3,False
+['nefarious' 'virtuous'],2,"[['stringent', 'solid'], ['subliminal', 'secret'], ['reticent', 'talkative'], ['jocular', 'humorous'], ['haggard', 'old']]",grade12,0,False
+['unprecedented' 'forerunners'],4,"[['unnecessary', 'prerequisites'], ['nauseating', 'medicine'], ['bloodthirsty', 'anemia'], ['holistic', 'proof'], ['adulterated', 'purity']]",grade12,1,False
+['tyro' 'inexperienced'],3,"[['headmaster', 'principled'], ['scapegoat', 'blameworthy'], ['forgery', 'valuable'], ['sycophant', 'servile'], ['risk', 'worthwhile']]",grade12,0,False
+['level' 'hierarchy'],0,"[['installment', 'serial'], ['halo', 'messiah'], ['vinaigrette', 'salad'], ['courtroom', 'drama'], ['misnomer', 'definition']]",grade12,4,False
+['decanter' 'pour'],0,"[['monument', 'venerate'], ['criminal', 'deviate'], ['nunnery', 'convert'], ['pharmacy', 'prescribe'], ['stiletto', 'walk']]",grade12,3,False
+['wretched' 'cheerful'],1,"[['territorial', 'terrestrial'], ['innocuous', 'dangerous'], ['floundering', 'struggling'], ['redacted', 'censored'], ['solitary', 'confined']]",grade12,4,False
+['invective' 'blame'],4,"[['homage', 'copy'], ['grandeur', 'admire'], ['duplicity', 'increase'], ['depravity', 'corrupt'], ['masonry', 'construct']]",grade12,0,False
+['erudite' 'uneducated'],1,"[['fiery', 'flagrant'], ['fervid', 'dispassionate'], ['loquacious', 'talkative'], ['gullible', 'naive'], ['dissonant', 'discordant']]",grade12,3,False
+['vitriol' 'bitter'],1,"[['hindsight', 'perfect'], ['alabaster', 'white'], ['buoyancy', 'light'], ['equilibrium', 'just'], ['jubilation', 'biblical']]",grade12,3,False
+['vernacular' 'regional'],2,"[['leaf', 'autumnal'], ['senator', 'dissentious'], ['fluctuation', 'irregular'], ['budget', 'austere'], ['autopsy', 'fatal']]",grade12,0,False
+['fake' 'authenticity'],0,"[['latent', 'manifestation'], ['impenetrable', 'defense'], ['lacteal', 'milk'], ['preponderant', 'thought'], ['retrograde', 'direction']]",grade12,3,False
+['castigate' 'criticize'],0,"[['dishevel', 'destroy'], ['brutalize', 'attack'], ['legalize', 'filibuster'], ['predict', 'forecast'], ['kill', 'massacre']]",grade12,4,False
+['virulent' 'poisonous'],1,"[['autonomous', 'free'], ['disparate', 'different'], ['botanical', 'flowery'], ['dormant', 'tired'], ['unique', 'eccentric']]",grade12,0,False
+['rivulet' 'small'],4,"[['dissertation', 'plagiarized'], ['bird', 'fledgling'], ['bankruptcy', 'indebted'], ['hooligan', 'athletic'], ['citadel', 'fortified']]",grade12,2,False
+['grenadier' 'army'],3,"[['inkling', 'pen'], ['wheelchair', 'paraplegic'], ['couch', 'lethargy'], ['count', 'nobility'], ['insurrection', 'government']]",grade12,1,False
+['truism' 'obvious'],2,"[['waiver', 'safe'], ['president', 'tyrannical'], ['daredevil', 'audacious'], ['novel', 'ingenuous'], ['pedant', 'imaginative']]",grade12,3,False
+['element' 'aggregate'],1,"[['fresco', 'painting'], ['foreground', 'landscape'], ['benefactor', 'fortune'], ['mandate', 'ruler'], ['diet', 'nutrient']]",grade12,0,False
+['microwave' 'heat'],0,"[['refrigerator', 'cool'], ['freezer', 'cook'], ['sink', 'organize'], ['fireplace', 'destroy']]",grade6,3,False
+['helmet' 'head'],0,"[['mask', 'face'], ['belt', 'train'], ['ring', 'wrist'], ['slipper', 'ankle']]",grade6,2,False
+['cigarette' 'unhealthy'],0,"[['sin', 'immoral'], ['baby', 'wise'], ['husband', 'rich'], ['nation', 'peaceful']]",grade6,2,False
+['positive' 'negative'],0,"[['clean', 'filthy'], ['angry', 'upset'], ['friendly', 'popular'], ['challenging', 'interesting']]",grade6,0,True
+['skeptical' 'belief'],1,"[['unpopular', 'wealth'], ['homeless', 'shelter'], ['polite', 'power'], ['nervous', 'stress']]",grade6,0,False
+['spaghetti' 'pasta'],0,"[['ketchup', 'condiment'], ['lettuce', 'sauce'], ['bacon', 'fruit'], ['cereal', 'dairy']]",grade6,2,False
+['expert' 'skilled'],3,"[['athlete', 'thin'], ['student', 'intelligent'], ['spy', 'friendly'], ['fanatic', 'enthusiastic']]",grade6,0,False
+['comedy' 'funny'],2,"[['mystery', 'boring'], ['drama', 'romantic'], ['tragedy', 'sad'], ['newspaper', 'expensive']]",grade6,1,False
+['butcher' 'meat'],3,"[['maid', 'chores'], ['teacher', 'knowledge'], ['librarian', 'books'], ['baker', 'bread']]",grade6,3,True
+['brother' 'sibling'],3,"[['mother', 'daughter'], ['doctor', 'nurse'], ['uncle', 'aunt'], ['father', 'parent']]",grade6,3,True
+['verse' 'song'],0,"[['core', 'apple'], ['mop', 'broom'], ['supermarket', 'office'], ['coat', 'jacket']]",grade6,1,False
+['liar' 'honesty'],2,"[['lawyer', 'mercy'], ['mother', 'children'], ['fool', 'wisdom'], ['soldier', 'power']]",grade6,0,False
+['sunscreen' 'skin'],2,"[['magic', 'children'], ['grass', 'house'], ['armor', 'body'], ['faith', 'country']]",grade6,3,False
+['engine' 'car'],0,"[['lens', 'microscope'], ['day', 'night'], ['picture', 'frame'], ['club', 'member']]",grade6,3,False
+['downpour' 'rain'],2,"[['wave', 'water'], ['tornado', 'clouds'], ['blizzard', 'snow'], ['desert', 'heat']]",grade6,0,False
+['wizard' 'magical'],0,"[['king', 'royal'], ['nun', 'silent'], ['teacher', 'ordinary'], ['chef', 'delicious']]",grade6,1,False
+['bus' 'automobile'],1,"[['building', 'house'], ['tiger', 'animal'], ['letter', 'alphabet'], ['bath', 'shower']]",grade6,0,False
+['wool' 'sheep'],0,"[['leather', 'cows'], ['metal', 'trees'], ['paper', 'rocks'], ['wood', 'mountains']]",grade6,1,False
+['humiliated' 'embarrassed'],1,"[['shy', 'timid'], ['enraged', 'angry'], ['sad', 'upset'], ['excited', 'anxious']]",grade6,3,False
+['sewing' 'craft'],2,"[['salt', 'food'], ['fate', 'science'], ['gasoline', 'fuel'], ['sunrise', 'art']]",grade6,3,False
+['pebble' 'stone'],0,"[['minnow', 'fish'], ['car', 'truck'], ['tiger', 'lion'], ['dictionary', 'book']]",grade6,0,True
+['obscene' 'inappropriate'],3,"[['impossible', 'easy'], ['polite', 'rude'], ['tall', 'honest'], ['spotless', 'clean']]",grade6,2,False
+['accident' 'unintended'],2,"[['idea', 'true'], ['law', 'perfect'], ['villain', 'evil'], ['castle', 'unknown']]",grade6,1,False
+['optimism' 'pesimissm'],0,"[['success', 'failure'], ['food', 'hunger'], ['motivation', 'dedication'], ['maturity', 'youth']]",grade6,2,False
+['train' 'railroad'],2,"[['boat', 'mountain'], ['helicopter', 'cloud'], ['truck', 'highway'], ['wagon', 'wheel']]",grade6,0,False
+['athlete' 'fit'],2,"[['chef', 'fat'], ['dog', 'energetic'], ['priest', 'religious'], ['dancer', 'intelligent']]",grade6,2,True
+['trivial' 'importance'],3,"[['prestigious', 'honor'], ['written', 'rhyme'], ['invisible', 'sight'], ['familiar', 'novelty']]",grade6,0,False
+['rock' 'hard'],0,"[['water', 'wet'], ['table', 'wooden'], ['mom', 'nice'], ['sound', 'loud']]",grade4,0,True
+['chair' 'sit'],0,"[['cup', 'drink'], ['bottle', 'break'], ['book', 'read'], ['eye', 'listen']]",grade4,3,False
+['poor' 'money'],0,"[['tired', 'energy'], ['angry', 'emotion'], ['hot', 'ice'], ['hungry', 'water']]",grade4,0,True
+['hammer' 'hit'],0,"[['knife', 'cut'], ['table', 'eat'], ['pen', 'build'], ['wheel', 'race']]",grade4,0,True
+['ham' 'meat'],2,"[['air', 'water'], ['tennis', 'school'], ['juice', 'drink'], ['math', 'number']]",grade4,0,False
+['beautiful' 'pretty'],0,"[['terrible', 'bad'], ['brave', 'valiant'], ['new', 'old'], ['tall', 'skinny']]",grade4,2,False
+['play' 'work'],0,"[['laugh', 'cry'], ['eat', 'talk'], ['run', 'walk'], ['see', 'hear']]",grade4,3,False
+['match' 'fire'],1,"[['bag', 'wallet'], ['key', 'car'], ['gas', 'machine'], ['cookie', 'mouth']]",grade4,3,False
+['tongue' 'taste'],3,"[['boat', 'swim'], ['bed', 'sit'], ['bag', 'buy'], ['nose', 'smell']]",grade4,2,False
+['hilarious' 'funny'],3,"[['right', 'wrong'], ['hard', 'boring'], ['nice', 'crazy'], ['great', 'good']]",grade4,0,False
+['teacher' 'educate'],0,"[['doctor', 'heal'], ['farmer', 'talk'], ['engine', 'oil'], ['dog', 'sit']]",grade4,1,False
+['whale' 'ocean'],1,"[['car', 'garage'], ['tiger', 'jungle'], ['chair', 'table']]",grade4,2,False
+['great' 'good'],2,"[['fun', 'cool'], ['strange', 'weird'], ['hot', 'warm'], ['dull', 'sharp']]",grade4,1,False
+['huge' 'big'],1,"[['nice', 'good'], ['tiny', 'small'], ['funny', 'happy'], ['old', 'new']]",grade4,1,True
+['tiny' 'little'],0,"[['huge', 'big'], ['long', 'tall'], ['small', 'loud'], ['neat', 'messy']]",grade4,1,False
+['candy' 'sweet'],3,"[['water', 'cold'], ['time', 'fast'], ['money', 'expensive'], ['fire', 'hot']]",grade4,0,False
+['ugly' 'beauty'],0,"[['serious', 'humor'], ['old', 'age'], ['hot', 'heat'], ['sweet', 'strength']]",grade4,2,False
+['sad' 'happiness'],0,"[['weak', 'strength'], ['sweet', 'flavor'], ['fast', 'time'], ['pretty', 'beauty']]",grade4,1,False
+['shield' 'protect'],1,"[['computer', 'talk'], ['vehicle', 'transport'], ['pencil', 'make'], ['song', 'sing']]",grade4,3,False
+['terrified' 'scared'],2,"[['quiet', 'secret'], ['sweet', 'rich'], ['obsessed', 'interested'], ['funny', 'serious']]",grade4,1,False
+['ring' 'finger'],0,"[['necklace', 'neck'], ['bracelet', 'diamond'], ['sock', 'hand'], ['glove', 'foot']]",grade4,0,True
+['wrench' 'tool'],3,"[['cow', 'milk'], ['radio', 'sound'], ['tree', 'forest'], ['carrot', 'vegetable']]",grade4,3,True
+['wall' 'room'],2,"[['lettuce', 'sandwich'], ['dog', 'cat'], ['wheel', 'car'], ['song', 'dance']]",grade4,3,False
+['sick' 'health'],2,"[['sad', 'emotion'], ['tall', 'intelligence'], ['scared', 'courage'], ['smart', 'energy']]",grade4,0,False
+['correct' 'right'],3,"[['crazy', 'smart'], ['weak', 'fun'], ['strong', 'hard'], ['cheap', 'inexpensive']]",grade4,2,False
+['puppy' 'dog'],0,"[['kitten', 'cat'], ['bear', 'cub'], ['fish', 'minnow'], ['cow', 'calf']]",grade4,2,False
+['musician' 'music'],1,"[['shower', 'water'], ['chef', 'food'], ['machine', 'snow'], ['child', 'art']]",grade4,0,False
+['hidden' 'visible'],1,"[['spicy', 'delicious'], ['flimsy', 'sturdy'], ['tasteful', 'classy'], ['elevated', 'escalated']]",grade8,3,False
+['honor' 'disgrace'],1,"[['comfort', 'pleasure'], ['safety', 'peril'], ['sanity', 'sense'], ['anger', 'rage']]",grade8,1,True
+['island' 'archipelago'],3,"[['anchor', 'aircraft'], ['archive', 'album'], ['ocean', 'iceberg'], ['article', 'newspaper']]",grade8,2,False
+['lifejacket' 'boat'],1,"[['medicine', 'disease'], ['seatbelt', 'plane'], ['shield', 'sword'], ['hat', 'helmet']]",grade8,3,False
+['ignite' 'extinguish'],0,"[['harvest', 'plant'], ['rest', 'relax'], ['investigate', 'trust'], ['remove', 'confiscate']]",grade8,0,True
+['devout' 'religious'],0,"[['hyper', 'energetic'], ['depressed', 'angry'], ['fit', 'strong'], ['cruel', 'strange']]",grade8,3,False
+['klutz' 'clumsy'],1,"[['priest', 'evil'], ['cold', 'contagious'], ['car', 'broken'], ['vegetable', 'green']]",grade8,1,True
+['algebra' 'mathematics'],0,"[['rain', 'precipitation'], ['bronze', 'metal'], ['tradition', 'culture'], ['trade', 'economy']]",grade8,0,True
+['epidemic' 'widespread'],2,"[['artist', 'idealistic'], ['island', 'lonesome'], ['emergency', 'urgent'], ['intention', 'challenged']]",grade8,3,False
+['cough' 'cold'],2,"[['fever', 'issue'], ['problem', 'solution'], ['disagreement', 'argument'], ['room', 'hotel']]",grade8,3,False
+['network' 'connect'],0,"[['statue', 'memorialize'], ['funeral', 'eliminate'], ['telephone', 'hear'], ['device', 'create']]",grade8,2,False
+['veins' 'circulate'],3,"[['calculators', 'think'], ['boots', 'sprint'], ['laws', 'enforce'], ['ornaments', 'decorate']]",grade8,3,True
+['note' 'melody'],0,"[['bone', 'skeleton'], ['movie', 'film'], ['meal', 'restaurant'], ['career', 'job']]",grade8,1,False
+['hasty' 'patience'],2,"[['unskilled', 'magic'], ['terrified', 'logic'], ['unqualified', 'credentials'], ['gullible', 'belief']]",grade8,3,False
+['elderly' 'youth'],3,"[['famous', 'popularity'], ['rational', 'proof'], ['smug', 'satisfaction'], ['well', 'illness']]",grade8,1,False
+['conclusion' 'essay'],3,"[['theme', 'song'], ['meal', 'dessert'], ['parade', 'party'], ['scene', 'play']]",grade8,0,False
+['fame' 'obscurity'],3,"[['peace', 'harmony'], ['music', 'art'], ['knowledge', 'wisdom'], ['sorrow', 'joy']]",grade8,1,False
+['whisper' 'quiet'],0,"[['folktale', 'traditional'], ['whip', 'evil'], ['disease', 'curable'], ['meal', 'satisfying']]",grade8,2,False
+['assassination' 'murder'],2,"[['document', 'certificate'], ['beverage', 'drink'], ['relay', 'race'], ['technology', 'robot']]",grade8,0,False
+['uninhibited' 'restraint'],3,"[['overweight', 'shape'], ['unhealthy', 'control'], ['intelligent', 'thought'], ['generous', 'selfishness']]",grade8,0,False
+['aluminum' 'metal'],0,"[['limerick', 'poetry'], ['mathematics', 'numbers'], ['rain', 'season'], ['water', 'thirst']]",grade8,0,True
+['devastated' 'damaged'],3,"[['unusual', 'weird'], ['unkind', 'hurtful'], ['incredible', 'mundane'], ['prevalent', 'common']]",grade8,2,False
+['excruciating' 'painful'],0,"[['baffling', 'confusing'], ['upsetting', 'exciting'], ['improving', 'hopeful'], ['crippling', 'stressful']]",grade8,0,True
+['locker' 'storage'],0,"[['telephone', 'communication'], ['wallet', 'cash'], ['pencil', 'paper'], ['lake', 'moisture']]",grade8,1,False
+['kiss' 'affection'],2,"[['smile', 'fear'], ['joke', 'importance'], ['message', 'information'], ['television', 'actors']]",grade8,2,True
+['active' 'idle'],2,"[['challenging', 'difficult'], ['dramatic', 'tragic'], ['brief', 'lengthy'], ['scholarly', 'studious']]",grade8,2,True
+['heirloom' 'inherited'],1,"[['ship', 'wooden'], ['sermon', 'religious'], ['newspaper', 'popular'], ['coupon', 'valuable']]",grade8,1,True
+['panacea' 'cure'],2,"[['cello', 'compose'], ['stereo', 'listen'], ['contagion', 'infect'], ['stopwatch', 'hasten']]",grade9,2,True
+['blatant' 'inconspicuous'],0,"[['tedious', 'engaging'], ['restorative', 'peaceful'], ['indulgent', 'luxurious'], ['pedantic', 'ordinary']]",grade9,2,False
+['sacrosanct' 'holy'],3,"[['surprising', 'remarkable'], ['skeptical', 'gullible'], ['ridiculous', 'absurd'], ['abominable', 'evil']]",grade9,3,True
+['livid' 'angry'],3,"[['trim', 'anorexic'], ['contrary', 'contrite'], ['faithful', 'dogmatic'], ['crestfallen', 'depressed']]",grade9,2,False
+['neighborhood' 'city'],3,"[['priory', 'monk'], ['jumper', 'dress'], ['iceberg', 'tip'], ['annex', 'building']]",grade9,3,True
+['lamentation' 'sorrow'],2,"[['psalm', 'warning'], ['sonnet', 'religion'], ['eulogy', 'praise'], ['newspaper', 'disapproval']]",grade9,1,False
+['objective' 'bias'],2,"[['fallacious', 'lies'], ['autistic', 'health'], ['tentative', 'certainty'], ['awake', 'insomnia']]",grade9,1,False
+['mallet' 'strike'],2,"[['harpsichord', 'twinkle'], ['impression', 'paint'], ['ornament', 'embellish'], ['ottoman', 'weave']]",grade9,1,False
+['ruse' 'trick'],2,"[['hangman', 'condemn'], ['funeral', 'eliminate'], ['spectacle', 'entertain'], ['inventor', 'deviate']]",grade9,3,False
+['piccolo' 'instrument'],2,"[['violoncello', 'bass'], ['currency', 'dollar'], ['decathlon', 'competition'], ['cult', 'festival']]",grade9,0,False
+['aloof' 'connected'],0,"[['deliberate', 'accidental'], ['rigid', 'firm'], ['ethereal', 'fleeting'], ['logical', 'calculating']]",grade9,2,False
+['inconceivable' 'doubtful'],3,"[['healthful', 'beneficial'], ['credible', 'plausible'], ['indecent', 'lustful'], ['sickening', 'repugnant']]",grade9,2,False
+['plagiarism' 'wrongdoing'],3,"[['citrus', 'lemonade'], ['infection', 'bacteria'], ['crime', 'punishment'], ['cancer', 'malady']]",grade9,0,False
+['provisional' 'permanent'],3,"[['aggressive', 'fierce'], ['improved', 'enhanced'], ['undercover', 'covert'], ['moderate', 'extreme']]",grade9,0,False
+['medal' 'accolade'],1,"[['song', 'hymnal'], ['cauldron', 'kettle'], ['fire', 'kindling'], ['airplane', 'hangar']]",grade9,0,False
+['carnival' 'entertainment'],2,"[['poster', 'propaganda'], ['handout', 'welfare'], ['encyclopedia', 'information'], ['statement', 'persuasion']]",grade9,1,False
+['selfish' 'altruism'],3,"[['ambiguity', 'uncertainty'], ['hollow', 'emptiness'], ['insidious', 'diseases'], ['depraved', 'morality']]",grade9,2,False
+['filament' 'lightbulb'],1,"[['misunderstanding', 'conversation'], ['blade', 'propeller'], ['car', 'gearshift'], ['outlet', 'economy']]",grade9,1,True
+['foolish' 'sagacity'],0,"[['miserly', 'generosity'], ['tangible', 'fingers'], ['tardy', 'time'], ['infamous', 'celebrity']]",grade9,3,False
+['loquacious' 'quiet'],1,"[['forgiven', 'annulled'], ['trivial', 'crucial'], ['salacious', 'impure'], ['enduring', 'ongoing']]",grade9,0,False
+['denouement' 'plot'],0,"[['appetizer', 'meal'], ['gown', 'ball'], ['rifle', 'dagger'], ['libertarian', 'revolution']]",grade9,2,False
+['pragmatic' 'unrealistic'],0,"[['perplexing', 'straightforward'], ['flirtatious', 'coquettish'], ['opulent', 'rich'], ['sinful', 'erotic']]",grade9,3,False
+['exhausting' 'rejuvenating'],0,"[['disturbing', 'soothing'], ['cruel', 'ruthless'], ['pitiful', 'miserable'], ['vexing', 'irritating']]",grade9,1,False
+['corpse' 'deceased'],0,"[['infant', 'nascent'], ['prophet', 'skeptical'], ['tyrant', 'easygoing'], ['athlete', 'sluggish']]",grade9,3,False
+['labyrinth' 'complicated'],1,"[['tempo', 'upbeat'], ['enigma', 'mysterious'], ['narrator', 'biased'], ['legend', 'credible']]",grade9,0,False
+['priest' 'ordained'],2,"[['lord', 'defrocked'], ['senator', 'allowed'], ['president', 'inaugurated'], ['king', 'graduated']]",grade9,1,False
+['euphemism' 'inoffensive'],0,"[['charlatan', 'dishonest'], ['wizard', 'mundane'], ['scorpion', 'harmless'], ['gymnast', 'clumsy']]",grade9,2,False
+['hurricane' 'storm'],0,"[['table', 'furniture'], ['tornado', 'rain'], ['snow', 'wind'], ['chair', 'sofa']]",grade5,3,False
+['commercial' 'advertise'],2,"[['sport', 'teach'], ['newspaper', 'inspire'], ['comedy', 'entertain'], ['drama', 'annoy']]",grade5,2,True
+['infuriating' 'annoying'],1,"[['ruined', 'ugly'], ['devastated', 'sad'], ['depressed', 'intelligent'], ['arrogant', 'clever']]",grade5,3,False
+['mother' 'female'],2,"[['vegetable', 'green'], ['snake', 'dangerous'], ['rock', 'hard'], ['tree', 'old']]",grade5,3,False
+['weak' 'strength'],3,"[['silly', 'comedy'], ['wild', 'friends'], ['brave', 'courage'], ['lost', 'direction']]",grade5,1,False
+['zebra' 'animal'],0,"[['green', 'color'], ['shape', 'cube'], ['country', 'Brazil'], ['food', 'dessert']]",grade5,3,False
+['lap' 'race'],1,"[['head', 'hair'], ['act', 'play'], ['runner', 'athlete'], ['show', 'theater']]",grade5,0,False
+['meat' 'animals'],0,"[['paper', 'trees'], ['diamonds', 'pearls'], ['wood', 'rocks'], ['oranges', 'apples']]",grade5,3,False
+['wonderful' 'good'],2,"[['great', 'terrific'], ['sinful', 'evil'], ['terrifying', 'scary'], ['perfect', 'flawed']]",grade5,3,False
+['obvious' 'hidden'],2,"[['silver', 'jewelry'], ['dress', 'gown'], ['idea', 'belief'], ['liberal', 'conservative']]",grade5,2,True
+['unknown' 'fame'],1,"[['rapid', 'speed'], ['ignorant', 'education'], ['refined', 'manners'], ['lovely', 'sight']]",grade5,0,False
+['television' 'watched'],2,"[['record', 'baked'], ['newspaper', 'cooked'], ['novel', 'read'], ['comic', 'laughed']]",grade5,3,False
+['evil' 'morals'],2,"[['special', 'manners'], ['famous', 'friends'], ['blind', 'sight'], ['beautiful', 'opinions']]",grade5,3,False
+['gold' 'expensive'],3,"[['jewelry', 'dull'], ['cotton', 'beautiful'], ['silver', 'outrageous'], ['velvet', 'soft']]",grade5,2,False
+['volleyball' 'sport'],1,"[['rabbit', 'cat'], ['runner', 'athlete'], ['tiger', 'zoo'], ['soccer', 'football']]",grade5,1,True
+['broken' 'repaired'],1,"[['foreign', 'strange'], ['selfish', 'generous'], ['unusual', 'weird'], ['nasty', 'mean']]",grade5,2,False
+['knife' 'sharp'],0,"[['crime', 'illegal'], ['child', 'rude'], ['wife', 'powerful'], ['war', 'peaceful']]",grade5,2,False
+['pie' 'dessert'],0,"[['bacon', 'meat'], ['candy', 'drink'], ['cola', 'tea'], ['ham', 'beef']]",grade5,3,False
+['suit' 'formal'],1,"[['hat', 'attractive'], ['coat', 'warm'], ['shoe', 'lonely'], ['tie', 'black']]",grade5,1,True
+['hungry' 'full'],2,"[['salty', 'delicious'], ['polite', 'kind'], ['evil', 'good'], ['beautiful', 'lovely']]",grade5,3,False
+['racist' 'prejudiced'],3,"[['saint', 'holy'], ['worker', 'tired'], ['nurse', 'sick'], ['clerk', 'hungry']]",grade5,3,True
+['hamburger' 'sandwich'],3,"[['foot', 'leg'], ['cow', 'pig'], ['sport', 'baseball'], ['pretzel', 'snack']]",grade5,2,False
+['second' 'minute'],0,"[['day', 'week'], ['centimeter', 'inch'], ['mile', 'hour'], ['year', 'month']]",grade5,0,True
+['author' 'write'],3,"[['mother', 'annoy'], ['banker', 'preach'], ['firefighter', 'study'], ['janitor', 'clean']]",grade5,3,True
+['nice' 'unkind'],0,"[['hideous', 'pretty'], ['safe', 'solid'], ['loud', 'noisy'], ['terrible', 'awful']]",grade5,3,False
+['mountain' 'high'],1,"[['river', 'ugly'], ['valley', 'low'], ['forest', 'lonely'], ['desert', 'wet']]",grade5,0,False
+['helicopter' 'sky'],3,"[['canoe', 'street'], ['truck', 'river'], ['motorcycle', 'bus'], ['submarine', 'water']]",grade5,3,True
+['thwart' 'frustrate'],4,"[['retain', 'burst'], ['meditate', 'snooze'], ['bully', 'balk'], ['bristle', 'brush'], ['laud', 'praise']]",grade11,4,True
+['legend' 'map'],1,"[['continent', 'nation'], ['page', 'tome'], ['tirade', 'government'], ['legion', 'family'], ['army', 'soldier']]",grade11,0,False
+['blatant' 'obvious'],4,"[['obscure', 'marred'], ['legendary', 'unbelievable'], ['novel', 'obsolete'], ['powerful', 'dominant'], ['preeminent', 'important']]",grade11,0,False
+['acrophobia' 'heights'],2,"[['claustrophobia', 'closets'], ['homophobia', 'discrimination'], ['agoraphobia', 'crowds'], ['vertigo', 'balance'], ['arachnophobia', 'insects']]",grade11,0,False
+['pragmatic' 'practical'],3,"[['irritating', 'pleasing'], ['tenacious', 'faltering'], ['opaque', 'translucent'], ['trivial', 'negligible'], ['unusual', 'ludicrous']]",grade11,1,False
+['enigma' 'mysterious'],0,"[['bigot', 'prejudiced'], ['beetle', 'venomous'], ['politician', 'obtuse'], ['professor', 'glib'], ['potion', 'potent']]",grade11,2,False
+['bishop' 'ordained'],0,"[['palace', 'stately'], ['transgression', 'acceptable'], ['cliche', 'intrepid'], ['loft', 'unattainable'], ['character', 'humorous']]",grade11,3,False
+['tedium' 'excitement'],3,"[['revision', 'edition'], ['honor', 'prestige'], ['mortgage', 'debt'], ['acceptance', 'denial'], ['perturbation', 'frustration']]",grade11,4,False
+['altruism' 'selfishness'],4,"[['alacrity', 'clarity'], ['passion', 'fervor'], ['levity', 'flippancy'], ['gravity', 'momentum'], ['impartiality', 'bias']]",grade11,2,False
+['saccharine' 'sweet'],2,"[['omniscient', 'omnipotent'], ['lethargic', 'slovenly'], ['sacrosanct', 'sacred'], ['hypocritical', 'dissonant'], ['obtuse', 'angular']]",grade11,2,True
+['debunk' 'verify'],0,"[['revere', 'denigrate'], ['besmirch', 'slander'], ['cower', 'submit'], ['pontificate', 'pronounce'], ['capitulate', 'surrender']]",grade11,0,True
+['cauldron' 'pot'],1,"[['vibration', 'perception'], ['pictograph', 'symbol'], ['favor', 'currency'], ['luminary', 'phantasm'], ['paragon', 'light']]",grade11,4,False
+['frail' 'brawn'],3,"[['humorous', 'wit'], ['obtuse', 'intensity'], ['disinterested', 'ennui'], ['longwinded', 'brevity'], ['tenuous', 'weakness']]",grade11,4,False
+['tawdry' 'taste'],2,"[['vicious', 'wrath'], ['bourgeois', 'wealth'], ['haughty', 'humility'], ['paraplegic', 'legs'], ['misshapen', 'deformity']]",grade11,1,False
+['archaeologist' 'hieroglyphics'],4,"[['theologian', 'cancer'], ['sojourner', 'destiny'], ['storyteller', 'mysteries'], ['courier', 'packages'], ['translator', 'languages']]",grade11,4,True
+['jury' 'deliberate'],3,"[['candidate', 'deprecate'], ['precedent', 'preside'], ['ruse', 'illuminate'], ['lobbyist', 'persuade'], ['parachute', 'open']]",grade11,0,False
+['placid' 'tumultuous'],3,"[['coveted', 'desired'], ['reviled', 'despised'], ['tangential', 'irrelevant'], ['credible', 'dubious'], ['unconventional', 'irregular']]",grade11,1,False
+['precept' 'guidance'],4,"[['chord', 'music'], ['footnote', 'connotation'], ['mathematician', 'numbers'], ['epilogue', 'introduction'], ['alibi', 'defense']]",grade11,3,False
+['buttress' 'wall'],4,"[['precinct', 'city'], ['column', 'pillar'], ['cream', 'lotion'], ['document', 'preamble'], ['philanthropist', 'charity']]",grade11,3,False
+['epistle' 'letter'],0,"[['decathlon', 'competition'], ['multitude', 'feast'], ['lounge', 'vacation'], ['credo', 'church'], ['festival', 'carnival']]",grade11,0,True
+['poison' 'noxious'],2,"[['performance', 'stellar'], ['satellite', 'worldly'], ['maze', 'labyrinthine'], ['wavelength', 'shallow'], ['leather', 'worn']]",grade11,3,False
+['blasphemy' 'religion'],1,"[['fornication', 'marriage'], ['treason', 'state'], ['lethargy', 'energy'], ['avarice', 'currency'], ['apathy', 'motivation']]",grade11,4,False
+['grain' 'silo'],0,"[['water', 'reservoir'], ['fuel', 'ration'], ['gasoline', 'automobile'], ['snow', 'igloo'], ['parchment', 'library']]",grade10,0,True
+['hidden' 'covert'],2,"[['diverse', 'ordinary'], ['angry', 'judgmental'], ['feminine', 'ladylike'], ['hardworking', 'dull'], ['prohibited', 'allowed']]",grade10,0,False
+['game' 'spectators'],1,"[['theater', 'actors'], ['opera', 'audience'], ['diner', 'waitresses'], ['museum', 'dinosaurs'], ['school', 'pupils']]",grade10,4,False
+['bohemian' 'unconventional'],0,"[['pariah', 'unpopular'], ['fairy', 'ephemeral'], ['symphony', 'cacophonous'], ['masterpiece', 'novel'], ['libertine', 'chaste']]",grade10,0,True
+['listen' 'eavesdrop'],4,"[['grin', 'smile'], ['donate', 'relinquish'], ['assume', 'conclude'], ['prognosticate', 'guess'], ['move', 'sneak']]",grade10,3,False
+['bluff' 'intentions'],1,"[['cloak', 'mask'], ['disguise', 'appearance'], ['backpack', 'computer'], ['envelope', 'messenger'], ['prayer', 'faith']]",grade10,0,False
+['altercation' 'discussion'],3,"[['sermon', 'preacher'], ['judgment', 'mercy'], ['insult', 'critic'], ['diatribe', 'speech'], ['requiem', 'composer']]",grade10,0,False
+['clemency' 'forgiveness'],0,"[['ardor', 'passion'], ['oblivion', 'repair'], ['nirvana', 'faith'], ['intoxication', 'sobriety'], ['digestion', 'cuisine']]",grade10,0,True
+['pain' 'sensation'],4,"[['knowledge', 'mathematics'], ['resonance', 'music'], ['pork', 'meatloaf'], ['judgment', 'court'], ['excitement', 'emotion']]",grade10,2,False
+['anguish' 'pain'],4,"[['lust', 'virtue'], ['bliss', 'sadness'], ['emptiness', 'vacancy'], ['similarity', 'relationship'], ['longing', 'desire']]",grade10,4,True
+['winery' 'merlot'],3,"[['supermarket', 'espresso'], ['marathon', 'water'], ['cafe', 'whiskey'], ['brewery', 'beer'], ['grove', 'applesauce']]",grade10,1,False
+['couch' 'furniture'],1,"[['bookcase', 'encyclopedia'], ['knife', 'cutlery'], ['bed', 'canopy'], ['cinema', 'rental'], ['protestor', 'villain']]",grade10,4,False
+['predictable' 'spontaneity'],1,"[['stormy', 'reason'], ['unfeeling', 'sympathy'], ['capricious', 'will'], ['dreamy', 'rest'], ['unafraid', 'shame']]",grade10,4,False
+['articulate' 'mute'],0,"[['graceful', 'klutzy'], ['spectacular', 'showy'], ['ornate', 'elegant'], ['embellished', 'superficial'], ['excruciating', 'painful']]",grade10,2,False
+['finale' 'musical'],4,"[['inning', 'baseball'], ['stitch', 'tapestry'], ['mystery', 'novel'], ['barista', 'coffee'], ['homestretch', 'race']]",grade10,0,False
+['sharp' 'blunt'],3,"[['studious', 'intelligent'], ['impermanent', 'temporary'], ['philosophical', 'religious'], ['forgiving', 'harsh'], ['translated', 'interpreted']]",grade10,4,False
+['propaganda' 'opinion'],0,"[['sermon', 'morality'], ['commercial', 'economy'], ['battle', 'violence'], ['diatribe', 'negativity'], ['eulogy', 'death']]",grade10,0,True
+['splinter' 'wood'],2,"[['skin', 'cell'], ['guitar', 'orchestra'], ['shard', 'glass'], ['seed', 'bagel'], ['glaze', 'pottery']]",grade10,1,False
+['surreptitious' 'obvious'],2,"[['scholarly', 'professional'], ['harmonious', 'musical'], ['pacifying', 'enraging'], ['sponsored', 'bribed'], ['artistic', 'masterful']]",grade10,4,False
+['arid' 'moisture'],2,"[['vacant', 'emptiness'], ['prophetic', 'vision'], ['stoic', 'emotion'], ['crystal', 'clarity'], ['salty', 'sodium']]",grade10,2,True
+['anarchist' 'government'],3,"[['activist', 'diversity'], ['feminist', 'men'], ['politician', 'order'], ['abolitionist', 'slavery'], ['teetotaler', 'prohibition']]",grade10,2,False
+['cat' 'shed'],0,"[['bird', 'molt'], ['elephant', 'hunt'], ['dog', 'fetch'], ['ferret', 'burrow'], ['human', 'tattoo']]",grade10,0,True
+['clumsy' 'grace'],0,"[['doubtful', 'faith'], ['determined', 'work'], ['rich', 'charity'], ['beautiful', 'love']]",grade7,3,False
+['corrupt' 'morals'],3,"[['talented', 'skill'], ['rude', 'intelligence'], ['fortunate', 'money'], ['ruthless', 'mercy']]",grade7,3,True
+['attorney' 'lawyer'],2,"[['worker', 'secretary'], ['flower', 'daffodil'], ['dog', 'canine'], ['doctor', 'dentist']]",grade7,1,False
+['permanent' 'temporary'],3,"[['ordinary', 'plain'], ['imaginary', 'fake'], ['astonishing', 'surprising'], ['skeptical', 'trusting']]",grade7,0,False
+['dreamer' 'idealistic'],1,"[['judge', 'legal'], ['cynic', 'critical'], ['parent', 'feminine'], ['novice', 'skilled']]",grade7,3,False
+['knight' 'chivalrous'],0,"[['flower', 'fragrant'], ['daughter', 'rebellious'], ['conversation', 'short'], ['disease', 'curable']]",grade7,3,False
+['square' 'quadrilateral'],0,"[['rifle', 'weapon'], ['instrument', 'violin'], ['pattern', 'plaid'], ['airplane', 'spacecraft']]",grade7,0,True
+['verdict' 'judgment'],3,"[['jet', 'helicopter'], ['observation', 'science'], ['principal', 'school'], ['infant', 'baby']]",grade7,1,False
+['hobby' 'pastime'],0,"[['emperor', 'leader'], ['producer', 'product'], ['skill', 'sport'], ['player', 'athlete']]",grade7,2,False
+['blizzard' 'storm'],0,"[['novelist', 'writer'], ['boat', 'submarine'], ['radio', 'television'], ['organization', 'party']]",grade7,3,False
+['cat' 'feline'],1,"[['book', 'novel'], ['blunder', 'mistake'], ['theatre', 'play'], ['automobile', 'tank']]",grade7,0,False
+['academy' 'educate'],2,"[['court', 'blame'], ['trailer', 'roam'], ['jail', 'imprison'], ['cafe', 'ingest']]",grade7,0,False
+['honest' 'sincere'],0,"[['solitary', 'alone'], ['peaceful', 'nervous'], ['vengeful', 'forgiving'], ['religious', 'doubtful']]",grade7,1,False
+['glass' 'delicate'],2,"[['air', 'bearable'], ['stone', 'gray'], ['cola', 'bubbly'], ['peace', 'eternal']]",grade7,0,False
+['ambitious' 'lazy'],3,"[['embarrassed', 'timid'], ['talkative', 'loud'], ['friendly', 'gregarious'], ['insecure', 'confident']]",grade7,3,True
+['rain' 'precipitation'],0,"[['salmon', 'seafood'], ['snow', 'tundra'], ['jungle', 'desert'], ['pet', 'hamster']]",grade7,0,True
+['rectangle' 'shape'],3,"[['dealer', 'employer'], ['deer', 'antelope'], ['telephone', 'call'], ['assault', 'crime']]",grade7,1,False
+['senate' 'congress'],1,"[['cinema', 'theater'], ['lobby', 'hotel'], ['judge', 'chamber'], ['government', 'democracy']]",grade7,0,False
+['cowardly' 'brave'],1,"[['numerous', 'many'], ['foolish', 'wise'], ['awful', 'dreadful'], ['anxious', 'nervous']]",grade7,2,False
+['carefree' 'worries'],1,"[['hesitant', 'doubt'], ['ignorant', 'knowledge'], ['pleasing', 'happiness'], ['lovely', 'affection']]",grade7,3,False
+['scribe' 'write'],3,"[['mother', 'reign'], ['tribute', 'offend'], ['translator', 'read'], ['watchman', 'guard']]",grade7,2,False
+['cruel' 'unkind'],1,"[['graceful', 'flexible'], ['vicious', 'aggressive'], ['frightening', 'spooky'], ['evil', 'insane']]",grade7,1,True
+['pipe' 'water'],2,"[['bottle', 'wine'], ['artery', 'paint'], ['vein', 'blood'], ['nozzle', 'hose']]",grade7,0,False
+['slave' 'submissive'],0,"[['murderer', 'violent'], ['circus', 'laughable'], ['professor', 'ignorant'], ['professional', 'bossy']]",grade7,3,False
+['heinous' 'evil'],0,"[['tremendous', 'large'], ['old', 'antique'], ['distressed', 'flawed'], ['possible', 'probable']]",grade7,3,False
+['master' 'dominant'],3,"[['nation', 'powerful'], ['activist', 'naive'], ['worker', 'impoverished'], ['ghost', 'ethereal']]",grade7,2,False
+['carnivore' 'meat'],1,"[['vegetarian', 'wheat'], ['herbivore', 'plants'], ['omnivore', 'food'], ['vegan', 'pastries']]",grade7,2,False

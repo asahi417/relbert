@@ -9,7 +9,7 @@ from random import shuffle, seed
 from datasets import load_dataset
 
 
-os.makedirs('results/figures', exist_ok=True)
+os.makedirs('results/figures/analysis', exist_ok=True)
 df_full = pd.read_csv('results/full_result.prompt.csv')
 df_full['Accuracy'] = df_full.pop('accuracy')  # * 100
 df_full = df_full[[i not in ['sat', 'sat_metaphor'] for i in df_full['data']]]
@@ -30,6 +30,8 @@ for t in ["scan", "sat_full", "u2", "u4", "bats", "google", "t_rex_relational_si
         fasttext_result[t] = mean(json.load(f)["full"])
 
 model_size = {
+    "bert-large-cased": [335, "BERT"],
+    "bert-base-cased": [110, "BERT"],
     "roberta-large": [335, "RoBERTa"],
     "roberta-base": [110, "RoBERTa"],
     "google/flan-t5-small": [60, "Flan-T5"],
@@ -187,6 +189,6 @@ def main(model_dict, lm_target, prefix, legend_out=False):
 
 
 if __name__ == '__main__':
-    main(model_size, ["RoBERTa", 'GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', 'Flan-T5 (FT)', "Flan-UL2"], "main", legend_out=True)
-    main(model_size_ft_data, ['SemEval', 'T-REX', 'NELL', 'ConceptNet'], "data")
-    main(model_size_ft_perm, ['Reverse Permutation', 'In-domain Permutation', 'Full Permutation'], "perm")
+    main(model_size, ["BERT", "RoBERTa", 'GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', 'Flan-T5 (FT)', "Flan-UL2"], "main", legend_out=True)
+    main(model_size_ft_data, ['SemEval', 'T-REX', 'NELL', 'ConceptNet'], "analysis/data")
+    main(model_size_ft_perm, ['Reverse Permutation', 'In-domain Permutation', 'Full Permutation'], "analysis/perm")
