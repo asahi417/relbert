@@ -58,21 +58,8 @@ language_models = {
     "gpt2": [lmppl.LM, 512],  # 124M
 }
 
-# Add Large Models
-language_models.update({
-    "google/flan-ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
-    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
-    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
-    "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
-    "facebook/opt-30b": [lmppl.LM, 1],  # 30B
-})
-
 # Add fine-tuned models
 language_models.update({
-    "relbert/t5-3b-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
     "relbert/flan-t5-xl-analogy-conceptnet": [lmppl.EncoderDecoderLM, 16],  # 3B
     "relbert/flan-t5-large-analogy-conceptnet": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy-conceptnet": [lmppl.EncoderDecoderLM, 1024],  # 220M
@@ -97,6 +84,10 @@ language_models.update({
     "relbert/flan-t5-large-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 256],  # 770M
     "relbert/flan-t5-base-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 220M
     "relbert/flan-t5-small-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 60M
+    "relbert/t5-3b-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
+    "relbert/t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
+    "relbert/t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
+    "relbert/t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
     "relbert/opt-350m-analogy": [lmppl.LM, 128],  # 350M
     "relbert/opt-350m-analogy-permutation": [lmppl.LM, 128],  # 350M
     "relbert/opt-350m-analogy-permutation-domain": [lmppl.LM, 128],  # 350M
@@ -112,6 +103,16 @@ language_models.update({
     "roberta-large": [lmppl.MaskedLM, 256],  # 355M
     "roberta-base": [lmppl.MaskedLM, 256],  # 110M
 })
+
+# Add Large Models
+language_models.update({
+    "google/flan-ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
+    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+    "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
+    "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+})
+
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):
