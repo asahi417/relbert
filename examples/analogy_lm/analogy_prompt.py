@@ -29,7 +29,7 @@ analogy_types = [
     ['t_rex_relational_similarity', None],
     ['conceptnet_relational_similarity', None],
     ['nell_relational_similarity', None],
-    # ['scan', None]
+    ['scan', None]
 ]
 
 language_models = {
