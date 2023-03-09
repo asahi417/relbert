@@ -57,6 +57,16 @@ language_models = {
     "gpt2-medium": [lmppl.LM, 256],  # 355M
     "gpt2": [lmppl.LM, 512],  # 124M
 }
+
+# Add Large Models
+language_models.update({
+    "google/flan-ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
+    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
+    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
+    "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
+    "facebook/opt-30b": [lmppl.LM, 1],  # 30B
+})
+
 # Add fine-tuned models
 language_models.update({
     "relbert/t5-3b-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
@@ -101,15 +111,6 @@ language_models.update({
     "bert-base-cased": [lmppl.MaskedLM, 256],  # 110M
     "roberta-large": [lmppl.MaskedLM, 256],  # 355M
     "roberta-base": [lmppl.MaskedLM, 256],  # 110M
-})
-
-# Add Large Models
-language_models.update({
-    "google/flan-ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
-    "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
-    "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
-    "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
-    "facebook/opt-30b": [lmppl.LM, 1],  # 30B
 })
 
 

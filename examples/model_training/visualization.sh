@@ -26,12 +26,3 @@ do
     vis "relbert-roberta-large-nce-${prompt}-${data}"
   done
 done
-
-
-for data in "semeval2012-nell" "semeval2012-t-rex" "semeval2012-nell-t-rex"
-do
-  for prompt in "a" "b" "c" "d" "e"
-  do
-    vis "relbert-roberta-large-nce-${prompt}-${data}"
-  done
-done

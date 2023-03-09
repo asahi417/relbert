@@ -1,3 +1,4 @@
+import json
 import os
 from typing import List
 from statistics import mean
@@ -15,32 +16,19 @@ df_full = df_full[[i not in ['sat', 'sat_metaphor'] for i in df_full['data']]]
 df_full.pop('prefix')
 
 random_guess = {}
+relbert_result = {}
+fasttext_result = {}
 for t in ["scan", "sat_full", "u2", "u4", "bats", "google", "t_rex_relational_similarity", "nell_relational_similarity", "conceptnet_relational_similarity"]:
+    # calculate random guess
     data = load_dataset("relbert/analogy_questions", t, split="test")
     random_guess[t] = mean([1/len(i['choice']) for i in data])
+    # load relbert result
+    with open(f"results/relbert_prediction/{t}.json") as f:
+        relbert_result[t] = mean(json.load(f)[f'{t}/test'])
+    # load fasttext result
+    with open(f"results/fasttext_prediction/{t}.json") as f:
+        fasttext_result[t] = mean(json.load(f)["full"])
 
-relbert_accuracy = {
-    'sat_full': 0.732620320855615,
-    'u2': 0.6754385964912281,
-    'u4': 0.6296296296296297,
-    'google': 0.952,
-    'bats': 0.8093385214007782,
-    't_rex_relational_similarity': 0.644808743169399,
-    'conceptnet_relational_similarity': 0.4748322147651007,
-    'nell_relational_similarity': 0.6583333333333333,
-    # "scan": 0.2469059405940594
-}
-# relbert_accuracy_triplet = {
-#     'sat_full': 0.6818181818181818,
-#     'sat': 0.6884272997032641,
-#     'u2': 0.6798245614035088,
-#     'u4': 0.6481481481481481,
-#     'google': 0.922,
-#     'bats': 0.7837687604224569,
-#     't_rex_relational_similarity': 0.5300546448087432,
-#     'conceptnet_relational_similarity': 0.3154362416107382,
-#     'nell_relational_similarity': 0.6383333333333333
-# }
 model_size = {
     "roberta-large": [335, "RoBERTa"],
     "roberta-base": [110, "RoBERTa"],
@@ -115,9 +103,14 @@ model_size_ft_perm = {
 }
 
 
-def plot(df_target, path_to_save: str, lm_target: List, no_relbert: bool = False, legend_out: bool = False, r: float = None):
+def plot(df_target, path_to_save: str, lm_target: List, relbert_accuracy: float = None, fasttext_accuracy: float = None,
+         legend_out: bool = False, r: float = None):
 
     styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:', "P-", "P--", "P:"]
+    colors = list(mpl.colormaps['tab20b'].colors)
+    seed(1)
+    shuffle(colors)
+
     out = df_target.pivot_table(index='Model Size', columns='lm', aggfunc='mean')
     out.columns = [i[1] for i in out.columns]
     out = out.reset_index()
@@ -127,18 +120,18 @@ def plot(df_target, path_to_save: str, lm_target: List, no_relbert: bool = False
     # random guess
     if r is None:
         r = mean([v for k, v in random_guess.items() if k in df_target['data'].unique()])
-    df_rand = pd.DataFrame([{"Model Size": df_target['Model Size'].min(), "Accuracy": r}, {"Model Size": df_target['Model Size'].max(), "Accuracy": r}])
-    ax = df_rand.plot.line(y='Accuracy', x='Model Size', color='black', style='--', label="Random", logx=True)
+    df_rand = pd.DataFrame([{"Model Size": df_target['Model Size'].min(), "Accuracy": r},
+                            {"Model Size": df_target['Model Size'].max(), "Accuracy": r}])
+    ax = df_rand.plot.line(y='Accuracy', x='Model Size', color='black', style='-', label="Random", logx=True)
 
-    # colors = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'gray', 'pink', 'olive', 'darkgreen']
-    colors = list(mpl.colormaps['tab20b'].colors)
-    seed(1)
-    shuffle(colors)
-    c = colors.pop(0)
-    if not no_relbert:
-        # relbert result
-        df_relbert = pd.DataFrame([{"Model Size": 340 * 1000000, "Accuracy": mean([v for k, v in relbert_accuracy.items() if k in df_target['data'].unique()])}])
-        df_relbert.plot.line(y='Accuracy', x='Model Size', ax=ax, color=c, style="*", label="RelBERT", logx=True)
+    if fasttext_accuracy is not None:
+        df_fasttext = pd.DataFrame([{"Model Size": df_target['Model Size'].min(), "Accuracy": fasttext_accuracy},
+                                   {"Model Size": df_target['Model Size'].max(), "Accuracy": fasttext_accuracy}])
+        df_fasttext.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors.pop(-1), style="--", label="FastText", logx=True)
+
+    if relbert_accuracy is not None:
+        df_relbert = pd.DataFrame([{"Model Size": 340 * 1000000, "Accuracy": relbert_accuracy}])
+        df_relbert.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors.pop(-1), style="*", label="RelBERT", logx=True)
 
     for n, c in enumerate(lm_target):
         tmp = out[['Model Size', c]].dropna().reset_index()
@@ -161,22 +154,36 @@ def main(model_dict, lm_target, prefix, legend_out=False):
     df['lm'] = [model_dict[i][1] for i in df['model']]
     df['Model Size'] = [model_dict[i][0] * 1000000 for i in df['model']]
     # average result
-    plot(df, f"results/figures/{prefix}.curve.average.png", lm_target, legend_out=legend_out)
+    plot(df,
+         f"results/figures/{prefix}.curve.average.png",
+         lm_target,
+         relbert_accuracy=mean([v for k, v in relbert_result.items() if k in df['data'].unique()]),
+         fasttext_accuracy=mean([v for k, v in fasttext_result.items() if k in df['data'].unique()]),
+         legend_out=legend_out)
     # average over 5 analogies
     plot(
         df[[i in ['sat_full', 'u2', 'u4', 'bats', 'google'] for i in df['data']]],
         f"results/figures/{prefix}.curve.average_5.png",
         lm_target,
+        relbert_accuracy=mean([v for k, v in relbert_result.items() if k in ['sat_full', 'u2', 'u4', 'bats', 'google']]),
+        fasttext_accuracy=mean([v for k, v in fasttext_result.items() if k in ['sat_full', 'u2', 'u4', 'bats', 'google']]),
         legend_out=legend_out)
     # average over entities analogies
     plot(
         df[[i in ['nell_relational_similarity', 't_rex_relational_similarity'] for i in df['data']]],
         f"results/figures/{prefix}.curve.average_entity.png",
         lm_target,
+        relbert_accuracy=mean([v for k, v in relbert_result.items() if k in ['nell_relational_similarity', 't_rex_relational_similarity']]),
+        fasttext_accuracy=mean([v for k, v in fasttext_result.items() if k in ['nell_relational_similarity', 't_rex_relational_similarity']]),
         legend_out=legend_out)
     # single analogy
-    for data, g in df.groupby('data'):
-        plot(g, f"results/figures/{prefix}.curve.{data}.png", lm_target, legend_out=legend_out)
+    for _data, g in df.groupby('data'):
+        plot(g,
+             f"results/figures/{prefix}.curve.{_data}.png",
+             lm_target,
+             relbert_accuracy=mean([v for k, v in relbert_result.items() if k == _data]),
+             fasttext_accuracy=mean([v for k, v in fasttext_result.items() if k == _data]),
+             legend_out=legend_out)
 
 
 if __name__ == '__main__':
