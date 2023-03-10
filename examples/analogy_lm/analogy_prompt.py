@@ -190,8 +190,10 @@ if __name__ == '__main__':
                     # model setup
                     if lm_class is lmppl.MaskedLM:
                         scorer = lm_class(target_model, max_length=256)
-                    else:
+                    elif lm_class is lmppl.LM:
                         scorer = lm_class(target_model, max_length=256, device_map='auto', low_cpu_mem_usage=True)
+                    else:
+                        scorer = lm_class(target_model, device_map='auto', low_cpu_mem_usage=True)
 
                 _df, _scores_texts = analogy_solver(scorer, target_data, batch_size=batch, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
