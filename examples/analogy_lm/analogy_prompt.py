@@ -29,7 +29,7 @@ analogy_types = [
     ['t_rex_relational_similarity', None],
     ['conceptnet_relational_similarity', None],
     ['nell_relational_similarity', None],
-    # ['scan', None]
+    ['scan', None]
 ]
 
 language_models = {
@@ -106,13 +106,12 @@ language_models.update({
 
 # Add Large Models
 language_models.update({
-    "google/flan-ul2": [lmppl.EncoderDecoderLM, 4],  # 20B
-    "EleutherAI/gpt-neox-20b": [lmppl.LM, 4],  # 20B
-    "facebook/opt-iml-30b": [lmppl.LM, 2],  # 30B
-    "facebook/opt-iml-max-30b": [lmppl.LM, 2],  # 30B
+    # "google/flan-ul2": [lmppl.EncoderDecoderLM, 4],  # 20B
+    # "EleutherAI/gpt-neox-20b": [lmppl.LM, 4],  # 20B
+    # "facebook/opt-iml-30b": [lmppl.LM, 2],  # 30B
+    # "facebook/opt-iml-max-30b": [lmppl.LM, 2],  # 30B
     "facebook/opt-30b": [lmppl.LM, 2],  # 30B
 })
-
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):
@@ -192,7 +191,7 @@ if __name__ == '__main__':
                     if lm_class is lmppl.MaskedLM:
                         scorer = lm_class(target_model, max_length=256)
                     else:
-                        scorer = lm_class(target_model, device_map='auto', low_cpu_mem_usage=True)
+                        scorer = lm_class(target_model, max_length=256, device_map='auto', low_cpu_mem_usage=True)
 
                 _df, _scores_texts = analogy_solver(scorer, target_data, batch_size=batch, data_prefix=prefix, scores_texts=_scores_texts)
                 _df.to_csv(breakdown_file, index=False)
