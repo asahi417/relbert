@@ -110,7 +110,7 @@ language_models.update({
     # "EleutherAI/gpt-neox-20b": [lmppl.LM, 4],  # 20B
     # "facebook/opt-iml-30b": [lmppl.LM, 2],  # 30B
     # "facebook/opt-iml-max-30b": [lmppl.LM, 2],  # 30B
-    "facebook/opt-30b": [lmppl.LM, 2],  # 30B
+    "facebook/opt-30b": [lmppl.LM, 4],  # 30B
 })
 
 
