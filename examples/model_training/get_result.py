@@ -54,6 +54,7 @@ def get_result(language_model: str = 'roberta-large', data: str = 'semeval2012',
 
 if __name__ == '__main__':
     full_output = []
+    full_output += get_result(language_model="roberta-base", data='semeval2012')
     full_output += get_result(data='semeval2012', loss='triplet')
     full_output += get_result(data='semeval2012', loss='iloob')
     full_output += get_result(data='semeval2012')

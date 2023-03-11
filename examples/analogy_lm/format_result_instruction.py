@@ -1,11 +1,6 @@
-import json
 import os
-from typing import List
-from statistics import mean
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
-from random import shuffle, seed
 from format_result import model_size
 
 df_full_i = pd.read_csv('results/full_result.instruction.csv').sort_values(by=['model', 'data'])

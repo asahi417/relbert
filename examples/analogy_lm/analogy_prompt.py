@@ -109,7 +109,7 @@ language_models.update({
     # "google/flan-ul2": [lmppl.EncoderDecoderLM, 4],  # 20B
     # "EleutherAI/gpt-neox-20b": [lmppl.LM, 4],  # 20B
     # "facebook/opt-iml-30b": [lmppl.LM, 2],  # 30B
-    "facebook/opt-iml-max-30b": [lmppl.LM, 4],  # 30B
+    # "facebook/opt-iml-max-30b": [lmppl.LM, 4],  # 30B
     "facebook/opt-30b": [lmppl.LM, 4],  # 30B
 })
 
