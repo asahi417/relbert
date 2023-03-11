@@ -18,7 +18,7 @@ df_full.pop('prefix')
 random_guess = {}
 relbert_result = {}
 fasttext_result = {}
-for t in ["scan", "sat_full", "u2", "u4", "bats", "google", "t_rex_relational_similarity", "nell_relational_similarity", "conceptnet_relational_similarity"]:
+for t in ["sat_full", "u2", "u4", "bats", "google"]:
     # calculate random guess
     data = load_dataset("relbert/analogy_questions", t, split="test")
     random_guess[t] = mean([1/len(i['choice']) for i in data])
