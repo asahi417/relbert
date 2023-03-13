@@ -100,8 +100,8 @@ language_models.update({
 language_models.update({
     "bert-large-cased": [lmppl.MaskedLM, 256],  # 355M
     "bert-base-cased": [lmppl.MaskedLM, 256],  # 110M
-    # "roberta-large": [lmppl.MaskedLM, 256],  # 355M
-    # "roberta-base": [lmppl.MaskedLM, 256],  # 110M
+    "roberta-large": [lmppl.MaskedLM, 256],  # 355M
+    "roberta-base": [lmppl.MaskedLM, 256],  # 110M
 })
 
 # Add Large Models
