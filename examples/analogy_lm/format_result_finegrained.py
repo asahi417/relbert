@@ -25,6 +25,8 @@ if __name__ == '__main__':
 
             with open(f"results/relbert_prediction/{data}.json") as f:
                 df['relbert'] = json.load(f)[f'{data}/test']
+            with open(f"results/relbert_prediction_base/{data}.json") as f:
+                df['relbert_base'] = json.load(f)[f'{data}/test']
 
             with open(f"results/fasttext_prediction/{data}.json") as f:
                 df['fasttext'] = json.load(f)["full"]
@@ -38,17 +40,20 @@ if __name__ == '__main__':
                         'prefix': prefix,
                         "random": mean([1/len(i.split("], [")) for i in df['choice']]),
                         "relbert": g['relbert'].mean(),
+                        "relbert_base": g['relbert_base'].mean(),
                         "fasttext": g['fasttext'].mean(),
                     })
 
     df = pd.DataFrame(output)
     for (data, prefix), g in df.groupby(["data", 'prefix']):
+        print(data, prefix)
         g['lm'] = [model_size[i][1] for i in g['model']]
         g['Model Size'] = [model_size[i][0] * 1000000 for i in g['model']]
         plot(g,
              f"results/figures/detail/{data}.{prefix.replace(' ', '_').replace('/', '_').replace(':', '_')}.png",
              ['RoBERTa', 'GPT-2', 'GPT-J', 'OPT', 'OPT-IML', 'T5', 'T5 (FT)', 'Flan-T5', "Flan-T5 (FT)", "Flan-UL2"],
              relbert_accuracy=g.pop("relbert").values[0],
+             relbert_base_accuracy=g.pop("relbert_base").values[0],
              fasttext_accuracy=g.pop("fasttext").values[0],
              r=g.pop("random").values[0],
              legend_out=True)

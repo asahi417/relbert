@@ -17,14 +17,17 @@ df_full.pop('prefix')
 
 random_guess = {}
 relbert_result = {}
+relbert_result_base = {}
 fasttext_result = {}
-for t in ["sat_full", "u2", "u4", "bats", "google"]:
+for t in ["sat_full", "u2", "u4", "bats", "google", 'scan', 'nell_relational_similarity', 't_rex_relational_similarity', 'conceptnet_relational_similarity']:
     # calculate random guess
     data = load_dataset("relbert/analogy_questions", t, split="test")
     random_guess[t] = mean([1/len(i['choice']) for i in data])
     # load relbert result
     with open(f"results/relbert_prediction/{t}.json") as f:
         relbert_result[t] = mean(json.load(f)[f'{t}/test'])
+    with open(f"results/relbert_prediction_base/{t}.json") as f:
+        relbert_result_base[t] = mean(json.load(f)[f'{t}/test'])
     # load fasttext result
     with open(f"results/fasttext_prediction/{t}.json") as f:
         fasttext_result[t] = mean(json.load(f)["full"])
@@ -105,10 +108,11 @@ model_size_ft_perm = {
 }
 
 
-def plot(df_target, path_to_save: str, lm_target: List, relbert_accuracy: float = None, fasttext_accuracy: float = None,
+def plot(df_target, path_to_save: str, lm_target: List, relbert_accuracy: float = None,
+         relbert_base_accuracy: float = None, fasttext_accuracy: float = None,
          legend_out: bool = False, r: float = None):
 
-    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:', "P-", "P--", "P:"]
+    styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:', "X-", "X--", "X:"]
     colors = list(mpl.colormaps['tab20b'].colors)
     seed(1)
     shuffle(colors)
@@ -132,14 +136,17 @@ def plot(df_target, path_to_save: str, lm_target: List, relbert_accuracy: float 
         df_fasttext.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors.pop(-1), style="--", label="FastText", logx=True)
 
     if relbert_accuracy is not None:
-        df_relbert = pd.DataFrame([{"Model Size": 340 * 1000000, "Accuracy": relbert_accuracy}])
-        df_relbert.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors.pop(-1), style="*", label="RelBERT", logx=True)
+        df_relbert = pd.DataFrame([
+            {"Model Size": 335 * 1000000, "Accuracy": relbert_accuracy},
+            {"Model Size": 110 * 1000000, "Accuracy": relbert_base_accuracy}
+        ])
+        df_relbert.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors.pop(-1), style="*:", label="RelBERT", logx=True)
 
     for n, c in enumerate(lm_target):
         tmp = out[['Model Size', c]].dropna().reset_index()
         tmp['Accuracy'] = tmp[c]
         if len(tmp) == 1:
-            tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n], style=styles[n][0], label=c, logx=True)
+            tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n], style="P", label=c, logx=True)
         else:
             tmp.plot.line(y='Accuracy', x='Model Size', ax=ax, color=colors[n], style=styles[n], label=c, logx=True)
     plt.grid()
@@ -160,6 +167,7 @@ def main(model_dict, lm_target, prefix, legend_out=False):
          f"results/figures/{prefix}.curve.average.png",
          lm_target,
          relbert_accuracy=mean([v for k, v in relbert_result.items() if k in df['data'].unique()]),
+         relbert_base_accuracy=mean([v for k, v in relbert_result_base.items() if k in df['data'].unique()]),
          fasttext_accuracy=mean([v for k, v in fasttext_result.items() if k in df['data'].unique()]),
          legend_out=legend_out)
     # average over 5 analogies
@@ -168,6 +176,7 @@ def main(model_dict, lm_target, prefix, legend_out=False):
         f"results/figures/{prefix}.curve.average_5.png",
         lm_target,
         relbert_accuracy=mean([v for k, v in relbert_result.items() if k in ['sat_full', 'u2', 'u4', 'bats', 'google']]),
+        relbert_base_accuracy=mean([v for k, v in relbert_result_base.items() if k in ['sat_full', 'u2', 'u4', 'bats', 'google']]),
         fasttext_accuracy=mean([v for k, v in fasttext_result.items() if k in ['sat_full', 'u2', 'u4', 'bats', 'google']]),
         legend_out=legend_out)
     # average over entities analogies
@@ -176,6 +185,7 @@ def main(model_dict, lm_target, prefix, legend_out=False):
         f"results/figures/{prefix}.curve.average_entity.png",
         lm_target,
         relbert_accuracy=mean([v for k, v in relbert_result.items() if k in ['nell_relational_similarity', 't_rex_relational_similarity']]),
+        relbert_base_accuracy=mean([v for k, v in relbert_result_base.items() if k in ['nell_relational_similarity', 't_rex_relational_similarity']]),
         fasttext_accuracy=mean([v for k, v in fasttext_result.items() if k in ['nell_relational_similarity', 't_rex_relational_similarity']]),
         legend_out=legend_out)
     # single analogy
@@ -184,6 +194,7 @@ def main(model_dict, lm_target, prefix, legend_out=False):
              f"results/figures/{prefix}.curve.{_data}.png",
              lm_target,
              relbert_accuracy=mean([v for k, v in relbert_result.items() if k == _data]),
+             relbert_base_accuracy=mean([v for k, v in relbert_result_base.items() if k == _data]),
              fasttext_accuracy=mean([v for k, v in fasttext_result.items() if k == _data]),
              legend_out=legend_out)
 
