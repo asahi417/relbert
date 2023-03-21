@@ -23,6 +23,7 @@ def main():
     parser.add_argument('-m', '--model', help='language model', default="relbert/relbert-roberta-large", type=str)
     parser.add_argument('-b', '--batch', default=256, type=int)
     parser.add_argument('-c', '--chunk', default=512, type=int)
+    parser.add_argument('--marker-size', default=5, type=int)
     parser.add_argument('-d', '--data', default="relbert/conceptnet_relational_similarity", type=str)
     parser.add_argument('-n', '--name', default=None, type=str)
     parser.add_argument('-s', '--split', default="test", type=str)
@@ -146,17 +147,17 @@ def main():
     scatter = plt.scatter(
         embedding_2d[:, 0],
         embedding_2d[:, 1],
-        s=2,
+        s=opt.marker_size,
         c=[relation_type_dict[i] for i in relation_types],
         cmap=sns.color_palette('Spectral', len(relation_type_dict), as_cmap=True)
     )
     plt.gca().set_aspect('equal', 'datalim')
-    plt.title('2-d Embedding Space', fontsize=12)
+    # plt.title('2-d Embedding Space', fontsize=12)
     plt.legend(handles=scatter.legend_elements(num=len(relation_type_dict))[0],
                labels=unique_relation_types,
                bbox_to_anchor=(1.04, 1),
                borderaxespad=0)
-    plt.savefig(figure_file, bbox_inches='tight')
+    plt.savefig(figure_file, bbox_inches='tight', dpi=600)
 
 
 if __name__ == '__main__':

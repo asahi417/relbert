@@ -40,9 +40,8 @@ eval_nce() {
   relbert-push-to-hub -m "${MODEL_CKPT}" -a "${MODEL_ALIAS}"
 }
 
-eval_nce "d" "filter_unified.min_entity_4_max_predicate_10" "epoch_7" "relbert-roberta-large-nce-d-t-rex"
-
 eval_nce "a" "filter_unified.min_entity_4_max_predicate_10" "epoch_8" "relbert-roberta-large-nce-a-t-rex"
 eval_nce "b" "filter_unified.min_entity_4_max_predicate_10" "epoch_7" "relbert-roberta-large-nce-b-t-rex"
 eval_nce "c" "filter_unified.min_entity_4_max_predicate_10" "epoch_9" "relbert-roberta-large-nce-c-t-rex"
+eval_nce "d" "filter_unified.min_entity_4_max_predicate_10" "epoch_7" "relbert-roberta-large-nce-d-t-rex"
 eval_nce "e" "filter_unified.min_entity_4_max_predicate_10" "epoch_8" "relbert-roberta-large-nce-e-t-rex"

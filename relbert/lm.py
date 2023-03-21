@@ -150,7 +150,7 @@ class RelBERT:
             self.model.save_pretrained(cache_dir)
         self.tokenizer.save_pretrained(cache_dir)
 
-    def encode_word_pairs(self, word_pairs, parallel: bool = True):
+    def encode_word_pairs(self, word_pairs, parallel: bool = False):
         """ Return a dictionary of encoded word_pair."""
         logging.info('encode word pairs')
         assert all(type(i) is tuple or list for i in word_pairs), word_pairs

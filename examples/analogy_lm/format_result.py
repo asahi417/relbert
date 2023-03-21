@@ -19,7 +19,7 @@ random_guess = {}
 relbert_result = {}
 relbert_result_base = {}
 fasttext_result = {}
-for t in ["sat_full", "u2", "u4", "bats", "google", 'scan', 'nell_relational_similarity', 't_rex_relational_similarity', 'conceptnet_relational_similarity']:
+for t in ["scan", "sat_full", "u2", "u4", "bats", "google", 'scan', 'nell_relational_similarity', 't_rex_relational_similarity', 'conceptnet_relational_similarity']:
     # calculate random guess
     data = load_dataset("relbert/analogy_questions", t, split="test")
     random_guess[t] = mean([1/len(i['choice']) for i in data])
@@ -31,7 +31,8 @@ for t in ["sat_full", "u2", "u4", "bats", "google", 'scan', 'nell_relational_sim
     # load fasttext result
     with open(f"results/fasttext_prediction/{t}.json") as f:
         fasttext_result[t] = mean(json.load(f)["full"])
-
+print(fasttext_result)
+input()
 model_size = {
     "bert-large-cased": [335, "BERT"],
     "bert-base-cased": [110, "BERT"],
