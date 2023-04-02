@@ -113,7 +113,7 @@ language_models.update({
     "facebook/opt-iml-max-30b": [lmppl.LM, 4],  # 30B
     "facebook/opt-30b": [lmppl.LM, 4],  # 30B
 })
-language_models = [{"google/ul2": [lmppl.EncoderDecoderLM, 1]}]
+language_models = {"google/ul2": [lmppl.EncoderDecoderLM, 1]}
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):
