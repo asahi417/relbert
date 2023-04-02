@@ -106,12 +106,14 @@ language_models.update({
 
 # Add Large Models
 language_models.update({
+    "google/ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
     "google/flan-ul2": [lmppl.EncoderDecoderLM, 4],  # 20B
     "EleutherAI/gpt-neox-20b": [lmppl.LM, 4],  # 20B
     "facebook/opt-iml-30b": [lmppl.LM, 2],  # 30B
     "facebook/opt-iml-max-30b": [lmppl.LM, 4],  # 30B
     "facebook/opt-30b": [lmppl.LM, 4],  # 30B
 })
+language_models = [{"google/ul2": [lmppl.EncoderDecoderLM, 1]}]
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):
@@ -124,7 +126,7 @@ def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = F
 def analogy_solver(scoring_model, data_name, batch_size, scores_texts, data_prefix):
 
     # dataset setup
-    dataset = load_dataset('relbert/analogy_questions', data_name, split='test')
+    dataset = load_dataset('relbert/analogy_questions_private', data_name, split='test')
     if data_prefix is not None:
         dataset = dataset.filter(lambda x: x['prefix'] == data_prefix)
         assert len(dataset) > 0

@@ -162,8 +162,7 @@ class Trainer:
                 if len(pos['input_ids']) > self.config['loss_function_config']['num_positive']:
                     ids = list(range(len(pos['input_ids'])))
                     random.shuffle(ids)
-                    pos = {k: [v[i] for i in ids[:self.config['loss_function_config']['num_positive']]] for k, v in
-                           pos.items()}
+                    pos = {k: [v[i] for i in ids[:self.config['loss_function_config']['num_positive']]] for k, v in pos.items()}
                 pos = {k: to_tensor(k, v) for k, v in pos.items()}
                 positive_embedding = self.model.to_embedding(pos, batch_size=self.config['batch'])
 

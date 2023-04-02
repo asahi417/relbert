@@ -25,11 +25,6 @@ train_nce "c" "Today, I finally discovered the relation between <subj> and <obj>
 train_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "albert-base-v2"
 train_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "albert-base-v2"
 
-train_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "microsoft/deberta-v3-base"
-train_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "microsoft/deberta-v3-base"
-train_nce "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "microsoft/deberta-v3-base"
-train_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" "microsoft/deberta-v3-base"
-train_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" "microsoft/deberta-v3-base"
 
 train_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "roberta-base"
 train_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "roberta-base"
@@ -71,12 +66,6 @@ eval_nce "b" "epoch_8" "relbert-albert-base-nce-b-semeval2012" "albert-base-v2"
 eval_nce "c" "epoch_8" "relbert-albert-base-nce-c-semeval2012" "albert-base-v2"
 eval_nce "d" "epoch_5" "relbert-albert-base-nce-d-semeval2012" "albert-base-v2"
 eval_nce "e" "epoch_9" "relbert-albert-base-nce-e-semeval2012" "albert-base-v2"
-
-eval_nce "a" "" "relbert-deberta-base-nce-a-semeval2012" "microsoft/deberta-v3-base"
-eval_nce "b" "" "relbert-deberta-base-nce-b-semeval2012" "microsoft/deberta-v3-base"
-eval_nce "c" "" "relbert-deberta-base-nce-c-semeval2012" "microsoft/deberta-v3-base"
-eval_nce "d" "" "relbert-deberta-base-nce-d-semeval2012" "microsoft/deberta-v3-base"
-eval_nce "e" "" "relbert-deberta-base-nce-e-semeval2012" "microsoft/deberta-v3-base"
 
 eval_nce "a" "epoch_8" "relbert-roberta-base-nce-a-semeval2012" "roberta-base"
 eval_nce "b" "epoch_5" "relbert-roberta-base-nce-b-semeval2012" "roberta-base"

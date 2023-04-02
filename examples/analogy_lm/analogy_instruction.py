@@ -69,6 +69,7 @@ language_models.update({
     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
     "google/flan-ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
 })
+language_models = [{"google/ul2": [lmppl.EncoderDecoderLM, 1]}]
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool):
@@ -85,7 +86,7 @@ def analogy_solver(scoring_model, data_name, batch_size: int, scores_texts, data
 
     is_encdec = type(scoring_model) is lmppl.EncoderDecoderLM
     # dataset setup
-    dataset = load_dataset('relbert/analogy_questions', data_name, split='test')
+    dataset = load_dataset('relbert/analogy_questions_private', data_name, split='test')
     if data_prefix is not None:
         dataset = dataset.filter(lambda x: x['prefix'] == data_prefix)
         assert len(dataset) > 0
