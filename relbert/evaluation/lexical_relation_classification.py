@@ -1,3 +1,4 @@
+import os
 import logging
 from itertools import product, chain
 from multiprocessing import Pool
@@ -33,7 +34,7 @@ class RelationClassification:
                 'random_state': 0, 'learning_rate_init': i[0], 'hidden_layer_sizes': i[1]} for i in
                             list(product(learning_rate_init, hidden_layer_sizes))]
 
-    def run_test(self, clf, x, y, per_class_metric: bool = False):
+    def run_test(self, clf, x, y):
         """ run evaluation on valid or test set """
         y_pred = clf.predict(x)
         p_mac, r_mac, f_mac, _ = precision_recall_fscore_support(y, y_pred, average='macro')
@@ -46,15 +47,15 @@ class RelationClassification:
             'p_macro': p_mac,
             'p_micro': p_mic,
             'r_macro': r_mac,
-            'r_micro': r_mic
+            'r_micro': r_mic,
+            # "prediction": y_pred,
+            # "true_label": y
         }
-        if per_class_metric and self.target_relation is not None:
-            for _l in self.target_relation:
-                if _l in self.label_dict:
-                    p, r, f, _ = precision_recall_fscore_support(y, y_pred, labels=[self.label_dict[_l]])
-                    tmp['f1/{}'.format(_l)] = f[0]
-                    tmp['p/{}'.format(_l)] = p[0]
-                    tmp['r/{}'.format(_l)] = r[0]
+        for _l in self.label_dict:
+            p, r, f, _ = precision_recall_fscore_support(y, y_pred, labels=[self.label_dict[_l]])
+            tmp[f'f1/{_l}'] = f[0]
+            tmp[f'p/{_l}'] = p[0]
+            tmp[f'r/{_l}'] = r[0]
         return tmp
 
     @property
@@ -69,12 +70,12 @@ class RelationClassification:
         report = {'classifier_config': clf.get_params()}
         # test
         x, y = self.dataset['test']
-        tmp = self.run_test(clf, x, y, per_class_metric=True)
+        tmp = self.run_test(clf, x, y)
         tmp = {f'test/{k}': v for k, v in tmp.items()}
         report.update(tmp)
         if 'val' in self.dataset:
             x, y = self.dataset['val']
-            tmp = self.run_test(clf, x, y, per_class_metric=True)
+            tmp = self.run_test(clf, x, y)
             tmp = {f'val/{k}': v for k, v in tmp.items()}
             report.update(tmp)
         return report
@@ -114,8 +115,7 @@ def evaluate_classification(relbert_ckpt: str = None,
             metric = evaluator(0)
         elif config is not None and data_name in config:
             logging.info('run with given config')
-            evaluator = RelationClassification(
-                dataset, label_dict, target_relation=target_relation, config=config[data_name])
+            evaluator = RelationClassification(dataset, label_dict, target_relation=target_relation, config=config[data_name])
             metric = evaluator(0)
 
         else:

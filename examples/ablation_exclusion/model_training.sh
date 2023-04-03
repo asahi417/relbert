@@ -1,5 +1,4 @@
-TEMPLATE_ID="a"
-TEMPLATE="Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "bert-base-cased"
+TEMPLATE="Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>"
 LM="roberta-base"
 
 #	Part-Whole
@@ -51,32 +50,3 @@ do
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/epoch_${E}" -o "${MODEL_CKPT}/epoch_${E}/analogy.forward.json" -b 64
 done
 relbert-eval-analogy -d 'semeval2012_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.forward.json" -b 64
-
-
-eval_classification() {
-  TEMPLATE_ID=${1}
-  MODEL_ALIAS=${3}
-  LM=${4}
-  MODEL_CKPT="relbert_output/ckpt/nce_semeval2012_${LM}/template-${TEMPLATE_ID}/${2}"
-
-  relbert-eval-classification -m "${MODEL_CKPT}" -o "${MODEL_CKPT}/classification.json" -b 64
-}
-
-
-eval_nce "a" "epoch_6" "relbert-bert-base-nce-a-semeval2012" "bert-base-cased"
-eval_nce "b" "epoch_8" "relbert-bert-base-nce-b-semeval2012" "bert-base-cased"
-eval_nce "c" "epoch_6" "relbert-bert-base-nce-c-semeval2012" "bert-base-cased"
-eval_nce "d" "epoch_7" "relbert-bert-base-nce-d-semeval2012" "bert-base-cased"
-eval_nce "e" "epoch_9" "relbert-bert-base-nce-e-semeval2012" "bert-base-cased"
-
-eval_nce "a" "epoch_5" "relbert-albert-base-nce-a-semeval2012" "albert-base-v2"
-eval_nce "b" "epoch_8" "relbert-albert-base-nce-b-semeval2012" "albert-base-v2"
-eval_nce "c" "epoch_8" "relbert-albert-base-nce-c-semeval2012" "albert-base-v2"
-eval_nce "d" "epoch_5" "relbert-albert-base-nce-d-semeval2012" "albert-base-v2"
-eval_nce "e" "epoch_9" "relbert-albert-base-nce-e-semeval2012" "albert-base-v2"
-
-eval_nce "a" "epoch_8" "relbert-roberta-base-nce-a-semeval2012" "roberta-base"
-eval_nce "b" "epoch_5" "relbert-roberta-base-nce-b-semeval2012" "roberta-base"
-eval_nce "c" "epoch_7" "relbert-roberta-base-nce-c-semeval2012" "roberta-base"
-eval_nce "d" "epoch_6" "relbert-roberta-base-nce-d-semeval2012" "roberta-base"
-eval_nce "e" "epoch_8" "relbert-roberta-base-nce-e-semeval2012" "roberta-base"
