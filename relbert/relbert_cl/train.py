@@ -77,6 +77,6 @@ def main():
         classification_loss=opt.classification_loss,
         loss_function_config=loss_function_config,
         parallel_preprocess=opt.parallel,
-        augment_negative_by_positive=opt.augment_negative_by_positive
+        augment_negative_by_positive=opt.augment_negative_by_positive,
     )
     trainer.train(epoch_save=opt.epoch_save)
