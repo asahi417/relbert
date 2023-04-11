@@ -29,6 +29,10 @@ train_nce "length_2" "Today, I finally discovered that the relation between <sub
 train_nce "length_3" "I discovered that the relation between <subj> and <obj> is <mask>"
 train_nce "length_4" "the relation between <subj> and <obj> is <mask>"
 train_nce "length_5" "<subj> and <obj> is <mask>"
+train_nce "length_6" "I discovered the relation between <subj> and <obj>: <subj> is the <mask> of <obj>"
+train_nce "length_7" "the relation between <subj> and <obj>: <subj> is the <mask> of <obj>"
+train_nce "length_8" "I discovered: <subj> is the <mask> of <obj>"
+train_nce "length_9" "<subj> is the <mask> of <obj>"
 
 eval_nce() {
   MODEL_CKPT="relbert_output/ckpt/random_template/template-${1}/${2}"
@@ -46,7 +50,6 @@ eval_nce "5" "epoch_6"
 eval_nce "6" "model"
 eval_nce "7" "epoch_6"
 eval_nce "8" "epoch_6"
-
 eval_nce "9" "epoch_6"
 eval_nce "10" "epoch_8"
 
@@ -55,3 +58,7 @@ eval_nce "length_2" "epoch_6"
 eval_nce "length_3" "epoch_8"
 eval_nce "length_4" "epoch_6"
 eval_nce "length_5" "model"
+eval_nce "length_6" "epoch_9"
+eval_nce "length_7" "epoch_9"
+eval_nce "length_8" "epoch_7"
+eval_nce "length_9" "epoch_5"

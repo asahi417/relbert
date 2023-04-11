@@ -63,13 +63,13 @@ language_models = {
 
 # Add Large Models
 language_models.update({
+    # "google/ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
     "EleutherAI/gpt-neox-20b": [lmppl.LM, 1],  # 20B
     "facebook/opt-iml-30b": [lmppl.LM, 1],  # 30B
     "facebook/opt-iml-max-30b": [lmppl.LM, 1],  # 30B
     "facebook/opt-30b": [lmppl.LM, 1],  # 30B
     "google/flan-ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
 })
-language_models = {"google/ul2": [lmppl.EncoderDecoderLM, 1]}
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool):

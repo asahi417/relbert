@@ -18,7 +18,11 @@ template_list = {
     "template-length_2": "Today, I finally discovered that the relation between <subj> and <obj> is <mask>",
     "template-length_3": "I discovered that the relation between <subj> and <obj> is <mask>",
     "template-length_4": "the relation between <subj> and <obj> is <mask>",
-    "template-length_5": "<subj> and <obj> is <mask>"
+    "template-length_5": "<subj> and <obj> is <mask>",
+    "template-length_6": "I discovered the relation between <subj> and <obj>: <subj> is the <mask> of <obj>",
+    "template-length_7": "the relation between <subj> and <obj>: <subj> is the <mask> of <obj>",
+    "template-length_8": "I discovered: <subj> is the <mask> of <obj>",
+    "template-length_9": "<subj> is the <mask> of <obj>"
 }
 
 if not os.path.exists("result.csv"):
@@ -30,9 +34,8 @@ if not os.path.exists("result.csv"):
             with open(x) as f:
                 a = json.load(f)["semeval2012_relational_similarity/validation"]
             accuracy.append({"accuracy": a, "model": os.path.dirname(x)})
-        if len(accuracy) != 10:
-            continue
         best_model = sorted(accuracy, key=lambda _x: _x["accuracy"], reverse=True)[0]['model']
+        print(template_type, best_model)
         with open(f"{best_model}/analogy.forward.json") as f:
             analogy = json.load(f)
             analogy = {os.path.dirname(k): round(v * 100, 1) for k, v in analogy.items() if k.endswith("test")}
@@ -42,6 +45,7 @@ if not os.path.exists("result.csv"):
         analogy["template_type"] = template_type
         analogy["template"] = template_list[template_type].replace("<subj>", "\textbf{[h]}").replace("<obj>", "\textbf{[t]}").replace("<mask>", "\texttt{<mask>}")
         output.append(analogy)
+        print(template_type, best_model)
     df = pd.DataFrame(output)
     df.index = df.pop("template_type")
     df = df.T

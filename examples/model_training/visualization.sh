@@ -26,3 +26,5 @@ do
     vis "relbert-roberta-large-nce-${prompt}-${data}"
   done
 done
+
+vis "relbert-roberta-base-nce-a-semeval2012"
