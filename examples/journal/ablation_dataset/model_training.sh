@@ -49,20 +49,6 @@ eval_nce () {
   relbert-push-to-hub -m "${MODEL_CKPT}" -a "${4}"
 }
 
-eval_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" 'conceptnet_relational_similarity' "relbert-roberta-base-nce-a-conceptnet" "model"
-eval_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" 'conceptnet_relational_similarity'  "relbert-roberta-base-nce-b-conceptnet" "model"
-eval_nce "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" 'conceptnet_relational_similarity' "relbert-roberta-base-nce-c-conceptnet" "model"
-eval_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 'conceptnet_relational_similarity' "relbert-roberta-base-nce-d-conceptnet" "model"
-eval_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" 'conceptnet_relational_similarity' "relbert-roberta-base-nce-e-conceptnet" "model"
-
-eval_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" 'nell_relational_similarity' "relbert-roberta-base-nce-a-nell" "model"
-eval_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" 'nell_relational_similarity' "relbert-roberta-base-nce-b-nell" "model"
-eval_nce "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" 'nell_relational_similarity' "relbert-roberta-base-nce-c-nell" "model"
-eval_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 'nell_relational_similarity' "relbert-roberta-base-nce-d-nell" "model"
-eval_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" 'nell_relational_similarity' "relbert-roberta-base-nce-e-nell" "model"
-
-eval_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" 't_rex_relational_similarity' "relbert-roberta-base-nce-a-t-rex" "model"
-eval_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" 't_rex_relational_similarity' "relbert-roberta-base-nce-b-t-rex" "epoch_4"
-eval_nce "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" 't_rex_relational_similarity' "relbert-roberta-base-nce-c-t-rex" "model"
-eval_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 't_rex_relational_similarity' "relbert-roberta-base-nce-d-t-rex" "epoch_4"
-eval_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" 't_rex_relational_similarity' "relbert-roberta-base-nce-e-t-rex" "epoch_4"
+eval_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 'conceptnet_relational_similarity' "relbert-roberta-base-nce-conceptnet" "model"
+eval_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" 'nell_relational_similarity' "relbert-roberta-base-nce-nell" "model"
+eval_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 't_rex_relational_similarity' "relbert-roberta-base-nce-t-rex" "epoch_4"

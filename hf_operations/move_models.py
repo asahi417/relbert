@@ -6,8 +6,9 @@ api = HfApi()
 filt = ModelFilter(author='relbert')
 models = api.list_models(filter=filt)
 
+
 models_filtered = [i.modelId for i in models if 'feature-extraction' in i.tags and i.modelId.startswith('relbert') and i.modelId not in ['relbert/relbert-roberta-large', 'relbert/relbert-roberta-base']]
-models_filtered = [i for i in models_filtered if 'conceptnet' in i or 't-rex' in i or 'nell' in i]
+models_filtered = [i for i in models_filtered if "roberta-large" in i and i.endswith('semeval2012')]
 
 pprint(sorted(models_filtered))
 

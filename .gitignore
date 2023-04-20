@@ -21,3 +21,5 @@ cluster_visualization_cache
 figures
 tmp
 examples/annotation
+relentless
+*.xlsx

@@ -34,7 +34,6 @@ eval_nce() {
   AGGREGATION_MODE=${5}
   MODEL_CKPT="relbert_output/ckpt/nce_aggregate_${LM}_${AGGREGATION_MODE}/template-${TEMPLATE_ID}/${2}"
 
-
   # for evaluation
   relbert-eval-analogy -d 'scan' 'sat_full' 'sat' 'u2' 'u4' 'google' 'bats' 't_rex_relational_similarity' 'conceptnet_relational_similarity' 'nell_relational_similarity' -s 'test' -m "${MODEL_CKPT}" -o "${MODEL_CKPT}/analogy.forward.json" -b 64
   relbert-eval-analogy -d 'scan' 'sat_full' 'sat' 'u2' 'u4' 'google' 'bats' 't_rex_relational_similarity' 'conceptnet_relational_similarity' 'nell_relational_similarity' -s 'test' -m "${MODEL_CKPT}" -o "${MODEL_CKPT}/analogy.reverse.json" -b 64 --reverse-pair
@@ -49,13 +48,5 @@ eval_nce() {
   relbert-push-to-hub -m "${MODEL_CKPT}" -a "${MODEL_ALIAS}"
 }
 
-eval_nce "a" "epoch_9" "relbert-roberta-base-nce-a-semeval2012-mask" "roberta-base" "mask"
-eval_nce "b" "epoch_5" "relbert-roberta-base-nce-b-semeval2012-mask" "roberta-base" "mask"
-eval_nce "c" "epoch_9" "relbert-roberta-base-nce-c-semeval2012-mask" "roberta-base" "mask"
-eval_nce "d" "model" "relbert-roberta-base-nce-d-semeval2012-mask" "roberta-base" "mask"
-eval_nce "e" "epoch_8" "relbert-roberta-base-nce-e-semeval2012-mask" "roberta-base" "mask"
-eval_nce "a" "epoch_9" "relbert-roberta-base-nce-a-semeval2012-average" "roberta-base" "average"
-eval_nce "b" "epoch_9" "relbert-roberta-base-nce-b-semeval2012-average" "roberta-base" "average"
-eval_nce "c" "epoch_6" "relbert-roberta-base-nce-c-semeval2012-average" "roberta-base" "average"
-eval_nce "d" "epoch_7" "relbert-roberta-base-nce-d-semeval2012-average" "roberta-base" "average"
-eval_nce "e" "model" "relbert-roberta-base-nce-e-semeval2012-average" "roberta-base" "average"
+eval_nce "a" "epoch_9" "relbert-roberta-base-nce-semeval2012-mask" "roberta-base" "mask"
+eval_nce "a" "epoch_9" "relbert-roberta-base-nce-semeval2012-average" "roberta-base" "average"
