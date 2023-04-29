@@ -6,8 +6,8 @@ import pandas as pd
 from datasets import load_dataset
 from lmppl import EncoderDecoderLM
 
-model_name = "google/flan-t5-xxl"
-# model_name = "google/flan-t5-small"
+# model_name = "google/flan-t5-xxl"
+model_name = "google/flan-t5-small"
 batch_size = 1
 data_analogy = load_dataset('relbert/analogy_questions', 'sat_full', split='test')
 data_fewshot = load_dataset('relbert/semeval2012_relational_similarity', split='train')
@@ -46,6 +46,7 @@ if __name__ == '__main__':
     os.makedirs(export_dir, exist_ok=True)
     for n_seed, k_shot in zip([1, 5], [3, 3]):
         for s in range(n_seed):
+            print(f"[{k_shot}-shot]: seed {n_seed}")
             ppl_file = f"{export_dir}/ppl.{model_name}.{k_shot}.{s}.csv"
             if not os.path.exists(ppl_file):
                 if score_model is None:
