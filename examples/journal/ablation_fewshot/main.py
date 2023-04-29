@@ -1,7 +1,7 @@
-from itertools import permutations
 import os
+from itertools import permutations
 from random import shuffle, seed
-
+from time import time
 import pandas as pd
 from datasets import load_dataset
 from lmppl import EncoderDecoderLM
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     export_dir = 'results'
     score_model = None
     os.makedirs(export_dir, exist_ok=True)
-    for n_seed, k_shot in zip([1, 5], [3, 3]):
+    for k_shot, n_seed in zip([1, 5], [3, 3]):
         for s in range(n_seed):
             print(f"[{k_shot}-shot]: seed {n_seed}")
             ppl_file = f"{export_dir}/ppl.{os.path.basename(model_name)}.{k_shot}.{s}.csv"
@@ -52,6 +52,11 @@ if __name__ == '__main__':
                 if score_model is None:
                     score_model = EncoderDecoderLM(model_name)
                 p = get_prompt(k_shot, s)
+                start = time()
                 ppl_df = solve_analogy(p, score_model)
+                elapsed = time() - start
                 ppl_df.to_csv(ppl_file, index=False)
+                print(f"\t {elapsed} seconds")
+            df = pd.read_csv(ppl_file)
+            [g for _, g in df.groupby("index")]
 
