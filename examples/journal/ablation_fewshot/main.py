@@ -53,4 +53,5 @@ if __name__ == '__main__':
                     score_model = EncoderDecoderLM(model_name)
                 p = get_prompt(k_shot, s)
                 ppl_df = solve_analogy(p, score_model)
+                ppl_df.to_csv(ppl_file, index=False)
 
