@@ -47,7 +47,7 @@ if __name__ == '__main__':
     for n_seed, k_shot in zip([1, 5], [3, 3]):
         for s in range(n_seed):
             print(f"[{k_shot}-shot]: seed {n_seed}")
-            ppl_file = f"{export_dir}/ppl.{model_name}.{k_shot}.{s}.csv"
+            ppl_file = f"{export_dir}/ppl.{os.path.basename(model_name)}.{k_shot}.{s}.csv"
             if not os.path.exists(ppl_file):
                 if score_model is None:
                     score_model = EncoderDecoderLM(model_name)
