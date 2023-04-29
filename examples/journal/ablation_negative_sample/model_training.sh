@@ -13,16 +13,8 @@ train_nce () {
   relbert-eval-analogy -d 'semeval2012_relational_similarity' -s 'validation' -m "${MODEL_CKPT}/model" -o "${MODEL_CKPT}/model/analogy.forward.json" -b 64
 }
 
-for N in 25 50 100 150 200 250 300
+for N in 25 50 100 150 200 250 300 350
 do
-  N=25
-  N=50
-  N=100
-  N=200
-  N=250
-  N=350
-  N=150
-  N=300
   train_nce "a" "Today, I finally discovered the relation between <subj> and <obj> : <subj> is the <mask> of <obj>" "${N}"
   train_nce "b" "Today, I finally discovered the relation between <subj> and <obj> : <obj>  is <subj>'s <mask>" "${N}"
   train_nce "c" "Today, I finally discovered the relation between <subj> and <obj> : <mask>" "${N}"
@@ -51,3 +43,5 @@ eval_nce "a" "250" "epoch_9"
 eval_nce "e" "150" "epoch_8"
 eval_nce "e" "300" "model"
 eval_nce "e" "350" "epoch_9"
+eval_nce "a" "450" "epoch_8"
+eval_nce "a" "500" "epoch_9"

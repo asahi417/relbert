@@ -20,7 +20,6 @@ template_header = "<subj-a> is to <obj-a>"
 template_join = "what"
 template_footer = "<subj-b> is to <obj-b>"
 analogy_types = [
-    ['sat', None],
     ['sat_full', None],
     ['u2', None],
     ['u4', None],
@@ -58,44 +57,6 @@ language_models = {
     "gpt2": [lmppl.LM, 512],  # 124M
 }
 
-# Add fine-tuned models
-language_models.update({
-    "relbert/flan-t5-xl-analogy-conceptnet": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy-conceptnet": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy-conceptnet": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy-conceptnet": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/flan-t5-xl-analogy-t-rex": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy-t-rex": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy-t-rex": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy-t-rex": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/flan-t5-xl-analogy-nell": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy-nell": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy-nell": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy-nell": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/flan-t5-xl-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/flan-t5-xl-analogy-permutation": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy-permutation": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy-permutation": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/flan-t5-xl-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/flan-t5-large-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/flan-t5-base-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/flan-t5-small-analogy-permutation-domain": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/t5-3b-analogy": [lmppl.EncoderDecoderLM, 16],  # 3B
-    "relbert/t5-large-analogy": [lmppl.EncoderDecoderLM, 256],  # 770M
-    "relbert/t5-base-analogy": [lmppl.EncoderDecoderLM, 1024],  # 220M
-    "relbert/t5-small-analogy": [lmppl.EncoderDecoderLM, 1024],  # 60M
-    "relbert/opt-350m-analogy": [lmppl.LM, 128],  # 350M
-    "relbert/opt-350m-analogy-permutation": [lmppl.LM, 128],  # 350M
-    "relbert/opt-350m-analogy-permutation-domain": [lmppl.LM, 128],  # 350M
-    "relbert/opt-125m-analogy": [lmppl.LM, 256],  # 125M
-    "relbert/opt-125m-analogy-permutation": [lmppl.LM, 256],  # 125M
-    "relbert/opt-125m-analogy-permutation-domain": [lmppl.LM, 256],  # 125M
-})
-
 # Add MLM
 language_models.update({
     "bert-large-cased": [lmppl.MaskedLM, 256],  # 355M
@@ -106,14 +67,12 @@ language_models.update({
 
 # Add Large Models
 language_models.update({
-    # "google/ul2": [lmppl.EncoderDecoderLM, 1],  # 20B
     "google/flan-ul2": [lmppl.EncoderDecoderLM, 4],  # 20B
     "EleutherAI/gpt-neox-20b": [lmppl.LM, 4],  # 20B
     "facebook/opt-iml-30b": [lmppl.LM, 2],  # 30B
     "facebook/opt-iml-max-30b": [lmppl.LM, 4],  # 30B
     "facebook/opt-30b": [lmppl.LM, 4],  # 30B
 })
-# language_models = {"google/ul2": [lmppl.EncoderDecoderLM, 1]}
 
 
 def get_input(query_pair: List, candidate_pairs: List, encoder_decoder: bool = False):

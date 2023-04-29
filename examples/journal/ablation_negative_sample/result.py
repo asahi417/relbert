@@ -97,21 +97,34 @@ def get_result(sample, template_id, ckpt):
 
 
 if __name__ == '__main__':
-    ourput = []
-    ourput.append(get_result(25, "a", "model"))
-    ourput.append(get_result(50, "a", "epoch_6"))
-    ourput.append(get_result(100, "b", "epoch_6"))
-    ourput.append(get_result(200, "a", "epoch_8"))
-    ourput.append(get_result(250, "a", "epoch_9"))
-    ourput.append(get_result(150, "e", "epoch_8"))
-    ourput.append(get_result(300, "e", "model"))
-    ourput.append(get_result(350, "e", "epoch_9"))
-    df = pd.DataFrame(ourput)
-    df = df.sort_values(by="negative_sample")
-    df = df[['sat_full', 'u2', 'u4', 'bats', 'google', 'scan', 'nell_relational_similarity',
-             't_rex_relational_similarity', 'conceptnet_relational_similarity',
-             'BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09', 'negative_sample', 'template_id', 'epoch']]
-    df.columns = ['SAT', 'U2', 'U4', 'BATS', 'Google', 'SCAN', 'NELL', 'T-REX', 'ConceptNet',
-                  'BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09', 'negative_sample', 'template_id', 'epoch']
-    df.index = df.pop("negative_sample").values
-    df.to_csv("result.csv")
+    if not os.path.exists("result.csv"):
+        output = [analogy_base]
+        output.append(get_result(25, "a", "model"))
+        output.append(get_result(50, "a", "epoch_6"))
+        output.append(get_result(100, "b", "epoch_6"))
+        output.append(get_result(200, "a", "epoch_8"))
+        output.append(get_result(250, "a", "epoch_9"))
+        output.append(get_result(150, "e", "epoch_8"))
+        output.append(get_result(300, "e", "model"))
+        output.append(get_result(350, "e", "epoch_9"))
+        output.append(get_result(450, "a", "epoch_8"))
+        output.append(get_result(500, "a", "epoch_9"))
+        df = pd.DataFrame(output)
+        df = df.sort_values(by="negative_sample")
+        df = df[['sat_full', 'u2', 'u4', 'bats', 'google', 'scan', 'nell_relational_similarity',
+                 't_rex_relational_similarity', 'conceptnet_relational_similarity',
+                 'BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09', 'negative_sample', 'template_id', 'epoch']]
+        df.columns = ['SAT', 'U2', 'U4', 'BATS', 'Google', 'SCAN', 'NELL', 'T-REX', 'ConceptNet',
+                      'BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09', 'negative_sample', 'template_id', 'epoch']
+        df.index = df.pop("negative_sample").values
+        df.to_csv("result.csv")
+    df = pd.read_csv("result.csv", index_col=0)
+    df.pop("template_id")
+    df.pop("epoch")
+    df["Average (Analogy)"] = df[['SAT', 'U2', 'U4', 'BATS', 'Google', 'SCAN', 'NELL', 'T-REX', 'ConceptNet']].mean(1).round(1)
+    df["Average (CLS)"] = df[['BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09']].mean(1).round(1)
+    df = df[['SAT', 'U2', 'U4', 'BATS', 'Google', 'SCAN', 'NELL', 'T-REX', 'ConceptNet', "Average (Analogy)",
+             'BLESS', 'CogALexV', 'EVALution', 'K&H+N', 'ROOT09', "Average (CLS)"]]
+    df = df.T
+    df = pd.DataFrame([[f"\textbf{{{k}}}" if k == max(i) else str(k) for k in i] for i in df.values], index=df.index, columns=df.columns)
+    print(df.to_latex(escape=False))

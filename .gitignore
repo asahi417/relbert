@@ -23,3 +23,6 @@ tmp
 examples/annotation
 relentless
 *.xlsx
+
+relbert-roberta-base-nce-semeval2012-0
+relbert-roberta-large-nce-semeval2012-0-400

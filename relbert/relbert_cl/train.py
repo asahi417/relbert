@@ -41,7 +41,7 @@ def main():
     parser.add_argument('--num-negative', help='gradient accumulation', default=400, type=int)
     parser.add_argument('--num-positive', help='gradient accumulation', default=10, type=int)
 
-    # misc
+    # _misc
     parser.add_argument('-p', '--parallel', help='', action='store_true')
     parser.add_argument('--epoch-save', help='interval to save model weight', default=1, type=int)
 
