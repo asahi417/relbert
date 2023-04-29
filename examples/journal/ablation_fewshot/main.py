@@ -6,8 +6,8 @@ import pandas as pd
 from datasets import load_dataset
 from lmppl import EncoderDecoderLM
 
-# model_name = "google/flan-t5-xxl"
-model_name = "google/flan-t5-small"
+model_name = "google/flan-t5-xxl"
+# model_name = "google/flan-t5-small"
 batch_size = 1
 data_analogy = load_dataset('relbert/analogy_questions', 'sat_full', split='test')
 data_fewshot = load_dataset('relbert/semeval2012_relational_similarity', split='train')
