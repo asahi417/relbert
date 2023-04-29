@@ -35,9 +35,9 @@ def solve_analogy(prompt_prefix: str, scorer):
     for n, i in enumerate(data_analogy):
         input_list += [f"{prompt_prefix}\n{i['stem'][0]} is to {i['stem'][1]} what"] * len(i['choice'])
         output_list += [f"{x} is to {y}" for x, y in i['choice']]
-        feature_list += [[n, i['answer']] for _ in range(len(i['choice']))]
+        feature_list += [[n, i['answer'], o] for o in range(len(i['choice']))]
     ppl = scorer.get_perplexity(input_texts=input_list, output_texts=output_list, batch=batch_size)
-    return pd.DataFrame([{"ppl": p, "input": i, "output": o, "index": d[0], "answer": d[1]} for p, i, o, d in zip(ppl, input_list, output_list, feature_list)])
+    return pd.DataFrame([{"ppl": p, "input": i, "output": o, "index": d[0], "answer": d[1], "choice": d[2]} for p, i, o, d in zip(ppl, input_list, output_list, feature_list)])
 
 
 if __name__ == '__main__':
@@ -58,5 +58,5 @@ if __name__ == '__main__':
                 ppl_df.to_csv(ppl_file, index=False)
                 print(f"\t {elapsed} seconds")
             df = pd.read_csv(ppl_file)
-            [g for _, g in df.groupby("index")]
+            [g['ppl'] for _, g in df.groupby("index")]
 
