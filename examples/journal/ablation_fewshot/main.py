@@ -11,6 +11,9 @@ model_name = "google/flan-t5-xxl"
 batch_size = 1
 data_analogy = load_dataset('relbert/analogy_questions', 'sat_full', split='test')
 data_fewshot = load_dataset('relbert/semeval2012_relational_similarity', split='train')
+relbert_base = 59.9
+relbert_large = 73.3
+zeroshot = 52.4
 
 
 def get_prompt(k: int = 5, random_seed: int = 42):
@@ -62,6 +65,13 @@ if __name__ == '__main__':
             accuracy = mean([int(g.sort_values('ppl')['choice'].values[0] == g['answer'].values[0]) for _, g in df.groupby("index")])
             output.append({"k": k_shot, "seed": s, "accuracy": accuracy})
     df = pd.DataFrame(output)
-    print(df)
     df.to_csv(f"{export_dir}/result.csv", index=False)
+    df.index = df.pop("k")
+    df['Accuracy'] = (100 * df.pop('accuracy')).round(1).values
+    df['Seed'] = df.pop('seed').astype(int)
+    df.index.name = None
+    df = df.pivot(columns='Seed', values='Accuracy')
+    df.mean().round(1)
+    df['Average'] = df.mean(1).values.round(1)
+    print(df.to_latex())
 

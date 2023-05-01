@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from tqdm import tqdm
 from time import sleep
 from typing import List
 import openai
@@ -53,7 +54,7 @@ def get_chat(model, data_name, prompt_id):
     dataset_prompt = [get_input(query=x['stem'], options=x['choice'], prompt_type=prompt_id) for x in dataset]
     output_list = []
     answer = dataset['answer']
-    for n, i in enumerate(dataset_prompt):
+    for n, i in tqdm(enumerate(dataset_prompt)):
         reply = get_reply(model, i)
         output_list.append({"reply": reply, "input": i, "model": model, "answer": answer[n]})
     return output_list
@@ -63,12 +64,12 @@ if __name__ == '__main__':
     os.makedirs('results/chat', exist_ok=True)
 
     # compute perplexity
-    for target_model in ['gpt-3.5-turbo']: #, 'gpt-4']:
+    for target_model in ['gpt-3.5-turbo', 'gpt-4']:
         for target_data_name in all_datasets:
             for _prompt in ["1", "2", "3"]:
                 scores_file = f"results/chat/{target_model}.{target_data_name}.{_prompt}.json"
                 if not os.path.exists(scores_file):
-                    logging.info(f"[COMPUTING PERPLEXITY] model: `{target_model}`, data: `{target_data_name}`")
+                    logging.info(f"[COMPUTING PERPLEXITY] model: `{target_model}`, data: `{target_data_name}`, prompt: `{_prompt}`")
                     scores_dict = get_chat(target_model, target_data_name, prompt_id=_prompt)
                     with open(scores_file, 'w') as f:
                         json.dump(scores_dict, f)
