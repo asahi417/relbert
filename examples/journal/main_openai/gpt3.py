@@ -10,7 +10,8 @@ from datasets import load_dataset
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None)
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 all_datasets = [
-    'sat_full', 'u2', 'u4', 'google', 'bats',
+    'sat_full',
+    # 'u2', 'u4', 'google', 'bats',
     # 't_rex_relational_similarity', 'conceptnet_relational_similarity', 'nell_relational_similarity', 'scan'
 ]
 
@@ -56,6 +57,9 @@ if __name__ == '__main__':
                 with open(scores_file, 'w') as f:
                     json.dump(_scores_aligned, f)
                 _df_tmp.to_csv(breakdown_file, index=False)
+            with open(scores_file) as f:
+                _scores_aligned = json.load(f)
+            print(_scores_aligned)
             df = pd.read_csv(breakdown_file)
             print(target_data, df['accuracy'].mean())
             # input()

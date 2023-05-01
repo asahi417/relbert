@@ -69,8 +69,8 @@ if __name__ == '__main__':
     result = []
     for target_model in ['gpt-3.5-turbo', 'gpt-4']:
         for target_data_name in all_datasets:
-            # for _prompt in ["1", "2", "3"]:
-            for _prompt in ["1"]:
+            for _prompt in ["1", "2", "3"]:
+            # for _prompt in ["1"]:
                 scores_file = f"results/chat/{target_model}.{target_data_name}.{_prompt}.json"
                 if not os.path.exists(scores_file):
                     logging.info(f"[COMPUTING PERPLEXITY] model: `{target_model}`, data: `{target_data_name}`, prompt: `{_prompt}`")
