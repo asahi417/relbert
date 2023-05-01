@@ -10,9 +10,8 @@ from datasets import load_dataset
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None)
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 all_datasets = [
-    'sat_full',
-    # 'u2', 'u4', 'google', 'bats',
-    # 't_rex_relational_similarity', 'conceptnet_relational_similarity', 'nell_relational_similarity', 'scan'
+    'sat_full', 'u2', 'u4', 'google', 'bats',
+    't_rex_relational_similarity', 'conceptnet_relational_similarity', 'nell_relational_similarity', 'scan'
 ]
 
 
