@@ -70,7 +70,6 @@ if __name__ == '__main__':
     for target_model in ['gpt-3.5-turbo', 'gpt-4']:
         for target_data_name in all_datasets:
             for _prompt in ["1", "2", "3"]:
-            # for _prompt in ["1"]:
                 scores_file = f"results/chat/{target_model}.{target_data_name}.{_prompt}.json"
                 if not os.path.exists(scores_file):
                     logging.info(f"[COMPUTING PERPLEXITY] model: `{target_model}`, data: `{target_data_name}`, prompt: `{_prompt}`")
@@ -79,21 +78,21 @@ if __name__ == '__main__':
                         json.dump(scores_dict, f)
                 with open(scores_file) as f:
                     scores_dict = json.load(f)
-                accuracy = []
-                for s in scores_dict:
-                    out = s['input'].split("\n")[1:-1]
-                    if s['reply'][0] in ['1', '2', '3', '4', '5']:
-                        pred = int(s['reply'][0]) - 1
-                    elif s['reply'].replace("option ", "")[0] in ['1', '2', '3', '4', '5']:
-                        pred = int(s['reply'].replace("option ", "")[0]) - 1
-                    elif any(s['reply'][:-1] in o for o in out):
-                        pred = int([o for o in out if s['reply'][:-1] in o][0][0]) - 1
-                    else:
-                        print(out)
-                        print(s['reply'])
-                        raise ValueError("unknown reply")
-                    accuracy.append(int(int(s['answer']) == pred))
-
-                result.append({"accuracy": mean(accuracy), "model": target_model, "data": target_data_name, "prompt": _prompt})
-    df = pd.DataFrame(result)
-    print(df)
+    #             accuracy = []
+    #             for s in scores_dict:
+    #                 out = s['input'].split("\n")[1:-1]
+    #                 if s['reply'][0] in ['1', '2', '3', '4', '5']:
+    #                     pred = int(s['reply'][0]) - 1
+    #                 elif s['reply'].replace("option ", "")[0] in ['1', '2', '3', '4', '5']:
+    #                     pred = int(s['reply'].replace("option ", "")[0]) - 1
+    #                 elif any(s['reply'][:-1] in o for o in out):
+    #                     pred = int([o for o in out if s['reply'][:-1] in o][0][0]) - 1
+    #                 else:
+    #                     print(out)
+    #                     print(s['reply'])
+    #                     raise ValueError("unknown reply")
+    #                 accuracy.append(int(int(s['answer']) == pred))
+    #
+    #             result.append({"accuracy": mean(accuracy), "model": target_model, "data": target_data_name, "prompt": _prompt})
+    # df = pd.DataFrame(result)
+    # print(df)
