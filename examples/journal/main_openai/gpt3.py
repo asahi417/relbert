@@ -11,7 +11,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None)
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 all_datasets = [
     'sat_full', 'u2', 'u4', 'google', 'bats',
-    't_rex_relational_similarity', 'conceptnet_relational_similarity', 'nell_relational_similarity', 'scan'
+    't_rex_relational_similarity', 'conceptnet_relational_similarity', 'nell_relational_similarity',
+    # 'scan'
 ]
 
 
@@ -33,11 +34,7 @@ def get_ppl(model, data_name):
     scores = scorer.get_perplexity(dataset_flat)
     scores = [{"input": f"{d}", "output": "", "score": s, "index": i} for s, d, i in zip(scores, dataset_flat, dataset_index)]
     scores_aligned = [(i, [s['score'] for s in scores if s['index'] == i]) for i in sorted(list(set(dataset_index)))]
-    df_tmp = dataset.to_pandas()
-    df_tmp['choice'] = [[_i.tolist() for _i in i] for i in df_tmp['choice']]
-    df_tmp['prediction'] = [i.index(min(i)) for _, i in scores_aligned]
-    df_tmp['accuracy'] = df_tmp['prediction'] == df_tmp['answer']
-    return df_tmp, scores_aligned
+    return scores_aligned
 
 
 if __name__ == '__main__':
@@ -52,13 +49,18 @@ if __name__ == '__main__':
             breakdown_file = f"results/breakdown/{target_model}_{target_data}_None.prompt.csv"
             if not os.path.exists(scores_file):
                 logging.info(f"[COMPUTING PERPLEXITY] model: `{target_model}`, data: `{target_data}`")
-                _df_tmp, _scores_aligned = get_ppl(target_model, target_data)
+                _scores_aligned = get_ppl(target_model, target_data)
                 with open(scores_file, 'w') as f:
                     json.dump(_scores_aligned, f)
-                _df_tmp.to_csv(breakdown_file, index=False)
-            with open(scores_file) as f:
-                _scores_aligned = json.load(f)
-            print(_scores_aligned)
+            if not os.path.exists(breakdown_file):
+                with open(scores_file) as f:
+                    _scores_aligned = json.load(f)
+                dataset = load_dataset("relbert/analogy_questions", target_data, split="test")
+                df_tmp = dataset.to_pandas()
+                df_tmp['choice'] = [[_i.tolist() for _i in i] for i in df_tmp['choice']]
+                df_tmp['prediction'] = [i.index(min(i)) for _, i in _scores_aligned]
+                df_tmp['accuracy'] = df_tmp['prediction'] == df_tmp['answer']
+                df_tmp.to_csv(breakdown_file, index=False)
             df = pd.read_csv(breakdown_file)
             print(target_data, df['accuracy'].mean())
             # input()
