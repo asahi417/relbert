@@ -12,7 +12,7 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logg
 all_datasets = [
     'sat_full', 'u2', 'u4', 'google', 'bats',
     't_rex_relational_similarity', 'conceptnet_relational_similarity', 'nell_relational_similarity',
-    # 'scan'
+    'scan'
 ]
 
 
