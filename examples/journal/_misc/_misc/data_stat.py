@@ -38,6 +38,8 @@ for d, name, parent, _type in data:
         r.update(set(x['validation']['relation_type']))
         r.intersection(set(x['test']['relation_type']))
         ratio = pretty(len(r.intersection(set(x["test"]["relation_type"])))/len(r) * 100)
+        for _s in ['train', 'validation']:
+            print(sum([len(i['positives']) for i in x[_s]]), _s, d)
         out.append({
             "Dataset": name,
             "#relations": "/".join([str(len(x[split])) for split in ['train', 'validation', 'test']]),

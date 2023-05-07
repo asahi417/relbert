@@ -61,5 +61,15 @@ if __name__ == '__main__':
     full_output += get_result(language_model="roberta-base", data_list='t-rex')
     full_output += get_result(language_model="roberta-base", data_list='nell')
     df = pd.DataFrame(full_output)
-    print(df)
     df.to_csv('result.csv', index=False)
+    df = df[[c for c in df.columns if 'valid' not in c]]
+    df.pop("sat/test.forward")
+    df = df[df['data'] == 't-rex']
+    df.pop("data")
+    df.pop("model")
+    df.pop("loss_function")
+    df.pop("aggregate")
+    print((df.T * 100).round(1))
+    print((df[[c for c in df.columns if 'test' in c]].mean(1)* 100).round(1))
+    print((df[[c for c in df.columns if c[0].isupper()]].mean(1) * 100).round(1))
+

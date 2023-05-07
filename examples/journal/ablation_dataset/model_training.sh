@@ -34,9 +34,8 @@ train_nce "e" "I wasn’t aware of this relationship, but I just read in the enc
 
 eval_nce () {
   TEMPLATE_ID=${1}
-  TEMPLATE=${2}
-  DATASET=${3}
-  MODEL_CKPT="relbert_output/ckpt/nce_${DATASET}/template-${TEMPLATE_ID}/${5}"
+  DATASET=${2}
+  MODEL_CKPT="relbert_output/ckpt/nce_${DATASET}/template-${TEMPLATE_ID}/${4}"
   # for evaluation
   relbert-eval-analogy -d 'scan' 'sat_full' 'sat' 'u2' 'u4' 'google' 'bats' 't_rex_relational_similarity' 'conceptnet_relational_similarity' 'nell_relational_similarity' -s 'test' -m "${MODEL_CKPT}" -o "${MODEL_CKPT}/analogy.forward.json" -b 64
   relbert-eval-analogy -d 'scan' 'sat_full' 'sat' 'u2' 'u4' 'google' 'bats' 't_rex_relational_similarity' 'conceptnet_relational_similarity' 'nell_relational_similarity' -s 'test' -m "${MODEL_CKPT}" -o "${MODEL_CKPT}/analogy.reverse.json" -b 64 --reverse-pair
@@ -46,9 +45,9 @@ eval_nce () {
   relbert-eval-analogy -d 'scan' 'sat' 'u2' 'u4' 'google' 'bats' 'semeval2012_relational_similarity' 't_rex_relational_similarity' 'conceptnet_relational_similarity' 'nell_relational_similarity' -s 'validation' -m "${MODEL_CKPT}" -o "${MODEL_CKPT}/analogy.bidirection.json" -b 64 --bi-direction-pair
   relbert-eval-classification -m "${MODEL_CKPT}" -o "${MODEL_CKPT}/classification.json" -b 64
   relbert-eval-mapping -m "${MODEL_CKPT}" -o "${MODEL_CKPT}/relation_mapping.json" -b 64
-  relbert-push-to-hub -m "${MODEL_CKPT}" -a "${4}"
+  relbert-push-to-hub -m "${MODEL_CKPT}" -a "${3}"
 }
 
-eval_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 'conceptnet_relational_similarity' "relbert-roberta-base-nce-conceptnet" "model"
-eval_nce "e" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <obj>  is <subj>’s <mask>" 'nell_relational_similarity' "relbert-roberta-base-nce-nell" "model"
-eval_nce "d" "I wasn’t aware of this relationship, but I just read in the encyclopedia that <subj> is the <mask> of <obj>" 't_rex_relational_similarity' "relbert-roberta-base-nce-t-rex" "epoch_4"
+eval_nce "d" 'conceptnet_relational_similarity' "relbert-roberta-base-nce-conceptnet" "model"
+eval_nce "e" 'nell_relational_similarity' "relbert-roberta-base-nce-nell" "model"
+eval_nce "a" 't_rex_relational_similarity' "relbert-roberta-base-nce-t-rex" "epoch_4"
