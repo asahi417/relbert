@@ -75,7 +75,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['doughnut' 'pastry'],0,"[['passport', 'document'], ['stamp', 'currency'], ['symphony', 'opera'], ['volcano', 'lava']]",high-intermediate,3,False
 ['devastated' 'damaged'],3,"[['unusual', 'weird'], ['unkind', 'hurtful'], ['incredible', 'mundane'], ['prevalent', 'common']]",high-intermediate,3,True
 ['cough' 'cold'],2,"[['fever', 'issue'], ['problem', 'solution'], ['disagreement', 'dispute'], ['room', 'hotel']]",high-intermediate,1,False
-['ballad' 'song'],3,"[['burial', 'death'], ['party', 'politician'], ['meal', 'restaurant'], ['mammal', 'animal']]",high-intermediate,0,False
+['ballad' 'song'],3,"[['burial', 'death'], ['party', 'politician'], ['meal', 'restaurant'], ['mammal', 'animal']]",high-intermediate,3,True
 ['island' 'archipelago'],3,"[['anchor', 'aircraft'], ['archive', 'album'], ['ocean', 'iceberg'], ['article', 'newspaper']]",high-intermediate,3,True
 ['star' 'constellation'],3,"[['crystal', 'jewel'], ['reservation', 'table'], ['bank', 'fortune'], ['wick', 'candle']]",high-intermediate,3,True
 ['professor' 'scholarly'],2,"[['friend', 'imaginary'], ['mystery', 'obvious'], ['sorcerer', 'magical'], ['father', 'maternal']]",high-intermediate,2,True

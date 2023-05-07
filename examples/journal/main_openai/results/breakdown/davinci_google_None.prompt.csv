@@ -484,7 +484,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['mouse' 'mice'],1,"[['productive', 'unproductive'], ['onion', 'onions'], ['fingers', 'dreams'], ['goat', 'melon']]",gram8-plural,1,True
 ['horse' 'horses'],2,"[['bananas', 'computers'], ['melon', 'child'], ['lion', 'lions'], ['generating', 'generated']]",gram8-plural,2,True
 ['pineapple' 'pineapples'],2,"[['building', 'donkey'], ['bottles', 'cows'], ['rat', 'rats'], ['France', 'French']]",gram8-plural,2,True
-['woman' 'women'],0,"[['banana', 'bananas'], ['Sweden', 'Swedish'], ['onion', 'elephant'], ['fingers', 'pineapples']]",gram8-plural,0,True
+['woman' 'women'],0,"[['banana', 'bananas'], ['Sweden', 'Swedish'], ['onion', 'elephant'], ['fingers', 'pineapples']]",gram8-plural,1,False
 ['goat' 'goats'],0,"[['hand', 'hands'], ['scream', 'screaming'], ['color', 'dog'], ['eyes', 'donkeys']]",gram8-plural,0,True
 ['rat' 'rats'],2,"[['lion', 'pineapple'], ['low', 'lowest'], ['road', 'roads'], ['mice', 'onions']]",gram8-plural,2,True
 ['bird' 'birds'],3,"[['rat', 'elephant'], ['mangoes', 'dreams'], ['speak', 'speaks'], ['bottle', 'bottles']]",gram8-plural,3,True

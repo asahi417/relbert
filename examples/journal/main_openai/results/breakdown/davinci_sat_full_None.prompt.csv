@@ -115,7 +115,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['prosaic' 'epic'],2,"[['normal', 'mean'], ['powerful', 'omnipotent'], ['ephemeral', 'eternal'], ['octagon', 'eight'], ['beneficent', 'strong']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (7) (spell corrected prosaic),2,True
 ['accomplice' 'crime'],4,"[['inmate', 'prison'], ['detective', 'clue'], ['employer', 'work'], ['salesperson', 'store'], ['partner', 'business']]",190 FROM REAL SATs,4,True
 ['arable' 'cultivation'],4,"[['exploited', 'protection'], ['healthy', 'medication'], ['insular', 'discovery'], ['productive', 'surplus'], ['navigable', 'sailing']]",190 FROM REAL SATs,3,False
-['depose' 'king'],3,"[['eulogize', 'hero'], ['inaugurate', 'mayor'], ['promote', 'general'], ['unfrock', 'minister'], ['elect', 'leader']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (9),4,False
+['depose' 'king'],3,"[['eulogize', 'hero'], ['inaugurate', 'mayor'], ['promote', 'general'], ['unfrock', 'minister'], ['elect', 'leader']]",ML: http://www.kagi.com/edicom/edu/sat_52.htm (9),0,False
 ['tutor' 'pupil'],1,"[['patron', 'client'], ['coach', 'athlete'], ['waiter', 'diner'], ['driver', 'passenger'], ['novelist', 'writer']]",190 FROM REAL SATs,1,True
 ['burnish' 'metal'],3,"[['cut', 'scissors'], ['deliver', 'box'], ['polish', 'wax'], ['sand', 'wood'], ['tarnish', 'silver']]",KS type: 39,3,True
 ['fickle' 'inconsistency'],3,"[['cloudy', 'warmth'], ['innate', 'capability'], ['worthy', 'heroism'], ['placid', 'calmness'], ['solid', 'order']]","ML: Kaplan, practice set 1 (8)",3,True
@@ -314,7 +314,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['reveler' 'merrymaking'],3,"[['hedonist', 'restraint'], ['demagogue', 'emotion'], ['anarchist', 'authority'], ['disputant', 'argument'], ['litigant', 'settlement']]",190 FROM REAL SATs,3,True
 ['tourniquet' 'bleeding'],3,"[['relapse', 'condition'], ['lotion', 'skin'], ['hoist', 'elevating'], ['splint', 'movement'], ['inflation', 'expanding']]",190 FROM REAL SATs,1,False
 ['refugee' 'asylum'],3,"[['astronaut', 'capsule'], ['perfectionist', 'frustration'], ['consumer', 'impulse'], ['opportunist', 'advantage'], ['director', 'stage']]",190 FROM REAL SATs,4,False
-['consider' 'contemplate'],3,"[['smile', 'greet'], ['write', 'compose'], ['complain', 'bicker'], ['examine', 'scrutinize'], ['ignore', 'notice']]",190 FROM REAL SATs,1,False
+['consider' 'contemplate'],3,"[['smile', 'greet'], ['write', 'compose'], ['complain', 'bicker'], ['examine', 'scrutinize'], ['ignore', 'notice']]",190 FROM REAL SATs,4,False
 ['strident' 'sound'],1,"[['fragrant', 'flower'], ['acrid', 'taste'], ['outdated', 'book'], ['adjusted', 'clock'], ['broken', 'glass']]",ML: http://www.kagi.com/edicom/edu/sat_53.htm (8),1,True
 ['temper' 'extreme'],2,"[['deliver', 'speedy'], ['provoke', 'angry'], ['mitigate', 'severe'], ['slander', 'dishonest'], ['assuage', 'commodious']]",KS type: 30,1,False
 ['binomial' 'name'],3,"[['octagon', 'eight'], ['entreat', 'gift'], ['normal', 'mean'], ['centennial', 'year'], ['benediction', 'church']]",ML: http://www.kagi.com/edicom/edu/sat_51.htm (7),2,False

@@ -253,7 +253,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['organize' 'organization'],1,"[['intended', 'unintended'], ['civilize', 'civilization'], ['standardize', 'install'], ['admire', 'optimize']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,1,True
 ['colonize' 'colonization'],0,"[['privatize', 'privatization'], ['specified', 'unspecified'], ['expire', 'observe'], ['expire', 'improvize']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,0,True
 ['improvize' 'improvization'],1,"[['believe', 'believer'], ['prepare', 'preparation'], ['restore', 'minimize'], ['globalize', 'illumine']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,1,True
-['illumine' 'illumination'],0,"[['characterize', 'characterization'], ['degrade', 'standardize'], ['allege', 'continue'], ['carbon', 'carbonless']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,0,True
+['illumine' 'illumination'],0,"[['characterize', 'characterization'], ['degrade', 'standardize'], ['allege', 'continue'], ['carbon', 'carbonless']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,3,False
 ['admire' 'admiration'],1,"[['creative', 'creatively'], ['maximize', 'maximization'], ['perspire', 'compile'], ['perspire', 'compile']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,1,True
 ['characterize' 'characterization'],1,"[['passion', 'passionless'], ['organize', 'organization'], ['restore', 'customize'], ['expire', 'minimize']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,1,True
 ['install' 'installation'],2,"[['stocked', 'overstocked'], ['globalize', 'colonize'], ['continue', 'continuation'], ['organize', 'realize']]",./cache/BATS_3.0/2_Derivational_morphology/D09 [verb+tion_irreg].txt,2,True
@@ -445,7 +445,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['angry' 'furious'],2,"[['wristband', 'band'], ['happy', 'unhappy'], ['lake', 'sea'], ['dislike', 'rain']]",./cache/BATS_3.0/4_Lexicographic_semantics/L07 [synonyms - intensity].txt,1,False
 ['tasty' 'delicious'],1,"[['dinner', 'rain'], ['confused', 'lost'], ['flower', 'petal'], ['dinner', 'strong']]",./cache/BATS_3.0/4_Lexicographic_semantics/L07 [synonyms - intensity].txt,1,True
 ['poorly' 'afflicted'],3,"[['well', 'rain'], ['desk', 'furniture'], ['tasty', 'cry'], ['lake', 'sea']]",./cache/BATS_3.0/4_Lexicographic_semantics/L07 [synonyms - intensity].txt,0,False
-['want' 'crave'],2,"[['cooked', 'raw'], ['doze', 'sad'], ['rain', 'deluge'], ['pain', 'drizzle']]",./cache/BATS_3.0/4_Lexicographic_semantics/L07 [synonyms - intensity].txt,0,False
+['want' 'crave'],2,"[['cooked', 'raw'], ['doze', 'sad'], ['rain', 'deluge'], ['pain', 'drizzle']]",./cache/BATS_3.0/4_Lexicographic_semantics/L07 [synonyms - intensity].txt,2,True
 ['monkey' 'gorilla'],3,"[['chuckle', 'pony'], ['bad', 'soon'], ['flower', 'bouquet'], ['necessary', 'essential']]",./cache/BATS_3.0/4_Lexicographic_semantics/L07 [synonyms - intensity].txt,2,False
 ['soon' 'immediately'],2,"[['bad', 'faith'], ['pony', 'bovid'], ['ask', 'beg'], ['dinner', 'pony']]",./cache/BATS_3.0/4_Lexicographic_semantics/L07 [synonyms - intensity].txt,0,False
 ['pony' 'horse'],1,"[['icicle', 'ice'], ['dislike', 'hate'], ['love', 'excited'], ['warm', 'cry']]",./cache/BATS_3.0/4_Lexicographic_semantics/L07 [synonyms - intensity].txt,0,False
@@ -756,7 +756,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['ensure' 'ensured'],3,"[['require', 'improve'], ['costly', 'costlier'], ['manage', 'lose'], ['develop', 'developed']]",./cache/BATS_3.0/1_Inflectional_morphology/I07 [verb_inf - Ved].txt,3,True
 ['locate' 'located'],3,"[['publish', 'achieve'], ['believe', 'tell'], ['enabling', 'enables'], ['marry', 'married']]",./cache/BATS_3.0/1_Inflectional_morphology/I07 [verb_inf - Ved].txt,3,True
 ['attend' 'attended'],2,"[['reducing', 'reduced'], ['understand', 'decide'], ['accept', 'accepted'], ['become', 'continue']]",./cache/BATS_3.0/1_Inflectional_morphology/I07 [verb_inf - Ved].txt,2,True
-['appear' 'appeared'],3,"[['expect', 'tell'], ['receive', 'accept'], ['representing', 'represented'], ['agree', 'agreed']]",./cache/BATS_3.0/1_Inflectional_morphology/I07 [verb_inf - Ved].txt,2,False
+['appear' 'appeared'],3,"[['expect', 'tell'], ['receive', 'accept'], ['representing', 'represented'], ['agree', 'agreed']]",./cache/BATS_3.0/1_Inflectional_morphology/I07 [verb_inf - Ved].txt,3,True
 ['identify' 'identified'],0,"[['locate', 'located'], ['agrees', 'agreed'], ['describe', 'apply'], ['remain', 'continue']]",./cache/BATS_3.0/1_Inflectional_morphology/I07 [verb_inf - Ved].txt,0,True
 ['become' 'became'],2,"[['understand', 'unite'], ['analysis', 'analyses'], ['remain', 'remained'], ['publish', 'perform']]",./cache/BATS_3.0/1_Inflectional_morphology/I07 [verb_inf - Ved].txt,2,True
 ['establish' 'established'],0,"[['seem', 'seemed'], ['become', 'hear'], ['safety', 'safeties'], ['describe', 'appear']]",./cache/BATS_3.0/1_Inflectional_morphology/I07 [verb_inf - Ved].txt,0,True
@@ -888,7 +888,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['tv' 'device'],1,"[['person', 'society'], ['gasoline', 'fuel'], ['denim', 'diary'], ['mascara', 'lemon']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,1,True
 ['croissant' 'pastry'],0,"[['blender', 'appliance'], ['candy', 'lollipop'], ['stapler', 'tub'], ['postcard', 'sunscreen']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,1,False
 ['computer' 'device'],1,"[['hairnet', 'vase'], ['hairpin', 'pin'], ['denim', 'blender'], ['white', 'black']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,3,False
-['diary' 'journal'],2,"[['mascara', 'jeans'], ['front', 'back'], ['juicer', 'utensil'], ['hairpin', 'gasoline']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,False
+['diary' 'journal'],2,"[['mascara', 'jeans'], ['front', 'back'], ['juicer', 'utensil'], ['hairpin', 'gasoline']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,1,False
 ['stapler' 'device'],0,"[['dress', 'clothes'], ['armchair', 'jeans'], ['inhale', 'exhale'], ['hairpin', 'grapefruit']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,True
 ['armchair' 'chair'],0,"[['perfume', 'toiletry'], ['hairnet', 'toothbrush'], ['pain', 'torment'], ['necklace', 'lemon']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,True
 ['shelf' 'furniture'],1,"[['box', 'cardboard'], ['bracelet', 'jewelry'], ['cake', 'jeans'], ['mascara', 'hamburger']]",./cache/BATS_3.0/4_Lexicographic_semantics/L02 [hypernyms - misc].txt,0,False
@@ -1660,7 +1660,7 @@ stem,answer,choice,prefix,prediction,accuracy
 ['descend' 'ascend'],1,"[['allosaurus', 'dinosaur'], ['employ', 'dismiss'], ['below', 'top'], ['uphill', 'true']]",./cache/BATS_3.0/4_Lexicographic_semantics/L10 [antonyms - binary].txt,2,False
 ['in' 'out'],1,"[['money', 'paper'], ['front', 'back'], ['climb', 'submerge'], ['dynamic', 'true']]",./cache/BATS_3.0/4_Lexicographic_semantics/L10 [antonyms - binary].txt,1,True
 ['occupied' 'vacant'],0,"[['out', 'in'], ['beginning', 'inside'], ['dynamic', 'ahead'], ['academia', 'college']]",./cache/BATS_3.0/4_Lexicographic_semantics/L10 [antonyms - binary].txt,0,True
-['previously' 'subsequently'],2,"[['croissant', 'pastry'], ['dive', 'top'], ['downslope', 'upslope'], ['dynamic', 'inside']]",./cache/BATS_3.0/4_Lexicographic_semantics/L10 [antonyms - binary].txt,0,False
+['previously' 'subsequently'],2,"[['croissant', 'pastry'], ['dive', 'top'], ['downslope', 'upslope'], ['dynamic', 'inside']]",./cache/BATS_3.0/4_Lexicographic_semantics/L10 [antonyms - binary].txt,2,True
 ['interior' 'exterior'],1,"[['song', 'album'], ['internal', 'external'], ['up', 'employ'], ['toward', 'dead']]",./cache/BATS_3.0/4_Lexicographic_semantics/L10 [antonyms - binary].txt,1,True
 ['drop' 'lift'],3,"[['unfortunate', 'tragic'], ['before', 'mortal'], ['in', 'dead'], ['down', 'up']]",./cache/BATS_3.0/4_Lexicographic_semantics/L10 [antonyms - binary].txt,3,True
 ['manage' 'manageable'],1,"[['filled', 'overfilled'], ['sustain', 'sustainable'], ['predict', 'observe'], ['avoid', 'contain']]",./cache/BATS_3.0/2_Derivational_morphology/D07 [verb+able_reg].txt,1,True
