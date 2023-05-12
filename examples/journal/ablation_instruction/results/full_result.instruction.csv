@@ -1,0 +1,8 @@
+model,accuracy
+google/flan-t5-xl,34.0
+google/flan-t5-xxl,35.8
+google/flan-ul2,40.6
+facebook/opt-iml-1.3b,24.6
+facebook/opt-iml-30b,27.3
+facebook/opt-iml-max-1.3b,26.5
+facebook/opt-iml-max-30b,31.3
