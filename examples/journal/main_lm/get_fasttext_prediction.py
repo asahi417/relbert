@@ -24,7 +24,7 @@ if not os.path.exists(path):
     os.makedirs(cache_dir, exist_ok=True)
     filename = os.path.basename(url)
     _path = f"{cache_dir}/{filename}"
-    assert path.endswith('.zip')
+    assert _path.endswith('.zip')
     with open(_path, "wb") as f:
         r = requests.get(url)
         f.write(r.content)
