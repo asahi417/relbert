@@ -4,6 +4,7 @@ import json
 from relbert import evaluate_analogy
 
 os.makedirs("results/relbert_prediction", exist_ok=True)
+os.makedirs("results/relbert_prediction_base", exist_ok=True)
 for t in ["scan", "sat_full", "u2", "u4", "bats", "google", "t_rex_relational_similarity", "nell_relational_similarity", "conceptnet_relational_similarity"]:
     path = f"results/relbert_prediction/{t}.json"
     if not os.path.exists(path):
