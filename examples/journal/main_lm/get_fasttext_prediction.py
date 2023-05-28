@@ -39,7 +39,7 @@ for t in ["scan", "sat_full", "u2", "u4", "bats", "google", "t_rex_relational_si
     if os.path.exists(path):
         continue
     os.makedirs("results/fasttext_prediction", exist_ok=True)
-    data = load_dataset("relbert/analogy_questions", t, split="test")
+    data = load_dataset("relbert/analogy_questions_private", t, split="test")
     accuracy = []
 
     for i in data:
