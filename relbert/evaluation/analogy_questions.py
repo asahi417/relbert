@@ -34,7 +34,8 @@ def evaluate_analogy(target_analogy: List or str,
     model = RelBERT(relbert_ckpt, max_length=max_length, template=template, aggregation_mode=aggregation_mode)
     model.eval()
     target = [target_analogy] if type(target_analogy) is str else target_analogy
-    target_data = [(t, load_dataset('relbert/analogy_questions', t, split=target_analogy_split)) for t in target]
+    # target_data = [(t, load_dataset('relbert/analogy_questions', t, split=target_analogy_split)) for t in target]
+    target_data = [(t, load_dataset('relbert/analogy_questions_private', t, split=target_analogy_split)) for t in target]
     result = {}
     pred = {}
     with torch.no_grad():

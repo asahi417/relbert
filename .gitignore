@@ -22,6 +22,7 @@ figures
 tmp
 examples/annotation
 relentless
+relentless_full
 *.xlsx
 
 relbert-roberta-base-nce-semeval2012-0
