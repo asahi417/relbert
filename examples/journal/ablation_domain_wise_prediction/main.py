@@ -1,5 +1,5 @@
 import os
-from random import seed, shuffle
+from random import seed
 import matplotlib as mpl
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,7 +11,6 @@ plt.rcParams.update({'font.size': 16})  # must set in top
 styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:', "X-", "X--", "X:"]
 seed(1)
 colors = list(mpl.colormaps['Dark2'].colors)
-# shuffle(colors)
 
 
 def cosine_similarity(a, b):
