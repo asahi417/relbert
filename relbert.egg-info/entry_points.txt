@@ -1,0 +1,8 @@
+[console_scripts]
+relbert-2d-plot = relbert.relbert_cl.latent_space_visualization:main
+relbert-eval-analogy = relbert.relbert_cl.evaluate:main_analogy
+relbert-eval-classification = relbert.relbert_cl.evaluate:main_classification
+relbert-eval-loss = relbert.relbert_cl.evaluate:main_validation_loss
+relbert-eval-mapping = relbert.relbert_cl.evaluate:main_relation_mapping
+relbert-push-to-hub = relbert.relbert_cl.push_to_hub:main
+relbert-train = relbert.relbert_cl.train:main
